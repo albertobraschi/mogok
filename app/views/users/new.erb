@@ -1,0 +1,165 @@
+
+<% page_name 'New User' %>
+
+<div class="main">
+  <div class="inner" style="width:850px;">
+    <h2>New User</h2>
+
+    <% form_for :user, :action => 'new' do |f| %>
+      <table class="details">
+        <tr>
+          <td class="label">
+            username
+          </td>
+          <td>
+            <%= f.text_field :username, :size => 30 %>
+            <%= field_error @user.errors[:username] %>
+          </td>
+        </tr>
+        <tr>
+          <td class="label">
+            active
+          </td>
+          <td>
+            <%= f.check_box :active %>
+          </td>
+        </tr>
+        <tr>
+          <td class="label">
+            staff info
+          </td>
+          <td>
+            <%= f.text_area :staff_info, :cols => 60, :rows => 2 %>
+          </td>
+        </tr>
+        <tr>
+          <td class="label">
+            password
+          </td>
+          <td>
+            <%= f.password_field :password, :size => 30 %>
+            <%= field_error @user.errors[:password] %>
+          </td>
+        </tr>
+        <tr>
+          <td class="label">
+            confirm password
+          </td>
+          <td>
+            <%= f.password_field :password_confirmation, :size => 30 %>
+            <%= field_error @user.errors[:password_confirmation] %>
+          </td>
+        </tr>
+        <tr>
+          <td class="label">
+            email
+          </td>
+          <td>
+            <%= f.text_field :email, :size => 40 %>
+            <%= field_error @user.errors[:email] %>
+          </td>
+        </tr>
+        <tr>
+          <td class="label">
+            country
+          </td>
+          <td>
+            <%= collection_select :user, :country_id, @countries, :id, :name, :include_blank => true %>
+          </td>
+        </tr>
+        <tr>
+          <td class="label">
+            gender
+          </td>
+          <td>
+            <%= collection_select :user, :gender_id, @genders, :id, :name, :include_blank => true %>
+          </td>
+        </tr>
+        <tr>
+          <td class="label">
+            style
+          </td>
+          <td>
+            <%= collection_select :user, :style_id, @styles, :id, :name %>
+          </td>
+        </tr>
+        <tr>
+          <td class="label">
+            avatar
+          </td>
+          <td>
+            <%= f.text_field :avatar, :size => 60 %>
+          </td>
+        </tr>
+        <tr>
+          <td class="label">
+            info
+          </td>
+          <td>
+            <% render :layout => 'misc/editor', :locals => {:target => 'user_info', :align => 'left'} do %>
+              <%= f.text_area :info, :cols => 70, :rows => 6 %>
+            <% end %>
+          </td>
+        </tr>
+        <tr>
+          <td class="label">
+            save sent messages
+          </td>
+          <td>
+            <%= f.check_box :save_sent %>
+          </td>
+        </tr>
+        <tr>
+          <td class="label">
+            delete message on reply
+          </td>
+          <td>
+            <%= f.check_box :delete_on_reply %>
+          </td>
+        </tr>
+        <tr>
+          <td class="label">
+            display last seen
+          </td>
+          <td>
+            <%= f.check_box :display_last_seen_at %>
+          </td>
+        </tr>
+        <tr>
+          <td class="label">
+            display downloads
+          </td>
+          <td>
+            <%= f.check_box :display_downloads %>
+          </td>
+        </tr>
+        <tr>
+          <td class="label">
+            uploaded
+          </td>
+          <td>
+            <%= f.text_field :uploaded, :size => 25 %>
+          </td>
+        </tr>
+        <tr>
+          <td class="label">
+            downloaded
+          </td>
+          <td>
+            <%= f.text_field :downloaded, :size => 25 %>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" style="text-align: center;">
+            <ul class="buttons">
+              <li><%= submit_tag 'Create', :class => 'submit' %></li>
+              <li><%= submit_tag 'Cancel', :name => 'cancel', :class => 'submit' %></li>
+            </ul>
+          </td>
+        </tr>
+      </table>
+    <% end %>
+  </div>
+</div>
+
+

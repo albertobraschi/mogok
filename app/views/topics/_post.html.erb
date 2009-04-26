@@ -1,0 +1,90 @@
+
+  <table class="post" id="post_<%= post.id %>">
+    <tr>
+      <td colspan="2" class="<%= post.is_topic_post? ? 'first_post_head' : 'head' %>">
+        <div class="float_left">
+          <ul class="compact">
+            <li><%= post.post_number %></li>
+            <li>|</li>
+            <li>
+              <%= post.is_topic_post ? 'created ' : 'posted ' %>
+              by
+              <%= post.user ? user_link(post.user) : 'unknown' %>
+              -
+              <%= textual_time_interval post.created_at, 'ago' %>
+            </li>
+            <% if post.edited_at %>
+              <li>
+                <span class="edited_by">
+                  <%= "(edited by  #{post.edited_by} #{textual_time_interval post.edited_at, 'ago'})" %>
+                </span>
+              </li>
+            <% end %>            
+          </ul>
+        </div>
+
+        <div class="float_right">
+          <ul class="menu">
+            <% if post.is_topic_post? %>              
+
+              <% if logged_user.admin_mod? %>
+                <li><%= link_to 'remove', topics_path(:forum_id => topic.forum, :action => 'destroy',  :id => topic), {:class => 'mod'} %></li>
+                <li>|</li>
+                <li><%= link_to((topic.stuck? ? 'unstick' : 'stick'), topics_path(:action => 'switch_stick', :id => topic), {:class => 'mod'}) %></li>
+                <li>|</li>
+                <li><%= link_to((topic.locked? ? 'unlock' : 'lock'), topics_path(:action => 'switch_lock', :id => topic), {:class => 'mod'}) %></li>
+                <li>|</li>
+              <% end %>
+
+              <% if logged_user != topic.user %>
+                <li><%= link_to 'report',{:controller => 'topics', :action => 'report', :id => topic} %></li>
+                <li>|</li>
+              <% end %>
+
+              <% if topic.editable_by? logged_user %>
+                <li><%= link_to 'edit', topics_path(:forum_id => topic.forum,  :action => 'edit', :id => topic) %></li>
+                <li>|</li>
+              <% end %>
+
+            <% else %>
+
+              <% if logged_user != post.user %>
+                <li><%= link_to 'report',{:controller => 'posts', :action => 'report', :id => post, :page => current_page} %></li>
+                <li>|</li>
+              <% end %>
+
+              <% if post.editable_by? logged_user %>
+                <li><%= link_to 'edit', posts_path(:forum_id => post.forum, :action => 'edit', :id => post, :page => current_page) %></li>
+                <li>|</li>
+              <% end %>
+
+            <% end %>
+            
+            <% if !topic.locked || logged_user.admin_mod? %>
+              <li>
+                <%= link_to_remote 'quote',
+                                   :url => {:controller => 'posts', :action => 'quote', :id => post, :username => (post.user ? post.user.username : 'unknown')},
+                                   :before => "this.blur();hide_show_div('quote_spinner_#{post.id}', 'spinner_right')",
+                                   :complete => "hide_show_div('quote_spinner_#{post.id}')" %>
+              </li>
+            <% else %>
+              <li><span class="grey">quote</span></li>
+            <% end %>
+          </ul>
+        </div>
+        <div id="quote_spinner<%= "_#{post.id}" %>" class="hide">
+          <%= spinner_image %>
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <td class="avatar<%= ' first_post' if post.is_topic_post? %>">
+        <%= avatar_image post.user %>
+      </td>
+      <td <%= 'class="first_post"' if post.is_topic_post? %>>
+        <div class="user_content" id="content<%= post.id %>">
+          <%= HtmlHelper.to_html post.body %>
+        </div>
+      </td>
+    </tr>
+  </table>

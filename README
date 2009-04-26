@@ -1,0 +1,384 @@
+ 
+This project aims to provide the basic functionalities of a private bittorrent tracker
+and community. It is built with the Ruby language and the Ruby on Rails framework.
+
+- Screenshots
+  - http://bayimg.com/image/aaphgaabe.jpg
+  - http://bayimg.com/image/aaphhaabe.jpg
+
+- Demo Video: http://www.youtube.com/watch?v=ep_dUaTb1GU (watch in HD)
+
+- Current State: beta testing
+
+- Licence: see doc/MIT_LICENCE
+
+- History/Changelog: see doc/HISTORY
+
+- Contact: mogoktracker[at]gmail
+
+
+ABOUT SOME OF THE FEATURES
+
+- Torrent categorization
+  Torrents are categorized by Type, Category, Format and Tags. Such structure allows to
+organize the torrents in specific or generic forms. Let's see examples on both
+scenarios (note that users can't choose or even see the torrent type, this is done implicitly
+when a category is selected).
+
+  # A community specialized in music:
+    - this structure is configured as the example in the create_data migration file
+
+    type[audio]
+      formats[MP3, OGG, FLAC]
+      category[Rock]
+        tags[acid, rockabilly, indie]
+      category[Blues]
+        tags[east-coast, british, st-louis]
+      category[Jazz]
+        tags[swing, cool, eletric]
+
+    type[video]
+      formats[AVI, OGG, MPG]
+      category[Master Class]
+        tags[popular, classical, theory]
+      category[Music Video]
+        tags[rock, pop, arthouse]
+
+    type[ebook]
+      formats[PDF, DOC, LIT]
+      category[Score]
+        tags[guitar, violin, big-band]
+      category[Theory]
+        tags[popular, classical]
+
+  # A community with more generic content:
+
+    type[music]
+      formats[MP3, OGG, FLAC]
+      category[Music]
+        tags[rock, blues, jazz]
+
+    type[movie]
+      formats[AVI, OGG, MPG]
+      category[Movie]
+        tags[podcast, documentary]
+
+    type[ebook]
+      formats[PDF, PPS, DOC]
+      category[eBook]
+        tags[literature, manual, self-improvement]
+
+- User Roles
+  Users are classified by roles, which define their rights to perform certain operations. The
+colors of the links in the interface indicate the minimum role that have access to it.
+  There are a set of reserved roles required by the application (check create_default_data
+migration file): system, owner, admin, mod and user. The system role is supposed to be used
+by just one user (must have id = 1) and is used to identify automatic messages (system user
+won't accept messages). Users with roles system, owner and admin can edit the profiles of
+users with lower ranking.
+  Roles and users also have tickets to grant them rights, currently two tickets are implemented:
+  - inviter: grants the right to send invitations
+  - staff: grants right to see and edit staff info
+
+- Ratio policy
+  There are no features for ratio enforcement, cheat detection or ranking assignment based on ratio,
+currently the tracker only registers the data transfers reported by the clients. Such
+customizations can be easily implemented using the background tasks infra-structure (see below).
+
+- Mail
+  The application can send emails for events like password recovery and invitation. It comes
+with a test configuration that uses a regular Gmail account (just add a valid username and password
+to config/initializers/action_mailer.rb). The plugin to access Gmail is action_mailer_optional_tls,
+it is in vendor/plugins. As configured in action_mailer.rb, mailer won't throw errors in development
+mode.
+
+- Logs
+  Several types of logs are provided so you can check what is going on with the app:
+  - error logs
+  - tracker announce logs (can be turned off)
+  - activity logs
+  - background tasks logs
+
+- Error logs
+  The application will alert you when an exception is thrown by the application, you can
+see what happened in the error logs page. In production mode only inexpected errors will
+be logged.
+
+- Application params
+  Some configuration parameters are stored in the database so they can be changed without
+restarting the application. They can be set in the application parameters page. Currently the parameters
+can only be 'true', 'false' or a number. Such parameters are executed (evaluated) as Ruby code, so be
+very careful if you want to change the application to support other values.
+
+- Login Block
+  After a limited number of login attempts (currently 5) the used IP will remain blocked by a
+period of time (currently 4 hours), but if the user changes its password using a password recovery
+email the block is cancelled. In the page 'blocks' you can see how many times an IP was blocked.
+
+- Signup
+  After a successful signup the used IP will be blocked for a period of time (currently 1 day). This
+is a simple measure to prevent automated signups and a more sophisticated mechanism should be
+implemented if necessary. Currently the application won't send an activation email to a new user.
+
+- Announce URLs
+  - are used by the bittorrent clients to send requests to the tracker
+  - they contain a special value called announce passkey, that identifies the user who is sending the
+    request (e.g. http://localhost/tracker/ANNOUNCE_PASSKEY/announce)
+  - when a user downloads a torrent file, this special url is included in it
+  - this means that if a torrent is stolen, the thief will be able to download on the user's bill
+  - but the application generates the announce passkeys using the user personal passkey and the torrent
+    announce key (using OpenSSL::HMAC), so if a user has one torrent stolen it won't compromise all the
+    torrents of that particular user
+  - users have to be oriented to reset their passkeys if they notice any suspicious activity in their
+    accounts, like peers with strange IPs or unusual ratio variation
+
+- Torrent Upload
+  - the application will accept any torrent, even if the announce url is from another tracker or
+    empty (it will be replaced by the user's personal announce url)
+  - if the torrent is not set to private the application's torrent parser will add a private flag
+    to it (such flag indicates that the torrent belongs to a private tracker, so the bittorrent clients will
+    block DHT and only peers registered in the tracker will be allowed to join that torrent).
+
+- Background Tasks
+  These are tasks that run periodically to keep the site tidy. They clean stale data, update things, etc.
+  - the module BgTasks is in lib/bg_tasks/
+  - to add a new task create the task class, add a configuration entry in app_config.yml and reload the tasks
+  - the tasks scripts are in script/
+  - tasks can be executed individually in the tasks page (that won't alter the schedule)
+  - there is a log page where the tasks report their execution status
+  - the tasks' default interval of execution in the file app_config.yml are optional
+  - if next_exec_at is empty the task won't be executed, just scheduled
+  - if interval is empty the task will be ignored
+  - tasks are supposed to run as a cron job, but there is a mock for testing
+  > Running the mock
+    - also works in Windows
+    - will run in 'development' mode by default
+    - command
+      mogok$ ruby1.8 script/bg_tasks_mock.rb
+      mogok$ ruby1.8 script/bg_tasks_mock.rb production
+  > Running as a cron job
+    - edit your cron jobs using the command
+      $ crontab -e
+    - use the command below (with your app path) to run the bg_tasks every hour at minute 5
+      5 * * * * RAILS_ENV=production /home/user/apps/mogok/script/runner /home/user/apps/mogok/script/bg_tasks.rb
+    - or replace the '5' for '*' to run every minute if you are testing
+    - IMPORTANT: the file APP_ROOT/script/runner must be an executable (chmod +x runner)
+    - in the tasks page you can see the current cron jobs in your system (note that in some systems cron jobs are separated by user)
+    - other useful cron commands
+      $ crontab -l (list cron jobs)
+      $ crontab -r (remove all)
+    - the tasks logs show you if the tasks are running properly
+
+
+# SOME TECHNICAL THINGS
+
+- Rails version
+  2.3.2
+
+- Database
+  The application requires MySQL as it uses database specific column types and features.
+
+- Search engine
+  It uses the MySQL's fulltext indexation, see migration files for torrent_fulltexts and
+topic_fulltexts. The information was duplicated in these tables because fulltext indexes require
+the table to be of type MyISAM.
+
+- Debugging
+  To make the application flow more understandable, the code is filled with debugging logs that
+are printed by the Rails framework (won't be printed in 'production' mode). For a friendlier view,
+the logs start with smilies:
+  :-) - everything is ok
+  :-o - something out of ordinary happened, but most likely it is the user's fault
+  :-( - an inexpected error occurred
+
+- Pagination
+  The application extends the functionalities of the will_paginate plugin. Check
+vendor/plugin/mogok_will_paginate/README.txt for more about it. Note that the will_paginate plugin
+is also in the plugin directory to prevent the extension from become broken.
+
+- Share Nothing
+  This application follows the share nothing principle, which means that all the application data
+is stored in the database, including the torrent files data (caching is used to minimize database
+operations, see below).
+
+- Sessions
+  Currently is cookie based (the Rails default).
+
+- Testing
+  The most critical features, like login, signup, tracker services, have Cucumber features
+tests, check the directory features/.
+  IMPORTANT: tests involving torrent files may be problematic on Windows (files may get corrupted).
+  - to run the tests (test database must be created first):
+    mogok$ rake features
+
+- Caching
+  The application uses memcached as the cache store. Caching is disabled by default in development mode
+to prevent conflict with Rails' class caching, but you can enable it changing the flag in the file
+config/environment.rb. That will make the application run as if it was in production mode but with all
+the logging.
+  Currently the application uses three caching strategies:
+  > cache_money (http://github.com/nkallen/cache-money/tree/master)
+    - very easy to use, it caches records every time a query for a specific record, like User.find(1)
+      or user.role, is made
+    - the way it is being used, list queries, like User.find(:all) or user.messages won't be cached
+    - note that cache_money is very recent and there are some reports of problems when using it with Passenger
+    - to quit using it just remove the 'index' calls from the models (search for 'cache_money') and
+      delete its initialization code in the file 'config/initializers/caching.rb'
+  > custom cache
+    - caches lists of records that are frequently used, mainly domain values like categories and formats
+    - the implementation is inside some of the models and user the module in 'lib/caching_methods.rb'
+    - are reset by sweepers (app/sweepers)
+  > fragment caching
+    - used to cache portions of pages, currently the torrent browse page (the most performance critical
+      page in the application) and the application menu.
+    - the torrent browse page will be cached only when browsed with the default options, which means no
+      search parameters and ordered by 'created_at DESC'. if a user searches for something or order
+      the table by another column the application will retrieve the information from the database and
+      won't cache it. also won't be cached for admins and mods as they can see things that users can't.
+    - the torrent page cache will be reset (expired) if a torrent is uploaded/removed/inactivated or
+      by expiration of the period configured in the app_config file (expiration time should not be too
+      long because informations like seeders/leechers are updated all the time)
+    - the fragment expiration time is made possible by the mogok_timed_fragment_cache plugin which is
+      a rewriting of the timed_fragment_cache plugin
+
+- Tracker request
+  A tracker request is treated just like any regular Rails request. Under very heavy load this could be
+a problem, so a faster mechanism (like Rails Metal or even an external tracker) might be required on such
+scenario.
+
+- Bittorrent
+  The implementation is based in the specification found at: http://wiki.theory.org/BitTorrentSpecification
+  The module Bittorrent is in: lib/bittorrent/
+
+- Internationalization
+  Although the application does not support multiple languages, it is structured in a way that makes it easy
+to translate. So, if you want to translate, let's say to Spanish, this is what you have to do:
+  - create a file named 'es.yml' in config/locales using the existing 'config/locales/en.yml' as the base for
+    your translation. this file will contain localized formats for date, time and numbers and translations for
+    the messages generated by controllers, models and some modules in the lib directory.
+  - change the default locale in the file app_config.yml to 'es'
+  - translate the views. note that you can let the original english views intact and just add the translated
+    ones following this name pattern: my_view.html.erb -> my_view.es.html.erb.
+
+- Configuration
+  Lays in the files below. The files come with an 'example' extension, just rename them and change the
+configurations when necessary.
+  - config/app_config.yml
+  - config/database.yml
+  - config/memcached.yml
+  - config/initializers/action_mailer.rb
+  - config/initializers/session_store.rb (change the secret)
+  - db/migrate/099_create_data.rb
+  
+
+# DEPLOYMENT
+  The deployment doesn't require anything more than a typical Rails application would,
+which means: set the Ruby environment, install the gems, install MySQL server and Memcached,
+prepare the application configuration files, run the migrations and start the server.
+  If you are new to Rails and use Windows, a good and easy way to put the application
+running is to use InstantRails (install the correct version of the rails gem). For a real
+scenario, a good option is to deploy on Ubuntu using Passenger (modrails). Windows users
+can also emulate a production Ubuntu setup using VirtualBox, which is a free OS emulator
+by Sun Microsystems.
+  IMPORTANT: if you are running on Windows, change the name of the file 'lib/mysql.rb.windows'
+to 'lib/mysql.rb' if the application can't find your mysql gem.
+
+- Deploying on Ubuntu (tested for 8.04) with Passenger:
+
+  > ubuntu update
+    sudo apt-get install update
+    sudo apt-get install dist-upgrade
+
+  > build-essential
+    sudo apt-get install build-essential
+
+  > apache
+    sudo apt-get install apache2
+    sudo apt-get install apache2-prefork-dev
+
+  > mysql server
+    sudo apt-get install mysql-server
+    sudo apt-get install libmysqlclient15-dev
+    sudo apt-get install libdbd-mysql-ruby
+
+  > memcached (there is also a Windows version, just look for it)
+    sudo apt-get install memcached
+
+  > rails 2.3.2 with ruby 1.8
+    sudo apt-get install ruby1.8 ruby1.8-dev rdoc1.8 ri1.8 irb libopenssl-ruby
+    > gems 1.3.1+ is required
+      sudo apt-get install rubygems
+      sudo gem sources -a http://gems.github.com
+      sudo gem update --system (probably will install as gem1.8)
+      > use 'gem -v' or 'gem1.8 -v' to confirm the version, it must be at least 1.3.1
+    sudo gem1.8 install rails --no-ri --no-rdoc
+    sudo gem1.8 install mysql --no-ri --no-rdoc
+
+    > gems required to run the features tests
+      sudo gem1.8 install ruby-debug --no-ri --no-rdoc
+      sudo gem1.8 install rspec --no-ri --no-rdoc
+      sudo gem1.8 install rspec-rails --no-ri --no-rdoc
+      sudo gem1.8 install cucumber --no-ri --no-rdoc
+      sudo apt-get install libxml2 libxml2-dev libxslt1.1 libxslt1-dev libxml-ruby libxslt-ruby
+      sudo gem1.8 install webrat --no-ri --no-rdoc
+      > NOTE: if rails can't find rspec and rspec-rails, install as a plugin or copy the gems to vendor/plugins
+
+    > gems required for caching
+      sudo gem1.8 install memcache-client --no-ri --no-rdoc
+      sudo gem1.8 install nkallen-cache-money --no-ri --no-rdoc
+      sudo gem1.8 install SystemTimer --no-ri --no-rdoc
+
+    > mongrel (useful to run in development mode, run using 'ruby script/server' or 'script/server')
+      sudo gem1.8 install mongrel --no-ri --no-rdoc
+
+    > passenger
+      sudo gem1.8 install passenger
+      sudo /usr/bin/passenger-install-apache2-module (and follow the instructions)
+
+      > your apache conf file (etc/apache2/httpd.conf) should have something like:
+        LoadModule passenger_module /usr/lib/ruby/gems/1.8/gems/passenger-2.1.2/ext/apache2/mod_passenger.so
+        PassengerRoot /usr/lib/ruby/gems/1.8/gems/passenger-2.1.2
+        PassengerRuby /usr/bin/ruby1.8
+
+        RailEnv development (you can use this parameter to change the environment, default is production)
+
+        <VirtualHost *:80>
+          ServerName localhost
+          DocumentRoot /your/app/path/mogok/public
+        </VirtualHost>
+
+      > you can also try Passenger with Nginx: http://www.modrails.com/documentation/Users guide Nginx.html
+
+    > execute the migrations
+      mogok$ rake db:create
+      mogok$ rake db:migrate
+      mogok$ rake db:create RAILS_ENV='test'
+      mogok$ rake db:create RAILS_ENV='production'
+      mogok$ rake db:migrate RAILS_ENV='production'
+
+    > start memcached (if necessary)
+      memcached -d -l 127.0.0.1 -p 11211 -m 256 -P /tmp/memcached.pid
+        -d = run as a daemon
+        -l = ip address
+        -p = port
+        -m = Mb of memory for the cache
+        -P = where to put the pid file
+      memcached -vv -l 127.0.0.1 -p 11211 -m 256 -P /tmp/memcached.pid
+        -vv = verbose (so you can see what is being stored and read from it)
+
+    > open http://localhost and use owner/owner or system/system to log in
+
+    > if you are using VirtualBox and want to access the app from Windows, a port forward is needed:
+      - set the app to run on port 8080 on Ubuntu (change /etc/apache2/ports.conf and etc/apache2/httpd.conf)
+      - execute the commands on Windows (VBoxManage is in VirtualBox's install dir):
+        VBoxManage setextradata "ubuntu-804" "VBoxInternal/Devices/pcnet/0/LUN#0/Config/apache/Protocol" TCP
+        VBoxManage setextradata "ubuntu-804" "VBoxInternal/Devices/pcnet/0/LUN#0/Config/apache/GuestPort" 8080
+        VBoxManage setextradata "ubuntu-804" "VBoxInternal/Devices/pcnet/0/LUN#0/Config/apache/HostPort" 80
+      - restart apache and windows if needed
+      - now you can open http://localhost on Windows and it will be forwarded to port 8080 on VirtualBox
+
+
+
+
+
+

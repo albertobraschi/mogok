@@ -1,0 +1,54 @@
+
+<% page_name 'Messenger' %>
+
+<div class="main">  
+  <h2>Messenger</h2>
+
+  <%= render :partial => 'misc/flash', :locals => {:flash => flash} %>
+
+  <div class="messenger">
+    <% form_for :message, :action => 'new' do |f| %>
+      <%= hidden_field_tag :replied_id, params[:message_id] if params[:message_id] && params[:reply] == '1' %>
+      <table>
+        <tr>  
+          <td colspan="2">
+            <%= render :partial => 'messages/menu', :locals => {:title => 'New message'} %>  
+          </td>
+        </tr>
+        <tr>
+          <td class="label">
+            To:
+          </td>
+          <td>
+            <%= text_field_tag :to, params[:to], {:size => 40, :focus => true} %>
+            <%= field_error @message.errors[:receiver_id] %>
+          </td>
+        </tr>
+        <tr>
+          <td class="label">
+            Subject:
+          </td>
+          <td>
+            <%= f.text_field :subject, :size => 40, :maxlength => 50 %>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            &nbsp;
+          </td>
+          <td>
+            <%= f.text_area :body, :cols => 80, :rows => 8 %>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" class="center">
+            <ul class="buttons">
+              <li><%= submit_tag 'Send', :class => 'submit' %></li>
+              <li><%= submit_tag 'Cancel', :name => 'cancel', :class => 'submit' %></li>
+            </ul>
+          </td>
+        </tr>
+      </table>
+    <% end %>
+  </div>
+</div>

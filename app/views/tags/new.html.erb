@@ -1,0 +1,33 @@
+
+<% page_name 'Tags' %>
+
+<div class="main">
+  <h2>New Tag</h2>
+  
+  <div class="fields_box" style="width:450px;">
+    <% form_for :tag, :action => 'new' do |f| %>
+      <%= hidden_field_tag :category_filter, params[:category_filter] %>
+      <table>
+        <tr>
+          <td class="label">
+            name:
+          </td>
+          <td>
+            <%= f.text_field :name, :size => 30, :focus => true %>
+          </td>
+          <td class="label">
+            category:
+          </td>
+          <td>
+            <%= collection_select :tag, :category_id, @categories, :id, :name %>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="4" class="center">
+            <%= f.submit 'Confirm', :class => 'submit' %>
+          </td>
+        </tr>
+      </table>
+    <% end %>
+  </div>
+</div>

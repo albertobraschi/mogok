@@ -1,0 +1,66 @@
+
+<% page_name 'Forums' %>
+
+ <div class="main"> 
+  <div class="forums" style="width:750px;">
+    <div class="page_header"><%= link_to 'Forums', {:action => 'index'} %></div>
+
+    <div class="forum_name"><%= link_to @forum.name, {:action => 'show', :id => @forum} %></div>
+
+    <%= render :partial => 'search_box', :locals => {:action_name => 'show'} %>
+
+    <%= render :partial => 'menu', :locals => {:forum => @forum} %>
+    
+    <%= render :partial => 'misc/flash', :locals => {:flash => flash} %>
+
+    <table class="topics">      
+      <tr>  
+        <td width="99%" class="header">
+          Topic
+        </td>
+        <td class="header">
+          Author
+        </td>
+        <td class="header">
+          Replies
+        </td>
+        <td class="header no_wrap">
+          Last Reply
+        </td>
+      </tr>
+      <% unless @topics.blank? %>
+        <% @topics.each do |t| %>
+          <tr>
+            <td class="left">
+              <%= '<span class="sticky">sticky: </span>' if t.stuck? %>
+              <%= link_to t.title, topics_path(:forum_id => @forum, :action => 'show', :id => t), {:class => 'title'} %>
+            </td>        
+            <td>
+              <%= t.user ? user_link(t.user) : 'unknown' %>
+            </td>
+            <td>
+              <%= t.replies_count %>
+            </td>
+            <td class="left no_wrap">
+              <% if t.last_post_by %>
+                <%= link_to "by #{t.last_post_by} #{textual_time_interval(t.last_post_at, 'ago')}",
+                            topics_path(:forum_id => @forum, :action => 'show', :id => t, :page => 'last'),
+                            {:class => 'last_post'} %>
+              <% else %>
+                -
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      <% else %>
+        <tr>
+          <td colspan="4">
+            No topics found.
+          </td> 
+        </tr>
+      <% end %>
+    </table>
+
+    <%= will_paginate @topics %>
+  </div>
+</div>

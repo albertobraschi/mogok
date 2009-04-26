@@ -1,0 +1,61 @@
+
+<% page_name 'Application Parameters' %>
+
+<div class="main">
+  <h2>App Params</h2>
+
+  <div class="links">
+    <%= link_to '[ new ]', {:action => 'new'}, {:class => 'admin'} %>
+  </div>
+  
+  <table class="browse">
+    <tr>
+      <td class="header">
+        &nbsp; id &nbsp;
+      </td>
+      <td class="header">
+        name
+      </td>
+      <td class="header">
+        value
+      </td>
+      <td class="header">
+        &nbsp;
+      </td>
+      <td class="header">
+        &nbsp;
+      </td>
+    </tr>
+    <% unless @app_params.blank? %>
+      <% @app_params.each do |t| %>
+        <tr>
+          <td>
+            <%= t.id %>
+          </td>
+          <td>
+            <%= t.name %>
+          </td>
+          <td>
+            <%= t.value %>
+          </td>
+          <td class="no_wrap">
+            <%= link_to '[ edit ]', {:action => 'edit', :id => t}, {:class => 'admin'} %>
+          </td>
+          <td class="no_wrap">
+            <% if logged_user.owner? %>
+              <%= link_to '[ delete ]', {:action => 'destroy', :id => t}, {:method => :post, :class => 'owner', :confirm => 'Are you sure?'} %>
+            <% else %>
+              <span class="grey">[ delete ]</span>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    <% else %>
+      <tr>
+        <td colspan="4">
+          no app params found
+        </td> 
+      </tr>
+    <% end %>
+  </table>
+</div>

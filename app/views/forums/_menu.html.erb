@@ -1,0 +1,16 @@
+
+
+  <div class="links">
+    <% if !forum.locked? || logged_user.admin_mod? %>
+      <%= link_to '[ new topic ]', topics_path(:forum_id => forum, :action => 'new') %>
+    <% end %>
+    
+    <% if logged_user.admin? %>
+      <%= link_to '[ edit forum ]', {:action => 'edit', :id => forum}, {:class => 'admin'} %>      
+      <%= link_to((forum.locked? ? '[ unlock forum ]' : '[ lock forum ]'), {:action => 'switch_lock', :id => forum}, {:class => 'admin'}) %>
+    <% end %>
+
+    <% if logged_user.owner? %>
+      <%= link_to '[ remove forum ]', {:action => 'destroy', :id => forum}, {:class => 'owner'} %>
+    <% end %>
+  </div>

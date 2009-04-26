@@ -1,0 +1,26 @@
+
+<% page_name 'Types' %>
+
+<div class="main">
+  <h2>Type Edition</h2>
+  
+  <div class="fields_box" style="width:400px;">
+    <% form_for :type, :action => 'edit', :id => @type do |f| %>
+      <table>
+        <tr>
+          <td class="label">
+            name:
+          </td>
+          <td>
+            <%= f.text_field :name, :size => 35, :focus => true %>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" class="center">
+            <%= submit_tag 'Confirm', :class => 'submit' %>
+          </td>
+        </tr>
+      </table>
+    <% end %>
+  </div>
+</div>

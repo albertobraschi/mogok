@@ -1,0 +1,80 @@
+
+<% page_name 'Tags' %>
+
+<div class="main">
+  <h2>Tags</h2>
+
+  <%= render :partial => 'misc/flash', :locals => {:flash => flash} %>
+
+  <div class="fields_box margin_bottom" style="width:300px;">
+    <% form_tag({:action => 'index'}, :method => :get) do %>
+      <table>
+        <tr>
+          <td class="label">
+            category:
+          </td>
+          <td>
+            <select name ="category_filter">
+              <option value=""></option>
+              <%= options_from_collection_for_select @categories, :id, :name, params[:category_filter].to_i %>
+            </select>            
+          </td>
+          <td colspan="4" class="center">
+            <%= submit_tag 'Filter', :class => 'submit' %>
+          </td>
+        </tr>
+      </table>
+    <% end %>
+  </div>
+
+  <div class="links">
+    <%= link_to '[ new ]', {:action => 'new', :category_filter => params[:category_filter]}, {:class => 'admin'} %>
+  </div>
+
+  <table class="browse">
+    <tr>
+      <td class="header">
+        &nbsp; id &nbsp;
+      </td>
+      <td class="header_order_by">
+        category
+      </td>
+      <td class="header_order_by">
+        name
+      </td>
+      <td class="header">
+        &nbsp;
+      </td>
+      <td class="header">
+        &nbsp;
+      </td>
+    </tr>
+    <% unless @tags.blank? %>
+      <% @tags.each do |t| %>
+        <tr>
+          <td>
+            <%= t.id %>
+          </td>
+          <td>
+            <%= t.category.name %>
+          </td>
+          <td>
+            <%= t.name %>
+          </td>
+          <td>
+            <%= link_to '[ edit ]', {:action => 'edit', :id => t, :category_filter => params[:category_filter]}, {:class => 'admin'} %>
+          </td>
+          <td>
+            <%= link_to '[ delete ]', {:action => 'destroy', :id => t, :category_filter => params[:category_filter]}, {:method => :post, :class => 'admin', :confirm => 'Are you sure?'} %>
+          </td>
+        </tr>
+      <% end %>
+    <% else %>
+      <tr>
+        <td colspan="5">
+          no tags found
+        </td> 
+      </tr>
+    <% end %>
+  </table>
+</div>

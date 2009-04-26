@@ -1,0 +1,60 @@
+
+  <div class="adm_menu">
+    <ul>
+      <li><%= link_to 'env', {:controller => 'adm', :action => 'env'} %></li>
+      <li>|</li>
+      <li><%= link_to 'tasks', {:controller => 'bg_tasks'} %></li>
+      <li>|</li>
+      <li><%= link_to 'params', {:controller => 'app_params'} %></li>
+      <li>|</li>
+      <% unless session[:adm_domain_menu] %>
+        <li><%= link_to 'domain', {:controller => 'adm', :action => 'switch_domain_menu' } %></li>
+        <li>|</li>
+      <% end %>
+     <% unless APP_CONFIG[:torrent_upload_enabled] %>
+        <li><%= link_to 'upload', {:controller => 'torrents', :action => 'upload'} %></li>
+        <li>|</li>
+      <% end %>
+      <li><%= link_to 'announces', {:controller => 'announce_logs' } %></li>
+      <li>|</li>
+      <li><%= link_to 'peers', {:controller => 'peers' } %></li>
+      <li>|</li>
+      <li><%= link_to 'blocks', {:controller => 'login_blocks' } %></li>
+      <li>|</li>
+      <li><%= link_to 'reports', {:controller => 'reports' } %></li>
+      <li>|</li>
+      <li><%= link_to 'errors', {:controller => 'error_logs'}, {:class => @error_log_alert ? 'error_log_alert' : nil} %></li>
+      <li>|</li>
+      <li><%= link_to 'hide', {:controller => 'adm', :action => 'switch_menu' } %></li>
+    </ul>
+  </div>
+
+  <% if session[:adm_domain_menu] %>
+    <div class="adm_domain_menu">
+      <ul>
+        <% if logged_user.owner? %>
+          <li><%= link_to 'roles', {:controller => 'roles'}, {:class => 'owner'} %></li>
+          <li>|</li>
+        <% end %>
+        <li><%= link_to 'styles', {:controller => 'styles'} %></li>
+        <li>|</li>
+        <li><%= link_to 'genders', {:controller => 'genders'} %></li>
+        <li>|</li>
+        <li><%= link_to 'types', {:controller => 'types'} %></li>
+        <li>|</li>
+        <li><%= link_to 'categories', {:controller => 'categories'} %></li>
+        <li>|</li>
+        <li><%= link_to 'tags', {:controller => 'tags'} %></li>
+        <li>|</li>
+        <li><%= link_to 'formats', {:controller => 'formats'} %></li>
+        <li>|</li>
+        <li><%= link_to 'countries', {:controller => 'countries'} %></li>
+        <li>|</li>
+        <li><%= link_to 'clients', {:controller => 'clients'} %></li>
+        <li>|</li>
+        <li><%= link_to 'hide', {:controller => 'adm', :action => 'switch_domain_menu' } %></li>
+      </ul>
+    </div>
+  <% end %>
+
+

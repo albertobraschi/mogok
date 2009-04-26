@@ -1,0 +1,32 @@
+
+<% page_name 'Application Parameters' %>
+
+<div class="main">
+  <h2>App Param Edition</h2>
+  
+  <div class="fields_box" style="width:600px;">
+    <% form_for :app_param, :action => 'edit', :id => @app_param do |f| %>
+      <table>
+        <tr>
+          <td class="label">
+            name:
+          </td>
+          <td>
+            <%= f.text_field :name, :size => 35, :focus => true %>
+          </td>
+          <td class="label">
+            value:
+          </td>
+          <td>
+            <%= f.text_field :value, :size => 35 %>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="4" class="center">
+            <%= submit_tag 'Confirm', :class => 'submit' %>
+          </td>
+        </tr>
+      </table>
+    <% end %>
+  </div>
+</div>

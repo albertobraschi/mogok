@@ -1,0 +1,44 @@
+
+<% page_name 'Categories' %>
+
+<div class="main">
+  <h2>Category Edition</h2>
+  
+  <div class="fields_box" style="width:750px;">
+    <% form_for :category, :action => 'edit', :id => @category do |f| %>
+      <table>
+        <tr>
+          <td class="label">
+            name:
+          </td>
+          <td>
+            <%= f.text_field :name, :size => 15, :focus => true %>
+          </td>
+          <td class="label">
+            position:
+          </td>
+          <td>
+            <%= f.text_field :position, :size => 3 %>
+          </td>
+          <td class="label">
+            image:
+          </td>
+          <td>
+            <%= f.text_field :image, :size => 40 %>
+          </td>
+          <td class="label">
+            type:
+          </td>
+          <td>
+            <%= collection_select :category, :type_id, @types, :id, :name %>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="8" class="center">
+            <%= submit_tag 'Confirm', :class => 'submit' %>
+          </td>
+        </tr>
+      </table>
+    <% end %>
+  </div>
+</div>

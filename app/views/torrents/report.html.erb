@@ -1,0 +1,33 @@
+
+<% page_name 'Torrent Report' %>
+
+<div class="main">
+  <h2>Torrent Report</h2>
+  
+  <div class="torrent_header"><%= torrent_link @torrent %></div>
+
+  <%= render :partial => 'misc/flash', :locals => {:flash => flash} %>
+
+  <div class="fields_box" style="width:650px;">
+    <% form_tag :action => 'report' do %>
+      <table>
+        <tr>
+          <td class="label">
+            Reason:
+          </td>
+          <td>
+            <%= text_field_tag :reason, '', {:size => 80, :maxlength => 200, :focus => true} %>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" class="center">
+            <ul class="buttons">
+              <li><%= submit_tag 'Send', :class => 'submit' %></li>
+              <li><%= submit_tag 'Cancel', :name => 'cancel', :class => 'submit' %></li>
+            </ul>
+          </td>
+        </tr>
+      </table>
+    <% end %>
+  </div>
+</div>

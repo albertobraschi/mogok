@@ -1,0 +1,10 @@
+
+
+if params[:text_link] == '1'
+  page.replace_html bookmark_span_id(@torrent), bookmark_text(@torrent)
+else
+  page.replace_html bookmark_span_id(@torrent), bookmark_image(@torrent)
+end
+
+
+  

@@ -1,0 +1,2 @@
+
+page.replace_html 'torrent_snatches', :partial => 'snatches'

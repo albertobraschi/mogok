@@ -1,0 +1,20 @@
+
+  <div class="forum_reply_box" style="width:550px;">
+    <% form_tag :controller => 'posts', :action => 'new', :topic_id => topic.id, :page => current_page do %>
+      <table>
+        <tr>
+        <tr>
+          <td>
+            <% render :layout => 'misc/editor', :locals => {:target => 'body', :align => 'center'} do %>
+              <%= text_area_tag :body, {}, {:rows => 6, :cols => 65} %>
+            <% end %>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <%= submit_tag 'Submit', :class => 'submit' %>
+          </td>
+        </tr>
+      </table>
+    <% end %>
+  </div>

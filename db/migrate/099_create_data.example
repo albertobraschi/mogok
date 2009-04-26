@@ -1,0 +1,329 @@
+
+class CreateData < ActiveRecord::Migration
+
+  def self.up
+    self.create_roles
+    self.create_genders
+    self.create_styles
+    self.create_countries
+    self.create_types_formats_categories_tags
+    self.create_bittorrent_clients
+    self.create_test_users if RAILS_ENV == 'development'
+  end
+
+  def self.down
+    Style.delete_all ['id > ?', 1]
+    Role.delete_all ['id > ?', 4]
+    Gender.delete_all
+    Type.delete_all
+    Format.delete_all
+    Tag.delete_all
+    Client.delete_all
+    Country.delete_all
+    User.delete_all ['id > ?', 1] if RAILS_ENV == 'development'
+  end
+
+  def self.create_styles
+    # style 1 (default) is created in the create_default_data migration
+    # Style.create(:name => 'custom_style', :stylesheet => 'custom.css')
+  end
+
+  def self.create_roles
+    # roles 1 (owner), 2 (admin), 3 (mod) and 4 (user) are created in the create_default_data migration
+    self.create_role 'librarian', 'Librarian','user_librarian', 'staff inviter'
+    self.create_role 'vip', 'VIP','user_vip', 'inviter'
+  end
+
+  def self.create_genders
+    Gender.create(:name => 'male')
+    Gender.create(:name => 'female')
+    Gender.create(:name => 'other')
+  end
+
+  def self.create_types_formats_categories_tags
+    # the category position field indicates its position in select menus
+
+    # type[audio]
+      t = Type.create(:name => 'audio')
+      # formats
+        Format.create(:name => 'MP3', :type_id => t.id)
+        Format.create(:name => 'OGG', :type_id => t.id)
+        Format.create(:name => 'FLAC', :type_id => t.id)
+      # category[Rock]
+        c = Category.create(:name => 'Rock', :type_id => t.id, :position => 1, :image => 'categories/rock.png')
+        Tag.create(:name => 'acid', :category_id => c.id)
+        Tag.create(:name => 'rockabilly', :category_id => c.id)
+        Tag.create(:name => 'indie', :category_id => c.id)
+      # category[Blues]
+        c = Category.create(:name => 'Blues', :type_id => t.id, :position => 2, :image => 'categories/blues.png')
+        Tag.create(:name => 'east-coast', :category_id => c.id)
+        Tag.create(:name => 'british', :category_id => c.id)
+        Tag.create(:name => 'st-louis', :category_id => c.id)
+      # category[Jazz]
+        c = Category.create(:name => 'Jazz', :type_id => t.id, :position => 3, :image => 'categories/jazz.png')
+        Tag.create(:name => 'swing', :category_id => c.id)
+        Tag.create(:name => 'cool', :category_id => c.id)
+        Tag.create(:name => 'eletric', :category_id => c.id)
+    # type[video]
+      t = Type.create(:name => 'video')
+      # formats
+        Format.create(:name => 'AVI', :type_id => t.id)
+        Format.create(:name => 'OGG', :type_id => t.id)
+        Format.create(:name => 'MPG', :type_id => t.id)
+      # category[Master Class]
+        c = Category.create(:name => 'Master Class', :type_id => t.id, :position => 4, :image => 'categories/master-class.png')
+        Tag.create(:name => 'popular', :category_id => c.id)
+        Tag.create(:name => 'classical', :category_id => c.id)
+        Tag.create(:name => 'theory', :category_id => c.id)
+      # category[Music Video]
+        c = Category.create(:name => 'Music Video', :type_id => t.id, :position => 5, :image => 'categories/music-video.png')
+        Tag.create(:name => 'rock', :category_id => c.id)
+        Tag.create(:name => 'pop', :category_id => c.id)
+        Tag.create(:name => 'arthouse', :category_id => c.id)
+    # type[ebook]
+      t = Type.create(:name => 'ebook')
+      # formats
+        Format.create(:name => 'PDF', :type_id => t.id)
+        Format.create(:name => 'DOC', :type_id => t.id)
+        Format.create(:name => 'LIT', :type_id => t.id)
+      # category[Score]
+        c = Category.create(:name => 'Score', :type_id => t.id, :position => 6, :image => 'categories/score.png')
+        Tag.create(:name => 'guitar', :category_id => c.id)
+        Tag.create(:name => 'violin', :category_id => c.id)
+        Tag.create(:name => 'big-band', :category_id => c.id)
+      # category[Theory]
+        c = Category.create(:name => 'Theory', :type_id => t.id, :position => 7, :image => 'categories/theory.png')
+        Tag.create(:name => 'popular', :category_id => c.id)
+        Tag.create(:name => 'classical', :category_id => c.id)
+  end
+
+  def self.create_bittorrent_clients
+    Client.create(:code => 'A', :name => 'ABC')
+    Client.create(:code => 'AZ', :name => 'Azureus')
+    Client.create(:code => 'BC', :name => 'BitComet', :banned => true)
+    Client.create(:code => 'DE', :name => 'Deluge')
+    Client.create(:code => 'HL', :name => 'Halite')
+    Client.create(:code => 'KT', :name => 'KTorrent')
+    Client.create(:code => 'LP', :name => 'Lphant')
+    Client.create(:code => 'LT', :name => 'libTorrent')
+    Client.create(:code => 'M', :name => 'BitTorrent')
+    Client.create(:code => 'O', :name => 'Opera')
+    Client.create(:code => 'PD', :name => 'Pando')
+    Client.create(:code => 'T', :name => 'BitTornado')
+    Client.create(:code => 'TR', :name => 'Transmission')
+    Client.create(:code => 'UT', :name => 'uTorrent', :min_version => 1770)
+  end
+
+  def self.create_countries
+    Country.create(:name => 'Afghanistan', :image => 'flags/afghanistan.gif')
+    Country.create(:name => 'Albania', :image => 'flags/albania.gif')
+    Country.create(:name => 'Algeria', :image => 'flags/algeria.gif')
+    Country.create(:name => 'Andorra', :image => 'flags/andorra.gif')
+    Country.create(:name => 'Angola', :image => 'flags/angola.gif')
+    Country.create(:name => 'Argentina', :image => 'flags/argentina.gif')
+    Country.create(:name => 'Armenia', :image => 'flags/armenia.gif')
+    Country.create(:name => 'Australia', :image => 'flags/australia.gif')
+    Country.create(:name => 'Austria', :image => 'flags/austria.gif')
+    Country.create(:name => 'Azerbaijan', :image => 'flags/azerbaijan.gif')
+    Country.create(:name => 'Bahamas', :image => 'flags/bahamas.gif')
+    Country.create(:name => 'Bahrain', :image => 'flags/bahrain.gif')
+    Country.create(:name => 'Bangladesh', :image => 'flags/bangladesh.gif')
+    Country.create(:name => 'Barbados', :image => 'flags/barbados.gif')
+    Country.create(:name => 'Belarus', :image => 'flags/belarus.gif')
+    Country.create(:name => 'Belgium', :image => 'flags/belgium.gif')
+    Country.create(:name => 'Belize', :image => 'flags/belize.gif')
+    Country.create(:name => 'Benin', :image => 'flags/benin.gif')
+    Country.create(:name => 'Bhutan', :image => 'flags/bhutan.gif')
+    Country.create(:name => 'Bolivia', :image => 'flags/bolivia.gif')
+    Country.create(:name => 'Bosnia H.', :image => 'flags/bosniaherzegovina.gif')
+    Country.create(:name => 'Botswana', :image => 'flags/botswana.gif')
+    Country.create(:name => 'Brazil', :image => 'flags/brazil.gif')
+    Country.create(:name => 'Brunei', :image => 'flags/brunei.gif')
+    Country.create(:name => 'Bulgaria', :image => 'flags/bulgaria.gif')
+    Country.create(:name => 'Burma', :image => 'flags/burma.gif')
+    Country.create(:name => 'Burund', :image => 'flags/burund.gif')
+    Country.create(:name => 'Cambodia', :image => 'flags/cambodia.gif')
+    Country.create(:name => 'Cameroon', :image => 'flags/cameroon.gif')
+    Country.create(:name => 'Canada', :image => 'flags/canada.gif')
+    Country.create(:name => 'Chad', :image => 'flags/chad.gif')
+    Country.create(:name => 'Chile', :image => 'flags/chile.gif')
+    Country.create(:name => 'China', :image => 'flags/china.gif')
+    Country.create(:name => 'Colombia', :image => 'flags/colombia.gif')
+    Country.create(:name => 'Comoros', :image => 'flags/comoros.gif')
+    Country.create(:name => 'Congo', :image => 'flags/congo.gif')
+    Country.create(:name => 'Costa Rica', :image => 'flags/costarica.gif')
+    Country.create(:name => 'Croatia', :image => 'flags/croatia.gif')
+    Country.create(:name => 'Cuba', :image => 'flags/cuba.gif')
+    Country.create(:name => 'Cyprus', :image => 'flags/cyprus.gif')
+    Country.create(:name => 'Czech Rep.', :image => 'flags/czechrep.gif')
+    Country.create(:name => 'Denmark', :image => 'flags/denmark.gif')
+    Country.create(:name => 'Dominican Rep.', :image => 'flags/dominicanrep.gif')
+    Country.create(:name => 'Ecuador', :image => 'flags/ecuador.gif')
+    Country.create(:name => 'Egypt', :image => 'flags/egypt.gif')
+    Country.create(:name => 'El Salvador', :image => 'flags/elsalvador.gif')
+    Country.create(:name => 'Estonia', :image => 'flags/estonia.gif')
+    Country.create(:name => 'Ethiopia', :image => 'flags/ethiopia.gif')
+    Country.create(:name => 'Fiji', :image => 'flags/fiji.gif')
+    Country.create(:name => 'Finland', :image => 'flags/finland.gif')
+    Country.create(:name => 'France', :image => 'flags/france.gif')
+    Country.create(:name => 'Gabon', :image => 'flags/gabon.gif')
+    Country.create(:name => 'Gambia', :image => 'flags/gambia.gif')
+    Country.create(:name => 'Georgia', :image => 'flags/georgia.gif')
+    Country.create(:name => 'Germany', :image => 'flags/germany.gif')
+    Country.create(:name => 'Ghana', :image => 'flags/ghana.gif')
+    Country.create(:name => 'Greece', :image => 'flags/greece.gif')
+    Country.create(:name => 'Grenada', :image => 'flags/grenada.gif')
+    Country.create(:name => 'Guatemala', :image => 'flags/guatemala.gif')
+    Country.create(:name => 'Guinea Bissau', :image => 'flags/guineabissau.gif')
+    Country.create(:name => 'Guyana', :image => 'flags/guyana.gif')
+    Country.create(:name => 'Haiti', :image => 'flags/haiti.gif')
+    Country.create(:name => 'Honduras', :image => 'flags/honduras.gif')
+    Country.create(:name => 'Hong Kong', :image => 'flags/hongkong.gif')
+    Country.create(:name => 'Hungary', :image => 'flags/hungary.gif')
+    Country.create(:name => 'Iceland', :image => 'flags/iceland.gif')
+    Country.create(:name => 'India', :image => 'flags/india.gif')
+    Country.create(:name => 'Indonesia', :image => 'flags/indonesia.gif')
+    Country.create(:name => 'Iran', :image => 'flags/iran.gif')
+    Country.create(:name => 'Iraq', :image => 'flags/iraq.gif')
+    Country.create(:name => 'Ireland', :image => 'flags/ireland.gif')
+    Country.create(:name => 'Isla de la Muerte', :image => 'flags/isladelamuerte.gif')
+    Country.create(:name => 'Israel', :image => 'flags/israel.gif')
+    Country.create(:name => 'Italy', :image => 'flags/italy.gif')
+    Country.create(:name => 'Ivory Coast', :image => 'flags/ivorycoast.gif')
+    Country.create(:name => 'Jamaica', :image => 'flags/jamaica.gif')
+    Country.create(:name => 'Japan', :image => 'flags/japan.gif')
+    Country.create(:name => 'Jordan', :image => 'flags/jordan.gif')
+    Country.create(:name => 'Kazakhstan', :image => 'flags/kazakhstan.gif')
+    Country.create(:name => 'Kenya', :image => 'flags/kenya.gif')
+    Country.create(:name => 'Kurdistan', :image => 'flags/kurdistan.gif')
+    Country.create(:name => 'Kyrgyzstan', :image => 'flags/kyrgyzstan.gif')
+    Country.create(:name => 'Laos', :image => 'flags/laos.gif')
+    Country.create(:name => 'Latvia', :image => 'flags/latvia.gif')
+    Country.create(:name => 'Lebanon', :image => 'flags/lebanon.gif')
+    Country.create(:name => 'Liberia', :image => 'flags/liberia.gif')
+    Country.create(:name => 'Libya', :image => 'flags/libya.gif')
+    Country.create(:name => 'Liechtenstein', :image => 'flags/liechtenstein.gif')
+    Country.create(:name => 'Lithuania', :image => 'flags/lithuania.gif')
+    Country.create(:name => 'Luxembourg', :image => 'flags/luxembourg.gif')
+    Country.create(:name => 'Macau', :image => 'flags/macau.gif')
+    Country.create(:name => 'Macedonia', :image => 'flags/macedonia.gif')
+    Country.create(:name => 'Madagascar', :image => 'flags/madagascar.gif')
+    Country.create(:name => 'Malawi', :image => 'flags/malawi.gif')
+    Country.create(:name => 'Malaysia', :image => 'flags/malaysia.gif')
+    Country.create(:name => 'Mali', :image => 'flags/mali.gif')
+    Country.create(:name => 'Malta', :image => 'flags/malta.gif')
+    Country.create(:name => 'Mauritania', :image => 'flags/mauritania.gif')
+    Country.create(:name => 'Mexico', :image => 'flags/mexico.gif')
+    Country.create(:name => 'Micronesia', :image => 'flags/micronesia.gif')
+    Country.create(:name => 'Moldova', :image => 'flags/moldova.gif')
+    Country.create(:name => 'Monaco', :image => 'flags/monaco.gif')
+    Country.create(:name => 'Mongolia', :image => 'flags/mongolia.gif')
+    Country.create(:name => 'Morocco', :image => 'flags/morocco.gif')
+    Country.create(:name => 'Mozambique', :image => 'flags/mozambique.gif')
+    Country.create(:name => 'Namibia', :image => 'flags/namibia.gif')
+    Country.create(:name => 'Nauru', :image => 'flags/nauru.gif')
+    Country.create(:name => 'Nepal', :image => 'flags/nepal.gif')
+    Country.create(:name => 'Netherlands', :image => 'flags/netherlands.gif')
+    Country.create(:name => 'New Zealand', :image => 'flags/newzealand.gif')
+    Country.create(:name => 'Nicaragua', :image => 'flags/nicaragua.gif')
+    Country.create(:name => 'Niger', :image => 'flags/niger.gif')
+    Country.create(:name => 'Nigeria', :image => 'flags/nigeria.gif')
+    Country.create(:name => 'North Korea', :image => 'flags/northkorea.gif')
+    Country.create(:name => 'Norway', :image => 'flags/norway.gif')
+    Country.create(:name => 'Oman', :image => 'flags/oman.gif')
+    Country.create(:name => 'Palestine', :image => 'flags/palestine.gif')
+    Country.create(:name => 'Pakistan', :image => 'flags/pakistan.gif')
+    Country.create(:name => 'Panama', :image => 'flags/panama.gif')
+    Country.create(:name => 'Paraguay', :image => 'flags/paraguay.gif')
+    Country.create(:name => 'Peru', :image => 'flags/peru.gif')
+    Country.create(:name => 'Philippines', :image => 'flags/philippines.gif')
+    Country.create(:name => 'Poland', :image => 'flags/poland.gif')
+    Country.create(:name => 'Portugal', :image => 'flags/portugal.gif')
+    Country.create(:name => 'Puerto Rico', :image => 'flags/puertorico.gif')
+    Country.create(:name => 'Qatar', :image => 'flags/qatar.gif')
+    Country.create(:name => 'Romania', :image => 'flags/romania.gif')
+    Country.create(:name => 'Russia', :image => 'flags/russia.gif')
+    Country.create(:name => 'Rwanda', :image => 'flags/rwanda.gif')
+    Country.create(:name => 'Saudi Arabia', :image => 'flags/saudiarabia.gif')
+    Country.create(:name => 'Senegal', :image => 'flags/senegal.gif')
+    Country.create(:name => 'Serbia', :image => 'flags/serbia.gif')
+    Country.create(:name => 'Sierra Leone', :image => 'flags/sierraleone.gif')
+    Country.create(:name => 'Singapore', :image => 'flags/singapore.gif')
+    Country.create(:name => 'Slovenia', :image => 'flags/slovenia.gif')
+    Country.create(:name => 'Slovakia', :image => 'flags/slovakia.gif')
+    Country.create(:name => 'Somalia', :image => 'flags/somalia.gif')
+    Country.create(:name => 'South Africa', :image => 'flags/southafrica.gif')
+    Country.create(:name => 'South Korea', :image => 'flags/southkorea.gif')
+    Country.create(:name => 'Spain', :image => 'flags/spain.gif')
+    Country.create(:name => 'Sri Lanka', :image => 'flags/srilanka.gif')
+    Country.create(:name => 'Sudan', :image => 'flags/sudan.gif')
+    Country.create(:name => 'Suriname', :image => 'flags/suriname.gif')
+    Country.create(:name => 'Sweden', :image => 'flags/sweden.gif')
+    Country.create(:name => 'Switzerland', :image => 'flags/switzerland.gif')
+    Country.create(:name => 'Syria', :image => 'flags/syria.gif')
+    Country.create(:name => 'Taiwan', :image => 'flags/taiwan.gif')
+    Country.create(:name => 'Tajikistan', :image => 'flags/tajikistan.gif')
+    Country.create(:name => 'Tanzania', :image => 'flags/tanzania.gif')
+    Country.create(:name => 'Thailand', :image => 'flags/thailand.gif')
+    Country.create(:name => 'Togo', :image => 'flags/togo.gif')
+    Country.create(:name => 'Trinidad Tobago', :image => 'flags/trinidadandtobago.gif')
+    Country.create(:name => 'Tunisia', :image => 'flags/tunisia.gif')
+    Country.create(:name => 'Turkey', :image => 'flags/turkey.gif')
+    Country.create(:name => 'Turkmenistan', :image => 'flags/turkmenistan.gif')
+    Country.create(:name => 'Tuvalu', :image => 'flags/tuvalu.gif')
+    Country.create(:name => 'UAE', :image => 'flags/uae.gif')
+    Country.create(:name => 'Uganda', :image => 'flags/uganda.gif')
+    Country.create(:name => 'UK', :image => 'flags/uk.gif')
+    Country.create(:name => 'Ukraine', :image => 'flags/ukraine.gif')
+    Country.create(:name => 'Uruguay', :image => 'flags/uruguay.gif')
+    Country.create(:name => 'USA', :image => 'flags/usa.gif')
+    Country.create(:name => 'USSR', :image => 'flags/ussr.gif')
+    Country.create(:name => 'Uzbekistan', :image => 'flags/uzbekistan.gif')
+    Country.create(:name => 'Vanuatu', :image => 'flags/vanuatu.gif')
+    Country.create(:name => 'Venezuela', :image => 'flags/venezuela.gif')
+    Country.create(:name => 'Vietnam', :image => 'flags/vietnam.gif')
+    Country.create(:name => 'Yemen', :image => 'flags/yemen.gif')
+    Country.create(:name => 'Yugoslavia', :image => 'flags/yugoslavia.gif')
+    Country.create(:name => 'Zaire', :image => 'flags/zaire.gif')
+    Country.create(:name => 'Zambia', :image => 'flags/zambia.gif')
+    Country.create(:name => 'Zimbabwe', :image => 'flags/zimbabwe.gif')
+  end
+
+  def self.create_test_users
+    self.create_test_user 'admin', Role.find_by_name(Role::ADMINISTRATOR)
+    self.create_test_user 'mod', Role.find_by_name(Role::MODERATOR)
+    self.create_test_user 'librarian', Role.find_by_name('librarian')
+    self.create_test_user 'vip', Role.find_by_name('vip')
+    self.create_test_user 'bill', Role.find_by_name(Role::USER)
+    self.create_test_user 'jane', Role.find_by_name(Role::USER)
+    self.create_test_user 'renee', Role.find_by_name(Role::USER)
+    self.create_test_user 'joe', Role.find_by_name(Role::USER)
+  end
+
+  private
+
+  def self.create_role(name, description, css_class, tickets = nil)
+    r = Role.new :description => description, :css_class => css_class, :tickets => tickets
+    r.name = name # attribute name is protected
+    r.save
+  end
+
+  def self.create_test_user(username, role)
+    country = Country.find(rand(150) + 1)
+    style = Style.find :first
+    u = User.new(:username => username,
+                 :password => 'rrrrr',
+                 :created_at => Time.now,
+                 :last_login_at => Time.now,
+                 :last_seen_at => Time.now,
+                 :style_id => style.id,
+                 :country_id => country.id,
+                 :email => "#{username}@mail.com",
+                 :avatar => APP_CONFIG[:default_avatar],
+                 :uploaded => rand(1.gigabyte),
+                 :downloaded => rand(1.gigabyte))
+    u.role = role # attribute role_id is protected
+    u.reset_passkey
+    u.save(false)
+  end
+end

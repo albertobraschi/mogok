@@ -1,0 +1,127 @@
+
+<% page_name 'Invitations' %>
+
+<div class="main">
+  <h2>Invitations</h2>
+
+  <%= render :partial => 'misc/flash', :locals => {:flash => flash} %>
+
+  <% if @app_params[:signup_open] || logged_user.admin? %>
+    <div class="links">
+      <%= link_to '[ invite ]', {:action => 'new'} %>
+    </div>
+  <% else %>
+    <div class="alert">Signups are currently closed.</div>
+  <% end %>
+
+  <h3>Open Invitations</h3>
+
+  <table class="browse">
+    <tr>
+      <td class="header_order_by">
+        Created
+      </td>
+      <td class="header">
+        Code
+      </td>
+      <td class="header">
+        Email
+      </td>
+      <% unless @invitations.blank? %>
+        <td class="header">
+          &nbsp;
+        </td>
+      <% end %>
+    </tr>
+    <% unless @invitations.blank? %>
+      <% @invitations.each do |i| %>
+        <tr>
+          <td>
+            <%= textual_time_interval(i.created_at, 'ago') %>
+          </td>
+          <td>
+            <%= i.code %>
+          </td>
+          <td>
+            <%= i.email %>
+          </td>
+          <td class="no_wrap">
+            <%= link_to '[ cancel ]', {:action => 'destroy', :id => i}, {:method => :post, :confirm => 'Are you sure?'} %>
+          </td>
+        </tr>
+      <% end %>
+    <% else %>
+      <tr>
+        <td colspan="3">
+          No invitations found.
+        </td> 
+      </tr>
+    <% end %>
+  </table>
+  
+  <br>
+
+  <h3>Your Invitees</h3>
+  
+  <table class="browse">
+    <tr>
+      <td class="header">
+        Username
+      </td>
+      <td class="header">
+        Country
+      </td>
+      <td class="header">
+        Role
+      </td>
+      <td class="header_order_by">
+        Joined
+      </td>
+      <td class="header">
+        Up
+      </td>
+      <td class="header">
+        Down
+      </td>
+      <td class="header">
+        Ratio
+      </td>
+    </tr>
+    <% unless @invitees.blank? %>
+      <% @invitees.each do |u| %>
+        <tr>
+          <td>
+            <%= user_link u %>
+          </td>        
+          <td>
+            <%= country_image u.country %>
+          </td>
+          <td>
+            <%= u.role.description %>
+          </td>
+          <td>
+            <%= I18n.l u.created_at, :format => :date %>
+          </td>
+          <td>
+            <%= textual_data_amount u.uploaded %>
+          </td>
+          <td>
+            <%= textual_data_amount u.downloaded %>
+          </td>
+          <td>
+            <%= number_to_ratio u.ratio %>
+          </td>
+        </tr>
+      <% end %>
+    <% else %>
+      <tr>
+        <td colspan="7">
+          No invitees found.
+        </td> 
+      </tr>
+    <% end %>
+  </table>
+
+  <%= will_paginate @invitees %>
+  
+</div>

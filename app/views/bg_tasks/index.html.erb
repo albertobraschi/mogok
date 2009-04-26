@@ -1,0 +1,109 @@
+
+<% page_name 'Tasks' %>
+
+<div class="main">
+  <h2>Tasks</h2>
+
+  <%= render :partial => 'misc/flash', :locals => {:flash => flash} %>
+
+  <div class="links">
+    <%= link_to '[ reload ]', {:action => 'reload'}, {:method => :post, :class => 'admin', :confirm => 'Warning: current settings will be lost.'} %>
+  </div>
+
+  <table class="browse">
+    <tr>
+      <td class="header" style="width:200px;">
+        name
+      </td>
+      <td class="header" style="width:150px;">
+        class_name
+      </td>
+      <td class="header">
+        interval
+      </td>
+      <td class="header">
+        next_exec
+      </td>
+      <td class="header">
+        &nbsp;
+      </td>
+      <td class="header">
+        &nbsp;
+      </td>
+      <td class="header">
+        &nbsp;
+      </td>
+    </tr>
+    <% unless @bg_tasks.blank? %>
+      <% @bg_tasks.each do |t| %>
+        <tr>
+          <td>
+            <%= t.name %>
+          </td>
+          <td>
+            <%= t.class_name %>
+          </td>
+          <td>
+            <%= t.interval_minutes %>
+          </td>
+          <td>
+            <%= I18n.l t.next_exec_at, :format => :db if t.next_exec_at %>
+          </td>
+          <td class="no_wrap">
+            <%= link_to "[ turn #{t.active? ? 'off' : 'on'} ]", {:action => 'switch', :id => t}, {:method => :post, :class => 'admin'} %>
+          </td>
+          <td class="no_wrap">
+            <%= link_to '[ edit ]', {:action => 'edit', :id => t}, {:class => 'admin'} %>
+          </td>
+          <td class="no_wrap">
+            <%= link_to '[ exec ]', {:action => 'exec', :id => t}, {:method => :post, :class => 'admin'} %>
+          </td>
+        </tr>
+      <% end %>
+    <% else %>
+      <tr>
+        <td colspan="7">
+          no registered tasks
+        </td>
+      </tr>
+   <% end %>
+  </table>
+
+  <br>
+    
+  <h2>cron</h2>
+
+  <table class="browse">
+    <tr>
+      <td class="header">
+        cron jobs
+      </td>
+    </tr>
+    <tr>
+      <% if @cron_jobs %>
+        <td class="left">
+          <%= HtmlHelper.to_html @cron_jobs %>
+        </td>
+      <% else %>
+        <td class="center">
+          no cron jobs found
+        </td>
+      <% end %>
+    </tr>
+  </table>
+
+
+  <br>
+
+  <h2>logs</h2>
+
+  <div class="links">
+    <%= link_to '[ view all ]', {:action => 'logs'}, {:class => 'admin'} %>
+  </div>
+
+  <%= render :partial => 'logs_table', :locals => {:task_logs => @task_logs} %>
+</div>
+
+
+
+

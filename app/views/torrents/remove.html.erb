@@ -1,0 +1,59 @@
+
+<% page_name 'Torrent Remotion' %>
+
+<div class="main">
+  <h2>Torrent Remotion</h2>
+
+  <div class="torrent_header"><%= torrent_link @torrent %></div>
+
+  <div class="fields_box" style="width:620px;">
+    <% form_tag :action => 'remove' do %>
+      <table>
+        <% unless logged_user.admin_mod? %>
+          <tr>
+            <td class="center">
+              <div class="grey bold">The torrent will stay inactive until a moderator removes it.</div>
+            </td>
+          </tr>
+        <% end %>
+        <% if logged_user.admin_mod? && !@torrent.active? %>
+          <tr>
+            <td>
+              <div class="grey bold center">torrent will be removed from system</div>
+            </td>
+          </tr>
+        <% end %>
+        <tr>
+          <td>
+            <table>
+              <tr>
+                <td class="label">
+                  Reason:
+                </td>
+                <td>
+                  <%= text_field_tag :reason, '', {:size => 70, :maxlength => 100, :focus => true} %>
+                </td>
+                <% if logged_user.admin_mod? && @torrent.active? %>
+                  <td class="label">
+                    DELETE:
+                  </td>
+                  <td>
+                    <%= check_box_tag :destroy %>
+                  </td>
+                <% end %>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <tr>
+          <td class="center">
+            <ul class="buttons">
+              <li><%= submit_tag 'Remove', :class => 'submit' %></li>
+              <li><%= submit_tag 'Cancel', :name => 'cancel', :class => 'submit' %></li>
+            </ul>
+          </td>
+        </tr>
+      </table>
+    <% end %>
+  </div>
+</div>

@@ -1,0 +1,38 @@
+
+<% page_name 'Forums' %>
+
+<div class="main">
+  <div class="forums">
+    <div class="page_header"><%= link_to 'Forums', {:action => 'index'} %></div>
+
+    <div class="forum_name"><%= link_to @post.forum.name, forums_path(:action => 'show', :id => @post.forum) %></div>
+
+    <div class="topic_title"><%= link_to @post.topic.title, topics_path(:forum_id => @post.forum, :action => 'show', :id => @post.topic) %></div>
+
+    <h3>Post Edition</h3>
+
+    <%= render :partial => 'misc/flash', :locals => {:flash => flash} %>
+
+    <div class="fields_box" style="width:680px;">
+      <% form_tag :action => 'edit', :page => params[:page] do %>
+        <table>
+          <tr>
+            <td>
+              <% render :layout => 'misc/editor', :locals => {:target => 'body', :align => 'center'} do %>
+                <%= text_area_tag :body, @post.body, {:rows => 8, :cols => 80, :focus => true} %>
+              <% end %>
+            </td>
+          </tr>
+          <tr>
+            <td class="center">
+              <ul class="buttons">
+                <li><%= submit_tag 'Edit', :class => 'submit' %></li>
+                <li><%= submit_tag 'Cancel', :name => 'cancel', :class => 'submit' %><li>
+              </ul>
+            </td>
+          </tr>
+        </table>
+      <% end %>
+    </div>
+  </div>
+</div>

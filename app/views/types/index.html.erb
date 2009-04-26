@@ -1,0 +1,53 @@
+
+<% page_name 'Types' %>
+
+<div class="main">
+  <h2>Types</h2>
+
+  <%= render :partial => 'misc/flash', :locals => {:flash => flash} %>
+
+  <div class="links">
+    <%= link_to '[ new ]', {:action => 'new'}, {:class => 'admin'} %>
+  </div>
+  
+  <table class="browse">
+    <tr>
+      <td class="header">
+        &nbsp; id &nbsp;
+      </td>
+      <td class="header">
+        name
+      </td>
+      <td class="header">
+        &nbsp;
+      </td>
+      <td class="header">
+        &nbsp;
+      </td>
+    </tr>
+    <% unless @types.blank? %>
+      <% @types.each do |t| %>
+        <tr>
+          <td>
+            <%= t.id %>
+          </td>
+          <td>
+            <%= t.name %>
+          </td>
+          <td class="no_wrap">
+            <%= link_to '[ edit ]', {:action => 'edit', :id => t}, {:class => 'admin'} %>
+          </td>
+          <td class="no_wrap">
+            <%= link_to '[ delete ]', {:action => 'destroy', :id => t}, {:method => :post, :class => 'admin', :confirm => 'Are you sure?'} %>
+          </td>
+        </tr>
+      <% end %>
+    <% else %>
+      <tr>
+        <td colspan="4">
+          no types found
+        </td> 
+      </tr>
+    <% end %>
+  </table>
+</div>

@@ -1,0 +1,108 @@
+
+  <table class="browse left">
+    <tr>
+      <td class="header">
+        user
+      </td>
+      <td class="header">
+        country
+      </td>
+      <td class="header_order_by">
+        started
+      </td>
+      <td class="header">
+        <%= image_tag('connectable.png', :alt => 'Connectable', :title => 'Connectable') %>
+      </td>
+      <td class="header">
+        up
+      </td>
+      <td class="header">
+        down
+      </td>
+      <td class="header">
+        %
+      </td>
+      <% if logged_user.admin? %>
+        <td class="header">
+          ip
+        </td>
+        <td class="header">
+          port
+        </td>
+      <% end %>
+      <td class="header">
+        client
+      </td>
+    </tr>
+    <% unless @peers.blank? %>
+      <% @peers.each do |p| %>
+        <tr>
+          <td>
+            <%= user_link p.user %>
+          </td>
+          <td>
+            <%= country_image p.user.country %>
+          </td>
+          <td>
+            <%= textual_time_interval p.started_at, 'ago' %>
+          </td>
+          <td>
+            <% if p.peer_conn && p.peer_conn.connectable %>
+              <span class="<%= p.peer_conn.connectable? ? 'connectable' : 'unconnectable' %>">
+                <%= p.peer_conn.connectable? ? 'yes' : 'no' %>
+              </span>
+            <% else %>
+              n/a
+            <% end %>
+          </td>          
+          <td>
+            <%= textual_data_amount p.uploaded %>
+          </td>
+          <td>
+            <%= textual_data_amount p.downloaded %>
+          </td>
+          <td>
+            <%= p.completion_percentage %>
+          </td>
+          <% if logged_user.admin? %>
+            <td>
+              <%= p.ip %>
+            </td>
+            <td>
+              <%= p.port %>
+            </td>
+          <% end %>
+          <td>
+            <%= "#{p.client_name} #{p.client_version}" %>
+          </td>
+        </tr>
+      <% end %>
+      <% if @peers.total_pages > 1 %>
+        <tr>
+          <td class="pagination" colspan="<%= logged_user.admin? ? '9' : '7'%>">
+            <%= will_paginate_remote @peers, {:container => false}, {:spinner_id => 'peers_spinner', :spinner_class => 'spinner_left'} %>
+          </td>
+        </tr>
+      <% end %>
+    <% else %>
+      <tr>
+        <td colspan="<%= logged_user.admin? ? '9' : '7'%>">
+          No peers found.
+        </td>
+      </tr>
+    <% end %>
+  </table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

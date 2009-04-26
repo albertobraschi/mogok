@@ -1,0 +1,50 @@
+
+<% page_name 'Forums' %>
+
+<div class="main">
+  <div class="forums" style="width:750px;">
+    <div class="page_header"><%= link_to 'Forums', forums_path %></div>
+
+    <div class="forum_name"><%= link_to @topic.forum.name, forums_path(:action => 'show', :id => @topic.forum) %></div>
+
+    <h3>Topic Edition</h3>
+    
+    <%= render :partial => 'misc/flash', :locals => {:flash => flash} %>
+    
+    <% form_tag :action => 'edit' do %>
+      <table class="details">
+        <tr>
+          <td class="label">
+            Title
+          </td>
+          <td>
+            <%= text_field_tag :title, params[:title], {:size => 78, :maxlength => 120, :focus => true} %>
+          </td>
+        </tr>
+        <tr>
+          <td class="label">
+            Body
+          </td>
+          <td>
+            <% render :layout => 'misc/editor', :locals => {:target => 'body', :align => 'left'} do %>
+              <%= text_area_tag :body, params[:body], {:cols => 70, :rows => 8} %>
+            <% end %>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" class="center">
+            <ul class="buttons">
+              <li><%= submit_tag 'Edit', :class => 'submit' %></li>
+              <li><%= submit_tag 'Cancel', :name => 'cancel', :class => 'submit' %></li>
+            </ul>
+          </td>
+        </tr>
+      </table>
+    <% end %>
+  </div>
+</div>
+
+
+
+
+

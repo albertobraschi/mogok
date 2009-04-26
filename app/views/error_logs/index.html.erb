@@ -1,0 +1,47 @@
+
+<% page_name 'Error Logs' %>
+
+<div class="main">
+  <div class="inner">
+    <h2>Error Logs</h2>
+
+    <div class="links">
+      <%= link_to '[ clear ]', {:action => 'clear_all'}, {:method => :post, :class => 'admin'} %>
+    </div>
+
+    <table class="browse wide">
+      <tr>
+        <td class="header_order_by">
+          created
+        </td>
+        <td class="header">
+          message
+        </td>
+        <td class="header">
+          location
+        </td>
+      </tr>
+      <% unless @error_logs.blank? %>
+        <% @error_logs.each do |l| %>
+          <tr>
+            <td>
+              <%= I18n.l l.created_at, :format => :db %>
+            </td>
+            <td>
+              <%= HtmlHelper.to_html l.message %>
+            </td>
+            <td>
+              <%= HtmlHelper.to_html strip_tags(l.location) %>
+            </td>
+          </tr>
+        <% end %>
+      <% else %>
+        <tr>
+          <td colspan="3">
+            no error logs found
+          </td>
+        </tr>
+      <% end %>
+    </table>
+  </div>
+</div>

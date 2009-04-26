@@ -1,0 +1,26 @@
+
+<% page_name 'Torrents' %>
+
+<div class="main">
+  <h2>Torrents</h2>
+  
+  <%= render :partial => 'misc/flash', :locals => {:flash => flash} %>
+
+  <% if @perform_cache %>
+
+    <% cache @search_box_fragment_name do %>
+      <%= render :partial => 'index_search_box' %>
+    <% end %>
+
+    <% cache(@fragment_name, APP_CONFIG[:torrents_refresh_minutes].minutes.from_now) do %>
+      <%= render :partial => 'index_content' %>
+    <% end %>
+    
+  <% else %>
+
+    <%= render :partial => 'index_search_box' %>
+
+    <%= render :partial => 'index_content' %>
+
+  <% end %>
+</div>

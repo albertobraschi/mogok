@@ -1,0 +1,104 @@
+
+<% page_name 'Torrent Edition' %>
+
+<%= populate_tags_formats_script @categories, @types %>
+
+<div class="main">
+  <div class="inner">
+    <h2>Torrent Edition</h2>
+
+    <% form_for :torrent, :action => 'edit', :id => @torrent do |f| %>
+      <table class="details">
+        <tr>
+          <td class="label">
+            Name
+          </td>
+          <td>
+            <%= f.text_field :name, :size => 62, :maxlength => 80, :focus => true %>
+            <%= field_error @torrent.errors[:name] %>
+          </td>
+        </tr>
+        <tr>
+          <td class="label">
+            Category
+          </td>
+          <td>
+            <%= collection_select :torrent, :category_id, @categories, :id, :name, {}, {:onchange => "populate_formats(this);populate_tags(this);clear_field('tags_str');"} %>
+          </td>
+        </tr>
+        <% unless @torrent.category.type.formats.blank? %>
+          <tr>
+            <td class="label">
+              Format
+            </td>
+            <td>
+              <%= collection_select :torrent, :format_id, @torrent.category.type.formats, :id, :name, {:include_blank => true}, {:id => 'format_id'} %>
+              <%= field_error @torrent.errors[:format_id] %>
+            </td>
+          </tr>
+        <% end %>
+        <% unless @torrent.category.tags.blank? %>
+          <tr>
+            <td class="label">
+              Tags
+            </td>
+            <td>
+              <select id="tags_select" onchange="add_tag('tags_select', 'tags_str')">
+                <option value=""></option>
+                <%= options_from_collection_for_select @torrent.category.tags, :name, :name %>
+              </select>
+              &nbsp;
+              <%= f.text_field :tags_str, :size => 40, :maxlength => 100, :id => 'tags_str' %>
+              <%= field_error @torrent.errors[:tags] %>
+            </td>
+          </tr>
+        <% end %>
+        <tr>
+          <td class="label">
+            Year
+          </td>
+          <td>
+            <%= f.text_field :year, :size => 6, :maxlength => 4 %>
+            <%= field_error @torrent.errors[:year] %>
+          </td>
+        </tr>
+        <tr>
+          <td class="label">Country</td>
+          <td>
+            <%= collection_select :torrent, :country_id, @countries, :id, :name, :include_blank => true %>
+          </td>
+        </tr>
+        <tr>
+          <td class="label">
+            Description
+          </td>
+          <td>
+            <% render :layout => 'misc/editor', :locals => {:target => 'torrent_description', :align => 'left'} do %>
+              <%= f.text_area :description, :cols => 80, :rows => 8 %>
+            <% end %>
+          </td>
+        </tr>
+        <% if logged_user.admin_mod? %>
+          <tr>
+            <td class="label">
+              REASON
+            </td>
+            <td>
+              <%= text_field_tag :reason, '', {:size => 62, :maxlength => 100} %>
+            </td>
+          </tr>
+        <% end %>
+        <tr>
+          <td colspan="2" class="center">
+            <ul class="buttons">
+              <li><%= submit_tag 'Edit', :class => 'submit' %></li>
+              <li><%= submit_tag 'Cancel', :name => 'cancel', :class => 'submit' %></li>
+            </ul>
+          </td>
+        </tr>
+      </table>
+    <% end %>
+  </div>
+</div>
+
+

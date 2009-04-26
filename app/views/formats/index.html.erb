@@ -1,0 +1,59 @@
+
+<% page_name 'Formats' %>
+
+<div class="main">
+  <h2>Formats</h2>
+
+  <%= render :partial => 'misc/flash', :locals => {:flash => flash} %>
+
+  <div class="links">
+    <%= link_to '[ new ]', {:action => 'new'}, {:class => 'admin'} %>
+  </div>
+
+  <table class="browse">
+    <tr>
+      <td class="header">
+        &nbsp; id &nbsp;
+      </td>
+      <td class="header_order_by">
+        type
+      </td>
+      <td class="header_order_by">
+        name
+      </td>
+      <td class="header">
+        &nbsp;
+      </td>
+      <td class="header">
+        &nbsp;
+      </td>
+    </tr>
+    <% unless @formats.blank? %>
+      <% @formats.each do |f| %>
+        <tr>
+          <td>
+            <%= f.id %>
+          </td>
+          <td>
+            <%= f.type.name %>
+          </td>
+          <td>
+            <%= f.name %>
+          </td>
+          <td>
+            <%= link_to '[ edit ]', {:action => 'edit', :id => f}, {:class => 'admin'} %>
+          </td>
+          <td>
+            <%= link_to '[ delete ]', {:action => 'destroy', :id => f}, {:method => :post, :class => 'admin', :confirm => 'Are you sure?'} %>
+          </td>
+        </tr>
+      <% end %>
+    <% else %>
+      <tr>
+        <td colspan="5">
+          no formats found
+        </td> 
+      </tr>
+    <% end %>
+  </table>
+</div>

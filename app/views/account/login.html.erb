@@ -1,0 +1,72 @@
+
+<% page_name 'Login' %>
+
+<div style="margin-top:80px;text-align:center;">
+  <h2>Please login</h2>
+</div>
+
+<%= render :partial => 'misc/flash', :locals => {:flash => flash} %>
+
+<div class="fields_box margin_bottom" style="width:300px;">
+  <% form_tag :action => 'login' do %>
+    <table>
+      <tr>
+        <td class="label">
+          Username:
+        </td>
+        <td>
+          <%= text_field_tag :username, params[:username], {:size => 25, :maxlength => 20, :focus => true} %>
+        </td>
+      </tr>
+      <tr>
+        <td class="label">
+          Password:
+        </td>
+        <td>
+          <%= password_field_tag :password, '', {:size => 25, :maxlength => 30} %>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          &nbsp;
+        </td>
+        <td>
+          <ul class="compact">
+            <li><%= check_box_tag :stay_logged_in %></li>
+            <li>Keep me logged in.</li>
+          </ul>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="2" class="center">
+          <%= submit_tag 'Login', :class => 'submit' %>
+        </td>
+      </tr>
+    </table>
+  <% end %>
+</div>
+
+<div class="links bold">
+  <%= link_to '[ password recovery ]', password_recovery_path %>
+  <br><br>
+  <%= link_to '[ sign up ]', signup_path(:invite_code => nil) %>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

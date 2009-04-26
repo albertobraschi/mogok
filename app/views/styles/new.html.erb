@@ -1,0 +1,32 @@
+
+<% page_name 'Styles' %>
+
+<div class="main">
+  <h2>New Style</h2>
+  
+  <div class="fields_box" style="width:520px;">
+    <% form_for :style, :action => 'new' do |f| %>
+      <table>
+        <tr>
+          <td class="label">
+            name:
+          </td>
+          <td>
+            <%= f.text_field :name, :size => 20, :focus => true %>
+          </td>
+          <td class="label">
+            stylesheet:
+          </td>
+          <td>
+            <%= f.text_field :stylesheet, :size => 30 %>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="4" class="center">
+            <%= f.submit 'Confirm', :class => 'submit' %>
+          </td>
+        </tr>
+      </table>
+    <% end %>
+  </div>
+</div>

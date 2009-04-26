@@ -1,0 +1,83 @@
+
+<% page_name 'Messenger' %>
+
+<% folder_names = {Message::INBOX => 'Inbox',
+                   Message::OLDS => 'Olds',
+                   Message::SENT => 'Sent',
+                   Message::TRASH => 'Trash'} %>
+
+<div class="main">  
+  <h2>Messenger</h2>
+  
+  <%= render :partial => 'misc/flash', :locals => {:flash => flash} %>
+
+  <div class="messenger">
+    <% form_tag({:action => 'move'}, :id => 'messages_form') do %>
+      <table>
+        <tr>
+          <td>
+            <%= render :partial => 'menu', :locals => {:title => folder_names[session[:messenger_folder]]} %>
+          </td>
+        </tr>
+        <% unless @messages.blank? %>
+          <% @messages.each do |m| %>
+            <tr>
+              <td>
+                <table>
+                  <tr>
+                    <td width="1%">
+                      <%= check_box_tag 'selected_messages[]', m.id, nil %>
+                    </td>
+                    <td class="no_wrap" width="10%">
+                      <%= I18n.l m.created_at %>
+                    </td>
+                    <td width="5%">
+                      <%= session[:messenger_folder] != Message::SENT ? user_link(m.sender) : user_link(m.receiver) %>
+                    </td>
+                    <td>
+                      <%= link_to m.subject, {:action => 'show', :id => m}, {:class => ('bold' if m.unread?)} %>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          <% end %>
+          <% if @messages.total_pages > 1 %>
+            <tr>
+              <td class="center">
+                <%= will_paginate @messages, {:container => false} %>
+              </td>
+            </tr>
+          <% end %>
+        <% else %>
+          <tr>
+            <td class="center grey">
+              Folder is Empty
+            </td>
+          </tr>
+        <% end %>
+        <tr>
+          <td>
+            <table>
+              <tr>
+                <td class="left" width="99%">
+                  <ul class="menu">
+                    <li><a href="javascript:void(0)" onclick="this.blur();change_check_boxes(true, 'messages_form')">check all</a></li>
+                    <li>|</li>
+                    <li><a href="javascript:void(0)" onclick="this.blur();change_check_boxes(false, 'messages_form')">uncheck all</a></li>
+                  </ul>
+                </td>
+                <td>
+                  <%= submit_tag 'Move to:', :class => 'submit' %>
+                </td>
+                <td>
+                  <%= render :partial => 'messages/dest_folder_select' %>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    <% end %>
+  </div>
+</div>

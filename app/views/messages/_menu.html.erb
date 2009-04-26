@@ -1,0 +1,18 @@
+
+  <div class="folder_name float_left">
+    <%= title %>
+  </div>
+
+  <div class="float_right">
+    <ul class="menu">
+      <li><%= link_to 'new', :action => 'new' %></li>
+      <li>|</li>
+      <li><%= link_to 'inbox', :action => 'folder', :id => Message::INBOX %></li>
+      <li>|</li>
+      <li><%= link_to 'olds', :action => 'folder', :id => Message::OLDS %></li>
+      <li>|</li>
+      <li><%= link_to 'sent', :action => 'folder', :id => Message::SENT %></li>
+      <li>|</li>
+      <li><%= link_to 'trash', :action => 'folder', :id => Message::TRASH %></li>
+    </ul>
+  </div>

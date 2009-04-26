@@ -1,0 +1,28 @@
+
+  <ul class="compact">
+    <li><%= mapped_files.size %></li>
+    <li><a href="javascript:void(0)" onclick="hide_show_div('torrent_files', '');this.blur()">[ view | hide ]</a></li>
+  </ul>
+
+  <div id="torrent_files" class="hide">
+    <table class="browse left">
+      <tr>
+        <td class="header">
+          Name
+        </td>
+        <td class="header">
+          Size
+        </td>
+      </tr>
+      <% mapped_files.each do |f| %>
+        <tr>
+          <td class="left">
+            <%= f.name %>
+          </td>
+          <td>
+            <%= textual_data_amount f.length %>
+          </td>
+        </tr>
+      <% end %>
+    </table>
+  </div>

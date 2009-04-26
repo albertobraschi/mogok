@@ -1,0 +1,159 @@
+
+<% page_name 'Announce Logs' %>
+
+<div class="main">
+  <h2>Announce Logs</h2>
+  
+  <div class="links">
+    <%= link_to '[ clear ]', {:action => 'clear_all'}, {:method => :post, :class => 'admin', :confirm => 'Are you sure?'} %>
+  </div>
+  
+  <div class="fields_box margin_bottom" style="width:750px;">
+    <% form_tag({:action => 'index'}, :method => :get) do %>
+      <table>
+        <tr>
+          <td class="label">
+            user_id:
+          </td>
+          <td>
+            <%= text_field_tag :user_id, params[:user_id], {:size => 10, :focus => true} %>
+          </td>
+          <td class="label">
+            torrent_id:
+          </td>
+          <td>
+            <%= text_field_tag :torrent_id, params[:torrent_id], {:size => 10} %>
+          </td>
+          <td class="label">
+            ip:
+          </td>
+          <td>
+            <%= text_field_tag :ip, params[:ip], {:size => 15} %>
+          </td>
+          <td class="label">
+            port:
+          </td>
+          <td>
+            <%= text_field_tag :port, params[:port], {:size => 10} %>
+          </td>
+          <td>
+            <%= submit_tag 'Search', :name => nil, :class => 'submit' %>
+          </td>
+        </tr>
+      </table>
+    <% end %>
+  </div>
+  
+  <% if !@announce_logs.blank? && @announce_logs.length > 15 %>
+    <%= will_paginate @announce_logs %>
+  <% end %>
+  
+  <table class="browse">
+    <tr>
+      <td class="<%= table_header_css_class 'created_at', @announce_logs %>">
+        <%= table_header_link 'created', 'created_at', @announce_logs %>
+      </td>
+      <td class="<%= table_header_css_class 'user_id', @announce_logs %>">
+        <%= table_header_link 'user', 'user_id', @announce_logs %>
+      </td>
+      <td class="<%= table_header_css_class 'torrent_id', @announce_logs %>">
+        <%= table_header_link 'tor', 'torrent_id', @announce_logs %>
+      </td>
+      <td class="<%= table_header_css_class 'event', @announce_logs %>">
+        <%= table_header_link 'event', 'event', @announce_logs %>
+      </td>
+      <td class="header">
+        seeder
+      </td>
+      <td class="<%= table_header_css_class 'up_offset', @announce_logs %>">
+        <%= table_header_link 'up', 'up_offset', @announce_logs %>
+      </td>
+      <td class="<%= table_header_css_class 'down_offset', @announce_logs %>">
+        <%= table_header_link 'down', 'down_offset', @announce_logs %>
+      </td>
+      <td class="<%= table_header_css_class 'time_interval', @announce_logs %>">
+        <%= table_header_link 'interval', 'time_interval', @announce_logs %>
+      </td>
+      <td class="header">
+        ip
+      </td>
+      <td class="header">
+        port
+      </td>
+      <td class="header">
+        client
+      </td>    
+    </tr>
+    <% unless @announce_logs.blank? %>
+      <% @announce_logs.each do |p| %>
+        <tr>
+          <td>
+            <%= I18n.l p.created_at, :format => :db %>
+          </td>
+          <td>
+            <%= user_link p.user, true %>
+          </td>
+          <td>
+            <%= link_to "[ #{p.torrent_id} ]", {:controller => 'torrents', :action => 'show', :id => p.torrent_id} %>
+          </td>
+          <td>
+            <%= p.event.blank? ? '-' : p.event %>
+          </td>
+          <td>
+            <%= p.seeder ? 'yes' : 'no' %>
+          </td>
+          <td>
+            <%= textual_data_amount p.up_offset %>
+          </td>
+          <td>
+            <%= textual_data_amount p.down_offset %>
+          </td>
+          <td>
+            <%= p.time_interval %>
+          </td>
+          <td>
+            <%= p.ip %>
+          </td>
+          <td>
+            <%= p.port %>
+          </td>
+          <td>
+            <%= "#{p.client_name}-#{p.client_version}" %>
+          </td>
+        </tr>    
+      <% end %>  
+    <% else %>
+      <tr>
+        <td colspan="11">
+          no announce logs found
+        </td>
+      </tr>
+    <% end %>
+  </table>
+
+  <%= will_paginate @announce_logs %>
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

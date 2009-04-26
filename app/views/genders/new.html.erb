@@ -1,0 +1,26 @@
+
+<% page_name 'Genders' %>
+
+<div class="main">
+  <h2>New Gender</h2>
+  
+  <div class="fields_box" style="width:320px;">
+    <% form_for :gender, :action => 'new' do |f| %>
+      <table>
+        <tr>
+          <td class="label">
+            name:
+          </td>
+          <td>
+            <%= f.text_field :name, :size => 25, :focus => true %>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" class="center">
+            <%= f.submit 'Confirm', :class => 'submit' %>
+          </td>
+        </tr>
+      </table>
+    <% end %>
+  </div>
+</div>

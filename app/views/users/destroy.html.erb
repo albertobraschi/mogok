@@ -1,0 +1,24 @@
+
+<% page_name 'User Remotion' %>
+
+<div class="main">
+  <h2>User Remotion</h2>
+
+  <div class="user_header"><%= user_link @user %></div>
+
+  <div class="fields_box" style="width:550px;">
+    <% form_tag :action => 'destroy' do %>
+      <table>        
+        <tr>
+          <td>
+            <ul class="buttons">
+              <li><%= submit_tag 'Remove', :class => 'submit' %></li>
+              <li><%= submit_tag 'Cancel', :name => 'cancel', :class => 'submit' %></li>
+            </ul>
+          </td>
+        </tr>
+      </table>
+    <% end %>
+  </div>
+</div>
+

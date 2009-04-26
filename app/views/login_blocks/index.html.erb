@@ -1,0 +1,51 @@
+
+<% page_name 'Login Blocks' %>
+
+<div class="main">
+  <h2>Login Blocks</h2>
+
+  <div class="links">
+    <%= link_to '[ clear ]', {:action => 'clear_all'}, {:method => :post, :class => 'admin', :confirm => 'Are you sure?'} %>
+  </div>
+
+  <table class="browse">
+    <tr>
+      <td class="header">
+        &nbsp; id &nbsp;
+      </td>
+      <td class="header">
+        ip
+      </td>
+      <td class="header_order_by">
+        blocks
+      </td>
+      <td class="header">
+        &nbsp;
+      </td>
+    </tr>
+    <% unless @login_blocks.blank? %>
+      <% @login_blocks.each do |b| %>
+        <tr>
+          <td>
+            <%= b.id %>
+          </td>
+          <td>
+            <%= b.ip %>
+          </td>
+          <td>
+            <%= b.blocks_count %>
+          </td>
+          <td>
+            <%= link_to '[ delete ]', {:action => 'destroy', :id => b}, {:method => :post, :class => 'admin', :confirm => 'Are you sure?'} %>
+          </td>
+        </tr>
+      <% end %>
+    <% else %>
+      <tr>
+        <td colspan="4">
+          no login blocks found
+        </td> 
+      </tr>
+    <% end %>
+  </table>
+</div>

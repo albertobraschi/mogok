@@ -1,0 +1,5 @@
+if @seeding
+  page.replace_html 'user_seeding', :partial => 'activity'
+else
+  page.replace_html 'user_leeching', :partial => 'activity'
+end

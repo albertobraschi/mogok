@@ -1,0 +1,44 @@
+
+<% page_name 'Clients' %>
+
+<div class="main">
+  <h2>Client Edition</h2>
+
+  <div class="fields_box" style="width:520px;">
+    <% form_for :client, :action => 'edit', :id => @client do |f| %>
+      <table>
+        <tr>
+          <td class="label">
+            code:
+          </td>
+          <td>
+            <%= f.text_field :code, :size => 4, :focus => true %>
+          </td>
+          <td class="label">
+            name:
+          </td>
+          <td>
+            <%= f.text_field :name, :size => 15 %>
+          </td>
+          <td class="label">
+            banned:
+          </td>
+          <td>
+            <%= f.check_box :banned %>
+          </td>
+          <td class="label">
+            min_version:
+          </td>
+          <td>
+            <%= f.text_field :min_version, :size => 6 %>
+          </td>          
+        </tr>
+        <tr>
+          <td colspan="8" class="center">
+            <%= submit_tag 'Confirm', :class => 'submit' %>
+          </td>
+        </tr>
+      </table>
+    <% end %>
+  </div>
+</div>

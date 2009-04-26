@@ -1,0 +1,30 @@
+
+Based on the plugin forked from http://github.com/georgepalmer/timed_fragment_cache/tree/master
+
+A rewriting to meet this application's needs and avoid redundant calls to memcached
+in the controller and in the view.
+
+Features
+  - adds optional expiration time to fragment caching
+  - works by adding a expiration time in the cache for a cached fragment
+
+Usage:
+
+  - in the controller, call the function that deletes the fragment if the expiration time is up
+
+   if expire_timed_fragment('fragment_name') # returns true if fragment was really deleted
+     # do the heavy work
+   end
+
+  - in the view perform the timed cache
+    IMPORTANT: it will cache the fragment (and the expiration) if not in cache, but won't check the expiration time
+
+   <% cache 'fragment_name', 10.minutes.from_now do %>
+     cached content
+   <% end %>
+
+  - the regular fragment cache continues the same
+
+   <% cache 'fragment_name' do %>
+     cached content
+   <% end %>

@@ -1,0 +1,139 @@
+
+<% page_name 'Stats History' %>
+
+<div class="main">
+  <h2>Stats History</h2>
+
+  <% if logged_user.owner? %>
+    <div class="links">
+      <%= link_to '[ clear ]', {:action => 'clear_all'}, {:method => :post, :class => 'owner',  :confirm => 'Are you sure?'} %>
+    </div>
+  <% end %>
+
+  <table class="browse">
+    <tr>
+      <td class="header_order_by">
+        added
+      </td>
+      <td class="header">
+        users_a
+      </td>
+      <td class="header">
+        users_i
+      </td>
+      <td class="header">
+        p_seeding
+      </td>
+      <td class="header">
+        p_leeching
+      </td>
+      <td class="header">
+        t_alive
+      </td>
+      <td class="header">
+        t_dead
+      </td>
+      <td class="header">
+        snatches
+      </td>
+      <td class="header">
+        forums
+      </td>
+      <td class="header">
+        topics
+      </td>
+      <td class="header">
+        posts
+      </td>
+      <td class="header">
+        up
+      </td>
+      <td class="header">
+        down
+      </td>
+      <td class="header">
+        ratio
+      </td>
+    </tr>
+    <% unless @stats.blank? %>
+      <% @stats.each do |s| %>
+        <tr>
+          <td class="no_wrap">
+            <%= I18n.l s.created_at, :format => :db %>
+          </td>
+          <td>
+            <%= s.users_active %>
+          </td>
+          <td>
+            <%= s.users_inactive %>
+          </td>
+          <td>
+            <%= s.peers_seeding %>
+          </td>
+          <td>
+            <%= s.peers_leeching %>
+          </td>
+          <td>
+            <%= s.torrents_alive %>
+          </td>
+          <td>
+            <%= s.torrents_dead %>
+          </td>
+          <td>
+            <%= s.snatches %>
+          </td>
+          <td>
+            <%= s.forums %>
+          </td>
+          <td>
+            <%= s.topics %>
+          </td>
+          <td>
+            <%= s.posts %>
+          </td>
+          <td>
+            <%= textual_data_amount s.uploaded %>
+          </td>
+          <td>
+            <%= textual_data_amount s.downloaded %>
+          </td>
+          <td>
+            <%= s.ratio %>
+          </td>
+        </tr>
+      <% end %>
+    <% else %>
+      <tr>
+        <td colspan="12">
+          No stats found.
+        </td>
+      </tr>
+    <% end %>
+  </table>
+
+  <%= will_paginate @stats %>
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

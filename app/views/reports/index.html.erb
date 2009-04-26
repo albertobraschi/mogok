@@ -1,0 +1,71 @@
+
+<% page_name 'Reports' %>
+
+<div class="main">
+  <h2>Reports</h2>
+
+  <table class="browse">
+    <tr>
+      <td class="header_order_by">
+        created
+      </td>
+      <td class="header">
+        by
+      </td>
+      <td class="header">
+        target
+      </td>
+      <td class="header">
+        assigned to
+      </td>
+      <td class="header">
+        reason
+      </td>
+      <td class="header">
+        &nbsp;
+      </td>
+      <td class="header">
+        &nbsp;
+      </td>
+      <td class="header">
+        &nbsp;
+      </td>
+    </tr>
+    <% unless @reports.blank? %>
+      <% @reports.each do |r| %>
+        <tr>
+          <td class="no_wrap">
+            <%= I18n.l r.created_at %>
+          </td>
+          <td>
+            <%= user_link r.user %>
+          </td>
+          <td class="no_wrap">
+            <%= link_to r.label, r.target_path %>
+          </td>
+          <td>
+            <%= user_link r.handler %>
+          </td>
+          <td style="max-width:500px;">
+            <%= HtmlHelper.to_html r.reason %>
+          </td>
+          <td class="no_wrap">
+            <%= link_to '[ grab ]', {:action => 'grab', :id => r}, {:method => :post, :class => 'mod'} %>
+          </td>
+          <td class="no_wrap">
+            <%= link_to '[ release ]', {:action => 'release', :id => r}, {:method => :post, :class => 'mod'} %>
+          </td>
+          <td class="no_wrap">
+            <%= link_to '[ delete ]', {:action => 'destroy', :id => r}, {:method => :post, :class => 'mod', :confirm => 'Are you sure?'} %>
+          </td>
+        </tr>
+      <% end %>
+    <% else %>
+      <tr>
+        <td colspan="8">
+          no reports found
+        </td>
+      </tr>
+    <% end %>
+  </table>
+</div>

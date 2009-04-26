@@ -1,0 +1,4 @@
+
+page << "$('body').value = $('body').value + \"[quote=#{params[:username]}]#{HtmlHelper.escape_javascript @comment.body}[/quote]\";"
+page << "$('body').focus();"
+

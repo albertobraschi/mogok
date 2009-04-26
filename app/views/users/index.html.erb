@@ -1,0 +1,128 @@
+
+<% page_name 'Users' %>
+
+<div class="main">
+  <h2>Users</h2>
+
+  <% if logged_user.admin? %>
+    <div class="links">
+      <%= link_to '[ new ]', {:action => 'new'}, {:class => 'admin'} %>
+    </div>
+  <% end %>
+
+  <%= render :partial => 'misc/flash', :locals => {:flash => flash} %>
+ 
+  <div class="fields_box margin_bottom" style="width:650px;">
+    <% form_tag({:action => 'index'}, :method => :get) do %>
+      <table>
+        <tr>
+          <td class="label">
+            Username:
+          </td>
+          <td>
+            <%= text_field_tag :username, params[:username], {:size => 15, :maxlength => 50, :focus => true} %>
+          </td>
+          <td class="label">
+            Role:
+          </td>
+          <td>
+            <select name="role_id" id="role_id">
+              <option value=""></option>
+              <%= options_from_collection_for_select @roles, :id, :description, params[:role_id].to_i %>
+            </select>
+          </td>
+          <td class="label">
+            Country:
+          </td>
+          <td>
+            <select name="country_id" id="country_id">
+              <option value=""></option>
+              <%= options_from_collection_for_select @countries, :id, :name, params[:country_id].to_i %>
+            </select>
+          </td>
+          <td>
+            <%= submit_tag 'Search', :name => nil, :class => 'submit' %>
+          </td>
+        </tr>
+      </table>
+    <% end %>
+  </div>
+
+  <table class="browse">
+    <tr>
+      <td class="<%= table_header_css_class 'username', @users %>">
+        <%= table_header_link 'Username', 'username', @users %>
+      </td>
+      <td class="<%= table_header_css_class 'country_id', @users %>">
+        <%= table_header_link 'Country', 'country_id', @users %>
+      </td>
+      <td class="<%= table_header_css_class 'role_id', @users %>">
+        <%= table_header_link 'Role', 'role_id', @users %>
+      </td>
+      <td class="<%= table_header_css_class 'created_at', @users %>">
+        <%= table_header_link 'Joined', 'created_at', @users %>
+      </td>
+      <td class="<%= table_header_css_class 'uploaded', @users %>">
+        <%= table_header_link 'Up', 'uploaded', @users %>
+      </td>
+      <td class="<%= table_header_css_class 'downloaded', @users %>">
+        <%= table_header_link 'Down', 'downloaded', @users %>
+      </td>
+      <td class="<%= table_header_css_class 'ratio', @users %>">
+        <%= table_header_link 'Ratio', 'ratio', @users %>
+      </td>
+    </tr>
+    <% unless @users.blank? %>
+      <% @users.each do |u| %>
+        <tr>
+          <td>
+            <%= user_link u %>
+          </td>        
+          <td>
+            <%= country_image u.country %>
+          </td>
+          <td>
+            <%= u.role.description %>
+          </td>
+          <td>
+            <%= I18n.l u.created_at, :format => :date %>
+          </td>
+          <td>
+            <%= textual_data_amount u.uploaded %>
+          </td>
+          <td>
+            <%= textual_data_amount u.downloaded %>
+          </td>
+          <td>
+            <%= number_to_ratio u.ratio %>
+          </td>
+        </tr>
+      <% end %>
+    <% else %>
+      <tr>
+        <td colspan="7">
+          No users found.
+        </td> 
+      </tr>
+    <% end %>
+  </table>
+
+  <%= will_paginate @users %>  
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

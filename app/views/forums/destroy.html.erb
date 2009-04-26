@@ -1,0 +1,52 @@
+
+<% page_name 'Forums' %>
+
+<div class="main">
+  <div class="forums">
+    <div class="page_header"><%= link_to 'Forums', forums_path %></div>
+
+    <h3>Forum Remotion</h3>
+
+    <% form_tag :action => 'destroy' do %>
+      <table class="details">
+        <tr>
+          <td class="label">
+            name
+          </td>
+          <td>
+            <%= @forum.name %>
+          </td>
+        </tr>
+        <tr>
+          <td class="label">
+            postition
+          </td>
+          <td>
+            <%= @forum.position %>
+          </td>
+        </tr>
+        <tr>
+          <td class="label">
+            description
+          </td>
+          <td>
+            <%= @forum.description %>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" class="center">
+            <ul class="buttons">
+              <li><%= submit_tag 'Remove', :class => 'submit' %></li>
+              <li><%= submit_tag 'Cancel', :name => 'cancel', :class => 'submit' %></li>
+            </ul>
+          </td>
+        </tr>
+      </table>
+    <% end %>
+  </div>
+</div>
+
+
+
+
+

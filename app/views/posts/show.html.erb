@@ -1,0 +1,54 @@
+
+<% page_name 'Forums' %>
+
+<div class="main">
+  <div class="forums">
+    <div class="page_header"><%= link_to 'Forums', forums_path %></div>
+
+    <div class="forum_name"><%= link_to @post.forum.name, forums_path(:action => 'show', :id => @post.forum) %></div>
+
+    <div class="topic_title"><%= link_to @post.topic.title, topics_path(:forum_id => @post.forum,  :action => 'show', :id => @post.topic) %></div>
+
+    <table class="post">
+      <tr>
+        <td colspan="2" class="<%= @post.is_topic_post? ? 'first_post_head' : 'head' %>">
+          <div class="float_left">
+            <%= @post.post_number %>
+            |
+            <%= @post.is_topic_post ? 'created ' : 'posted ' %>
+            by
+            <%= @post.user ? user_link(@post.user) : 'unknown' %>
+            -
+            <%= textual_time_interval @post.created_at, 'ago' %>
+            &nbsp;
+            <% if @post.edited_at %>
+              <span class="edited_by">
+                <%= "(edited by  #{@post.edited_by} #{textual_time_interval @post.edited_at, 'ago'})" %>
+              </span>
+            <% end %>
+          </div>
+
+          <div class="float_right">
+            <%= link_to 'edit', posts_path(:forum_id => @post.forum, :action => 'edit', :id => @post) %>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td class="avatar<%= ' first_post' if @post.is_topic_post? %>">
+          <%= avatar_image @post.user %>
+        </td>
+        <td class="<%= 'first_post' if @post.is_topic_post? %>">
+          <div class="user_content" id="content<%= @post.id %>">
+            <%= HtmlHelper.to_html @post.body %>
+          </div>
+        </td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+
+
+
+
+

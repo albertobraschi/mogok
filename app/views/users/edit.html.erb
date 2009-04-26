@@ -1,0 +1,205 @@
+
+<% page_name 'Profile Edition' %>
+
+<div class="main">
+  <div class="inner" style="width:850px;">    
+    <h2>Profile Edition</h2>
+
+    <% form_for :user, :action => 'edit', :id => @user do |f| %>
+      <table class="details">
+        <% if logged_user.admin? %>
+          <tr>
+            <td class="label">
+              USERNAME
+            </td>
+            <td>
+              <%= f.text_field :username, :size => 30 %>
+              <%= field_error @user.errors[:username] %>
+            </td>
+          </tr>
+          <tr>
+            <td class="label">
+              ROLE
+            </td>
+            <td>
+              <%= collection_select :user, :role_id, @roles, :id, :name %>
+              <%= field_error @user.errors[:role_id] %>
+            </td>
+          </tr>
+          <tr>
+            <td class="label">
+              ACTIVE
+            </td>
+            <td>
+              <%= f.check_box :active %>
+            </td>
+          </tr>
+          <tr>
+            <td class="label">
+              TICKETS
+            </td>
+            <td>
+              <%= f.text_field :tickets, :size => 30 %>
+            </td>
+          </tr>
+          <tr>
+            <td class="label">
+              STAFF INFO
+            </td>
+            <td>
+              <%= f.text_area :staff_info, :cols => 60, :rows => 2 %>
+            </td>
+          </tr>
+        <% end %>
+        <% unless logged_user.admin? %>
+          <tr>
+            <td class="label">
+              Current password
+            </td>
+            <td>
+              <%= password_field_tag 'current_password', '', {:size => 30, :focus => true} %>
+              <%= field_error @user.errors[:current_password] %>
+            </td>
+          </tr>
+        <% end %>
+        <tr>
+          <td class="label">
+            New password
+          </td>
+          <td>
+            <%= f.password_field :password, :size => 30 %>
+            <%= field_error @user.errors[:password] %>
+          </td>
+        </tr>
+        <tr>
+          <td class="label">
+            Confirm new password
+          </td>
+          <td>
+            <%= f.password_field :password_confirmation, :size => 30 %>
+            <%= field_error @user.errors[:password_confirmation] %>
+          </td>
+        </tr>
+        <tr>
+          <td class="label">
+            Email
+          </td>
+          <td>
+            <%= f.text_field :email, :size => 40 %>
+            <%= field_error @user.errors[:email] %>
+          </td>
+        </tr>
+        <tr>
+          <td class="label">
+            Country
+          </td>
+          <td>
+            <%= collection_select :user, :country_id, @countries, :id, :name, :include_blank => true %>
+          </td>
+        </tr>
+        <tr>
+          <td class="label">
+            Gender
+          </td>
+          <td>
+            <%= collection_select :user, :gender_id, @genders, :id, :name, :include_blank => true %>
+          </td>
+        </tr>
+        <tr>
+          <td class="label">
+            Style
+          </td>
+          <td>
+            <%= collection_select :user, :style_id, @styles, :id, :name %>
+          </td>
+        </tr>
+        <tr>
+          <td class="label">
+            Avatar
+          </td>
+          <td>
+            <%= f.text_field :avatar, :size => 60 %>
+          </td>
+        </tr>
+        <tr>
+          <td class="label">
+            Info
+          </td>
+          <td>
+            <% render :layout => 'misc/editor', :locals => {:target => 'user_info', :align => 'left'} do %>
+              <%= f.text_area :info, :cols => 70, :rows => 6 %>
+            <% end %>
+          </td>
+        </tr>
+        <tr>
+          <td class="label">
+            Save sent messages
+          </td>
+          <td>
+            <%= f.check_box :save_sent %>
+          </td>
+        </tr>
+        <tr>
+          <td class="label">
+            Delete message on reply
+          </td>
+          <td>
+            <%= f.check_box :delete_on_reply %>
+          </td>
+        </tr>
+        <tr>
+          <td class="label">
+            Display last seen
+          </td>
+          <td>
+            <%= f.check_box :display_last_seen_at %>
+          </td>
+        </tr>
+        <tr>
+          <td class="label">
+            Display downloads
+          </td>
+          <td>
+            <%= f.check_box :display_downloads %>
+          </td>
+        </tr>
+        <% if logged_user.admin? %>
+          <tr>
+            <td class="label">
+              UPDATE COUNTERS
+            </td>
+            <td>
+              <%= check_box_tag :update_stats, '1', false %>
+            </td>
+          </tr>
+          <tr>
+            <td class="label">
+              UPLOADED
+            </td>
+            <td>
+              <%= f.text_field :uploaded, :size => 25 %>
+            </td>
+          </tr>
+          <tr>
+            <td class="label">
+              DOWNLOADED
+            </td>
+            <td>
+              <%= f.text_field :downloaded, :size => 25 %>
+            </td>
+          </tr>
+        <% end %>
+        <tr>
+          <td colspan="2" class="center">
+            <ul class="buttons">
+              <li><%= submit_tag 'Edit', :class => 'submit' %></li>
+              <li><%= submit_tag 'Cancel', :name => 'cancel', :class => 'submit' %></li>
+            </ul>
+          </td>
+        </tr>
+      </table>
+    <% end %>
+  </div>
+</div>
+
+

@@ -1,0 +1,39 @@
+
+<% page_name 'Post Report' %>
+
+<div class="main">
+  <div class="forums">
+    <div class="page_header"><%= link_to 'Forums', {:action => 'index'} %></div>
+
+    <div class="forum_name"><%= link_to @post.forum.name, forums_path(:action => 'show', :id => @post.forum) %></div>
+
+    <div class="topic_title"><%= link_to @post.topic.title, topics_path(:forum_id => @post.forum, :action => 'show', :id => @post.topic) %></div>
+
+    <h3>Post Report</h3>
+
+    <%= render :partial => 'misc/flash', :locals => {:flash => flash} %>
+
+    <div class="fields_box" style="width:650px;">
+      <% form_tag :action => 'report', :page => params[:page] do %>
+        <table>
+          <tr>
+            <td class="label">
+              Reason:
+            </td>
+            <td>
+              <%= text_field_tag :reason, '', {:size => 80, :maxlength => 200, :focus => true} %>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2" class="center">
+              <ul class="buttons">
+                <li><%= submit_tag 'Send', :class => 'submit' %></li>
+                <li><%= submit_tag 'Cancel', :name => 'cancel', :class => 'submit' %></li>
+              </ul>
+            </td>
+          </tr>
+        </table>
+      <% end %>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,44 @@
+
+<% page_name 'Roles' %>
+
+<div class="main">
+  <h2>New Role</h2>
+
+  <div class="fields_box" style="width:850px;">
+    <% form_for :role, :action => 'new' do |f| %>
+      <table>
+        <tr>
+          <td class="label">
+            name:
+          </td>
+          <td>
+            <%= f.text_field :name, :size => 10, :focus => true %>
+          </td>
+          <td class="label">
+            css_class:
+          </td>
+          <td>
+            <%= f.text_field :css_class, :size => 10 %>
+          </td>
+          <td class="label">
+            desc:
+          </td>
+          <td>
+            <%= f.text_field :description, :size => 20 %>
+          </td>
+          <td class="label">
+            tickets:
+          </td>
+          <td>
+            <%= f.text_field :tickets, :size => 30 %>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="8" class="center">
+            <%= f.submit 'Confirm', :class => 'submit' %>
+          </td>
+        </tr>
+      </table>
+    <% end %>
+  </div>
+</div>

@@ -1,0 +1,219 @@
+
+<% page_name 'Stats' %>
+
+<div class="main"> 
+  <div class="inner" style="width:850px;">  
+    <h2>Site Stats</h2>
+
+    <%= render :partial => 'misc/flash', :locals => {:flash => flash} %>
+    
+    <table class="details">
+      <% unless @stat %>
+        <tr>  
+          <td class="center">            
+            <br><span class="bold grey">Stats currently unavailable.</span><br><br>
+          </td>
+        </tr>
+      <% else %>
+        <tr>  
+          <td class="label">
+            Updated
+          </td>
+          <td>
+            <%= textual_time_interval @stat.created_at, 'ago' %>&nbsp;
+            <%= link_to '[ history ]', {:action => 'history'}, {:class => 'admin'} if logged_user.admin? %>
+          </td>
+        </tr>
+        <tr>
+         <td class="label">
+            Torrents
+          </td>
+          <td>  
+            <%= "#{@stat.torrents_alive} alive + #{@stat.torrents_dead} dead = #{@stat.torrents_alive + @stat.torrents_dead} total" %>
+          </td>
+        </tr>
+        <tr>
+         <td class="label">
+            Snatches
+          </td>
+          <td>  
+            <%= "#{@stat.snatches}" %>
+          </td>
+        </tr>
+        <tr>
+          <td class="label">
+            Users
+          </td>
+          <td>  
+            <%= "#{@stat.users_active} active + #{@stat.users_inactive} inactive = #{@stat.users_active + @stat.users_inactive} total" %>
+          </td>
+        </tr>      
+        <tr>
+         <td class="label">
+            Peers
+          </td>
+          <td>  
+            <%= "#{@stat.peers_seeding} seeding + #{@stat.peers_leeching} leeching = #{@stat.peers_seeding + @stat.peers_leeching} total" %>
+          </td>
+        </tr>
+        <tr>
+         <td class="label">
+            Forums
+          </td>
+          <td>
+            <%= "#{@stat.posts} posts in #{@stat.topics} topics and #{@stat.forums} forums" %>
+          </td>
+        </tr>
+        <tr>
+         <td class="label">
+            Uploaded
+          </td>
+          <td>  
+            <%= textual_data_amount @stat.uploaded %>
+          </td>
+        </tr>            
+        <tr>
+         <td class="label">
+            Downloaded
+          </td>
+          <td>  
+            <%= textual_data_amount @stat.downloaded %>
+          </td>        
+        </tr>
+        <tr>
+         <td class="label">
+            Tracker ratio
+          </td>
+          <td>  
+            <%= @stat.ratio %>
+          </td>
+        </tr>
+        <tr>
+          <td class="label">
+            Top contributors
+          </td>
+          <td>
+            <% unless @stat.top_contributors_list.blank? %>
+              <table class="browse left">
+                <tr>
+                  <td class="header">
+                    Torrents
+                  </td>
+                  <td class="header">
+                    Username
+                  </td >
+                  <td class="header">
+                    Country
+                  </td>
+                  <td class="header">
+                    Role
+                  </td>
+                  <td class="header">
+                    Joined
+                  </td>
+                  <td class="header">
+                    Up
+                  </td>
+                  <td class="header">
+                    Down
+                  </td>
+                  <td class="header">
+                    Ratio
+                  </td>
+                </tr>
+                <% @stat.top_contributors_list.each do |i| %>
+                  <% u = i[:user] %>
+                  <tr>
+                    <td>
+                      <%= i[:torrents] %>
+                    </td>
+                    <td>
+                      <%= user_link u %>
+                    </td>        
+                    <td>
+                      <%= country_image u.country %>
+                    </td>
+                    <td>
+                      <%= u.role.description %>
+                    </td>
+                    <td>
+                      <%= I18n.l u.created_at, :format => :date %>
+                    </td>
+                    <td>
+                      <%= textual_data_amount u.uploaded %>
+                    </td>
+                    <td>
+                      <%= textual_data_amount u.downloaded %>
+                    </td>
+                    <td>
+                       <%= number_to_ratio u.ratio %>
+                    </td>
+                  </tr>
+                <% end %>
+              </table>
+            <% end %>
+          </td>
+        </tr>
+        <tr>
+          <td class="label">
+            Top uploaders
+          </td>
+          <td>
+            <% unless @stat.top_uploaders_list.blank? %>
+              <table class="browse left">
+                <tr>
+                  <td class="header">
+                    Username
+                  </td>
+                  <td class="header">
+                    Country
+                  </td>
+                  <td class="header">
+                    Role
+                  </td>
+                  <td class="header">
+                    Joined
+                  </td>
+                  <td class="header">
+                    Up
+                  </td>
+                  <td class="header">
+                    Down
+                  </td>
+                  <td class="header">
+                    Ratio
+                  </td>
+                </tr>
+                <% @stat.top_uploaders_list.each do |u| %>
+                  <tr>
+                    <td>
+                      <%= user_link u %>
+                    </td>        
+                    <td>
+                      <%= country_image u.country %>
+                    </td>
+                    <td>
+                      <%= u.role.description %>
+                    </td>
+                    <td>
+                      <%= I18n.l u.created_at, :format => :date %>
+                    </td>
+                    <td>
+                      <%= textual_data_amount u.uploaded %>
+                    </td>
+                    <td>
+                      <%= textual_data_amount u.downloaded %>
+                    </td>
+                    <td>
+                      <%= number_to_ratio u.ratio %>
+                    </td>
+                  </tr>
+                <% end %>
+              </table>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </table>
+  </div>
+</div>

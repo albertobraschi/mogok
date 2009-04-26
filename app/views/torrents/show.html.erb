@@ -1,0 +1,238 @@
+
+<% page_name 'Torrent Details' %>
+
+<div class="main">
+  <div class="inner">
+    <h2>Torrent Details</h2>
+
+    <div class="torrent_header"><%= torrent_link @torrent %></div>
+
+    <%= render :partial => 'misc/flash', :locals => {:flash => flash} %>
+
+    <table class="details margin_bottom">
+      <tr>
+        <td class="label">
+          Download
+        </td>
+        <td>
+          <div class="torrent_download_link float_left">
+            <%= torrent_download_link @torrent, true %>
+          </div>
+
+          <div class="float_right">
+            <ul class="menu">
+              <% if logged_user.admin_mod? || @torrent.user == logged_user %>
+                <li><%= link_to 'edit', {:action => 'edit', :id => @torrent} %></li>
+                <li>|</li>
+                <li><%= link_to 'remove', {:action => 'remove', :id => @torrent} %></li>
+                <li>|</li>
+                <% if logged_user.admin_mod? %>
+                  <% unless @torrent.active? %>
+                  <li><%= link_to 'activate', {:action => 'activate', :id => @torrent}, {:class => 'mod', :confirm => 'Are you sure?'} %></li>
+                    <li>|</li>
+                  <% end %>
+                  <li><%= link_to @torrent.locked? ? 'unlock' : 'lock', {:action => 'switch_lock_comments', :id => @torrent}, {:class => 'mod'} %></li>
+                  <li>|</li>
+                <% end %>
+              <% else %>
+                <li><%= link_to 'report', {:action => 'report', :id => @torrent} %></li>
+                <li>|</li>
+              <% end %>              
+              <li><%= bookmark_link_text @torrent, 'bookmark_spinner' %></li>
+            </ul>
+          </div>
+          <div id="bookmark_spinner" class="hide">
+            <%= spinner_image %>
+          </div>
+        </td>
+      </tr>
+      <% if logged_user.admin? %>
+        <tr>  
+          <td class="label">
+            ID
+          </td>
+          <td>
+            <%= @torrent.id %>          
+          </td>
+        </tr>
+      <% end %>
+      <% if logged_user.admin_mod? %>
+        <tr>  
+          <td class="label">
+            ACTIVE
+          </td>
+          <td>
+            <%= @torrent.active %>          
+          </td>
+        </tr>
+      <% end %>
+      <tr>  
+        <td class="label">
+          Category
+        </td>
+        <td>
+          <%= @torrent.category.name %>
+        </td>
+      </tr>
+      <% if @torrent.format_id %>
+        <tr>  
+          <td class="label">
+            Format
+          </td>
+          <td>
+            <%= @torrent.format.name %> 
+          </td>
+        </tr>
+      <% end %>
+      <% unless @torrent.tags.blank? %>
+        <tr>  
+          <td class="label">
+            Tags
+          </td>
+          <td>
+            <%= @torrent.tags_str %>
+          </td>
+        </tr>
+      <% end %>
+      <% if @torrent.year %>
+        <tr>
+          <td class="label">
+            Year
+          </td>
+          <td>
+            <%= @torrent.year %>
+          </td>
+        </tr>
+      <% end %>
+      <% if @torrent.country_id %>
+        <tr>
+          <td class="label">
+            Country
+          </td>
+          <td>
+            <%= country_image @torrent.country %>
+          </td>
+        </tr>
+      <% end %>
+      <tr>  
+        <td class="label">
+          Description
+        </td>
+        <td>
+          <div class="user_content">
+            <%= HtmlHelper.to_html @torrent.description %>
+          </div>
+        </td>
+      </tr>
+      <tr>  
+        <td class="label">
+          Created by
+        </td>
+        <td>
+          <%= @torrent.user ? user_link(@torrent.user) : 'unknown' %> 
+        </td>
+      </tr>
+      <tr>  
+        <td class="label">
+          Created
+        </td>
+        <td>
+          <%= textual_time_interval(@torrent.created_at, 'ago') %>
+        </td>
+      </tr>
+      <tr>
+        <td class="label">
+          Size
+        </td>
+        <td>
+          <%= textual_data_amount @torrent.size %>
+        </td>
+      </tr>
+      <tr>  
+        <td class="label">
+          Info Hash
+        </td>
+        <td>
+          <%= @torrent.info_hash_hex %>
+        </td>
+      </tr>
+      <tr>
+        <tr>  
+          <td class="label">
+            Files
+          </td>
+          <td class="left">
+            <%= render :partial => 'mapped_files', :locals => {:mapped_files => @mapped_files} %>
+          </td>
+        </tr>
+      </tr>
+      <tr>  
+        <td class="label">
+          Snatched
+        </td>
+        <td>
+          <div class="float_left">
+            <ul class="compact">
+              <li><%= "#{@torrent.snatches_count} time#{'s' if @torrent.snatches_count != 1}" %></li>
+              <% if @torrent.snatches_count > 0 %>
+                <li>
+                  <%=  link_to_remote '[ view | hide ]',
+                                      :url => {:action => 'show_snatches', :id => @torrent},
+                                      :condition => "retrieve_or_hide(this, 'torrent_snatches')",
+                                      :before => "this.blur();hide_show_div('snatches_spinner', 'spinner_left')",
+                                      :complete => "hide_show_div('snatches_spinner'); hide_show_div('torrent_snatches', 'torrent_snatches')"%>
+                </li>
+              <% end %>
+            </ul>
+          </div>
+          <div id="snatches_spinner" class="hide">
+            <%= spinner_image %>
+          </div>
+          <br>
+          <div id="torrent_snatches" class="hide"></div>
+        </td>
+      </tr>
+      <tr>  
+        <td class="label">
+          Peers
+        </td>
+        <td>
+          <div class="float_left">
+            <ul class="compact">
+              <li><%= "#{@torrent.seeders_count} seeding + #{@torrent.leechers_count} leeching = #{@torrent.total_peers} total" %><li>
+              <% if @torrent.total_peers > 0 %>
+                <li>
+                  <%=  link_to_remote '[ view | hide ]',
+                                       :url => {:action => 'show_peers', :id => @torrent},
+                                       :condition => "retrieve_or_hide(this, 'torrent_peers')",
+                                       :before => "this.blur();hide_show_div('peers_spinner', 'spinner_left')",
+                                       :complete => "hide_show_div('peers_spinner'); hide_show_div('torrent_peers', '')" %>
+                </li>
+              <% end %>
+            </ul>
+          </div>
+          <div id="peers_spinner" class="hide">
+            <%= spinner_image %>
+          </div>
+          <br>
+          <div id="torrent_peers" class="hide"></div>                
+        </td>
+      </tr>
+    </table>
+
+    <a name="comments"></a>
+
+    <%= render :partial => 'comment_flash', :locals => {:flash => flash} %>
+
+    <%= render :partial => 'comment', :collection => @comments, :locals => {:torrent => @torrent, :current_page => @comments.current_page} %>
+
+    <%= will_paginate @comments %>
+
+    <% if !@torrent.locked? || logged_user.admin_mod? %>
+      <h3>Comment</h3>
+      <%= render :partial => 'comment_box', :locals => {:torrent => @torrent} %>
+    <% end %>
+  </div>
+</div>
+
+

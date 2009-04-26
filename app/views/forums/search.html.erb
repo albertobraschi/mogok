@@ -1,0 +1,55 @@
+
+<% page_name 'Forums' %>
+
+ <div class="main">
+  <div class="forums" style="width:850px;">
+    <div class="page_header"><%= link_to 'Forums', forums_path %></div>
+
+    <div class="forum_name">Search All Forums</div>
+
+    <%= render :partial => 'search_box', :locals => {:action_name => 'search'} %>
+
+    <table class="search">
+      <tr>
+        <td width="10%" class="header">
+          Forum
+        </td>
+        <td width="90%" class="header">
+          Topic
+        </td>
+        <td class="header">
+          Author
+        </td>
+        <td class="header">
+          Replies
+        </td>
+      </tr>
+      <% unless @topics.blank? %>
+        <% @topics.each do |t| %>
+          <tr>
+            <td class="no_wrap">
+              <%= link_to t.forum.name, {:action => 'show', :id => t.forum}, {:class => 'forum'} %>
+            </td>
+            <td class="left">
+              <%= link_to t.title, topics_path(:forum_id => t.forum, :action => 'show', :id => t), {:class => 'topic'} %>
+            </td>
+            <td>
+              <%= t.user ? user_link(t.user) : 'unknown' %>
+            </td>
+            <td>
+              <%= t.replies_count %>
+            </td>
+          </tr>
+        <% end %>
+      <% else %>
+        <tr>
+          <td colspan="4">
+            No topics found.
+          </td>
+        </tr>
+      <% end %>
+    </table>
+
+    <%= will_paginate @topics %>
+  </div>
+</div>

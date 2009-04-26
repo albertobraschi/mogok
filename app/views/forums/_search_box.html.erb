@@ -1,0 +1,15 @@
+
+  <div class="fields_box margin_bottom" style="width:400px;">
+    <% form_tag({:action => action_name}, :method => :get) do %>
+      <table>
+        <tr>
+          <td>
+            <%= text_field_tag :keywords, params[:keywords], {:size => 40, :maxlength => 80, :focus => true} %>
+          </td>
+          <td>
+            <%= submit_tag 'Search', :name => nil, :class => 'submit' %>
+          </td>
+        </tr>
+      </table>
+    <% end %>
+  </div>

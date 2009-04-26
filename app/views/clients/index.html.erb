@@ -1,0 +1,71 @@
+
+<% page_name 'Clients' %>
+
+<div class="main">
+  <h2>Clients</h2>
+
+  <%= render :partial => 'misc/flash', :locals => {:flash => flash} %>
+
+  <div class="links">
+    <%= link_to '[ new ]', {:action => 'new'}, {:class => 'admin'} %>
+  </div>
+
+  <table class="browse">
+    <tr>
+      <td class="header">
+        &nbsp; id &nbsp;
+      </td>
+      <td class="header">
+        code
+      </td>
+      <td class="header_order_by">
+        name
+      </td>
+      <td class="header">
+        banned
+      </td>
+      <td class="header">
+        min_version
+      </td>
+      <td class="header">
+        &nbsp;
+      </td>
+      <td class="header">
+        &nbsp;
+      </td>
+    </tr>
+    <% unless @clients.blank? %>
+      <% @clients.each do |c| %>
+        <tr>
+          <td>
+            <%= c.id %>
+          </td>
+          <td>
+            <%= c.code %>
+          </td>
+          <td>
+            <%= c.name %>
+          </td>
+          <td>
+            <%= c.banned %>
+          </td>
+          <td>
+            <%= c.min_version %>
+          </td>
+          <td>
+            <%= link_to '[ edit ]', {:action => 'edit', :id => c}, {:class => 'admin'} %>
+          </td>
+          <td>
+            <%= link_to '[ delete ]', {:action => 'destroy', :id => c}, {:method => :post, :class => 'admin', :confirm => 'Are you sure?'} %>
+          </td>
+        </tr>
+      <% end %>
+    <% else %>
+      <tr>
+        <td colspan="7">
+          no clients found
+        </td> 
+      </tr>
+    <% end %>
+  </table>
+</div>

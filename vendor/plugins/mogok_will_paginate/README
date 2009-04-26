@@ -1,0 +1,51 @@
+
+This plugin extends the functionality of will_paginate.
+It adds the following features:
+
+1 - An alternative link renderer
+  Change config/initializers/init.rb to use the default pagination links.
+
+
+2 - Support for remote (ajax) pagination (typically in partials)
+  Usage:
+    will_paginate_remote @peers, { will_paginate_options }, { remote_options }
+    - remote_options:
+      :spinner_id => spinner_element_id (typically a div containing an animated gif)
+      :spinner_class => spinner_element_css_class  (the class when the element is visible)
+  Example:
+    <%= will_paginate_remote @users, {:container => false}, {:spinner_id => 'users_spinner', :spinner_class => 'spinner_left'} %>
+
+
+3 - Support for rendering the last page (doesn't apply to remote pagination).
+  Example:
+    Product.paginate :page => :last, :per_page => 50
+
+
+4 - A view helper to decorate browse table headers.
+  - Requires three entries in your css file:
+    > the header link class (name 'header')
+    > the header td class (name 'header')
+    > the header td class for the ordered column (name 'header_order_by')
+  - Usage
+    > getting the td header css class
+      table_header_css_class(database_column_name, collection)
+    > rendering the header link
+      table_header_link('Link Text', 'database_column', @wp_collection, 'link_css_class')
+    Example:
+      <td class="<%= table_header_css_class 'name', @users %>">
+        <%= table_header_link 'Name', 'name', @users %>
+      </td>
+
+
+5 - Support for html anchor in the pagination links.
+  The html anchor associated with the list. Will be included in the rendered links.
+  Example:
+    @comments.html_anchor = 'comments'
+
+
+6 - Possibility to choose which columns are to be shown in a decrescent way when the header link is
+clicked the first time. Used when a higher value is more interesting to the user than a low value.
+  Example:
+    @computers.desc_by_default = ['clock_rate', 'storage_capacity']
+
+

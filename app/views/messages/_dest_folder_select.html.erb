@@ -1,0 +1,14 @@
+
+  <select name="destination_folder" id="destination_folder">
+    <% unless session[:messenger_folder] == Message::TRASH %>
+      <option value="<%= Message::TRASH %>" selected><%= 'Trash' %></option>
+    <% end %>
+    <% unless session[:messenger_folder] == Message::SENT %>
+      <% unless session[:messenger_folder] == Message::INBOX %>
+        <option value="<%= Message::INBOX %>"><%= 'Inbox' %></option>
+      <% end %>
+      <% unless session[:messenger_folder] == Message::OLDS %>
+        <option value="<%= Message::OLDS %>"><%= 'Olds' %></option>
+      <% end %>
+    <% end %>
+  </select>

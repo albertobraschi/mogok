@@ -1,0 +1,44 @@
+
+<% page_name 'Task Edition' %>
+
+<div class="main">
+  <h2>Task Edition</h2>
+
+  <div class="fields_box" style="width:900px;">
+    <% form_for :bg_task, :action => 'edit', :id => @bg_task do |f| %>
+      <table>
+        <tr>
+          <td class="label">
+            name:
+          </td>
+          <td>
+            <%= f.text_field :name, :size => 20, :focus => true %>
+          </td>
+          <td class="label">
+            class_name:
+          </td>
+          <td>
+            <%= f.text_field :class_name, :size => 25 %>
+          </td>
+          <td class="label">
+            interval_minutes:
+          </td>
+          <td>
+            <%= f.text_field :interval_minutes, :size => 3 %>
+          </td>
+          <td class="label">
+            next_exec_at:
+          </td>
+          <td>
+            <%= f.text_field :next_exec_at, :size => 20 %>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="8" class="center">
+            <%= submit_tag 'Confirm', :class => 'submit' %>
+          </td>
+        </tr>
+      </table>
+    <% end %>
+  </div>
+</div>

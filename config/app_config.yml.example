@@ -1,0 +1,127 @@
+# *** restart the application after changing this file ***
+
+
+# GENERAL
+
+# application name (appears in the browse window)
+app_name: Mogok
+
+# default locale
+default_locale: en
+
+# if user didn't ask to stay logged in, her session token will expire after this period
+user_max_inactivity_minutes: 30
+
+# default avatar image.
+default_avatar: no_avatar.jpg
+
+# expiration time for the torrents browse cached pages (will expire when a new torrent is uploaded)
+torrents_refresh_minutes: 1
+
+# torrent file maximum size (such files are temporarily loaded in memory so be careful)
+torrent_file_max_size_kb: 256
+
+# set to false to block torrent uploads for non-admins
+torrent_upload_enabled: true
+
+# period that a torrent remains labeled as new after it was uploaded
+torrent_new_period_minutes: 10
+
+# if set will be put in the beginning of the torrent file name(e.g [mogok]Test.torrent)
+torrent_file_prefix: mogok
+
+# if set will replace the original torrent file comment
+torrent_file_comment: Downloaded from Mogok
+
+# size of pages when browsing data
+torrents_page_size: 50
+torrent_peers_page_size: 20
+torrent_snatches_page_size: 20
+torrent_comments_page_size: 20
+users_page_size: 40
+user_activity_page_size: 20
+user_history_page_size: 20
+messages_page_size: 20
+logs_page_size: 50
+announce_logs_page_size: 50
+peers_page_size: 50
+forum_topics_page_size: 40
+forum_posts_page_size: 20
+forum_search_results_page_size: 40
+stats_history_page_size: 40
+
+# browse table columns showed by default in a decrescent way when header is clicked the fist time
+users_desc_by_default:
+ - uploaded
+ - downloaded
+ - ratio
+torrents_desc_by_default:
+ - created_at
+ - comments_count
+ - snatches_count
+ - seeders_count
+ - leechers_count
+announce_logs_desc_by_default:
+ - created_at
+ - up_offset
+ - down_offset
+
+
+# TRACKER
+
+# set the url for an external tracker if necessary (check app/helpers/tracker_helper.rb)
+  # tracker_url: http://host:port/tracker
+
+# if tracker accepts scrape requests
+tracker_scrape_enabled: true
+
+# tracker responses parameters (1800 = 30 minutes)
+tracker_announce_interval_seconds: 1800
+tracker_announce_min_interval_seconds: 1800
+tracker_announce_resp_max_peers: 30
+
+# if tracker does not accept unregistered bittorrent clients
+tracker_ban_unknown_clients: false
+
+# if announces from the bittorrent clients are to be logged
+tracker_log_announces: true
+
+
+# BACKGROUND TASKS
+
+# tasks (note that the actual execution depends on the cron job scheduling)
+bg_tasks:
+  - :name: Cleanup
+    :class_name: BgTasks::Cleanup
+    :interval_minutes: 150
+  - :name: Cleanup Peers
+    :class_name: BgTasks::CleanupPeers
+    :interval_minutes: 70
+  - :name: Refresh Stats
+    :class_name: BgTasks::RefreshStats
+    :interval_minutes: 360
+
+# tasks configuration
+peer_max_inactivity_minutes: 60
+user_max_inactivity_days: 150
+log_max_age_days: 30
+announce_log_max_age_days: 2
+message_max_age_months: 6
+error_log_max_age_days: 5
+password_recovery_max_age_days: 1
+invitation_max_age_days: 3
+task_log_max_age_days: 1
+
+
+
+
+
+
+
+
+
+
+
+
+
+#

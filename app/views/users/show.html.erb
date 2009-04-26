@@ -1,0 +1,295 @@
+
+<% page_name 'User Details' %>
+
+<div class="main">
+  <div class="inner" style="width:880px;">
+    <h2>User Details</h2>
+
+    <%= render :partial => 'misc/flash', :locals => {:flash => flash} %>
+    
+    <table class="details">
+      <tr>  
+        <td class="label">
+          Username
+        </td>
+        <td>  
+          <div class="float_left">
+            <%= user_link @user %>
+          </div>
+          <div class="float_right">
+            <ul class="menu">
+              <% if @user.editable_by? logged_user %>
+                <li><%= link_to 'edit', {:controller => 'users', :action => 'edit', :id => @user} %></li>
+                <li>|</li>
+              <% end %>
+
+              <% if @user != logged_user && @user.editable_by?(logged_user) %>
+                <li><%= link_to 'remove', {:controller => 'users', :action => 'destroy', :id => @user}, {:class => 'admin'} %></li>
+                <li>|</li>
+              <% end %>
+              
+              <% if logged_user.has_ticket?(:staff) %>
+                <li><%= link_to 'staff info', {:controller => 'users', :action => 'edit_staff_info', :id => @user}, {:class => 'staff'} %></li>
+                <li>|</li>
+              <% end %>
+
+              <% if @user == logged_user || logged_user.admin?%>
+                <%= link_to 'reset passkey', {:action => 'reset_passkey', :id => @user} %>
+                <li>|</li>
+              <% end %>
+
+              <% if @user != logged_user && @user.active? %>                
+                <li><%= link_to 'report', {:action => 'report', :id => @user } %></li>
+                <li>|</li>
+              <% end %>
+              
+              <% if @user.active? %>
+                <li><%= link_to 'message', {:controller => 'messages', :action => 'new', :to => @user.username } %></li>
+              <% else %>
+                <li><span class="grey">message</span></li>
+              <% end %>
+            </ul>
+          </div>
+        </td>
+      </tr>
+      <% if logged_user.admin? %>
+        <tr>
+          <td class="label">
+            ID
+          </td>
+          <td>
+            <%= @user.id %>
+          </td>
+        </tr>
+        <tr>  
+          <td class="label">
+            ACTIVE
+          </td>
+          <td>
+            <%= @user.active %>
+          </td>
+        </tr>
+      <% end %>
+      <% if logged_user.has_ticket?(:staff) && !@user.staff_info.blank? %>
+        <tr>
+          <td class="label">
+            STAFF INFO
+          </td>
+          <td>
+            <%= HtmlHelper.to_html @user.staff_info %>
+          </td>
+        </tr>
+      <% end %>
+      <tr>  
+        <td class="label">
+          Role
+        </td>
+        <td>
+          <%= @user.role.description %> 
+        </td>
+      </tr>
+      <% if !@user.tickets.blank? && (@user == logged_user || logged_user.admin?) %>
+        <tr>
+          <td class="label">
+            Tickets
+          </td>
+          <td>
+            <%= @user.tickets %>
+          </td>
+        </tr>
+      <% end %>
+      <% unless @user.country.blank? %>
+        <tr>  
+          <td class="label">
+            Country
+          </td>
+          <td>
+            <%= country_image @user.country %>
+          </td>
+        </tr>
+      <% end %>
+      <tr>  
+        <td class="label">
+          Joined
+        </td>
+        <td>
+          <%= I18n.l @user.created_at, :format => :date %>
+        </td>
+      </tr>
+      <% if @user.display_last_seen_at? || @user == logged_user || logged_user.admin? %>
+        <tr>  
+          <td class="label">
+            Last seen
+          </td>
+          <td>
+            <%= textual_time_interval @user.last_seen_at, 'ago' %>
+          </td>
+        </tr>
+      <% end %>
+      <% if @user == logged_user || logged_user.admin? %>
+        <tr>  
+          <td class="label">
+            Passkey
+          </td>
+          <td>
+            <%= "#{@user.passkey[0, 4]}**************#{@user.passkey[@user.passkey.size - 5, 4]}" %>
+          </td>
+        </tr>
+        <tr>  
+          <td class="label">
+            Email
+          </td>
+          <td>
+            <%= @user.email %>
+          </td>
+        </tr>
+      <% end %>
+      <% unless @user.gender.blank? %>
+        <tr>  
+          <td class="label">
+            Gender
+          </td>
+          <td>
+            <%= @user.gender.name %>
+          </td>
+        </tr>
+      <% end %>
+      <% unless @user.inviter.blank? %>
+        <tr>
+          <td class="label">
+            Invited by
+          </td>
+          <td>
+            <%= user_link @user.inviter %>
+          </td>
+        </tr>
+      <% end %>
+      <% unless @user.avatar.blank? %>
+        <tr>  
+          <td class="label">
+            Avatar
+          </td>
+          <td>
+            <%= avatar_image @user %>
+          </td>
+        </tr>
+      <% end %>
+      <% unless @user.info.blank? %>
+        <tr>  
+          <td class="label">
+            Info
+          </td>
+          <td>
+            <div class="user_content">
+              <%= HtmlHelper.to_html @user.info %>
+            </div>
+          </td>
+        </tr>
+      <% end %>
+      <tr>
+        <td class="label">
+          Uploads
+        </td>
+        <td>
+          <div class="float_left">
+            <%= link_to_remote '[ view | hide ]',
+                                :url => {:action => 'show_uploads', :id => @user},
+                                :condition => "retrieve_or_hide(this, 'user_uploads')",
+                                :before => "this.blur();hide_show_div('uploads_spinner', 'spinner_left')",
+                                :complete => "hide_show_div('uploads_spinner'); hide_show_div('user_uploads')" %>
+          </div>
+          <div id="uploads_spinner" class="hide">
+            <%= spinner_image %>
+          </div>
+          <br>
+          <div id="user_uploads" class="hide"></div>
+        </td>
+      </tr>
+      <% if @user.display_downloads? || @user == logged_user || logged_user.admin? %>
+        <tr>
+          <td class="label">
+            Snatches
+          </td>
+          <td>
+            <div class="float_left">
+              <%= link_to_remote '[ view | hide ]',
+                                  :url => {:action => 'show_snatches', :id => @user},
+                                  :condition => "retrieve_or_hide(this, 'user_snatches')",
+                                  :before => "this.blur();hide_show_div('snatches_spinner', 'spinner_left')",
+                                  :complete => "hide_show_div('snatches_spinner'); hide_show_div('user_snatches')" %>
+            </div>
+            <div id="snatches_spinner" class="hide">
+              <%= spinner_image %>
+            </div>
+            <br>
+            <div id="user_snatches" class="hide"></div>
+          </td>
+        </tr>
+      <% end %>
+      <tr>  
+        <td class="label">
+          Uploaded
+        </td>
+        <td>
+          <%= textual_data_amount @user.uploaded %>
+        </td>
+      </tr>
+      <tr>  
+        <td class="label">
+          Downloaded
+        </td>
+        <td>
+          <%= textual_data_amount @user.downloaded %>
+        </td>
+      </tr>
+      <tr>  
+        <td class="label">
+          Ratio
+        </td>
+        <td>
+          <%= number_to_ratio @user.ratio %>
+        </td>
+      </tr>
+      <tr>  
+        <td class="label">
+          Seeding
+        </td>
+        <td>
+          <div class="float_left">
+            <%= link_to_remote '[ view | hide ]',
+                                :url => {:action => 'show_activity', :id => @user, :seeding => '1'},
+                                :condition => "retrieve_or_hide(this, 'user_seeding')",
+                                :before => "this.blur();hide_show_div('seeding_spinner', 'spinner_left')",
+                                :complete => "hide_show_div('seeding_spinner'); hide_show_div('user_seeding')" %>
+          </div>
+          <div id="seeding_spinner" class="hide">
+            <%= spinner_image %>
+          </div>
+          <br>
+          <div id="user_seeding" class="hide"></div>                
+        </td>
+      </tr>
+      <% if @user.display_downloads? || @user == logged_user || logged_user.admin? %>
+        <tr>  
+          <td class="label">
+            Leeching
+          </td>
+          <td>
+            <div class="float_left">
+              <%= link_to_remote '[ view | hide ]',
+                                  :url => {:action => 'show_activity', :id => @user},
+                                  :condition => "retrieve_or_hide(this, 'user_leeching')",
+                                  :before => "this.blur();hide_show_div('leeching_spinner', 'spinner_left')",
+                                  :complete => "hide_show_div('leeching_spinner'); hide_show_div('user_leeching')" %>
+            </div>
+            <div id="leeching_spinner" class="hide">
+              <%= spinner_image %>
+            </div>
+            <br>
+            <div id="user_leeching" class="hide"></div>                
+          </td>
+        </tr>
+      <% end %>
+    </table>
+  </div>
+</div>

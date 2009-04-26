@@ -1,0 +1,89 @@
+
+<% page_name 'My Uploads' %>
+
+<div class="main">
+  <h2>My Uploads</h2>
+
+  <table class="browse wide">
+    <tr>
+      <td class="header">
+        &nbsp;
+      </td>
+      <td class="<%= table_header_css_class 'name', @torrents  %>" width="99%" colspan="2">
+        <%= table_header_link 'Name', 'name', @torrents %>
+      </td>
+      <td class="<%= table_header_css_class 'created_at', @torrents %>">
+        <%= table_header_link 'Added', 'created_at', @torrents %>
+      </td>
+      <td class="<%= table_header_css_class 'size', @torrents %>">
+        <%= table_header_link 'Size', 'size', @torrents %>
+      </td>
+      <td class="<%= table_header_css_class 'files_count', @torrents %>">
+        <%= table_header_link 'Files', 'files_count', @torrents %>
+      </td>
+      <td class="<%= table_header_css_class 'comments_count', @torrents %>">
+        <%= table_header_link image_tag('comments.png', :alt => 'Commented', :title => 'Commented'), 'comments_count', @torrents %>
+      </td>
+      <td class="<%= table_header_css_class 'snatches_count', @torrents %>">
+        <%= table_header_link image_tag('snatches.gif', :alt => 'Snatched', :title => 'Snatched'), 'snatches_count', @torrents %>
+      </td>
+      <td class="<%= table_header_css_class 'seeders_count', @torrents %>">
+        <%= table_header_link image_tag('seeders.png', :alt => 'Seeders', :title => 'Seeders'), 'seeders_count', @torrents %>
+      </td>
+      <td class="<%= table_header_css_class 'leechers_count', @torrents %>">
+        <%= table_header_link image_tag('leechers.png', :alt => 'Leechers', :title => 'Leechers'), 'leechers_count', @torrents %>
+      </td>
+    </tr>
+    <% unless @torrents.blank? %>
+      <% @torrents.each do |t| %>
+        <tr>
+          <td class="no_padding">
+            <%= category_label t.category %>
+          </td>
+          <td class="left no_right_border">
+            <%= torrent_link t, :browse %>
+            <%= torrent_additional_info t %>
+            <div class="tags"><%= t.tags_str %></div>
+          </td>
+          <td class="torrent_download_bookmark">
+            <div class="float_right">
+              <ul class="compact">
+                <li><%= torrent_download_link t %></li>
+                <li><%= bookmark_link_image t %></li>
+              </ul>
+            </div>
+          </td>
+          <td class="no_wrap">
+            <%= textual_time_interval t.created_at, 'ago' %>
+          </td>
+          <td class="no_wrap">
+            <%= textual_data_amount t.size %>
+          </td>
+          <td>
+            <%= t.files_count %>
+          </td>
+          <td>
+            <%= t.comments_count %>
+          </td>
+          <td>
+            <%= t.snatches_count %>
+          </td>
+          <td>
+            <%= t.seeders_count %>
+          </td>
+          <td>
+            <%= t.leechers_count %>
+          </td>
+        </tr>
+      <% end %>
+    <% else %>
+      <tr>
+        <td colspan="10">
+          No torrents found.
+        </td>
+      </tr>
+    <% end %>
+  </table>
+
+  <%= will_paginate @torrents %>
+</div>

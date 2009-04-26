@@ -1,0 +1,58 @@
+
+<% page_name 'Logs' %>
+
+<div class="main">
+  <h2>Logs</h2>
+  
+  <div class="fields_box margin_bottom" style="width:400px;">
+    <% form_tag({:action => 'index'}, :method => :get) do %>
+      <table>
+        <tr>
+          <% if logged_user.admin? %>
+            <td>
+              <%= check_box_tag :admin, '1', params[:admin] == '1', {:title => 'admin only'} %>
+            </td>
+          <% end %>
+          <td>
+            <%= text_field_tag :keywords, params[:keywords], {:size => 40, :maxlength => 80, :focus => true} %>
+          </td>
+          <td colspan="2">
+            <%= submit_tag 'Search', :name => nil, :class => 'submit' %>
+          </td>
+        </tr>
+      </table>
+    <% end %>
+  </div>
+
+  <table class="browse">
+    <tr>
+      <td class="<%= table_header_css_class 'created_at', @logs %>">
+        <%= table_header_link 'Added', 'created_at', @logs %>
+      </td>
+      <td class="header">
+        Contents
+      </td>
+    </tr>
+    <% unless @logs.blank? %>
+      <% @logs.each do |l| %>
+        <tr>
+          <td<%= ' class="admin"' if l.admin %>>
+            <%= I18n.l l.created_at, :format => :long %>
+          </td>
+          <td class="left<%= ' admin' if l.admin %>">
+            <%= l.body %>
+          </td>
+        </tr>
+      <% end %>
+    <% else %>
+      <tr>
+        <td colspan="2">
+          No logs found.
+        </td> 
+      </tr>
+    <% end %>
+  </table>
+
+  <%= will_paginate @logs %>
+  
+</div>

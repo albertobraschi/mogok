@@ -1,0 +1,15 @@
+
+   <div class="editor <%= align %>">
+      <table class="<%= align %>">
+        <tr>
+          <td>
+            <%= render :partial => 'misc/editor_panel', :locals => {:target => target} %>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <%= yield %>            
+          </td>
+        </tr>
+      </table>
+    </div>

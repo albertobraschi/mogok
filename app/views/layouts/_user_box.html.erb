@@ -1,0 +1,44 @@
+
+  <div class="user_box">
+    <table>
+      <tr>
+        <td class="no_wrap">
+          <ul>
+            <li><%= user_link logged_user %></li>
+            <li>|</li>
+            <li><span class="bold">up:</span>&nbsp;<%= textual_data_amount logged_user.uploaded %></li>
+            <li>|</li>
+            <li><span class="bold">down:</span>&nbsp;<%= textual_data_amount logged_user.downloaded %></li>
+            <li>|</li>
+            <li><span class="bold">ratio:</span>&nbsp;<%= number_to_ratio logged_user.ratio %></li>
+          </ul>
+        </td>
+      </tr>
+      <tr>
+        <td class="no_wrap">
+          <ul class="user_menu">
+            <li><%= link_to 'inbox', {:controller => 'messages', :action => 'folder', :id => Message::INBOX}, { :class => ('new_message' if logged_user.has_new_message?) } %></li>
+            <li>|</li>
+            <li><%= link_to 'bookmarks', {:controller => 'users', :action => 'bookmarks'} %></li>
+            <li>|</li>
+            <li><%= link_to 'uploads', {:controller => 'users', :action => 'uploads', :id => logged_user} %></li>
+            <% if logged_user.has_ticket?(:inviter) %>
+              <li>|</li>
+              <li><%= link_to 'invite', {:controller => 'invitations'} %></li>
+            <% end %>
+            <% if logged_user.mod? %>
+              <li>|</li>
+              <li><%= link_to 'reports', {:controller => 'reports' }, {:class => @report_alert ? 'report_alert' : nil} %></li>
+            <% end %>
+            <li>|</li>
+            <li><%= link_to 'profile', {:controller => 'users', :action => 'edit', :id => logged_user} %></li>
+            <% if logged_user.admin? && !session[:adm_menu] %>
+              <li>|</li>
+              <li><%= link_to 'adm', {:controller => 'adm', :action => 'switch_menu' } %></li>
+            <% end %>
+          </ul>
+        </td>
+      </tr>
+    </table>
+  </div>
+

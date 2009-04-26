@@ -1,0 +1,32 @@
+
+<% page_name 'Comment Edition' %>
+
+<div class="main">  
+  <h2>Comment Edition</h2>
+
+  <div class="torrent_header"><%= torrent_link @comment.torrent %></div>
+
+  <%= render :partial => 'misc/flash', :locals => {:flash => flash} %>
+
+  <div class="fields_box" style="width:600px;">
+    <% form_tag :action => 'edit', :page => params[:page] do %>
+      <table>
+        <tr>
+          <td>
+            <% render :layout => 'misc/editor', :locals => {:target => 'body', :align => 'center'} do %>
+              <%= text_area_tag :body, @comment.body, {:rows => 8, :cols => 70, :focus => true} %>
+            <% end %>
+          </td>
+        </tr>
+        <tr>
+          <td class="center">
+            <ul class="buttons">
+              <li><%= submit_tag 'Edit', :class => 'submit' %></li>
+              <li><%= submit_tag 'Cancel', :name => 'cancel', :class => 'submit' %></li>
+            </ul>
+          </td>
+        </tr>
+      </table>
+    <% end %>
+  </div>
+</div>

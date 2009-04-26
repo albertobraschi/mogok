@@ -1,0 +1,32 @@
+
+<% page_name 'Countries' %>
+
+<div class="main">
+  <h2>New Country</h2>
+  
+  <div class="fields_box" style="width:550px;">
+    <% form_for :country, :action => 'new' do |f| %>
+      <table>
+        <tr>
+          <td class="label">
+            name:
+          </td>
+          <td>
+            <%= f.text_field :name, :size => 15, :focus => true %>
+          </td>
+          <td class="label">
+            image:
+          </td>
+          <td>
+            <%= f.text_field :image, :size => 40 %>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="4" class="center">
+            <%= f.submit 'Confirm', :class => 'submit' %>
+          </td>
+        </tr>
+      </table>
+    <% end %>
+  </div>
+</div>

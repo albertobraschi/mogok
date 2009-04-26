@@ -1,0 +1,266 @@
+
+en:
+  controller:
+    account:
+      login:
+        blocked: Login is temporarily blocked for your IP address. Try to recover your password.
+        account_disabled: This account was disabled.
+      signup:
+        blocked: Signup is temporarily blocked for your IP address.
+      password_recovery:
+        sent: A password recovery link has been sent to {{email}}.
+        delivery_error: An error occurred and the email could be not sent. Please try again later.
+        invalid_email: Email address {{email}} is not valid.
+      change_password:
+        changed: Password successfully changed.
+        invalid_link: Invalid password recovery link.
+      check_login_attempts:
+        blocked: Login will now remain blocked for {{hours}} hours. Try to recover your password.
+        invalid_login: "Invalid login data. Remaining attempts: {{remaining}}"
+
+    comments:
+      new:
+        success: Comment successfully added.
+        empty: Comment cannot be empty.
+      edit:
+        success: Comment successfully edited.
+        empty: Comment cannot be empty.
+      report:
+        success: Comment successfully reported.
+        reason_required: Reason is required.
+
+    invitations:
+      new:
+        success: An invitation email was sent to {{email}}.
+        email_in_use: Email already in use.        
+        delivery_error: An error occurred and the invitation email could be not sent. Please try again later.
+        invalid_email: Invalid email address.
+      destroy:
+        success: Invitation successfully cancelled.
+
+    messages:
+      new:
+        success: Message successfully sent.
+        for_system: Messages for system are not accepted.
+      move:
+        moved_single: Message successfully moved.
+        moved_list: Message(s) successfully moved.
+      prepare_new_message:
+        no_subject: no subject
+      prepare_to_reply:
+        wrote: wrote
+      prepare_to_forward:
+        wrote: wrote
+
+    posts:
+      new:
+        success: Post successfully added.
+        empty: Post cannot be empty.
+      edit:
+        success: Post successfully edited.
+        empty: Post cannot be empty.
+      report:
+        success: Post successfully reported.
+        reason_required: Reason is required.
+
+    topics:
+      new:
+        success: Topic successfully created.
+        empty: Both fields are required.
+      edit:
+        success: Topic successfully edited.
+        empty: Both fields are required.
+      destroy:
+        success: Topic successfully removed.
+      report:
+        success: Topic successfully reported.
+        reason_required: Reason is required.
+
+    torrents:
+      edit:
+        success: Torrent successfully edited.
+        log: Torrent "{{torrent}}" was edited by {{user}}
+      remove:
+        destroyed: Torrent successfully deleted from system.
+        destroyed_log: Torrent "{{torrent}}" was removed by {{user}}
+        inactivated: Torrent was successfully inactivated.
+        inactivated_log: Torrent "{{torrent}}" was inactivated by {{user}}
+      activate:
+        success: Torrent was successfully activated.
+        log: Torrent "{{torrent}}" was activated by {{user}}
+      report:
+        success: Torrent successfully reported.
+        reason_required: Reason is required.
+      upload:
+        success: Your personal announce url was added to the torrent, please re-download it.
+        log: Torrent "{{torrent}}" was uploaded by {{user}}
+
+    tracker:
+      scrape:
+        failure:
+          not_allowed: Tracker does not allow scrape.
+          malformed_request: Client sent a malformed request.
+          server_error: Inexpected server error.
+      announce:
+        failure:
+          malformed_request: Client sent a malformed request.
+          invalid_request: Client sent a request with invalid data.
+          client_banned: Client not allowed.
+          client_version_banned: Client version not allowed.
+          server_error: Inexpected server error.
+      set_torrent:
+        failure:
+          invalid_torrent: Torrent not found.
+      set_user:
+        failure:
+          invalid_passkey: Invalid passkey.
+          invalid_user: Invalid user.
+
+    users:
+      edit:
+        success: Profile successfully updated.
+      destroy:
+        success: User successfully destroyed.
+        log: User {{user}} removed by {{by}}
+      reset_passkey:
+        success: Passkey successfully reset.
+        log: User {{user}} PASSKEY was reset by {{by}}
+      report:
+        success: User successfully reported.
+        reason_required: Reason is required.
+
+
+  helper:
+    application_helper:
+      user_link:
+        inactive: Inactive
+    torrents_helper:
+      torrent_download_link:
+        download: Download
+      bookmark_image:
+        bookmark: Bookmark
+        unbookmark: Unbookmark
+
+
+  model:
+    app_mailer:
+      password_recovery:
+        subject: password recovery
+      invitation:
+        subject: invitation to our site
+        
+    message:
+      errors:
+        receiver:
+          invalid: User not found.
+          inactive: User is not active.
+
+    user:
+      errors:
+        username:
+          required: Username required.
+          taken: Username already in use.
+          invalid_length: Length must be between 3 and 20.
+        password:
+          required: Password required.
+          incorrect:  Password incorrect.
+          too_short: Password length must be at least 5.
+          invalid_confirmation: Incorrect password confirmation.
+        email:
+          required: Email required.
+          taken: Email already in use.
+          invalid: Invalid email.
+        invite_code:
+          invalid: Invalid invite code.
+          
+    torrent:
+      errors:
+        torrent_file:
+          required: Torrent file required.
+          type: Must be a file of type torrent.
+          size: Torrent file size cannot exceed {{max_size}} KB, increase the pieces size.
+        info_hash:
+          taken:  Torrent file already uploaded.
+        year:
+          invalid: Invalid year.
+        tags:
+          max: Tags limit is {{max}}.
+
+  lib:
+    message_notification:
+      notify_torrent_inactivated:
+        subject: torrent inactivated
+        body: Your torrent "{{name}}" was inactivated by {{by}} ({{reason}}).
+      notify_torrent_deleted:
+        subject: torrent removed
+        body: Your torrent "{{name}}" was removed by {{by}} ({{reason}}).
+      notify_passkey_reset:
+        subject: passkey reset
+        body: Your passkey was reset for security reasons, please re-download your active torrents.
+
+
+  activerecord:
+    errors:
+      messages:
+        blank: Required field.
+        empty: Required field.
+
+
+  date:
+    day_names: [Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday]
+    abbr_day_names: [Sun, Mon, Tue, Wed, Thu, Fri, Sat]
+    month_names: [~, January, February, March, April, May, June, July, August, September, October, November, December]
+    abbr_month_names: [~, Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec]
+    order: [:year, :month, :day]
+
+  time:
+    formats:
+      # Dec 12, 2008 13:34
+      default: "%b %d, %Y %H:%M"
+      # Dec 12, 2008
+      date: "%b %d, %Y"
+      # Dec 12, 2008 13:34:30
+      long: "%b %d, %Y %H:%M:%S"
+      # 2008-12-12 13:34:30
+      db: "%Y-%m-%d %H:%M:%S"
+    am: am
+    pm: pm
+
+  number:
+    format:
+      # 32,000.50
+      separator: '.'
+      delimiter: ','       
+    ratio:
+      format:
+        precision: 3
+    data_amount:
+      format:
+        precision: 2
+
+  datetime:
+    textual:
+      seconds:
+        one: 1 second
+        other: '{{count}} seconds'
+      minutes:
+        one: 1 minute
+        other: '{{count}} minutes'
+      hours:
+        one: 1 hour
+        other: '{{count}} hours'
+      days:
+        one: 1 day
+        other: '{{count}} days'
+      months:
+        one: 1 month
+        other: '{{count}} months'
+      year:
+        one: 1 year
+        other: '{{count}} years'
+
+
+
+
+
+        

@@ -1,0 +1,185 @@
+
+<% page_name 'Peers' %>
+
+<div class="main">
+  <h2>Peers</h2>
+
+  <div class="fields_box margin_bottom" style="width:850px;">
+    <% form_tag({:action => 'index'}, :method => :get) do %>
+      <table>
+        <tr>
+          <td class="label">
+            seeders:
+          </td>
+          <td>
+            <%= check_box_tag :seeder, '1', params[:seeder] == '1' %>
+          </td>
+          <td class="label">
+            leechers:
+          </td>
+          <td>
+            <%= check_box_tag :leecher, '1', params[:leecher] == '1' %>
+          </td>
+          <td class="label">
+            user_id:
+          </td>
+          <td>
+            <%= text_field_tag :user_id, params[:user_id], {:size => 4, :focus => true} %>
+          </td>
+          <td class="label">
+            torrent_id:
+          </td>
+          <td>
+            <%= text_field_tag :torrent_id, params[:torrent_id], {:size => 4} %>
+          </td>
+          <td class="label">
+            ip:
+          </td>
+          <td>
+            <%= text_field_tag :ip, params[:ip], {:size => 15} %>
+          </td>
+          <td class="label">
+            port:
+          </td>
+          <td>
+            <%= text_field_tag :port, params[:port], {:size => 10} %>
+          </td>
+          <td>
+            <%= submit_tag 'Search', :name => nil, :class => 'submit' %>
+          </td>
+        </tr>
+      </table>
+    <% end %>
+  </div>
+
+  <% if !@peers.blank? && @peers.length > 15 %>
+    <%= will_paginate @peers %>
+  <% end %>
+
+  <table class="browse">
+    <tr>
+      <td class="header_order_by">
+        started
+      </td>
+      <td class="header">
+        last_action
+      </td>
+      <td class="header">
+        user
+      </td>
+      <td class="header">
+        tor
+      </td>
+      <td class="header">
+        up
+      </td>
+      <td class="header">
+        down
+      </td>
+      <td class="header">
+        left
+      </td>
+      <td class="header">
+        %
+      </td>
+      <td class="header">
+        seeder
+      </td>
+      <td class="header">
+        ip
+      </td>
+      <td class="header">
+        port
+      </td>
+      <td class="header">
+        <%= image_tag 'connectable.png', :alt => 'connectable', :title => 'connectable' %>
+      </td>
+      <td class="header">
+        client
+      </td>
+      <td class="header">
+        &nbsp;
+      </td>
+    </tr>
+    <% unless @peers.blank? %>
+      <% @peers.each do |p| %>
+        <tr>
+          <td>
+            <%= I18n.l p.started_at, :format => :db %>
+          </td>
+          <td>
+            <%= I18n.l p.last_action_at, :format => :db %>
+          </td>
+          <td>
+            <%= user_link p.user, true %>
+          </td>
+          <td>
+            <%= link_to "[ #{p.torrent.id} ]", {:controller => 'torrents', :action => 'show', :id => p.torrent}, {:title => p.torrent.name} %>
+          </td>
+          <td>
+            <%= textual_data_amount p.uploaded %>
+          </td>
+          <td>
+            <%= textual_data_amount p.downloaded %>
+          </td>
+          <td>
+            <%= textual_data_amount p.leftt %>
+          </td>
+          <td>
+            <%= p.completion_percentage %>
+          </td>
+          <td>
+            <%= p.seeder %>
+          </td>
+          <td>
+            <%= p.ip %>
+          </td>
+          <td>
+            <%= p.port %>
+          </td>
+          <td>
+            <%= p.peer_conn.connectable ? p.peer_conn.connectable : '?' %>
+          </td>
+          <td>
+            <%= "#{p.client_name} #{p.client_version}" %>
+          </td>
+          <td>
+            <%= link_to '[ delete ]', {:action => 'destroy', :id => p}, {:method => :post, :class => 'admin', :confirm => 'Are you sure?'} %>
+          </td>
+        </tr>
+      <% end %>
+    <% else %>
+      <tr>
+        <td colspan="14">
+          no peers found
+        </td>
+      </tr>
+    <% end %>
+  </table>
+
+  <%= will_paginate @peers %>
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

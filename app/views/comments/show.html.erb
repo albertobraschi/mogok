@@ -1,0 +1,51 @@
+
+<% page_name 'Forums' %>
+
+<div class="main">
+  <h2>Comment Details</h2>
+
+  <div class="torrent_header"><%= torrent_link @comment.torrent %></div>
+
+  <table class="comment" id="comment_<%= @comment.id %>">
+    <tr>
+      <td class="head" colspan="2">
+        <div class="float_left">
+          <%= @comment.comment_number %>
+          |
+          by
+          <%= @comment.user ? user_link(@comment.user) : 'unknown' %>
+          &nbsp;
+          -
+          &nbsp;
+          <%= textual_time_interval @comment.created_at, 'ago' %>
+          &nbsp;
+          <% unless @comment.edited_at.blank? %>
+            <span class="edited_by">
+              <%= "(edited by  #{@comment.edited_by} #{textual_time_interval @comment.edited_at, 'ago'})" %>
+            </span>
+          <% end %>
+        </div>
+
+        <div class="float_right">
+          <%= link_to 'edit', comments_path(:torrent_id => @comment.torrent, :action => 'edit', :id => @comment) %>
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <td class="avatar">
+        <%= avatar_image @comment.user %>
+      </td>
+      <td class="body" valign="top">
+        <div class="user_content">
+          <%= HtmlHelper.to_html @comment.body %>
+        </div>
+      </td>
+    </tr>
+  </table>
+</div>
+
+
+
+
+
+

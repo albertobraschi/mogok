@@ -1,0 +1,67 @@
+
+  <table class="browse">
+    <tr>
+      <td class="header">
+        &nbsp;
+      </td>
+      <td class="header" width="99%">
+        Name
+      </td>
+      <td class="header_order_by no_wrap">
+        Added
+      </td>
+      <td class="header">
+        <%= image_tag('comments.png', :alt => 'Commented', :title => 'Commented') %>
+      </td>
+      <td class="header">
+        <%= image_tag('snatches.gif', :alt => 'Snatched', :title => 'Snatched') %>
+      </td>
+      <td class="header">
+        <%= image_tag('seeders.png', :alt => 'Seeders', :title => 'Seeders') %>
+      </td>
+      <td class="header_order_by">
+        <%= image_tag('leechers.png', :alt => 'Leechers', :title => 'Leechers') %>
+      </td>
+    </tr>
+    <% unless @torrents.blank? %>
+      <% @torrents.each do |t| %>
+        <tr>
+          <td class="no_padding">
+            <%= category_label t.category %>
+          </td>
+          <td class="left">
+            <%= torrent_link t, :compact, 80 %>
+            <div class="tags grey"><%= t.tags_str %></div>
+          </td>
+          <td class="no_wrap">
+            <%= textual_time_interval t.created_at, 'ago' %>
+          </td>
+          <td>
+            <%= t.comments_count %>
+          </td>
+          <td>
+            <%= t.snatches_count %>
+          </td>
+          <td>
+            <%= t.seeders_count %>
+          </td>
+          <td>
+            <%= t.leechers_count %>
+          </td>
+        </tr>
+      <% end %>
+      <% if @torrents.total_pages > 1 %>
+        <tr>
+          <td class="pagination" colspan="7">
+            <%= will_paginate_remote @torrents, {:container => false}, {:spinner_id => 'uploads_spinner', :spinner_class => 'spinner_left'} %>
+          </td>
+        </tr>
+      <% end %>
+    <% else %>
+      <tr>
+        <td colspan="7">
+          No torrents found.
+        </td>
+      </tr>
+    <% end %>
+  </table>

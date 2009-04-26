@@ -1,0 +1,48 @@
+
+<% page_name 'Forums' %>
+
+<div class="main">
+  <div class="forums" style="width:750px;">
+    <div class="page_header"><%= link_to 'Forums', {:action => 'index'} %></div>
+
+    <h3>Edit Forum</h3>
+
+    <% form_for :forum, :action => 'edit' do |f| %>
+      <table class="details">
+        <tr>
+          <td class="label">
+            name
+          </td>
+          <td>
+            <%= f.text_field :name, :size => 78, :focus => true %>
+          </td>
+        </tr>
+        <tr>
+          <td class="label">
+            position
+          </td>
+          <td>
+            <%= f.text_field :position, :size => 3 %>
+          </td>
+        </tr>
+        <tr>
+          <td class="label">
+            description
+          </td>
+          <td>
+            <%= f.text_area :description, :cols => 70, :rows => 5 %>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" class="center">
+            <%= submit_tag 'Submit', :class => 'submit' %>
+          </td>
+        </tr>
+      </table>
+    <% end %>
+  </div>
+</div>
+
+
+
+

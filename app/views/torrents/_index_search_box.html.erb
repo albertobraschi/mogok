@@ -1,0 +1,70 @@
+
+  <%= populate_tags_formats_script @categories, @types %>
+  
+  <div class="fields_box margin_bottom" style="width:950px;">
+    <% form_tag({:action => 'index'}, :method => :get) do %>
+      <span class="left">
+        <a title="toggle advanced" href="javascript:void(0)" onclick="hide_show_div('advanced_fields', '');this.blur()">[ + ]</a>
+      </span>
+      <div id="advanced_fields" class="<%= advanced_fields_class params %>">
+        <table>
+          <tr>
+            <% if logged_user.admin_mod? %>
+              <td>
+                <%= check_box_tag :inactive, '1', params[:inactive] == '1', {:title => 'inactives only'} %>
+              </td>
+            <% end %>
+            <td class="label">
+              Category:
+            </td>
+            <td>
+              <select name="category_id" id="category_id" onchange="populate_formats(this);populate_tags(this);clear_field('tags_str')">
+                <option value=""></option>
+                <%= options_from_collection_for_select @categories, :id, :name, params[:category_id].to_i %>
+              </select>
+            </td>
+            <td class="label">
+              Format:
+            </td>
+            <td>
+              <select name="format_id" id="format_id">
+                <option value=""></option>
+                <%= options_from_collection_for_select @types.detect{|t| @category.type_id == t.id}.formats, :id, :name, params[:format_id].to_i if @category %>
+              </select>
+            </td>
+            <td class="label">
+              Tags:
+            </td>
+            <td>
+              <select id="tags_select" onchange="add_tag('tags_select', 'tags_str')">
+                <option value=""></option>
+                <%= options_from_collection_for_select @categories.detect{|c| @category == c}.tags, :name, :name if @category %>
+              </select>
+            </td>
+            <td>
+              <%= text_field_tag :tags_str, params[:tags_str], {:size => 30, :maxlength => 100} %>
+            </td>
+            <td class="label">
+              Country:
+            </td>
+            <td>
+              <select name="country_id" id="country_id">
+                <option value=""></option>
+                <%= options_from_collection_for_select @countries, :id, :name, params[:country_id].to_i %>
+              </select>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <table>
+        <tr>
+          <td>
+            <ul class="compact">
+              <li><%= text_field_tag :keywords, params[:keywords], {:size => 45, :maxlength => 100, :focus => true} %></li>
+              <li><%= submit_tag 'Search', :name => nil, :class => 'submit' %></li>
+            </ul>
+          </td>
+        </tr>
+      </table>
+    <% end %>
+  </div>

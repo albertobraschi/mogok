@@ -1,0 +1,28 @@
+
+<% page_name 'Staff Info Edition' %>
+
+<div class="main">  
+  <h2>Staff Info Edition</h2>
+
+  <div class="user_header"><%= user_link @user %></div>
+
+  <div class="fields_box" style="width:520px;">
+    <% form_tag :action => 'edit_staff_info', :id => @user do %>
+      <table>
+        <tr>
+          <td>
+            <%= text_area_tag :staff_info, @user.staff_info, {:rows => 6, :cols => 60, :focus => true} %>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" style="text-align: center;">
+            <ul class="buttons">
+              <li><%= submit_tag 'Edit', :class => 'submit' %></li>
+              <li><%= submit_tag 'Cancel', :name => 'cancel', :class => 'submit' %></li>
+            </ul>
+          </td>
+        </tr>
+      </table>
+    <% end %>
+  </div>
+</div>

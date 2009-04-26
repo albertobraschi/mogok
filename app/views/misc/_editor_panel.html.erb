@@ -1,0 +1,160 @@
+
+<table class="panel">
+  <tr>
+    <td>
+      <table>
+        <tr>
+          <td>
+            <a href="javascript:void(0);" onclick="surround_text('[b]', '[/b]', '<%= target %>');">
+              <%= image_tag('editor/text_bold.gif', :class => 'button', :alt => 'Bold', :title => 'Bold') %>
+            </a>
+          </td>
+          <td>
+            <a href="javascript:void(0);" onclick="surround_text('[i]', '[/i]', '<%= target %>');">
+              <%= image_tag('editor/text_italic.gif', :class => 'button', :alt => 'Italic', :title => 'Italic') %>
+            </a>
+          </td>
+          <td>
+            <a href="javascript:void(0);" onclick="surround_text('[u]', '[/u]', '<%= target %>');">
+              <%= image_tag('editor/text_underline.gif', :class => 'button', :alt => 'Underline', :title => 'Underline') %>
+            </a>
+          </td>
+          <td>
+            <a href="javascript:void(0);" onclick="surround_text('[s]', '[/s]', '<%= target %>');">
+              <%= image_tag('editor/text_strike.gif', :class => 'button', :alt => 'Strike', :title => 'Strike') %>
+            </a>
+          </td>
+          <td>
+            &nbsp;
+          </td>
+          <td>
+            <a href="javascript:void(0);" onclick="surround_text('[left]', '[/left]', '<%= target %>');">
+              <%= image_tag('editor/text_left.gif', :class => 'button', :alt => 'Align Left', :title => 'Align Left') %>
+            </a>
+          </td>
+          <td>
+            <a href="javascript:void(0);" onclick="surround_text('[center]', '[/center]', '<%= target %>');">
+              <%= image_tag('editor/text_center.gif', :class => 'button', :alt => 'Centered', :title => 'Centered') %>
+            </a>
+          </td>
+          <td>
+            <a href="javascript:void(0);" onclick="surround_text('[right]', '[/right]', '<%= target %>');">
+              <%= image_tag('editor/text_right.gif', :class => 'button', :alt => 'Align Right', :title => 'Align Right') %>
+            </a>
+          </td>
+          <td>
+            &nbsp;
+          </td>
+          <td>
+            <select onchange="surround_text('[color=' + this.options[this.selectedIndex].value + ']', '[/color]', '<%= target %>'); this.selectedIndex = 0;">
+              <option value="" selected="selected">Color</option>
+              <option value="black">Black</option>
+              <option value="red">Red</option>
+              <option value="yellow">Yellow</option>
+              <option value="pink">Pink</option>
+              <option value="green">Green</option>
+              <option value="orange">Orange</option>
+              <option value="purple">Purple</option>
+              <option value="blue">Blue</option>
+              <option value="brown">Brown</option>
+            </select>
+          </td>
+          <td>
+            &nbsp;
+          </td>
+          <td>
+            <select onchange="surround_text('[size=' + this.options[this.selectedIndex].value + ']', '[/size]', '<%= target %>'); this.selectedIndex = 0;">
+              <option value="" selected="selected">Size</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+            </select>
+          </td>
+          <td>
+            &nbsp;
+          </td>
+          <td>
+            <a href="javascript:void(0);" onclick="surround_text('[img]', '[/img]', '<%= target %>');">
+              <%= image_tag('editor/img.gif', :class => 'button', :alt => 'Image', :title => 'Image') %>
+            </a>
+          </td>
+          <td>
+            <a href="javascript:void(0);" onclick="surround_text('[url=http://]', '[/url]', '<%= target %>');">
+              <%= image_tag('editor/url.gif', :class => 'button', :alt => 'Hyperlink', :title => 'Hyperlink') %>
+            </a>
+          </td>
+          <td>
+            <a href="javascript:void(0);" onclick="surround_text('[quote=?]', '[/quote]', '<%= target %>');">
+              <%= image_tag('editor/quote.gif', :class => 'button', :alt => 'Quote', :title => 'Quote') %>
+            </a>
+          </td>
+          <td>
+            <a href="javascript:void(0);" onclick="surround_text('[youtube]v=', '[/youtube]', '<%= target %>');">
+              <%= image_tag('editor/youtube.gif', :class => 'button', :alt => 'Youtube Video', :title => 'Youtube Video') %>
+            </a>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <table>
+        <tr>
+          <td>
+            <a href="javascript:void(0);" onclick="insert_text(' [em]smile[/em] ', '<%= target %>');">
+              <%= image_tag('emoticons/smile.gif', :class => 'emoticon', :alt => ':-)') %>
+            </a>
+          </td>
+          <td>
+            <a href="javascript:void(0);" onclick="insert_text(' [em]wink[/em] ', '<%= target %>');">
+              <%= image_tag('emoticons/wink.gif', :class => 'emoticon', :alt => ';-)') %>
+            </a>
+          </td>
+          <td>
+            <a href="javascript:void(0);" onclick="insert_text(' [em]grin[/em] ', '<%= target %>');">
+              <%= image_tag('emoticons/grin.gif', :class => 'emoticon', :alt => ':-D') %>
+            </a>
+          </td>
+          <td>
+            <a href="javascript:void(0);" onclick="insert_text(' [em]cool[/em] ', '<%= target %>');">
+              <%= image_tag('emoticons/cool.gif', :class => 'emoticon', :alt => '8-)') %>
+            </a>
+          </td>
+          <td>
+            <a href="javascript:void(0);" onclick="insert_text(' [em]kiss[/em] ', '<%= target %>');">
+              <%= image_tag('emoticons/kiss.gif', :class => 'emoticon', :alt => ':-*') %>
+            </a>
+          </td>
+          <td>
+            <a href="javascript:void(0);" onclick="insert_text(' [em]confused[/em] ', '<%= target %>');">
+              <%= image_tag('emoticons/confused.gif', :class => 'emoticon', :alt => ':-o') %>
+            </a>
+          </td>
+          <td>
+            <a href="javascript:void(0);" onclick="insert_text(' [em]no_expression[/em] ', '<%= target %>');">
+              <%= image_tag('emoticons/no_expression.gif', :class => 'emoticon', :alt => ':-|') %>
+            </a>
+          </td>
+          <td>
+            <a href="javascript:void(0);" onclick="insert_text(' [em]angry[/em] ', '<%= target %>');">
+              <%= image_tag('emoticons/angry.gif', :class => 'emoticon', :alt => '>:-(') %>
+            </a>
+          </td>
+          <td>
+            <a href="javascript:void(0);" onclick="insert_text(' [em]sad[/em] ', '<%= target %>');">
+              <%=  image_tag('emoticons/sad.gif', :class => 'emoticon', :alt => ':-(') %>
+            </a>
+          </td>
+          <td>
+            <a href="javascript:void(0);" onclick="insert_text(' [em]cry[/em] ', '<%= target %>');">
+              <%= image_tag('emoticons/cry.gif', :class => 'emoticon', :alt => ':-(')  %>
+            </a>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>

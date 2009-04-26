@@ -1,0 +1,75 @@
+
+<% page_name 'Roles' %>
+
+<div class="main">
+  <h2>Roles</h2>
+
+  <%= render :partial => 'misc/flash', :locals => {:flash => flash} %>
+
+  <div class="links">
+    <%= link_to '[ new ]', {:action => 'new'}, {:class => 'owner'} %>
+  </div>
+  
+  <table class="browse">
+    <tr>
+      <td class="header_order_by">
+        &nbsp; id &nbsp;
+      </td>
+      <td class="header">
+        name
+      </td>
+      <td class="header">
+        css_class
+      </td>
+      <td class="header">
+        description
+      </td>
+      <td class="header">
+        tickets
+      </td>
+      <td class="header">
+        &nbsp;
+      </td>
+      <td class="header">
+        &nbsp;
+      </td>
+    </tr>
+    <% unless @roles.blank? %>
+      <% @roles.each do |r| %>
+        <tr>
+          <td>
+            <%= r.id %>
+          </td>
+          <td>
+            <%= r.name %>
+          </td>
+          <td>
+            <%= r.css_class %>
+          </td>
+          <td>
+            <%= r.description %>
+          </td>
+          <td>
+            <%= r.tickets %>
+          </td>
+          <td>
+            <%= link_to '[ edit ]', {:action => 'edit', :id => r}, {:class => 'owner'} %>
+          </td>
+          <td>
+            <% unless r.default? %>
+              <%= link_to '[ delete ]', {:action => 'destroy', :id => r}, {:method => :post, :class => 'owner', :confirm => 'Are you sure?'} %>
+            <% else %>
+              <span class="grey">[ delete ]</span>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    <% else %>
+      <tr>
+        <td colspan="7">
+          no roles found
+        </td> 
+      </tr>
+    <% end %>
+  </table>
+</div>

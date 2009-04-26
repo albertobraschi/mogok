@@ -1,0 +1,28 @@
+
+  <table class="browse left">
+    <tr>
+      <td class="header_order_by">
+        when
+      </td>
+      <td class="header">
+        user
+      </td>
+    </tr>
+    <% @snatches.each do |s| %>
+      <tr>
+        <td>
+          <%= textual_time_interval s.created_at, 'ago' %>
+        </td>
+        <td>
+          <%= s.user ? user_link(s.user) : 'unknown' %>
+        </td>
+      </tr>
+    <% end %>
+    <% if @snatches.total_pages > 1 %>
+      <tr>
+        <td class="pagination" colspan="2">
+          <%= will_paginate_remote @snatches, {:container => false}, {:spinner_id => 'snatches_spinner', :spinner_class => 'spinner_left'} %>
+        </td>
+      </tr>
+    <% end %>
+  </table>

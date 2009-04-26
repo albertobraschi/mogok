@@ -1,0 +1,42 @@
+
+<% page_name 'Forums' %>
+
+<div class="main">
+  <div class="forums">
+    <div class="page_header"><%= link_to 'Forums', forums_path %></div>
+
+    <div class="forum_name"><%= link_to @topic.forum.name, forums_path(:action => 'show', :id => @topic.forum) %></div>
+
+    <div class="topic_title"><%= link_to @topic.title, topics_path(:forum_id => @topic.forum,  :action => 'show', :id => @topic) %></div>
+
+    <%= render :partial => 'misc/flash', :locals => {:flash => flash} %>
+
+    <%= render :partial => 'post', :collection => @posts, :locals => {:topic => @topic, :current_page => @posts.current_page} %>
+
+    <%= will_paginate @posts %>
+
+    <% if !@topic.locked? || logged_user.admin_mod? %>
+      <h3>Reply</h3>
+
+      <%= render :partial => 'reply_box', :locals => {:current_page => @posts.current_page, :topic => @topic} %>
+    <% end %>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
