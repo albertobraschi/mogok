@@ -1,6 +1,6 @@
  
-This project aims to provide the basic functionalities of a private bittorrent tracker
-and community. It is built with the Ruby language and the Ruby on Rails framework.
+This project aims to provide the basic functionalities required by a private bittorrent
+tracker and community. It is built with the Ruby language and the Ruby on Rails framework.
 
 - Screenshots
   - http://bayimg.com/image/aaphgaabe.jpg

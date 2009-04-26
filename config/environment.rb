@@ -8,7 +8,6 @@ require File.join(File.dirname(__FILE__), 'boot')
 
 
 # enables caching in development (more logs are shown but requires restart after any change in the app)
-#cache_in_development = true
 cache_in_development = false
 
 CACHE_ENABLED = (RAILS_ENV == 'production') || (RAILS_ENV == 'test') || cache_in_development
