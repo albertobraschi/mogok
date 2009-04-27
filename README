@@ -226,7 +226,7 @@ the logging.
       delete its initialization code in the file 'config/initializers/caching.rb'
   > custom cache
     - caches lists of records that are frequently used, mainly domain values like categories and formats
-    - the implementation is inside some of the models and user the module in 'lib/caching_methods.rb'
+    - the implementation is inside some of the models and use the methods in 'lib/caching_methods.rb'
     - are reset by sweepers (app/sweepers)
   > fragment caching
     - used to cache portions of pages, currently the torrent browse page (the most performance critical
