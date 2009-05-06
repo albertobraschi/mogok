@@ -4,7 +4,7 @@ class ClientsController < ApplicationController
   before_filter :admin_required
   
   def index
-    @clients = Client.find :all, :order => 'name'
+    @clients = Client.all
   end
   
   def new

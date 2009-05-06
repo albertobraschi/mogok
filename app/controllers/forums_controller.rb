@@ -6,28 +6,21 @@ class ForumsController < ApplicationController
 
   def index
     logger.debug ':-) forums_controller.index'
-    @forums = Forum.find :all, :order => 'position'
+    @forums = Forum.all
   end
 
   def show
     logger.debug ':-) forums_controller.show'
     params[:keywords] = ApplicationHelper.process_search_keywords params[:keywords], 3
     @forum = Forum.find params[:id]
-    @topics = Topic.paginate_by_forum_id @forum,
-                                         :conditions => show_conditions(params),
-                                         :order => 'stuck DESC, last_post_at DESC',
-                                         :per_page => APP_CONFIG[:forum_topics_page_size],
-                                         :page => current_page
+    @topics = Topic.search_by_forum @forum, params, :per_page => APP_CONFIG[:forum_topics_page_size]
   end
 
   def search
     logger.debug ':-) forums_controller.search'
     params[:keywords] = ApplicationHelper.process_search_keywords params[:keywords], 3
     unless params[:keywords].blank?
-      @topics = Topic.paginate :conditions => search_conditions(params),
-                               :order => 'last_post_at DESC',
-                               :per_page => APP_CONFIG[:forum_search_results_page_size],
-                               :page => current_page
+      @topics = Topic.search params, :per_page => APP_CONFIG[:forum_search_results_page_size]
     else
       redirect_to :action => 'index'
     end
@@ -72,21 +65,6 @@ class ForumsController < ApplicationController
     f = Forum.find params[:id]
     f.toggle! :locked
     redirect_to :action => 'show', :id => f
-  end
-
-  private
-
-  def show_conditions(params)
-    search_conditions params
-  end
-
-  def search_conditions(params)
-    s, h = '', {}
-    unless params[:keywords].blank?
-      s << 'id IN (SELECT topic_id FROM topic_fulltexts WHERE MATCH(body) AGAINST (:keywords IN BOOLEAN MODE) ) '
-      h[:keywords] = params[:keywords]
-    end
-    [s, h]
   end
 end
 

@@ -19,9 +19,9 @@
           <ul class="user_menu">
             <li><%= link_to 'inbox', {:controller => 'messages', :action => 'folder', :id => Message::INBOX}, { :class => ('new_message' if logged_user.has_new_message?) } %></li>
             <li>|</li>
-            <li><%= link_to 'bookmarks', {:controller => 'users', :action => 'bookmarks'} %></li>
+            <li><%= link_to 'bookmarks', bookmarks_path %></li>
             <li>|</li>
-            <li><%= link_to 'uploads', {:controller => 'users', :action => 'uploads', :id => logged_user} %></li>
+            <li><%= link_to 'uploads', uploads_path %></li>
             <% if logged_user.has_ticket?(:inviter) %>
               <li>|</li>
               <li><%= link_to 'invite', {:controller => 'invitations'} %></li>
@@ -31,7 +31,7 @@
               <li><%= link_to 'reports', {:controller => 'reports' }, {:class => @report_alert ? 'report_alert' : nil} %></li>
             <% end %>
             <li>|</li>
-            <li><%= link_to 'profile', {:controller => 'users', :action => 'edit', :id => logged_user} %></li>
+            <li><%= link_to 'profile', profile_path %></li>
             <% if logged_user.admin? && !session[:adm_menu] %>
               <li>|</li>
               <li><%= link_to 'adm', {:controller => 'adm', :action => 'switch_menu' } %></li>

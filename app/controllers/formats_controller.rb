@@ -5,7 +5,7 @@ class FormatsController < ApplicationController
   cache_sweeper :domain_sweeper, :only => [:new, :edit, :destroy]
   
   def index
-    @formats = Format.find :all, :order => 'type_id, name'
+    @formats = Format.all
   end
   
   def new

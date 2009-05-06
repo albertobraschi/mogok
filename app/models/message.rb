@@ -30,4 +30,13 @@ class Message < ActiveRecord::Base
   def owned_by?(user)
     self.owner_id == user.id
   end
+
+  def self.user_messages(user, params, *args)
+    options = args.pop
+    paginate_by_owner_id user,
+                         :conditions => {:folder => options[:folder]},
+                         :order => 'created_at DESC',
+                         :page => current_page(params[:page]),
+                         :per_page => options[:per_page]
+  end
 end

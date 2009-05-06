@@ -10,17 +10,14 @@ require File.join(File.dirname(__FILE__), 'boot')
 # enables caching in development (more logs are shown but requires restart after any change in the app)
 cache_in_development = false
 
-CACHE_ENABLED = (RAILS_ENV == 'production') || (RAILS_ENV == 'test') || cache_in_development
+CACHE_ENABLED = !Rails.env.development? || cache_in_development
 
 
 Rails::Initializer.run do |config|
-  
-  # cache store
-  if CACHE_ENABLED
-    memcached_config = open(File.join(RAILS_ROOT, 'config/memcached.yml')) {|f| YAML.load(f)[RAILS_ENV] }
-    config.cache_store = :mem_cache_store, memcached_config['servers'], memcached_config
-  end
-  
+
+  # Settings in config/environments/* take precedence over those specified here.
+  # Application configuration should go into files in config/initializers
+  # -- all .rb files in that directory are automatically loaded.
   # Settings in config/environments/* take precedence over those specified here.
   # Application configuration should go into files in config/initializers
   # -- all .rb files in that directory are automatically loaded.

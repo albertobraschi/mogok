@@ -37,7 +37,7 @@ module ErrorHandling
   end
 
   def log_error(e, template = nil, force_log = false)
-    if force_log || RAILS_ENV != 'production'
+    if force_log || !Rails.env.production?
       if ErrorLog.count(:all) < 50
         ErrorLog.create :created_at => Time.now,
                         :message => "Error: #{e.class.name}\n Page: #{template}\n Message: #{e.clean_message[0, 500]}",

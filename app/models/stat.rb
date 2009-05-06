@@ -13,4 +13,13 @@ class Stat < ActiveRecord::Base
   def top_uploaders_list
     Marshal.load(self.top_uploaders.unpack('m')[0]) if self.top_uploaders
   end
+
+  def self.first
+    find :first, :order => 'id DESC'
+  end
+
+  def self.paginate(params, *args)
+    options = args.pop
+    super :order => 'created_at DESC', :page => current_page(params[:page]), :per_page => options[:per_page]
+  end
 end

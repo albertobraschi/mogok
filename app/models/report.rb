@@ -8,4 +8,8 @@ class Report < ActiveRecord::Base
   def before_save
     self.reason = self.reason[0, 200]
   end
+
+  def self.all
+    find :all, :order => 'created_at DESC'
+  end
 end

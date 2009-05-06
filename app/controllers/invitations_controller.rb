@@ -7,11 +7,8 @@ class InvitationsController < ApplicationController
     logger.debug ':-) invitations_controller.index'
     ticket_required(:inviter)
     @app_params = AppParam.load
-    @invitations = Invitation.find_all_by_user_id logged_user.id, :order => 'created_at DESC'     
-    @invitees = User.paginate_by_inviter_id logged_user.id, 
-                                            :order => 'created_at',
-                                            :per_page => APP_CONFIG[:users_page_size],
-                                            :page => current_page
+    @invitations = Invitation.user_invitations logged_user
+    @invitees = User.user_invitees logged_user, params, :per_page => APP_CONFIG[:users_page_size]
   end
   
   def new

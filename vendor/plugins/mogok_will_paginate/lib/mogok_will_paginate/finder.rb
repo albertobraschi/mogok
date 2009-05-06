@@ -2,7 +2,16 @@
 module WillPaginate  
   module Finder   
     module ClassMethods
-      
+
+      def current_page(page)
+        return 1 if page.blank?
+        page == 'last' ? :last : page.to_i
+      end
+
+      def order_by(order_by, desc)
+        "#{order_by}#{' DESC' if desc == '1'}"
+      end
+
       alias :old_paginate :paginate      
       def paginate(*args, &block)                
         options = args.pop

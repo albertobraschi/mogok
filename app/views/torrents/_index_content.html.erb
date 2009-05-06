@@ -8,31 +8,31 @@
       <td class="header">
         &nbsp;
       </td>
-      <td class="<%= table_header_css_class 'name', @torrents  %>" width="99%" colspan="2">
+      <td width="99%" colspan="2" class="<%= table_header_css_class 'name'  %>">
         <%= table_header_link 'Name', 'name', @torrents %>
       </td>
-      <td class="<%= table_header_css_class 'created_at', @torrents %>">
+      <td class="<%= table_header_css_class 'created_at' %>">
         <%= table_header_link 'Added', 'created_at', @torrents %>
       </td>
       <td class="header">
         Upper
       </td>
-      <td class="<%= table_header_css_class 'size', @torrents %>">
+      <td class="<%= table_header_css_class 'size' %>">
         <%= table_header_link 'Size', 'size', @torrents %>
       </td>
-      <td class="<%= table_header_css_class 'files_count', @torrents %>">
+      <td class="<%= table_header_css_class 'files_count' %>">
         <%= table_header_link 'Files', 'files_count', @torrents %>
       </td>
-      <td class="<%= table_header_css_class 'comments_count', @torrents %>">
+      <td class="<%= table_header_css_class 'comments_count' %>">
         <%= table_header_link image_tag('comments.png', :alt => 'Commented', :title => 'Commented'), 'comments_count', @torrents %>
       </td>
-      <td class="<%= table_header_css_class 'snatches_count', @torrents %>">
+      <td class="<%= table_header_css_class 'snatches_count' %>">
         <%= table_header_link image_tag('snatches.gif', :alt => 'Snatched', :title => 'Snatched'), 'snatches_count', @torrents %>
       </td>
-      <td class="<%= table_header_css_class 'seeders_count', @torrents %>">
+      <td class="<%= table_header_css_class 'seeders_count' %>">
         <%= table_header_link image_tag('seeders.png', :alt => 'Seeders', :title => 'Seeders'), 'seeders_count', @torrents %>
       </td>
-      <td class="<%= table_header_css_class 'leechers_count', @torrents %>">
+      <td class="<%= table_header_css_class 'leechers_count' %>">
         <%= table_header_link image_tag('leechers.png', :alt => 'Leechers', :title => 'Leechers'), 'leechers_count', @torrents %>
       </td>
     </tr>

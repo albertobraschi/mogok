@@ -40,6 +40,40 @@ class Peer < ActiveRecord::Base
     sprintf "%.1f", ((self.torrent.size - self.leftt) / self.torrent.size.to_f) * 100
   end
 
+  def self.search(params, *args)
+    options = args.pop
+    paginate :conditions => search_conditions(params),
+                           :order => 'started_at DESC',
+                           :page => current_page(params[:page]),
+                           :per_page => options[:per_page]
+  end
+
+  def self.user_peers(user, params, *args)
+    options = args.pop
+    paginate_by_user_id user,
+                        :conditions => {:seeder => params[:seeding] == '1'},
+                        :order => 'started_at DESC',
+                        :page => current_page(params[:page]),
+                        :per_page => options[:per_page]
+  end
+
+  def self.torrent_peers(torrent_id, params, *args)
+    options = args.pop
+    paginate_by_torrent_id torrent_id,
+                           :order => 'started_at DESC',
+                           :page => current_page(params[:page]),
+                           :per_page => options[:per_page]
+  end
+
+  def self.find_for_announce_resp(torrent, announcer, *args)
+    options = args.pop
+    cols = ['id', 'torrent_id', 'user_id', 'uploaded', 'downloaded', 'leftt', 'port', 'started_at', 'last_action_at']
+    find :all,
+         :conditions => ['torrent_id = ? AND user_id != ?', torrent.id, announcer.id],
+         :order => cols.rand, # simple way to randomize retrieved peers
+         :limit => options[:limit]
+  end
+
   def self.make_compact_ip(ip, port)
     ipaddr = IPAddr.new ip
     if ipaddr.ipv4?
@@ -53,6 +87,43 @@ class Peer < ActiveRecord::Base
       return compact_ip << compact_port.reverse
     end
     return nil
+  end
+
+  private
+
+  def self.search_conditions(params)
+    s, h = '', {}
+    unless params[:user_id].blank?
+      s << 'user_id = :user_id '
+      h[:user_id] = params[:user_id].to_i
+      previous = true
+    end
+    unless params[:torrent_id].blank?
+      s << 'AND ' if previous
+      s << 'torrent_id = :torrent_id '
+      h[:torrent_id] = params[:torrent_id].to_i
+      previous = true
+    end
+    if params[:seeder] == '1'
+      params[:leecher] = '0'
+      s << 'seeder = TRUE '
+      previous = true
+    elsif params[:leecher] == '1'
+      s << 'seeder = FALSE '
+      previous = true
+    end
+    unless params[:ip].blank?
+      s << 'AND ' if previous
+      s << 'ip = :ip '
+      h[:ip] = params[:ip]
+      previous = true
+    end
+    unless params[:port].blank?
+      s << 'AND ' if previous
+      s << 'port = :port '
+      h[:port] = params[:port].to_i
+    end
+    [s, h]
   end
 end
 

@@ -14,4 +14,12 @@ class Post < ActiveRecord::Base
   def editable_by?(user)
     user.id == self.user_id || user.admin_mod?
   end
+
+  def self.topic_posts(topic, params, *args)
+    options = args.pop
+    paginate_by_topic_id topic,
+                         :order => 'created_at',
+                         :page => current_page(params[:page]),
+                         :per_page => options[:per_page]
+  end
 end

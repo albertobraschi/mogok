@@ -179,6 +179,7 @@ en:
           required: Torrent file required.
           type: Must be a file of type torrent.
           size: Torrent file size cannot exceed {{max_size}} KB, increase the pieces size.
+          invalid: Invalid torrent file.
         info_hash:
           taken:  Torrent file already uploaded.
         year:

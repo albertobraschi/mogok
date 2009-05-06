@@ -82,7 +82,7 @@ class AccountController < ApplicationController
         begin
           code = User.make_password_recovery_code
           AppMailer.deliver_password_recovery user, code
-          PasswordRecovery.delete_all ['user_id = ?', user.id] # if user already have one
+          PasswordRecovery.delete_all_by_user user # if user already have one
           PasswordRecovery.create :created_at => Time.now, :code => code, :user_id => user.id
           flash[:notice] = t('controller.account.password_recovery.sent', :email => user.email)
         rescue => e
@@ -197,7 +197,7 @@ class AccountController < ApplicationController
   end
 
   def clean_login_attempts
-    LoginAttempt.delete_all ['ip = ?', request.remote_ip]
+    LoginAttempt.delete_all_by_ip request.remote_ip
   end
   
   def set_mailer_host

@@ -41,13 +41,10 @@ module BgTasks
           stat.ratio = ratio stat.uploaded, stat.downloaded
 
           # top uploaders (who uploaded more data)
-          stat.top_uploaders = User.find :all, :order => 'uploaded DESC', :conditions => 'uploaded > 0', :limit => 10          
+          stat.top_uploaders = User.top_uploaders :limit => 10
 
           # top contributors (who uploaded more torrents)
-          stat.top_contributors = []
-          q = 'SELECT user_id, COUNT(*) AS uploads FROM torrents WHERE user_id IS NOT NULL GROUP BY user_id ORDER BY uploads DESC LIMIT 10'
-          result = Torrent.connection.select_all q
-          result.each {|r| stat.top_contributors << {:user => User.find(r['user_id']), :torrents => r['uploads']} }
+          stat.top_contributors = User.top_contributors :limit => 10
 
           stat.save
           logger.debug ':-) TASK SiteStats successfully executed' if logger

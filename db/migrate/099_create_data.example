@@ -8,7 +8,7 @@ class CreateData < ActiveRecord::Migration
     self.create_countries
     self.create_types_formats_categories_tags
     self.create_bittorrent_clients
-    self.create_test_users if RAILS_ENV == 'development'
+    self.create_test_users if Rails.env.development?
   end
 
   def self.down
@@ -20,7 +20,7 @@ class CreateData < ActiveRecord::Migration
     Tag.delete_all
     Client.delete_all
     Country.delete_all
-    User.delete_all ['id > ?', 1] if RAILS_ENV == 'development'
+    User.delete_all ['id > ?', 1] if Rails.env.development?
   end
 
   def self.create_styles

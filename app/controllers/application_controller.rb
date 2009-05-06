@@ -27,15 +27,6 @@ class ApplicationController < ActionController::Base
     Log.create :created_at => Time.now, :body => text, :admin => admin
   end
 
-  def current_page
-    params[:page] = '1' if params[:page].blank?
-    params[:page] == 'last' ? :last : params[:page].to_i
-  end
-
-  def order_by
-    "#{params[:order_by]}#{' DESC' if params[:desc] == '1'}"
-  end
-
   def cancelled?
     true unless params[:cancel].blank?
   end

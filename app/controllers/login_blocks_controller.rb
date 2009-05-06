@@ -4,7 +4,7 @@ class LoginBlocksController < ApplicationController
   before_filter :admin_required
 
   def index
-    @login_blocks = LoginBlock.find :all, :order => 'blocks_count DESC'
+    @login_blocks = LoginBlock.all
   end
 
   def destroy

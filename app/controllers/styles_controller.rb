@@ -5,7 +5,7 @@ class StylesController < ApplicationController
   cache_sweeper :domain_sweeper, :only => [:new, :edit, :destroy]
 
   def index
-    @styles = Style.find :all, :order => 'name'
+    @styles = Style.all
   end
 
   def new

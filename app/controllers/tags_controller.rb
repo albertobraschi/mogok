@@ -5,9 +5,8 @@ class TagsController < ApplicationController
   cache_sweeper :domain_sweeper, :only => [:new, :edit, :destroy]
   
   def index
-    conditions = {:category_id => params[:category_filter]} unless params[:category_filter].blank?
-    @tags = Tag.find :all, :conditions => conditions, :order => 'category_id, name'
-    @categories = Category.find :all, :order => 'position'
+    @tags = Tag.all :category_id => params[:category_filter]
+    @categories = Category.all
   end
   
   def new

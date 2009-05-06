@@ -7,4 +7,8 @@ class Forum < ActiveRecord::Base
   def editable_by?(user)
     user.admin?
   end
+
+  def self.all
+    find :all, :order => 'position'
+  end
 end

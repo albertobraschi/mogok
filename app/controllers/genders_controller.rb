@@ -5,7 +5,7 @@ class GendersController < ApplicationController
   cache_sweeper :domain_sweeper, :only => [:new, :edit, :destroy]
 
   def index
-    @genders = Gender.find :all, :order => 'name'
+    @genders = Gender.all
   end
 
   def new

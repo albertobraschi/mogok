@@ -5,7 +5,7 @@ class ReportsController < ApplicationController
 
   def index
     logger.debug ':-) reports_controller.index'
-    @reports = Report.find :all, :order => 'created_at DESC'
+    @reports = Report.all
   end
 
   def grab

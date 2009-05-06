@@ -7,12 +7,12 @@ module WillPaginate
     HEADER_ORDER_BY_CSS_CLASS = 'header_order_by'
     HEADER_LINK_CSS_CLASS = 'header'
 
-    def table_header_css_class(column_name, collection)
-      collection.blank? || (collection.order_by != column_name) ? HEADER_CSS_CLASS : HEADER_ORDER_BY_CSS_CLASS
+    def table_header_css_class(column_name)
+      params[:order_by] == column_name ? HEADER_ORDER_BY_CSS_CLASS : HEADER_CSS_CLASS
     end    
 
     def table_header_link(text, column_name, collection)
-      link_params = params.dup      
+      link_params = params.dup
       if column_name == params[:order_by]
         desc = true unless params[:desc] == '1'
       else
@@ -21,9 +21,8 @@ module WillPaginate
         end
       end
       link_params[:desc] = desc ? '1' : nil
-      link_params[:order_by] = column_name
-      
-      params[:page] = nil if params[:page] == '1' # just cosmetic
+      link_params[:order_by] = column_name      
+      link_params[:page] = nil if params[:page] == '1' # just cosmetic
       link_params.delete_if {|k, v| v.blank? } # just cosmetic
       
       link_to text, link_params, {:class => HEADER_LINK_CSS_CLASS}

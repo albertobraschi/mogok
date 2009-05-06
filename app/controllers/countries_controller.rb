@@ -5,7 +5,7 @@ class CountriesController < ApplicationController
   cache_sweeper :domain_sweeper, :only => [:new, :edit, :destroy]
 
   def index
-    @countries = Country.find :all, :order => 'name'
+    @countries = Country.all
   end
 
   def new

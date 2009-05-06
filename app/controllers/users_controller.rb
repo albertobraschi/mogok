@@ -7,15 +7,10 @@ class UsersController < ApplicationController
   def index
     logger.debug ':-) users_controller.index'
     params[:order_by] = 'username' if params[:order_by].blank?
-    params[:username] = nil if params[:username] && params[:username].size < 3    
 
-    @users = User.paginate :conditions => index_conditions(params), 
-                           :page => current_page,
-                           :order => index_order_by(params),
-                           :per_page => APP_CONFIG[:users_page_size]
-                         
+    @users = User.search params, logged_user, :per_page => APP_CONFIG[:users_page_size]
     @users.desc_by_default = APP_CONFIG[:users_desc_by_default]
-    @users.order_by = params[:order_by]
+    
     @roles = Role.all_for_search
     @countries = Country.cached_all
   end 
@@ -56,7 +51,7 @@ class UsersController < ApplicationController
   
   def edit
     logger.debug ':-) users_controller.edit'
-    @user = User.find params[:id]
+    @user = User.find(params[:id] || logged_user.id)
     access_denied unless @user.editable_by? logged_user
     if request.post?
       logger.debug ':-) post request'
@@ -153,26 +148,17 @@ class UsersController < ApplicationController
 
   def bookmarks
     logger.debug ':-) users_controller.bookmarks'
-    @torrents = Torrent.paginate :conditions => bookmarks_conditions,
-                                 :order => 'category_id, name',
-                                 :page => current_page,
-                                 :per_page => 20,
-                                 :include => :tags
+    @torrents = Torrent.bookmarked_by_user logged_user, params, :per_page => 20
     @torrents.each {|t| t.bookmarked = true} if @torrents
   end
 
   def uploads
     logger.debug ':-) users_controller.uploads'
     params[:order_by], params[:desc]= 'created_at', '1' if params[:order_by].blank?
-    @torrents = Torrent.scoped_by_active(true).paginate_by_user_id logged_user,
-                                                                   :order => order_by,
-                                                                   :page => current_page,
-                                                                   :per_page => 20,
-                                                                   :include => :tags
+    @torrents = Torrent.uploaded_by_user logged_user, params, :per_page => APP_CONFIG[:user_history_page_size]
     set_bookmarked @torrents
     unless @torrents.blank?
       @torrents.desc_by_default = APP_CONFIG[:torrents_desc_by_default]
-      @torrents.order_by = params[:order_by]
     end
   end
   
@@ -183,21 +169,14 @@ class UsersController < ApplicationController
     if !@seeding && @user != logged_user && !logged_user.admin?
       access_denied unless @user.display_downloads?
     end
-    @peers = Peer.paginate_by_user_id @user,
-                                      :conditions => {:seeder => @seeding},
-                                      :order => 'started_at DESC',
-                                      :page => current_page,
-                                      :per_page => APP_CONFIG[:user_activity_page_size]
+    @peers = Peer.user_peers @user, params, :per_page => APP_CONFIG[:user_activity_page_size]
   end  
   
   def show_uploads
     logger.debug ':-) users_controller.show_uploads'
-    @torrents = Torrent.paginate_by_user_id params[:id],
-                                            :conditions => {:active => true},
-                                            :order => 'created_at DESC',
-                                            :page => current_page,
-                                            :per_page => APP_CONFIG[:user_history_page_size],
-                                            :include => :tags
+    params[:order_by], params[:desc]= 'created_at', '1'
+    @user = User.find params[:id]
+    @torrents = Torrent.uploaded_by_user @user, params, :per_page => APP_CONFIG[:user_history_page_size]
   end  
   
   def show_snatches
@@ -206,46 +185,10 @@ class UsersController < ApplicationController
     if @user != logged_user && !logged_user.admin?
       access_denied unless @user.display_downloads?
     end
-    @snatches = Snatch.paginate_by_user_id @user,
-                                           :order => 'created_at DESC',
-                                           :page => current_page,
-                                           :per_page => APP_CONFIG[:user_history_page_size]
+    @snatches = Snatch.user_snatches @user, params, :per_page => APP_CONFIG[:user_history_page_size]
   end
   
   private
-  
-  def index_order_by(params)
-   if params[:order_by] == 'ratio'
-     "uploaded/downloaded #{'DESC' if params[:desc] == '1'}"
-   else
-     order_by
-   end
-  end
-
-  def index_conditions(params)
-    s, h = '', {}
-    unless logged_user.system_user?
-      s << 'id != 1 ' # system user won't be listed
-      previous = true
-    end
-    unless params[:username].blank?
-      s << 'username LIKE :username '
-      h[:username] = "%#{params[:username]}%"
-      previous = true
-    end
-    unless params[:role_id].blank?
-      s << 'AND ' if previous
-      s << 'role_id = :role_id '
-      h[:role_id] = params[:role_id].to_i
-      previous = true
-    end
-    unless params[:country_id].blank?
-      s << 'AND ' if previous
-      s << 'country_id = :country_id '
-      h[:country_id] = params[:country_id].to_i
-    end
-    [s, h]
-  end
   
   def set_bookmarked(torrents)
     unless torrents.blank?
@@ -255,18 +198,6 @@ class UsersController < ApplicationController
         end
       end
     end
-  end
-
-  def bookmarks_conditions
-    s, h = '', {}
-    unless logged_user.admin_mod?
-      s << 'active = TRUE '
-      previous = true
-    end
-    s << 'AND ' if previous
-    s << 'id in (SELECT torrent_id FROM bookmarks WHERE user_id = :user_id)'
-    h[:user_id] = logged_user.id
-    [s, h]
   end
 end
 

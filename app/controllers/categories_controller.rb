@@ -5,7 +5,7 @@ class CategoriesController < ApplicationController
   cache_sweeper :domain_sweeper, :only => [:new, :edit, :destroy]
   
   def index
-    @categories = Category.find :all, :order => 'position'
+    @categories = Category.all
   end
   
   def new

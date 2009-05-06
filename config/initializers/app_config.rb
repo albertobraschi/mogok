@@ -15,7 +15,7 @@ I18n.default_locale = APP_CONFIG[:default_locale]
 WillPaginate::ViewHelpers.pagination_options[:renderer] = WillPaginate::MogokLinkRenderer
 
 # logger config
-RAILS_DEFAULT_LOGGER.level = RAILS_ENV == 'production' ? Logger::ERROR : Logger::DEBUG
+RAILS_DEFAULT_LOGGER.level = Rails.env.production? ? Logger::ERROR : Logger::DEBUG
 
 # get rid of the red divs in the invalid form fields
 ActionView::Base.field_error_proc = Proc.new {|html_tag, instance| "#{html_tag}" }

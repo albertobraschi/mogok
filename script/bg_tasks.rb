@@ -1,5 +1,5 @@
  
-BgTasks::Dispatcher.exec APP_CONFIG, RAILS_DEFAULT_LOGGER, RAILS_ENV
+BgTasks::Dispatcher.exec APP_CONFIG, Rails.logger, Rails.env
 
 
 

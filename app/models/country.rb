@@ -19,4 +19,8 @@ class Country < ActiveRecord::Base
       find :all, :order => 'name'
     end
   end
+
+  def self.all
+    find :all, :order => 'name'
+  end
 end

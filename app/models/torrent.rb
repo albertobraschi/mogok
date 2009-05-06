@@ -114,21 +114,53 @@ class Torrent < ActiveRecord::Base
     root.out
   end
   
-  # Populate the torrent object with the given meta info hash.
-  def set_meta_info(meta_info, force_private = false, logger = nil)
-    begin
-      meta_info[INFO][PRIVATE] = '1' if force_private
-      populate_meta_info meta_info
-    rescue => e
-      logger.debug ":-o Torrent.set_meta_info error: #{e.message}" if logger
-      raise InvalidTorrentError.new('Invalid torrent file.', e)
-    end
+  # Populate the torrent object with the torrent file data
+  def set_meta_info(torrent_data, force_private = false, logger = nil)
+    meta_info = parse(torrent_data, logger) # parse torrent and check if meta-info is valid
+    meta_info[INFO][PRIVATE] = '1' if force_private
+    populate_meta_info meta_info
   end
-  
+
+  def self.search(params, searcher, *args)
+    options = args.pop
+    paginate :conditions => search_conditions(params, searcher),
+             :order => order_by(params[:order_by], params[:desc]),
+             :page => current_page(params[:page]),
+             :per_page => options[:per_page],
+             :include => :tags
+  end
+
+  def self.stuck_by_user(user, params, *args)
+    options = args.pop
+    paginate :conditions => stuck_conditions(user),
+             :order => 'leechers_count DESC, name',
+             :page => current_page(params[:page]),
+             :per_page => options[:per_page],
+             :include => :tags
+  end
+
+  def self.bookmarked_by_user(user, params, *args)
+    options = args.pop
+    paginate :conditions => bookmarked_by_user_conditions(user),
+             :order => 'category_id, name',
+             :page => current_page(params[:page]),
+             :per_page => options[:per_page],
+             :include => :tags
+  end
+
+  def self.uploaded_by_user(user, params, *args)
+    options = args.pop    
+    scoped_by_active(true).paginate_by_user_id user,
+                                               :order => order_by(params[:order_by], params[:desc]),
+                                               :page => current_page(params[:page]),
+                                               :per_page => options[:per_page],
+                                               :include => :tags
+  end
+
   private
 
   def populate_meta_info(meta_info)
-    self.creation_date = Time.at(meta_info[CREATION_DATE].to_i) unless meta_info[CREATION_DATE].blank?
+    self.creation_date = Time.at(meta_info[CREATION_DATE]) unless meta_info[CREATION_DATE].blank?
     self.created_by = meta_info[CREATED_BY]
     self.comment = meta_info[COMMENT][0, 100] unless meta_info[COMMENT].blank?
     self.encoding = meta_info[ENCODING]
@@ -187,6 +219,89 @@ class Torrent < ActiveRecord::Base
     root[PIECES] = BString.new(info[PIECES])
     root[PRIVATE] = BNumber.new(info[PRIVATE]) if info[PRIVATE] == '1'
     root.out
+  end
+
+  def self.search_conditions(params, searcher)
+    s, h = '', {}
+    if searcher.admin_mod?
+      if params[:inactive] == '1'
+        s << 'active = FALSE '
+        previous = true
+      end
+    else
+      s << 'active = TRUE '
+      previous = true
+    end
+    unless params[:keywords].blank?
+      s << 'AND ' if previous
+      s << 'id IN (SELECT torrent_id FROM torrent_fulltexts WHERE MATCH(body) AGAINST (:keywords IN BOOLEAN MODE)) '
+      h[:keywords] = params[:keywords]
+      previous = true
+    end
+    unless params[:category_id].blank?
+      s << 'AND ' if previous
+      s << 'category_id = :category_id '
+      h[:category_id] = params[:category_id].to_i
+      previous = true
+    end
+    unless params[:format_id].blank?
+      s << 'AND ' if previous
+      s << 'format_id = :format_id '
+      h[:format_id] = params[:format_id].to_i
+      previous = true
+    end
+    unless params[:country_id].blank?
+      s << 'AND ' if previous
+      s << 'country_id = :country_id '
+      h[:country_id] = params[:country_id].to_i
+      previous = true
+    end
+    unless params[:tags_str].blank?
+      if params[:category_id].blank?
+        params[:tags_str] = ''
+      else
+        tags = Tag.parse_tags params[:tags_str], params[:category_id].to_i
+        unless tags.blank?
+          if tags.length > 3
+            tags = tags[0, 3] # three tags maximum
+          end
+          params[:tags_str] = tags.join ', ' # show user which tags were used in search
+          s << 'AND ' if previous
+          s << 'id IN '
+          s << "(SELECT torrent_id FROM tags_torrents WHERE tag_id = #{tags[0].id} "
+          unless tags[1].blank?
+            s << "AND torrent_id IN (SELECT torrent_id FROM tags_torrents WHERE tag_id = #{tags[1].id} "
+            unless tags[2].blank?
+              s << "AND torrent_id IN (SELECT torrent_id FROM tags_torrents WHERE tag_id = #{tags[2].id})"
+            end
+            s << ')'
+          end
+          s << ')'
+        end
+      end
+    end
+    [s, h]
+  end
+
+  def self.stuck_conditions(user)
+    s, h = '', {}
+    s << 'active = TRUE AND seeders_count = 0 AND leechers_count > 0 '
+    s << 'AND '
+    s << '(user_id = :user_id OR id IN (SELECT torrent_id FROM snatches WHERE user_id = :user_id))'
+    h[:user_id] = user.id
+    [s, h]
+  end
+
+  def self.bookmarked_by_user_conditions(user)
+    s, h = '', {}
+    unless user.admin_mod?
+      s << 'active = TRUE '
+      previous = true
+    end
+    s << 'AND ' if previous
+    s << 'id in (SELECT torrent_id FROM bookmarks WHERE user_id = :user_id)'
+    h[:user_id] = user.id
+    [s, h]
   end
 end
 

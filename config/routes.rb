@@ -18,6 +18,11 @@ ActionController::Routing::Routes.draw do |map|
     content.staff 'staff', :action => 'staff'
   end
 
+  # user
+  map.bookmarks 'bookmarks', :controller => 'users', :action => 'bookmarks'
+  map.uploads 'uploads', :controller => 'users', :action => 'uploads'
+  map.profile 'profile', :controller => 'users', :action => 'edit'
+
   # torrents
   map.torrents 'torrents/:action/:id', :controller => 'torrents'
   map.comments 'torrents/:torrent_id/comments/:action/:id', :controller => 'comments'

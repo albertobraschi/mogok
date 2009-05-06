@@ -5,18 +5,16 @@ class MessagesController < ApplicationController
     
   def folder
     logger.debug ':-) messages_controller.folder'
+    page = params[:page].blank? ? 1 : params[:page].to_i
     folder = params[:id].blank? ? Message::INBOX : params[:id]
     raise ArgumentError unless Message.valid_folder? folder
-    @messages = Message.paginate_by_owner_id logged_user,
-                                             :conditions => {:folder => folder},
-                                             :order => 'created_at DESC',
-                                             :per_page => APP_CONFIG[:messages_page_size],
-                                             :page => current_page
-    if logged_user.has_new_message? && folder == Message::INBOX && current_page == 1
-      logged_user.toggle! :has_new_message
-    end
+
+    @messages = Message.user_messages logged_user, params, :folder => folder, :per_page => APP_CONFIG[:messages_page_size]
+
+    logged_user.toggle!(:has_new_message) if logged_user.has_new_message? && folder == Message::INBOX && page == 1
+
     session[:messenger_folder] = folder
-    session[:messenger_page] = current_page != 1 ? current_page : nil
+    session[:messenger_page] = page
   end
   
   def show
@@ -38,9 +36,10 @@ class MessagesController < ApplicationController
       end
     else
       unless cancelled?
-        prepare_new_message @message
-        unless @message.receiver.system_user?
-          if @message.save
+        prepare_new_message @message        
+        if @message.valid?
+          unless @message.receiver.system_user?
+            @message.save
             save_sent if logged_user.save_sent
             delete_replied if logged_user.delete_on_reply && !params[:replied_id].blank?
             @message.owner.toggle! :has_new_message unless @message.owner.has_new_message?
@@ -48,10 +47,10 @@ class MessagesController < ApplicationController
             flash[:notice] = t('controller.messages.new.success')
             redirect_to :action => 'folder', :id => session[:messenger_folder], :page => session[:messenger_page]
           else
-            logger.debug ':-o message not sent'
+            flash.now[:error] = t('controller.messages.new.for_system')
           end
         else
-          flash.now[:error] = t('controller.messages.new.for_system')
+          logger.debug ':-o message not sent'
         end
       else
         redirect_to :action => 'folder', :id => session[:messenger_folder], :page => session[:messenger_page]

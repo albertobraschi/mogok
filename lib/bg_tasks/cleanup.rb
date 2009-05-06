@@ -23,20 +23,20 @@ module BgTasks
           Message.delete_all ['created_at < ?', config[:message_max_age_months].months.ago]
           AnnounceLog.delete_all ['created_at < ?', config[:announce_log_max_age_days].days.ago]
           ErrorLog.delete_all ['created_at < ?', config[:error_log_max_age_days].days.ago]
-          PeerConn.connection.execute 'DELETE FROM peer_conns WHERE peer_conns.id NOT IN (SELECT DISTINCT peer_conn_id FROM peers)'
+          PeerConn.delete_peerless
           PasswordRecovery.delete_all ['created_at < ?', config[:password_recovery_max_age_days].days.ago]
           Invitation.delete_all ['created_at < ?', config[:invitation_max_age_days].days.ago]
           BgTaskLog.delete_all ['created_at < ?', config[:task_log_max_age_days].days.ago]
           LoginAttempt.delete_all ['blocked_until < ?', Time.now]
           SignupBlock.delete_all ['blocked_until < ?', Time.now]
-          User.find(:all, :conditions => ['last_seen_at < ? AND active = TRUE', config[:user_max_inactivity_days].days.ago]).each do |u|
+          User.find_absents(config[:user_max_inactivity_days].days.ago).each do |u|
             next if u.has_ticket?(:staff)
-            if u.torrents.blank?
-              u.destroy
-              log "User #{u.username} removed by system.", true
-            else
+            if u.torrents.count > 0
               u.toggle! :active # inactivate if user has at least one torrent
               log "User #{u.username} inactivated by system.", true
+            else
+              u.destroy
+              log "User #{u.username} removed by system.", true
             end
           end
           logger.debug ":-) TASK #{bg_task.name} successfully executed" if logger

@@ -1,4 +1,5 @@
 nbproject
+config/environment.rb
 config/app_config.yml
 config/database.yml
 config/memcached.yml

@@ -139,11 +139,7 @@ module Bittorrent
     end
 
     def include_peers_in_response req, resp
-      cols = [:id, :torrent_id, :user_id, :uploaded, :downloaded, :leftt, :ip, :port, :started_at, :last_action_at]
-      resp.peers = Peer.find :all,
-                             :conditions => ['torrent_id = ? AND user_id != ?', req.torrent.id, req.user.id],
-                             :order => cols.rand, # simple way to randomize retrieved peers
-                             :limit => req.numwant
+      resp.peers = Peer.find_for_announce_resp req.torrent, req.user, :limit => req.numwant
       resp.compact = req.compact
       resp.no_peer_id = req.no_peer_id
     end

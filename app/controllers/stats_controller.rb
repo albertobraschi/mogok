@@ -6,14 +6,12 @@ class StatsController < ApplicationController
 
   def index
     logger.debug ':-) stats_controller.index'
-    @stat = Stat.find :first, :order => 'id DESC'
+    @stat = Stat.first
   end
 
   def history
     logger.debug ':-) stats_controller.history'
-    @stats = Stat.paginate :order => 'created_at DESC',
-                           :per_page => APP_CONFIG[:stats_history_page_size],
-                           :page => current_page
+    @stats = Stat.paginate params, :per_page => APP_CONFIG[:stats_history_page_size]
   end
 
   def clear_all

@@ -1,12 +1,14 @@
 
+if CACHE_ENABLED
+  require 'memcache'
+  memcached_config = open(File.join(RAILS_ROOT, 'config/memcached.yml')) {|f| YAML.load(f)[Rails.env] }
+  memcached_config.symbolize_keys!
+  memcached_config[:logger] = RAILS_DEFAULT_LOGGER
 
-# memcached
-  if CACHE_ENABLED
-    require 'memcache'
-    memcached_config = open(File.join(RAILS_ROOT, 'config/memcached.yml')) {|f| YAML.load(f)[RAILS_ENV] }
-    memcached_config.symbolize_keys!
-    memcached_config[:logger] = RAILS_DEFAULT_LOGGER
+  # rails cache store
+    ActionController::Base.cache_store = :mem_cache_store, memcached_config[:servers], memcached_config
 
+  # application custom cache
     CACHE = MemCache.new memcached_config
     CACHE.servers = memcached_config[:servers]
 
@@ -16,10 +18,8 @@
         CACHE.reset if forked # we're in smart spawning mode, reset connection
       end
     end
-  end
 
-# cache_money
-  if CACHE_ENABLED
+  # cache_money
     require 'cache_money'
 
     $local = Cash::Local.new(CACHE)
@@ -29,10 +29,11 @@
     class ActiveRecord::Base
       is_cached :repository => $cache
     end
-  else
+else
+  # disable cache_money code in the models
     class ActiveRecord::Base
       def self.index(*args)
       end
     end
-  end
+end
 

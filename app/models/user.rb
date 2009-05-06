@@ -79,6 +79,42 @@ class User < ActiveRecord::Base
     find 1
   end
 
+  def self.search(params, searcher, *args)
+    options = args.pop    
+    params[:username] = nil if params[:username] && params[:username].size < 3
+
+    paginate :conditions => search_conditions(params, searcher),
+             :order => search_order_by(params),
+             :page => current_page(params[:page]),
+             :per_page => options[:per_page]
+  end
+
+  def self.user_invitees(user, params, *args)
+    options = args.pop
+    paginate_by_inviter_id user,
+                           :order => 'created_at',
+                           :page => current_page(params[:page]),
+                           :per_page => options[:per_page]
+  end
+
+  def self.top_uploaders(*args)
+    options = args.pop
+    find :all, :order => 'uploaded DESC', :conditions => 'uploaded > 0', :limit => options[:limit]
+  end
+
+  def self.top_contributors(*args)
+    options = args.pop
+    a = []
+    q = "SELECT user_id, COUNT(*) AS uploads FROM torrents WHERE user_id IS NOT NULL GROUP BY user_id ORDER BY uploads DESC LIMIT #{options[:limit]}"
+    result = connection.select_all q
+    result.each {|r| a << {:user => find(r['user_id']), :torrents => r['uploads']} }
+    a
+  end
+
+  def self.find_absents(threshold)
+    find :all, :conditions => ['last_seen_at < ? AND active = TRUE', threshold]
+  end
+
   def announce_passkey(torrent)
     hmac = CryptUtils.hmac_md5 torrent.announce_key, self.passkey
     hmac + self.id.to_s # append user id to hmac
@@ -206,6 +242,40 @@ class User < ActiveRecord::Base
   end
   
   private
+
+  def self.search_conditions(params, searcher)
+    s, h = '', {}
+    unless searcher.system_user?
+      s << 'id != 1 ' # hide system user
+      previous = true
+    end
+    unless params[:username].blank?
+      s << 'AND ' if previous
+      s << 'username LIKE :username '
+      h[:username] = "%#{params[:username]}%"
+      previous = true
+    end
+    unless params[:role_id].blank?
+      s << 'AND ' if previous
+      s << 'role_id = :role_id '
+      h[:role_id] = params[:role_id].to_i
+      previous = true
+    end
+    unless params[:country_id].blank?
+      s << 'AND ' if previous
+      s << 'country_id = :country_id '
+      h[:country_id] = params[:country_id].to_i
+    end
+    [s, h]
+  end
+
+  def self.search_order_by(params)
+    if params[:order_by] == 'ratio'
+      "uploaded/downloaded#{' DESC' if params[:desc] == '1'}"
+    else
+      order_by(params[:order_by], params[:desc])
+    end
+  end
 
   def username_available?(params)
     User.find_by_username(params[:username], :conditions => ['id != ?', self.id]).blank?

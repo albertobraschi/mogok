@@ -6,10 +6,7 @@ class TopicsController < ApplicationController
   def show
     logger.debug ':-) topics_controller.show'
     @topic = Topic.find params[:id]
-    @posts = Post.paginate_by_topic_id @topic,
-                                       :order => 'created_at',
-                                       :per_page => APP_CONFIG[:forum_posts_page_size],
-                                       :page => current_page
+    @posts = Post.topic_posts @topic, params, :per_page => APP_CONFIG[:forum_posts_page_size]
   end
 
   def new

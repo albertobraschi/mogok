@@ -16,7 +16,7 @@ user_max_inactivity_minutes: 30
 default_avatar: no_avatar.jpg
 
 # expiration time for the torrents browse cached pages (will expire when a new torrent is uploaded)
-torrents_refresh_minutes: 1
+torrents_refresh_minutes: 5
 
 # torrent file maximum size (such files are temporarily loaded in memory so be careful)
 torrent_file_max_size_kb: 256

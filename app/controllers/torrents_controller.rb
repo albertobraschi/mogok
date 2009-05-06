@@ -10,24 +10,17 @@ class TorrentsController < ApplicationController
 
   def index
     logger.debug ':-) torrents_controller.index'
-    params[:keywords] = ApplicationHelper.process_search_keywords params[:keywords], 3   
+    params[:keywords] = ApplicationHelper.process_search_keywords params[:keywords], 3
     params[:order_by], params[:desc]= 'created_at', '1' if params[:order_by].blank?
-
+    
     @perform_cache = index_perform_cache?
     
-    @fragment_name = "torrents.index.page.#{current_page}"
+    @fragment_name = "torrents.index.page.#{params[:page] || 1}"
     @search_box_fragment_name = 'torrents.index.search_box'
 
     if !@perform_cache || (@perform_cache && expire_timed_fragment(@fragment_name)) # check mogok_timed_fragment_cache plugin
-      @torrents = Torrent.paginate :conditions => index_conditions(params),
-                                   :order => order_by,
-                                   :page => current_page,
-                                   :per_page => APP_CONFIG[:torrents_page_size],
-                                   :include => :tags
-      unless @torrents.blank?
-        @torrents.desc_by_default = APP_CONFIG[:torrents_desc_by_default]
-        @torrents.order_by = params[:order_by]
-      end
+      @torrents = Torrent.search params, logged_user, :per_page => APP_CONFIG[:torrents_page_size]
+      @torrents.desc_by_default = APP_CONFIG[:torrents_desc_by_default] unless @torrents.blank?
       @category = Category.find params[:category_id] unless params[:category_id].blank?
     end
     if !@perform_cache || (@perform_cache && !read_fragment(@search_box_fragment_name))
@@ -45,10 +38,7 @@ class TorrentsController < ApplicationController
     else
       @torrent.set_bookmarked logged_user
       @mapped_files = MappedFile.cached_by_torrent(@torrent)
-      @comments = Comment.paginate_by_torrent_id @torrent,
-                                                 :order => 'created_at',
-                                                 :page => current_page,
-                                                 :per_page => APP_CONFIG[:torrent_comments_page_size]
+      @comments = Comment.torrent_comments @torrent, params, :per_page => APP_CONFIG[:torrent_comments_page_size]
       @comments.html_anchor  = 'comments' if @comments
     end
   end  
@@ -167,16 +157,14 @@ class TorrentsController < ApplicationController
     if request.post?
       logger.debug ':-) post request'
       @torrent.user = logged_user
-      uploaded_file = params[:torrent_file]
       begin
-        torrent_data = get_file_data uploaded_file
+        torrent_data = get_file_data params[:torrent_file]
         begin
-          @torrent.set_meta_info Bittorrent::TorrentFile.parse(torrent_data, logger), true, logger # parsing torrent
+          @torrent.set_meta_info(torrent_data, true, logger) # torrent file parsing
           logger.debug ':-) torrent file parsed'
         rescue Bittorrent::TorrentFile::InvalidTorrentError => e
-          logger.error ':-o TorrentsController.upload torrent parsing error'
-          log_error e.original if e.original
-          raise_torrent_file_error e.message
+          logger.debug ":-o torrent parsing error: #{e.message}"
+          raise_torrent_file_error t('model.torrent.errors.torrent_file.invalid')
         end
 
         if @torrent.save
@@ -191,7 +179,7 @@ class TorrentsController < ApplicationController
           end
         end
       rescue TorrentFileError => e
-        logger.error ":-o invalid torrent file: #{e.message}"
+        logger.error ":-o torrent file error: #{e.message}"
         @torrent.valid? # check if there are other errors to display in the view
         @torrent.errors.add :torrent_file, e.message
       end
@@ -218,28 +206,18 @@ class TorrentsController < ApplicationController
 
   def stuck
     logger.debug ':-) torrents_controller.stuck_torrents'
-    @torrents = Torrent.paginate :conditions => stuck_conditions,
-                                 :order => 'leechers_count DESC, name',
-                                 :per_page => 20,
-                                 :page => current_page,
-                                 :include => :tags
+    @torrents = Torrent.stuck_by_user logged_user, params, :per_page => 20
     set_bookmarked @torrents
   end
     
   def show_peers
     logger.debug ':-) torrents_controller.show_peers'
-    @peers = Peer.paginate_by_torrent_id params[:id],
-                                         :order => 'started_at DESC',
-                                         :page => current_page,
-                                         :per_page => APP_CONFIG[:torrent_peers_page_size]
+    @peers = Peer.torrent_peers params[:id], params, :per_page => APP_CONFIG[:torrent_peers_page_size]
   end  
   
   def show_snatches
     logger.debug ':-) torrents_controller.show_snatches'
-    @snatches = Snatch.paginate_by_torrent_id params[:id],
-                                              :order => 'created_at DESC',
-                                              :page => current_page,
-                                              :per_page => APP_CONFIG[:torrent_snatches_page_size]
+    @snatches = Snatch.torrent_snatches params[:id], params, :per_page => APP_CONFIG[:torrent_snatches_page_size]
   end  
     
   private
@@ -286,86 +264,14 @@ class TorrentsController < ApplicationController
   end
 
   def index_perform_cache?
-    !logged_user.admin_mod? && # admin_mods can see what other users can't
-    params[:order_by] == 'created_at'&&
-    params[:desc] == '1' &&
+    !logged_user.admin_mod? && # admin_mods can see inactive torrents
+    params[:order_by] == 'created_at' && params[:desc] == '1' &&
     params[:keywords].blank? &&
     params[:category_id].blank? &&
     params[:format_id].blank? &&
     params[:country_id].blank? &&
     params[:tags_str].blank? &&
     params[:inactive].blank?
-  end
-  
-  def index_conditions(params)
-    s, h = '', {}
-    if logged_user.admin_mod?
-      if params[:inactive] == '1'
-        s << 'active = FALSE '
-        previous = true
-      end
-    else
-      s << 'active = TRUE '
-      previous = true
-    end    
-    unless params[:keywords].blank?
-      s << 'AND ' if previous
-      s << 'id IN (SELECT torrent_id FROM torrent_fulltexts WHERE MATCH(body) AGAINST (:keywords IN BOOLEAN MODE)) '
-      h[:keywords] = params[:keywords]
-      previous = true
-    end
-    unless params[:category_id].blank?
-      s << 'AND ' if previous
-      s << 'category_id = :category_id '
-      h[:category_id] = params[:category_id].to_i
-      previous = true
-    end
-    unless params[:format_id].blank?
-      s << 'AND ' if previous
-      s << 'format_id = :format_id '
-      h[:format_id] = params[:format_id].to_i
-      previous = true
-    end
-    unless params[:country_id].blank?
-      s << 'AND ' if previous
-      s << 'country_id = :country_id '
-      h[:country_id] = params[:country_id].to_i
-      previous = true
-    end
-    unless params[:tags_str].blank?
-      if params[:category_id].blank?
-        params[:tags_str] = ''
-      else
-        tags = Tag.parse_tags params[:tags_str], params[:category_id].to_i
-        unless tags.blank?
-          if tags.length > 3
-            tags = tags[0, 3] # three tags maximum
-          end
-          params[:tags_str] = tags.join ', ' # show user which tags were used in search
-          s << 'AND ' if previous
-          s << 'id IN '
-          s << "(SELECT torrent_id FROM tags_torrents WHERE tag_id = #{tags[0].id} "
-          unless tags[1].blank?
-            s << "AND torrent_id IN (SELECT torrent_id FROM tags_torrents WHERE tag_id = #{tags[1].id} "
-            unless tags[2].blank?
-              s << "AND torrent_id IN (SELECT torrent_id FROM tags_torrents WHERE tag_id = #{tags[2].id})"
-            end
-            s << ')'
-          end
-          s << ')'
-        end
-      end
-    end
-    [s, h]
-  end
-
-  def stuck_conditions
-    s, h = '', {}
-    s << 'active = TRUE AND seeders_count = 0 AND leechers_count > 0 '
-    s << 'AND '
-    s << '(user_id = :user_id OR id IN (SELECT torrent_id FROM snatches WHERE user_id = :user_id))'
-    h[:user_id] = logged_user.id
-    [s, h]
   end
 end
 

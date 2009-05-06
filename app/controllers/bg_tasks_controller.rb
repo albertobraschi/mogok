@@ -7,7 +7,7 @@ class BgTasksController < ApplicationController
     logger.debug ':-) bg_tasks_controller.index'
     @bg_tasks = BgTasks::Utils.fetch_tasks APP_CONFIG
     @cron_jobs = list_cron_jobs
-    @task_logs = BgTaskLog.find :all, :order => 'created_at DESC', :limit => 10
+    @task_logs = BgTaskLog.all :limit => 10
   end
 
   def exec
@@ -54,7 +54,7 @@ class BgTasksController < ApplicationController
 
   def logs
     logger.debug ':-) bg_tasks_controller.logs'
-    @task_logs = BgTaskLog.find :all, :order => 'created_at DESC', :limit => 200
+    @task_logs = BgTaskLog.all :limit => 400
   end
 
   def clear_logs

@@ -4,7 +4,7 @@ module BgTasks
   module Utils
 
     def self.fetch_tasks(config)
-      tasks = BgTask.find :all, :order => 'name'
+      tasks = BgTask.all
       tasks = load_tasks config if tasks.blank?
       tasks
     end

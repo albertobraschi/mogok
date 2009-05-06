@@ -20,4 +20,8 @@ class Category < ActiveRecord::Base
       find :all, :order => 'position', :include => :tags
     end
   end
+
+  def self.all
+    find :all, :order => 'position'
+  end
 end
