@@ -13,17 +13,17 @@
   
   <body>
     <div>      
-      <%= render :partial => 'layouts/header' %>
+      <%= render :partial => 'misc/header' %>
 
       <% cache 'application.menu' do %>
-        <%= render :partial => 'layouts/menu' %>
+        <%= render :partial => 'misc/menu' %>
       <% end %>
 
-      <%= render :partial => 'layouts/adm_menu' if logged_user.admin? && session[:adm_menu] %>
+      <%= render :partial => 'misc/adm_menu' if logged_user.admin? && session[:adm_menu] %>
       
       <%= yield :layout %>
       
-      <%= render :partial => 'layouts/footer' %>
+      <%= render :partial => 'misc/footer' %>
     </div>
   </body>
 </html>

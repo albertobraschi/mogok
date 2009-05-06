@@ -26,14 +26,15 @@ class Torrent < ActiveRecord::Base
   attr_accessor :inactivated
 
   validates_uniqueness_of :info_hash, :message => I18n.t('model.torrent.errors.info_hash.taken')
+  validates_numericality_of :year, :message => I18n.t('model.torrent.errors.year.invalid'), :allow_blank => true
   validates_presence_of :name
   validates_presence_of :category_id
+
 
   MAX_TAGS = 4
 
   def validate
     errors.add(:tags, I18n.t('model.torrent.errors.tags.max', :max => MAX_TAGS)) if self.tags.length > MAX_TAGS
-    errors.add(:year, I18n.t('model.torrent.errors.year.invalid')) if self.year && self.year.to_s.size != 4
   end
 
   def before_create
@@ -114,11 +115,17 @@ class Torrent < ActiveRecord::Base
     root.out
   end
   
-  # Populate the torrent object with the torrent file data
   def set_meta_info(torrent_data, force_private = false, logger = nil)
-    meta_info = parse(torrent_data, logger) # parse torrent and check if meta-info is valid
+    begin
+      meta_info = parse(torrent_data, logger) # parse and check if meta-info is valid
+      logger.debug ':-) torrent file is valid' if logger
+    rescue InvalidTorrentError => e
+      logger.debug ":-o torrent parsing error: #{e.message}" if logger
+      errors.add :torrent_file, I18n.t('model.torrent.errors.torrent_file.invalid')
+      return
+    end
     meta_info[INFO][PRIVATE] = '1' if force_private
-    populate_meta_info meta_info
+    populate_meta_info meta_info    
   end
 
   def self.search(params, searcher, *args)

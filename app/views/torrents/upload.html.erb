@@ -29,7 +29,7 @@
           </td>
           <td>
             <%= file_field_tag :torrent_file, {:size => 51} %>
-            <%= field_error @torrent.errors[:torrent_file] %>
+            <%= field_error @torrent.errors[:torrent_file] || @torrent.errors[:info_hash] %>
           </td>
         </tr>
         <tr>

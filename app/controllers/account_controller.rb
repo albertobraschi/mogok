@@ -67,7 +67,7 @@ class AccountController < ApplicationController
           log_user_in @user
           redirect_to root_path
         else
-          logger.error ':-o user data invalid'
+          logger.debug ':-o user data invalid'
           @user.password = @user.password_confirmation = ''
         end
       end

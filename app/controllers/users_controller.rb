@@ -37,7 +37,7 @@ class UsersController < ApplicationController
           logger.debug ":-) user created. id: #{@user.id}"
           redirect_to :action => 'show', :id => @user
         else
-          logger.error ':-o user not created'
+          logger.debug ':-o user not created'
           @user.password = @user.password_confirmation = ''
         end
       else
@@ -63,7 +63,7 @@ class UsersController < ApplicationController
             flash[:notice] = t('controller.users.edit.success')
             redirect_to :action => 'show', :id => @user
           else
-            logger.error ':-o user not saved'
+            logger.debug ':-o user not saved'
             @user.password = @user.password_confirmation = ''
           end
         end

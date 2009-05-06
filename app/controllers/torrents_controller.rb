@@ -58,7 +58,7 @@ class TorrentsController < ApplicationController
           flash[:notice] = t('controller.torrents.edit.success')
           redirect_to :action => 'show', :id => @torrent
         else
-          logger.error ':-o torrent not saved'
+          logger.debug ':-o torrent not saved'
         end
       else
         redirect_to :action => 'show', :id => @torrent
@@ -159,29 +159,19 @@ class TorrentsController < ApplicationController
       @torrent.user = logged_user
       begin
         torrent_data = get_file_data params[:torrent_file]
-        begin
-          @torrent.set_meta_info(torrent_data, true, logger) # torrent file parsing
-          logger.debug ':-) torrent file parsed'
-        rescue Bittorrent::TorrentFile::InvalidTorrentError => e
-          logger.debug ":-o torrent parsing error: #{e.message}"
-          raise_torrent_file_error t('model.torrent.errors.torrent_file.invalid')
-        end
 
+        @torrent.set_meta_info(torrent_data, true, logger) # torrent file parsing
+        
         if @torrent.save
           logger.debug ':-) torrent saved'
           add_log t('controller.torrents.upload.log', :torrent => @torrent.name, :user => logged_user.username)
           flash[:alert] = t('controller.torrents.upload.success')
           redirect_to :action => 'show', :id => @torrent
-        else
-          if @torrent.errors[:info_hash]
-            logger.error ':-o torrent file already uploaded'
-            raise_torrent_file_error @torrent.errors[:info_hash]
-          end
         end
       rescue TorrentFileError => e
-        logger.error ":-o torrent file error: #{e.message}"
-        @torrent.valid? # check if there are other errors to display in the view
+        logger.debug ":-o torrent file error: #{e.message}"
         @torrent.errors.add :torrent_file, e.message
+        @torrent.valid? # check if there are other errors to display in the view        
       end
       @category = @torrent.category
     end
@@ -193,15 +183,15 @@ class TorrentsController < ApplicationController
     
   def download
     logger.debug ':-) torrents_controller.download'
-    @torrent = Torrent.find params[:id]
-    raise ArgumentError if !@torrent.active? && !logged_user.admin_mod?
-    @torrent.announce_url = announce_url logged_user.announce_passkey(@torrent)
-    @torrent.comment = APP_CONFIG[:torrent_file_comment] if APP_CONFIG[:torrent_file_comment]
-    file_name = TorrentsHelper.torrent_file_name @torrent, APP_CONFIG[:torrent_file_prefix]
-    send_data @torrent.out,
-              :type => 'application/x-bittorrent',
-              :disposition => 'attachment',
-              :filename => file_name
+    t = Torrent.find_by_id params[:id]
+    if t.blank? || (!t.active? && !logged_user.admin_mod?)
+      render :template => 'torrents/unavailable'
+    else
+      t.announce_url = announce_url logged_user.announce_passkey(t)
+      t.comment = APP_CONFIG[:torrent_file_comment] if APP_CONFIG[:torrent_file_comment]
+      file_name = TorrentsHelper.torrent_file_name t, APP_CONFIG[:torrent_file_prefix]
+      send_data t.out, :filename => file_name, :type => 'application/x-bittorrent', :disposition => 'attachment'
+    end
   end
 
   def stuck
@@ -244,7 +234,7 @@ class TorrentsController < ApplicationController
     elsif f.respond_to? :read
       data = f.read
     else
-      raise 'Unable to handle uploaded file. Check how the web server treats file uploads.'
+      raise 'Unable to handle uploaded file, check how the web server treats file uploads.'
     end
     data
   end
