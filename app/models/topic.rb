@@ -11,7 +11,7 @@ class Topic < ActiveRecord::Base
   attr_accessor :last_post
 
   def after_create
-    TopicFulltext.create :topic_id => self.id, :body => "#{self.title} #{self.topic_post.body}"
+    TopicFulltext.create :topic_id => self, :body => "#{self.title} #{self.topic_post.body}"
   end
 
   def after_update
@@ -22,29 +22,45 @@ class Topic < ActiveRecord::Base
     user.id == self.user_id || user.admin_mod?
   end
 
-  def self.search(params, args)
-    paginate :conditions => search_conditions(params),
-             :order => 'last_post_at DESC',
-             :page => current_page(params[:page]),
-             :per_page => args[:per_page]
-  end
-
-  def self.search_by_forum(forum, params, args)
-    paginate_by_forum_id forum,
-                         :conditions => search_conditions(params),
-                         :order => 'stuck DESC, last_post_at DESC',
-                         :page => current_page(params[:page]),
-                         :per_page => args[:per_page]
-  end
-
-  private
-
-  def self.search_conditions(params)
-    s, h = '', {}
-    unless params[:keywords].blank?
-      s << 'id IN (SELECT topic_id FROM topic_fulltexts WHERE MATCH(body) AGAINST (:keywords IN BOOLEAN MODE) ) '
-      h[:keywords] = params[:keywords]
+  def edit(params, editor)
+    self.title = params[:title]
+    self.topic_post.body = params[:body]
+    self.topic_post.edited_at = Time.now
+    self.topic_post.edited_by = editor.username
+    Topic.transaction do
+      self.topic_post.save
+      save
     end
-    [s, h]
+  end
+
+  def add_post(params, user)
+    Topic.transaction do
+      self.replies_count += 1
+      self.last_post_at = Time.now
+      self.last_post_by = user.username
+      save
+      p = Post.new :user => user, 
+                   :topic => self,
+                   :forum_id => self.forum_id,
+                   :created_at => Time.now,
+                   :body => params[:body]
+      p.post_number = self.replies_count + 1
+      p.save
+    end
+  end
+
+  def destroy
+    Topic.transaction do
+      self.forum.decrement! :topics_count if self.forum.topics_count > 0
+      super
+    end
+  end
+
+
+  def paginate_posts(params, args)
+    Post.paginate_by_topic_id self,
+                              :order => 'created_at',
+                              :page => self.class.current_page(params[:page]),
+                              :per_page => args[:per_page]
   end
 end

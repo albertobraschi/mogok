@@ -5,6 +5,8 @@ class LogsController < ApplicationController
   def index
     logger.debug ':-) logs_controller.index'        
     params[:keywords] = ApplicationHelper.process_search_keywords params[:keywords]
+    params[:order_by], params[:desc] = 'created_at', '1' if params[:order_by].blank?
+    
     @logs = Log.search params, logged_user, :per_page => APP_CONFIG[:logs_page_size]
   end
 end

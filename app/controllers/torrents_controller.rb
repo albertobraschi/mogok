@@ -38,7 +38,7 @@ class TorrentsController < ApplicationController
     else
       @torrent.set_bookmarked logged_user
       @mapped_files = MappedFile.cached_by_torrent(@torrent)
-      @comments = Comment.torrent_comments @torrent, params, :per_page => APP_CONFIG[:torrent_comments_page_size]
+      @comments = @torrent.paginate_comments params, :per_page => APP_CONFIG[:torrent_comments_page_size]
       @comments.html_anchor  = 'comments' if @comments
     end
   end  
@@ -51,14 +51,13 @@ class TorrentsController < ApplicationController
     if request.post?
       logger.debug ':-) post request'
       unless cancelled?
-        @torrent.set_attributes params[:torrent]
-        if @torrent.save
-          logger.debug ':-) torrent saved'
+        if @torrent.edit(params[:torrent])
+          logger.debug ':-) torrent edited'
           add_log t('controller.torrents.edit.log', :torrent => @torrent.name, :user => logged_user.username), params[:reason]
           flash[:notice] = t('controller.torrents.edit.success')
           redirect_to :action => 'show', :id => @torrent
         else
-          logger.debug ':-o torrent not saved'
+          logger.debug ':-o torrent not edited'
         end
       else
         redirect_to :action => 'show', :id => @torrent
@@ -105,7 +104,7 @@ class TorrentsController < ApplicationController
   def activate
     logger.debug ':-) torrents_controller.activate'
     @torrent = Torrent.find params[:id]
-    @torrent.update_attribute :active, true
+    @torrent.activate
     add_log t('controller.torrents.activate.log', :torrent => @torrent.name, :user => logged_user.username)
     flash[:notice] = t('controller.torrents.activate.success')
     redirect_to :action => 'index'
@@ -118,7 +117,7 @@ class TorrentsController < ApplicationController
       unless cancelled?
         unless params[:reason].blank?
           target_path = url_for :action => 'show', :id => @torrent, :only_path => true
-          Report.create :created_at => Time.now, :label => "torrent [#{@torrent.id}]", :target_path => target_path, :user => logged_user, :reason => params[:reason]
+          Report.create @torrent, target_path, logged_user, params[:reason]
           flash[:notice] = t('controller.torrents.report.success')
           redirect_to :action => 'show', :id => @torrent
         else
@@ -133,14 +132,7 @@ class TorrentsController < ApplicationController
   def bookmark
     logger.debug ':-) torrents_controller.bookmark'
     @torrent = Torrent.find params[:id]
-    @bookmark = logged_user.bookmarks.find_by_torrent_id @torrent
-    if @bookmark
-      @bookmark.destroy
-      @torrent.bookmarked = false
-    else
-      @bookmark = Bookmark.create :torrent_id => @torrent.id, :user_id => logged_user.id
-      @torrent.bookmarked = true
-    end
+    Bookmark.toggle_bookmarked @torrent, logged_user
   end
 
   def switch_lock_comments
@@ -160,18 +152,18 @@ class TorrentsController < ApplicationController
       begin
         torrent_data = get_file_data params[:torrent_file]
 
-        @torrent.set_meta_info(torrent_data, true, logger) # torrent file parsing
-        
-        if @torrent.save
-          logger.debug ':-) torrent saved'
-          add_log t('controller.torrents.upload.log', :torrent => @torrent.name, :user => logged_user.username)
-          flash[:alert] = t('controller.torrents.upload.success')
-          redirect_to :action => 'show', :id => @torrent
+        if @torrent.set_meta_info(torrent_data, true, logger) # torrent file parsing
+          if @torrent.save
+            logger.debug ':-) torrent saved'
+            add_log t('controller.torrents.upload.log', :torrent => @torrent.name, :user => logged_user.username)
+            flash[:alert] = t('controller.torrents.upload.success')
+            redirect_to :action => 'show', :id => @torrent
+          end
         end
       rescue TorrentFileError => e
         logger.debug ":-o torrent file error: #{e.message}"
-        @torrent.errors.add :torrent_file, e.message
-        @torrent.valid? # check if there are other errors to display in the view        
+        @torrent.valid? # first check if there are also other errors
+        @torrent.errors.add :torrent_file, e.message        
       end
       @category = @torrent.category
     end
@@ -202,12 +194,14 @@ class TorrentsController < ApplicationController
     
   def show_peers
     logger.debug ':-) torrents_controller.show_peers'
-    @peers = Peer.torrent_peers params[:id], params, :per_page => APP_CONFIG[:torrent_peers_page_size]
+    t = Torrent.find params[:id]
+    @peers = t.paginate_peers params, :per_page => APP_CONFIG[:torrent_peers_page_size]
   end  
   
   def show_snatches
     logger.debug ':-) torrents_controller.show_snatches'
-    @snatches = Snatch.torrent_snatches params[:id], params, :per_page => APP_CONFIG[:torrent_snatches_page_size]
+    t = Torrent.find params[:id]
+    @snatches = t.paginate_snatches params, :per_page => APP_CONFIG[:torrent_snatches_page_size]
   end  
     
   private
@@ -244,8 +238,8 @@ class TorrentsController < ApplicationController
       raise_torrent_file_error t('model.torrent.errors.torrent_file.required')
     else
       logger.debug ":-) file uploaded as #{f.class.name}"
-      if f.respond_to? :original_filename
-        raise_torrent_file_error t('model.torrent.errors.torrent_file.type') unless f.original_filename.downcase.ends_with? '.torrent'
+      if f.respond_to?(:original_filename) && !f.original_filename.downcase.ends_with?('.torrent')
+        raise_torrent_file_error t('model.torrent.errors.torrent_file.type')
       end
       if f.length > APP_CONFIG[:torrent_file_max_size_kb].kilobytes
         raise_torrent_file_error t('model.torrent.errors.torrent_file.size', :max_size => APP_CONFIG[:torrent_file_max_size_kb])

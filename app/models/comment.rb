@@ -14,10 +14,10 @@ class Comment < ActiveRecord::Base
     user.id == self.user_id || user.admin_mod?
   end
 
-  def self.torrent_comments(torrent, params, args)
-    paginate_by_torrent_id torrent,
-                           :order => 'created_at',
-                           :page => current_page(params[:page]),
-                           :per_page => args[:per_page]
+  def edit(params, editor)
+    self.body = params[:body]
+    self.edited_at = Time.now
+    self.edited_by = editor.username
+    save
   end
 end

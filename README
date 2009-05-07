@@ -259,6 +259,7 @@ to translate. So, if you want to translate, let's say to Spanish, this is what y
   - change the default locale in the file app_config.yml to 'es'
   - translate the views. note that you can let the original english views intact and just add the translated
     ones following this name pattern: my_view.html.erb -> my_view.es.html.erb.
+  IMPORTANT: changing or deleting the default 'en.yml' file may break some of the features tests.
 
 - Configuration
   Lays in the files below. The files come with an 'example' extension, just rename them and change the

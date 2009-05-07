@@ -12,16 +12,8 @@ class PostsController < ApplicationController
     logger.debug ':-) posts_controller.new'
     @topic = Topic.find params[:topic_id]
     access_denied if @topic.locked? && !logged_user.admin_mod?
-    unless params[:body].blank?      
-      Post.transaction do
-        @topic.replies_count = @topic.replies_count + 1
-        @topic.last_post_at = Time.now
-        @topic.last_post_by = logged_user.username
-        @topic.save
-        p = Post.new :user => logged_user, :topic => @topic, :forum_id => @topic.forum_id, :created_at => Time.now, :body => params[:body]
-        p.post_number = @topic.replies_count + 1
-        p.save
-      end
+    unless params[:body].blank?
+      @topic.add_post params, logged_user
       flash[:notice] = t('controller.posts.new.success')
       redirect_to topics_path(:action => 'show', :id => @topic, :page => 'last')
     else
@@ -43,13 +35,10 @@ class PostsController < ApplicationController
       logger.debug ':-) post request'
       unless cancelled?
         unless params[:body].blank?
-          @post.body = params[:body]
-          @post.edited_at, @post.edited_by = Time.now, logged_user.username
-          if @post.save
-            logger.debug ':-) post saved'
-            flash[:notice] = t('controller.posts.edit.success')
-            redirect_to topics_path(:action => 'show', :id => @post.topic_id, :page => params[:page])
-          end
+          @post.edit params, logged_user
+          logger.debug ':-) post saved'
+          flash[:notice] = t('controller.posts.edit.success')
+          redirect_to topics_path(:action => 'show', :id => @post.topic_id, :page => params[:page])
         else
           flash[:error] = t('controller.posts.edit.empty')
         end
@@ -66,7 +55,7 @@ class PostsController < ApplicationController
       unless cancelled?
         unless params[:reason].blank?
           target_path = posts_path(:forum_id => @post.forum_id, :action => 'show', :id => @post)
-          Report.create :created_at => Time.now, :label => "post [#{@post.id}]", :target_path => target_path, :user => logged_user, :reason => params[:reason]
+          Report.create @post, target_path, logged_user, params[:reason]
           flash[:notice] = t('controller.posts.report.success')
           redirect_to topics_path(:action => 'show', :id => @post.topic_id, :page => params[:page])
         else

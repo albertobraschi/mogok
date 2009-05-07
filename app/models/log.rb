@@ -2,8 +2,6 @@
 class Log < ActiveRecord::Base
 
   def self.search(params, searcher, args)
-    params[:order_by], params[:desc] = 'created_at', '1' if params[:order_by].blank?
-
     paginate :conditions => search_conditions(params, searcher),
              :order => order_by(params[:order_by], params[:desc]),
              :page => current_page(params[:page]),

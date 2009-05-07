@@ -9,10 +9,10 @@ class AccountController < ApplicationController
 
   def login
     logger.debug ':-) account_controller.login'
-    login_attempt = LoginAttempt.find_by_ip request.remote_ip
-    if login_attempt && login_attempt.blocked?
+    login_attempt = LoginAttempt.fetch(request.remote_ip)
+    if login_attempt.blocked?
       logger.debug ":-) login is temporarily blocked for this ip: #{login_attempt.ip}"
-      flash.now[:error] = t('controller.account.login.blocked')
+      flash.now[:error] = t('controller.account.login.blocked') unless flash[:notice]
     else
       if request.post?
         logger.debug ':-) post request'
@@ -21,22 +21,18 @@ class AccountController < ApplicationController
           logger.debug ':-) user authenticated'
           if u.active?
             logger.debug ':-) user active'
-            u.last_login_at = Time.now
-            u.reset_token # prevents multiple logins
-            u.token_expires_at = (params[:stay_logged_in] == '1') ? 10.days.from_now : APP_CONFIG[:user_max_inactivity_minutes].minutes.from_now
-            logger.debug ":-) user token expires at: #{u.token_expires_at}"
-            u.save
-            log_user_in u
-            clean_login_attempts                        
+            log_user_in u, params[:stay_logged_in] == '1'
+            clean_login_attempts
             uri, session[:original_uri] = session[:original_uri], nil
             redirect_to uri || {:controller => 'content'}
           else
             logger.debug ':-o user not active'
-            flash.now[:error] = flash.now[:error] = t('controller.account.login.account_disabled')
+            flash.now[:error] = t('controller.account.login.account_disabled')
           end
         else
           logger.debug ':-o user not authenticated'
-          check_login_attempts login_attempt
+          login_attempt.increment_or_block(MAX_LOGIN_ATTEMPTS, BLOCK_TIME_HOURS)
+          set_login_failed_message login_attempt
         end
       end
       params[:password] = nil
@@ -62,8 +58,8 @@ class AccountController < ApplicationController
       if request.post?
         logger.debug ':-) post request'
         access_denied unless @app_params[:signup_open]
-        if save_new_user @user, @app_params[:signup_by_invitation_only]
-          SignupBlock.create :ip => request.remote_ip, :blocked_until => 1.day.from_now
+        if save_new_user(@user, @app_params[:signup_by_invitation_only])
+          SignupBlock.create(:ip => request.remote_ip, :blocked_until => 1.day.from_now)
           log_user_in @user
           redirect_to root_path
         else
@@ -79,14 +75,13 @@ class AccountController < ApplicationController
     if request.post?
       user = User.find_by_email params[:email] if User.valid_email? params[:email]
       if user && user.active?
+        code = user.create_password_recovery
         begin
-          code = User.make_password_recovery_code
           AppMailer.deliver_password_recovery user, code
-          PasswordRecovery.delete_all_by_user user # if user already have one
-          PasswordRecovery.create :created_at => Time.now, :code => code, :user_id => user.id
           flash[:notice] = t('controller.account.password_recovery.sent', :email => user.email)
         rescue => e
           log_error e
+          PasswordRecovery.delete_all_by_user user
           flash.now[:error] = t('controller.account.password_recovery.delivery_error')
         end
         redirect_to :action => 'login'
@@ -106,15 +101,14 @@ class AccountController < ApplicationController
       if request.post?
         unless params[:password].blank?
           logger.debug ':-) post request'
-          @user.password, @user.password_confirmation = params[:password], params[:password_confirmation]
-          if @user.save
-            logger.debug ':-) user saved'
-            flash[:notice] = t('controller.account.change_password.changed')
+          if @user.change_password(params[:password], params[:password_confirmation])
+            logger.debug ':-) user password changed'            
             password_recovery.destroy
             clean_login_attempts
+            flash[:notice] = t('controller.account.change_password.changed')
             redirect_to :action => 'login', :username => @user.username
           else
-            logger.debug ':-o user not saved'
+            logger.debug ':-o user password not changed'
           end
         else
           @user.errors.add :password, t('model.user.password.required')
@@ -129,40 +123,26 @@ class AccountController < ApplicationController
 
   private
 
-  def log_user_in(u)
+  def set_login_failed_message(login_attempt)
+    if login_attempt.blocked?
+      flash.now[:error] = t('controller.account.set_login_failed_message.blocked',
+                            :hours => BLOCK_TIME_HOURS)
+    else
+      flash.now[:error] = t('controller.account.set_login_failed_message.invalid_login', 
+                            :remaining => MAX_LOGIN_ATTEMPTS - login_attempt.attempts_count)
+    end
+  end
+
+  def log_user_in(u, keep_logged_in = false)
+    u.last_login_at = Time.now
+    u.reset_token
+    u.token_expires_at = keep_logged_in ? 30.days.from_now : APP_CONFIG[:user_max_inactivity_minutes].minutes.from_now
+    logger.debug ":-) user token expires at: #{u.token_expires_at}"
+    u.save
     reset_session
     session[:user_id] = u.id
     session[:token] = u.token
     session[:adm_menu] = true if u.admin?
-  end
-
-  def check_login_attempts(a)
-    unless a
-      a = LoginAttempt.create :ip => request.remote_ip, :attempts_count => 1
-    else
-      if a.attempts_count < (MAX_LOGIN_ATTEMPTS - 1)
-        a.attempts_count += 1        
-      else
-        a.blocked_until = BLOCK_TIME_HOURS.hours.from_now
-        a.attempts_count = 0        
-        register_login_block a.ip
-      end
-      a.save
-    end
-    if a.blocked?
-      flash.now[:error] = t('controller.account.check_login_attempts.blocked', :hours => BLOCK_TIME_HOURS)
-    else
-      flash.now[:error] = t('controller.account.check_login_attempts.invalid_login', :remaining => MAX_LOGIN_ATTEMPTS - a.attempts_count)
-    end
-  end
-
-  def register_login_block(ip)
-    b = LoginBlock.find_by_ip ip
-    unless b
-      LoginBlock.create :ip => ip, :blocks_count => 1
-    else
-      b.increment! :blocks_count
-    end
   end
 
   def save_new_user(u, invite_required)    

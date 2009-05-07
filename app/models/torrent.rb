@@ -49,7 +49,7 @@ class Torrent < ActiveRecord::Base
   end
   
   def after_create
-    TorrentFulltext.create :torrent_id => self.id, :body => "#{self.name} #{self.description}"
+    TorrentFulltext.create :torrent_id => self, :body => "#{self.name} #{self.description}"
   end
 
   def after_update
@@ -85,26 +85,48 @@ class Torrent < ActiveRecord::Base
   end
 
   def inactivate
-    self.inactivated = true # this flag is used by the torrents cache sweeper
-    toggle! :active    
+    self.inactivated = true # flag used by cache sweeper
+    update_attribute :active, false
   end
 
-  def set_attributes(params)
-    if self.name != params[:name]
-      self.name = params[:name]
-      @update_fulltext = true
-    end
-    self.category_id = params[:category_id]
-    self.format_id = params[:format_id]
-    self.tags = Tag.parse_tags params[:tags_str], self.category_id
-    if self.description != params[:description]
-      self.description = params[:description]
-      @update_fulltext = true
-    end
-    self.year = params[:year]
-    self.country_id = params[:country_id]
+  def activate
+    update_attribute :active, true
   end
-  
+
+  def add_comment(params, user)
+    Torrent.transaction do
+      increment! :comments_count
+      c = Comment.new :user => user,
+                      :torrent => self,
+                      :created_at => Time.now,
+                      :body => params[:body]
+      c.comment_number = self.comments_count
+      c.save
+    end
+  end
+
+  def paginate_comments(params, args)
+    Comment.paginate_by_torrent_id self,
+                                   :order => 'created_at',
+                                   :page => self.class.current_page(params[:page]),
+                                   :per_page => args[:per_page]
+  end
+
+  def paginate_peers(params, args)
+    Peer.paginate_by_torrent_id self,
+                                :order => 'started_at DESC',
+                                :page => self.class.current_page(params[:page]),
+                                :per_page => args[:per_page]
+  end
+
+
+  def paginate_snatches(params, args)
+    Snatch.paginate_by_torrent_id self,
+                                  :order => 'created_at DESC',
+                                  :page => self.class.current_page(params[:page]),
+                                  :per_page => args[:per_page]
+  end
+
   def out
     root = BDictionary.new
     root[ANNOUNCE] = BString.new(self.announce_url)
@@ -115,6 +137,11 @@ class Torrent < ActiveRecord::Base
     root.out
   end
   
+  def edit(params)
+    set_attributes params
+    save
+  end
+
   def set_meta_info(torrent_data, force_private = false, logger = nil)
     begin
       meta_info = parse(torrent_data, logger) # parse and check if meta-info is valid
@@ -122,10 +149,11 @@ class Torrent < ActiveRecord::Base
     rescue InvalidTorrentError => e
       logger.debug ":-o torrent parsing error: #{e.message}" if logger
       errors.add :torrent_file, I18n.t('model.torrent.errors.torrent_file.invalid')
-      return
+      return false
     end
     meta_info[INFO][PRIVATE] = '1' if force_private
-    populate_meta_info meta_info    
+    populate_meta_info meta_info
+    true
   end
 
   def self.search(params, searcher, args)
@@ -152,15 +180,23 @@ class Torrent < ActiveRecord::Base
              :include => :tags
   end
 
-  def self.uploaded_by_user(user, params, args)
-    scoped_by_active(true).paginate_by_user_id user,
-                                               :order => order_by(params[:order_by], params[:desc]),
-                                               :page => current_page(params[:page]),
-                                               :per_page => args[:per_page],
-                                               :include => :tags
-  end
-
   private
+
+  def set_attributes(params)
+    if self.name != params[:name]
+      self.name = params[:name]
+      @update_fulltext = true
+    end
+    self.category_id = params[:category_id]
+    self.format_id = params[:format_id]
+    self.tags = Tag.parse_tags params[:tags_str], self.category_id
+    if self.description != params[:description]
+      self.description = params[:description]
+      @update_fulltext = true
+    end
+    self.year = params[:year]
+    self.country_id = params[:country_id]
+  end
 
   def populate_meta_info(meta_info)
     self.creation_date = Time.at(meta_info[CREATION_DATE]) unless meta_info[CREATION_DATE].blank?
@@ -220,7 +256,7 @@ class Torrent < ActiveRecord::Base
     root[NAME] = BString.new(info[NAME])
     root[PIECE_LENGTH] = BNumber.new(info[PIECE_LENGTH])
     root[PIECES] = BString.new(info[PIECES])
-    root[PRIVATE] = BNumber.new(info[PRIVATE]) if info[PRIVATE] == '1'
+    root[PRIVATE] = BNumber.new(info[PRIVATE]) if info[PRIVATE]
     root.out
   end
 

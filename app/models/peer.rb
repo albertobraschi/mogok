@@ -47,21 +47,6 @@ class Peer < ActiveRecord::Base
                            :per_page => args[:per_page]
   end
 
-  def self.user_peers(user, params, args)
-    paginate_by_user_id user,
-                        :conditions => {:seeder => params[:seeding] == '1'},
-                        :order => 'started_at DESC',
-                        :page => current_page(params[:page]),
-                        :per_page => args[:per_page]
-  end
-
-  def self.torrent_peers(torrent_id, params, args)
-    paginate_by_torrent_id torrent_id,
-                           :order => 'started_at DESC',
-                           :page => current_page(params[:page]),
-                           :per_page => args[:per_page]
-  end
-
   def self.find_for_announce_resp(torrent, announcer, args)
     cols = ['id', 'torrent_id', 'user_id', 'uploaded', 'downloaded', 'leftt', 'port', 'started_at', 'last_action_at']
     find :all,

@@ -116,6 +116,13 @@ class User < ActiveRecord::Base
     hmac + self.id.to_s # append user id to hmac
   end
 
+  def create_password_recovery
+    code = User.make_password_recovery_code
+    PasswordRecovery.delete_all_by_user self
+    PasswordRecovery.create :created_at => Time.now, :code => code, :user => self
+    code
+  end
+
   def password=(password)
     @password = password
     unless password.blank?
@@ -179,62 +186,49 @@ class User < ActiveRecord::Base
     self.passkey = CryptUtils.md5_token self.username
   end
 
+  def reset_passkey!
+    reset_passkey
+    save
+  end
+
   def reset_token
     self.token = CryptUtils.md5_token self.id, 20
   end
 
-  def set_attributes(params, updater, current_password)
-    self.country_id = params[:country_id]
-    self.style_id = params[:style_id]
-    self.gender_id = params[:gender_id]
-    self.avatar = params[:avatar]
-    self.info = params[:info]
-    self.save_sent = params[:save_sent]
-    self.delete_on_reply = params[:delete_on_reply]
-    self.display_last_seen_at = params[:display_last_seen_at]
-    self.display_downloads = params[:display_downloads]
-
-    if self.email != params[:email]
-      self.email = params[:email]
-      unless email_available?(params)
-        errors.add(:email, I18n.t('model.user.errors.email.taken'))
-        return false
-      end
+  def edit(params, updater, current_password)
+    if set_attributes(params, updater, current_password)
+      return save
     end
+    false
+  end
 
-    unless updater.admin?
-      if current_password.blank?
-        errors.add(:current_password, I18n.t('model.user.errors.password.required'))
-        return false
-      else
-        unless self.encrypted_password == CryptUtils.encrypt_password(current_password, self.salt)
-          errors.add(:current_password, I18n.t('model.user.errors.password.incorrect'))
-          return false      
-        end
-      end
-    else
-      if self.username != params[:username]
-        self.username = params[:username]
-        unless username_available?(params)
-          errors.add(:username, I18n.t('model.user.errors.username.taken'))
-          return false
-        end        
-      end
-      if self.role_id != params[:role_id].to_i && role_update_allowed?(params, updater)
-        self.role_id = params[:role_id]
-      end
-      self.tickets = params[:tickets]
-      self.active = params[:active] if self.id != 1
-      self.staff_info = params[:staff_info]     
-      self.uploaded, self.downloaded = params[:uploaded], params[:downloaded] if params[:update_stats] == '1'
-    end
+  def change_password(password, confirmation)
+    self.password = password
+    self.password_confirmation = confirmation
+    save
+  end
 
-    unless params[:password].blank?
-      self.password = params[:password]        
-      self.password_confirmation = params[:password_confirmation]
-    end
+  def paginate_uploads(params, args)
+    Torrent.scoped_by_active(true).paginate_by_user_id self,
+                                                       :order => self.class.order_by(params[:order_by], params[:desc]),
+                                                       :page => self.class.current_page(params[:page]),
+                                                       :per_page => args[:per_page],
+                                                       :include => :tags
+  end
 
-    return true
+  def paginate_snatches(params, args)
+    Snatch.paginate_by_user_id self,
+                               :order => 'created_at DESC',
+                               :page => self.class.current_page(params[:page]),
+                               :per_page => args[:per_page]
+  end
+
+  def paginate_peers(params, args)
+    Peer.paginate_by_user_id self,
+                             :conditions => {:seeder => params[:seeding] == '1'},
+                             :order => 'started_at DESC',
+                             :page => self.class.current_page(params[:page]),
+                             :per_page => args[:per_page]
   end
   
   private
@@ -271,6 +265,60 @@ class User < ActiveRecord::Base
     else
       order_by(params[:order_by], params[:desc])
     end
+  end
+
+  def set_attributes(params, updater, current_password)
+    self.country_id = params[:country_id]
+    self.style_id = params[:style_id]
+    self.gender_id = params[:gender_id]
+    self.avatar = params[:avatar]
+    self.info = params[:info]
+    self.save_sent = params[:save_sent]
+    self.delete_on_reply = params[:delete_on_reply]
+    self.display_last_seen_at = params[:display_last_seen_at]
+    self.display_downloads = params[:display_downloads]
+
+    if self.email != params[:email]
+      self.email = params[:email]
+      unless email_available?(params)
+        errors.add(:email, I18n.t('model.user.errors.email.taken'))
+        return false
+      end
+    end
+
+    unless updater.admin?
+      if current_password.blank?
+        errors.add(:current_password, I18n.t('model.user.errors.password.required'))
+        return false
+      else
+        unless self.encrypted_password == CryptUtils.encrypt_password(current_password, self.salt)
+          errors.add(:current_password, I18n.t('model.user.errors.password.incorrect'))
+          return false
+        end
+      end
+    else
+      if self.username != params[:username]
+        self.username = params[:username]
+        unless username_available?(params)
+          errors.add(:username, I18n.t('model.user.errors.username.taken'))
+          return false
+        end
+      end
+      if self.role_id != params[:role_id].to_i && role_update_allowed?(params, updater)
+        self.role_id = params[:role_id]
+      end
+      self.tickets = params[:tickets]
+      self.active = params[:active] if self.id != 1
+      self.staff_info = params[:staff_info]
+      self.uploaded, self.downloaded = params[:uploaded], params[:downloaded] if params[:update_stats] == '1'
+    end
+
+    unless params[:password].blank?
+      self.password = params[:password]
+      self.password_confirmation = params[:password_confirmation]
+    end
+
+    return true
   end
 
   def username_available?(params)

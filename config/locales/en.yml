@@ -3,10 +3,10 @@ en:
   controller:
     account:
       login:
-        blocked: Login is temporarily blocked for your IP address. Try to recover your password.
+        blocked: Login is temporarily blocked for your machine. Try to recover your password.
         account_disabled: This account was disabled.
       signup:
-        blocked: Signup is temporarily blocked for your IP address.
+        blocked: Signup is temporarily blocked for your machine.
       password_recovery:
         sent: A password recovery link has been sent to {{email}}.
         delivery_error: An error occurred and the email could be not sent. Please try again later.
@@ -14,7 +14,7 @@ en:
       change_password:
         changed: Password successfully changed.
         invalid_link: Invalid password recovery link.
-      check_login_attempts:
+      set_login_failed_message:
         blocked: Login will now remain blocked for {{hours}} hours. Try to recover your password.
         invalid_login: "Invalid login data. Remaining attempts: {{remaining}}"
 

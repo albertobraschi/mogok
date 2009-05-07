@@ -6,7 +6,7 @@ class TopicsController < ApplicationController
   def show
     logger.debug ':-) topics_controller.show'
     @topic = Topic.find params[:id]
-    @posts = Post.topic_posts @topic, params, :per_page => APP_CONFIG[:forum_posts_page_size]
+    @posts = @topic.paginate_posts params, :per_page => APP_CONFIG[:forum_posts_page_size]
   end
 
   def new
@@ -17,12 +17,7 @@ class TopicsController < ApplicationController
       logger.debug ':-) post request'
       unless cancelled?
         unless params[:title].blank? || params[:body].blank?
-          t = Topic.new :forum => @forum, :user => logged_user, :title => params[:title], :created_at => Time.now, :last_post_at => Time.now
-          t.topic_post = Post.new :user => logged_user, :topic => t, :forum => @forum, :post_number => 1, :is_topic_post => true, :created_at => Time.now, :body => params[:body]
-          Topic.transaction do
-            t.save
-            @forum.increment! :topics_count
-          end
+          t = @forum.add_topic(params, logged_user)
           flash[:notice] = t('controller.topics.new.success')
           redirect_to :action => 'show', :id => t
         else
@@ -43,14 +38,7 @@ class TopicsController < ApplicationController
     else
       unless cancelled?
         unless params[:title].blank? || params[:body].blank?
-          @topic.title = params[:title]
-          @topic.topic_post.body = params[:body]
-          @topic.topic_post.edited_at = Time.now
-          @topic.topic_post.edited_by = logged_user.username
-          Topic.transaction do
-            @topic.topic_post.save
-            @topic.save
-          end
+          @topic.edit params, logged_user
           flash[:notice] = t('controller.topics.edit.success')
           redirect_to :action => 'show', :id => @topic
         else
@@ -68,10 +56,7 @@ class TopicsController < ApplicationController
     if request.post?
       unless cancelled?
         f = @topic.forum
-        Topic.transaction do
-          f.decrement! :topics_count if f.topics_count > 0
-          @topic.destroy
-        end
+        @topic.destroy
         flash[:notice] = t('controller.topics.destroy.success')
         redirect_to forums_path(:action => 'show', :id => f)
       else
@@ -87,7 +72,7 @@ class TopicsController < ApplicationController
       unless cancelled?
         unless params[:reason].blank?
           target_path = topics_path(:forum_id => @topic.forum_id, :action => 'show', :id => @topic)
-          Report.create :created_at => Time.now, :label => "topic [#{@topic.id}]", :target_path => target_path, :user => logged_user, :reason => params[:reason]
+          Report.create @topic, target_path, logged_user, params[:reason]
           flash[:notice] = t('controller.topics.report.success')
           redirect_to topics_path(:action => 'show', :id => @topic)
         else

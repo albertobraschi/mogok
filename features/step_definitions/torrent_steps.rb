@@ -12,7 +12,7 @@ Given /^I have a torrent with name (.*) and owned by user (.*)$/ do |name, owner
   owner = fetch_user owner
   torrent_file_data = File.new(File.join(TEST_DATA_DIR, 'VALID.TORRENT'), 'rb').read
   t = Torrent.new(:category_id => c.id, :name => name, :user_id => owner.id)  
-  t.set_meta_info Bittorrent::TorrentFile.parse(torrent_file_data), true
+  t.set_meta_info torrent_file_data, true
   t.save
 end
 
@@ -82,10 +82,15 @@ Then /^a snatch for torrent (.*) and user (.*) should be created$/ do |torrent_n
   snatch.should_not == nil
 end
 
-Then /^the downloaded torrent should have hex info hash (.*)$/ do |info_hash|
-  t = Torrent.new
-  t.set_meta_info Bittorrent::TorrentFile.parse(response.body), true
-  Digest.hexencode(t.info_hash).should == info_hash
+Then /^the downloaded torrent and the test torrent info hashs should have equal$/ do
+  test = Torrent.new
+  test_torrent_data = File.new(File.join(TEST_DATA_DIR, 'VALID.TORRENT'), 'rb').read
+  test.set_meta_info(test_torrent_data, true)
+
+  downloaded = Torrent.new
+  downloaded.set_meta_info(response.body, false) # false because it should contain private flag
+  
+  downloaded.info_hash.should == test.info_hash
 end
 
 Then /^the torrent (.*) should have (\d+) mapped files$/ do |name, mapped_files|

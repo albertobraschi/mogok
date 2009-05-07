@@ -56,16 +56,14 @@ class UsersController < ApplicationController
     if request.post?
       logger.debug ':-) post request'
       unless cancelled?
-        if @user.set_attributes params[:user], logged_user, params[:current_password]
-          @user.avatar = APP_CONFIG[:default_avatar] if @user.avatar.blank?
-          if @user.save 
-            logger.debug ':-) user saved'
-            flash[:notice] = t('controller.users.edit.success')
-            redirect_to :action => 'show', :id => @user
-          else
-            logger.debug ':-o user not saved'
-            @user.password = @user.password_confirmation = ''
-          end
+        @user.avatar = APP_CONFIG[:default_avatar] if @user.avatar.blank?
+        if @user.edit(params[:user], logged_user, params[:current_password])
+          logger.debug ':-) user edited'
+          flash[:notice] = t('controller.users.edit.success')
+          redirect_to :action => 'show', :id => @user
+        else
+          logger.debug ':-o user not edited'
+          @user.password = @user.password_confirmation = ''
         end
       else
         redirect_to :action => 'show', :id => @user
@@ -103,8 +101,7 @@ class UsersController < ApplicationController
     access_denied if @user != logged_user && !@user.admin?
     if request.post?
       unless cancelled?
-        @user.reset_passkey
-        @user.save
+        @user.reset_passkey!
         add_log t('controller.users.reset_passkey.log', :user => @user.username, :by => logged_user.username), nil, true
         notify_passkey_reset @user if @user != logged_user
         logger.debug ':-) paskey reset'
@@ -155,7 +152,7 @@ class UsersController < ApplicationController
   def uploads
     logger.debug ':-) users_controller.uploads'
     params[:order_by], params[:desc]= 'created_at', '1' if params[:order_by].blank?
-    @torrents = Torrent.uploaded_by_user logged_user, params, :per_page => APP_CONFIG[:user_history_page_size]
+    @torrents = logged_user.paginate_uploads params, :per_page => APP_CONFIG[:user_history_page_size]
     set_bookmarked @torrents
     unless @torrents.blank?
       @torrents.desc_by_default = APP_CONFIG[:torrents_desc_by_default]
@@ -169,14 +166,14 @@ class UsersController < ApplicationController
     if !@seeding && @user != logged_user && !logged_user.admin?
       access_denied unless @user.display_downloads?
     end
-    @peers = Peer.user_peers @user, params, :per_page => APP_CONFIG[:user_activity_page_size]
+    @peers = @user.paginate_peers params, :per_page => APP_CONFIG[:user_activity_page_size]
   end  
   
   def show_uploads
     logger.debug ':-) users_controller.show_uploads'
     params[:order_by], params[:desc]= 'created_at', '1'
     @user = User.find params[:id]
-    @torrents = Torrent.uploaded_by_user @user, params, :per_page => APP_CONFIG[:user_history_page_size]
+    @torrents = @user.paginate_uploads params, :per_page => APP_CONFIG[:user_history_page_size]
   end  
   
   def show_snatches
@@ -185,7 +182,7 @@ class UsersController < ApplicationController
     if @user != logged_user && !logged_user.admin?
       access_denied unless @user.display_downloads?
     end
-    @snatches = Snatch.user_snatches @user, params, :per_page => APP_CONFIG[:user_history_page_size]
+    @snatches = @user.paginate_snatches params, :per_page => APP_CONFIG[:user_history_page_size]
   end
   
   private

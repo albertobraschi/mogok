@@ -13,14 +13,14 @@ class ForumsController < ApplicationController
     logger.debug ':-) forums_controller.show'
     params[:keywords] = ApplicationHelper.process_search_keywords params[:keywords], 3
     @forum = Forum.find params[:id]
-    @topics = Topic.search_by_forum @forum, params, :per_page => APP_CONFIG[:forum_topics_page_size]
+    @topics = @forum.search params, :per_page => APP_CONFIG[:forum_topics_page_size]
   end
 
   def search
     logger.debug ':-) forums_controller.search'
     params[:keywords] = ApplicationHelper.process_search_keywords params[:keywords], 3
     unless params[:keywords].blank?
-      @topics = Topic.search params, :per_page => APP_CONFIG[:forum_search_results_page_size]
+      @topics = Forum.search_all params, :per_page => APP_CONFIG[:forum_search_results_page_size]
     else
       redirect_to :action => 'index'
     end

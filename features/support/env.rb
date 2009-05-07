@@ -20,7 +20,10 @@ Webrat.configure do |config|
   config.mode = :rails
 end
 
-# mogok customizations
+# force default locale as tests use interface messages
+I18n.default_locale = 'en'
+
+# app customizations
 TEST_DATA_DIR = File.join(RAILS_ROOT, 'features/support/test_data')
 LOG_TO_STDOUT = false
 
@@ -41,3 +44,6 @@ if LOG_TO_STDOUT
 end
 
 puts "> CACHE_ENABLED = #{CACHE_ENABLED}"
+puts "> I18n.default_locale = #{I18n.default_locale}"
+
+
