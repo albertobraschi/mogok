@@ -23,12 +23,11 @@ class AnnounceLog < ActiveRecord::Base
     super h
   end
 
-  def self.search(params, *args)
-    options = args.pop    
+  def self.search(params, args)
     paginate :conditions => search_conditions(params),
              :order => order_by(params[:order_by], params[:desc]),
              :page => current_page(params[:page]),
-             :per_page => options[:per_page]
+             :per_page => args[:per_page]
   end
 
   private

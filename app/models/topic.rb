@@ -22,21 +22,19 @@ class Topic < ActiveRecord::Base
     user.id == self.user_id || user.admin_mod?
   end
 
-  def self.search(params, *args)
-    options = args.pop
+  def self.search(params, args)
     paginate :conditions => search_conditions(params),
              :order => 'last_post_at DESC',
              :page => current_page(params[:page]),
-             :per_page => options[:per_page]
+             :per_page => args[:per_page]
   end
 
-  def self.search_by_forum(forum, params, *args)
-    options = args.pop
+  def self.search_by_forum(forum, params, args)
     paginate_by_forum_id forum,
                          :conditions => search_conditions(params),
                          :order => 'stuck DESC, last_post_at DESC',
                          :page => current_page(params[:page]),
-                         :per_page => options[:per_page]
+                         :per_page => args[:per_page]
   end
 
   private

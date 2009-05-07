@@ -14,11 +14,10 @@ class Comment < ActiveRecord::Base
     user.id == self.user_id || user.admin_mod?
   end
 
-  def self.torrent_comments(torrent, params, *args)
-    options = args.pop
+  def self.torrent_comments(torrent, params, args)
     paginate_by_torrent_id torrent,
                            :order => 'created_at',
                            :page => current_page(params[:page]),
-                           :per_page => options[:per_page]
+                           :per_page => args[:per_page]
   end
 end

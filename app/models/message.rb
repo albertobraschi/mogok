@@ -36,33 +36,31 @@ class Message < ActiveRecord::Base
     FOLDERS.include? value
   end
 
-  def self.make_new(params, sender, *args)
-    options = args.pop
+  def self.make_new(params, sender, args)
     m = new params
-    if !options[:to].blank?
-      m.owner = m.receiver = User.find_by_username(options[:to])
+    if !args[:to].blank?
+      m.owner = m.receiver = User.find_by_username(args[:to])
       m.sender = sender
       m.created_at = Time.now
       m.subject = I18n.t('model.message.new.no_subject') if m.subject.blank?
       m.unread = true
       m.folder = INBOX
     end
-    if !options[:message_id].blank? # if replying or forwarding
-      old_message = find options[:message_id]
+    if !args[:message_id].blank? # if replying or forwarding
+      old_message = find args[:message_id]
       old_message.ensure_ownership sender
-      prepare_for_reply m, old_message if options[:reply]
-      prepare_for_forward m, old_message if options[:forward]
+      prepare_for_reply m, old_message if args[:reply]
+      prepare_for_forward m, old_message if args[:forward]
     end
     m
   end
 
-  def self.user_messages(user, params, *args)
-    options = args.pop
+  def self.user_messages(user, params, args)
     paginate_by_owner_id user,
-                         :conditions => {:folder => options[:folder]},
+                         :conditions => {:folder => args[:folder]},
                          :order => 'created_at DESC',
                          :page => current_page(params[:page]),
-                         :per_page => options[:per_page]
+                         :per_page => args[:per_page]
   end
 
   def owned_by?(user)

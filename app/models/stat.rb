@@ -18,8 +18,7 @@ class Stat < ActiveRecord::Base
     find :first, :order => 'id DESC'
   end
 
-  def self.paginate(params, *args)
-    options = args.pop
-    super :order => 'created_at DESC', :page => current_page(params[:page]), :per_page => options[:per_page]
+  def self.paginate(params, args)
+    super :order => 'created_at DESC', :page => current_page(params[:page]), :per_page => args[:per_page]
   end
 end

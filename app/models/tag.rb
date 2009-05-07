@@ -29,9 +29,8 @@ class Tag < ActiveRecord::Base
     tags
   end
 
-  def self.all(*args)
-    options = args.pop
-    conditions = {:category_id => options[:category_id]} unless options[:category_id].blank?
+  def self.all(args)
+    conditions = {:category_id => args[:category_id]} unless args[:category_id].blank?
     find :all, :conditions => conditions, :order => 'category_id, name'
   end
 end

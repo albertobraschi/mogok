@@ -79,33 +79,29 @@ class User < ActiveRecord::Base
     find 1
   end
 
-  def self.search(params, searcher, *args)
-    options = args.pop    
+  def self.search(params, searcher, args)
     params[:username] = nil if params[:username] && params[:username].size < 3
 
     paginate :conditions => search_conditions(params, searcher),
              :order => search_order_by(params),
              :page => current_page(params[:page]),
-             :per_page => options[:per_page]
+             :per_page => args[:per_page]
   end
 
-  def self.user_invitees(user, params, *args)
-    options = args.pop
+  def self.user_invitees(user, params, args)
     paginate_by_inviter_id user,
                            :order => 'created_at',
                            :page => current_page(params[:page]),
-                           :per_page => options[:per_page]
+                           :per_page => args[:per_page]
   end
 
-  def self.top_uploaders(*args)
-    options = args.pop
-    find :all, :order => 'uploaded DESC', :conditions => 'uploaded > 0', :limit => options[:limit]
+  def self.top_uploaders(args)
+    find :all, :order => 'uploaded DESC', :conditions => 'uploaded > 0', :limit => args[:limit]
   end
 
-  def self.top_contributors(*args)
-    options = args.pop
+  def self.top_contributors(args)
     a = []
-    q = "SELECT user_id, COUNT(*) AS uploads FROM torrents WHERE user_id IS NOT NULL GROUP BY user_id ORDER BY uploads DESC LIMIT #{options[:limit]}"
+    q = "SELECT user_id, COUNT(*) AS uploads FROM torrents WHERE user_id IS NOT NULL GROUP BY user_id ORDER BY uploads DESC LIMIT #{args[:limit]}"
     result = connection.select_all q
     result.each {|r| a << {:user => find(r['user_id']), :torrents => r['uploads']} }
     a

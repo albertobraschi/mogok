@@ -1,8 +1,7 @@
 
 class BgTaskLog < ActiveRecord::Base
 
-  def self.all(*args)
-    options = args.pop
-    find :all, :order => 'created_at DESC', :limit => options[:limit]
+  def self.all(args)
+    find :all, :order => 'created_at DESC', :limit => args[:limit]
   end
 end

@@ -128,39 +128,35 @@ class Torrent < ActiveRecord::Base
     populate_meta_info meta_info    
   end
 
-  def self.search(params, searcher, *args)
-    options = args.pop
+  def self.search(params, searcher, args)
     paginate :conditions => search_conditions(params, searcher),
              :order => order_by(params[:order_by], params[:desc]),
              :page => current_page(params[:page]),
-             :per_page => options[:per_page],
+             :per_page => args[:per_page],
              :include => :tags
   end
 
-  def self.stuck_by_user(user, params, *args)
-    options = args.pop
+  def self.stuck_by_user(user, params, args)
     paginate :conditions => stuck_conditions(user),
              :order => 'leechers_count DESC, name',
              :page => current_page(params[:page]),
-             :per_page => options[:per_page],
+             :per_page => args[:per_page],
              :include => :tags
   end
 
-  def self.bookmarked_by_user(user, params, *args)
-    options = args.pop
+  def self.bookmarked_by_user(user, params, args)
     paginate :conditions => bookmarked_by_user_conditions(user),
              :order => 'category_id, name',
              :page => current_page(params[:page]),
-             :per_page => options[:per_page],
+             :per_page => args[:per_page],
              :include => :tags
   end
 
-  def self.uploaded_by_user(user, params, *args)
-    options = args.pop    
+  def self.uploaded_by_user(user, params, args)
     scoped_by_active(true).paginate_by_user_id user,
                                                :order => order_by(params[:order_by], params[:desc]),
                                                :page => current_page(params[:page]),
-                                               :per_page => options[:per_page],
+                                               :per_page => args[:per_page],
                                                :include => :tags
   end
 
