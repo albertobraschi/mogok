@@ -105,19 +105,19 @@ module Bittorrent
             a << e
           end
         when NUMBER
-          e = ''
+          n = ''
           loop do
             byte = data.read(1)
-            return Integer(e) if byte == END_MARK  # exception if not a number
-            e << byte
+            return Integer(n) if byte == END_MARK  # exception if not a number
+            n << byte
           end          
         when END_MARK
           return nil
         else
           size = parse_size data, byte
-          e = ''
-          size.times { e << data.read(1) }
-          return e
+          s = ''
+          size.times { s << data.read(1) }
+          return s
       end
     end
     
