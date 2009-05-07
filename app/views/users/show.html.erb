@@ -116,7 +116,7 @@
           <%= I18n.l @user.created_at, :format => :date %>
         </td>
       </tr>
-      <% if @user.display_last_seen_at? || @user == logged_user || logged_user.admin? %>
+      <% if @user.last_seen_at? && (@user.display_last_seen_at? || @user == logged_user || logged_user.admin?) %>
         <tr>  
           <td class="label">
             Last seen
