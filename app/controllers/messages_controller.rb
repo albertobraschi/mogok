@@ -1,18 +1,19 @@
 
 class MessagesController < ApplicationController
   before_filter :login_required
+  rescue_from Message::NotOwnerError, :with => :access_denied
 
-    
   def folder
     logger.debug ':-) messages_controller.folder'
-    page = params[:page].blank? ? 1 : params[:page].to_i
     folder = params[:id].blank? ? Message::INBOX : params[:id]
     raise ArgumentError unless Message.valid_folder? folder
+    page = params[:page].blank? ? 1 : params[:page].to_i
 
     @messages = Message.user_messages logged_user, params, :folder => folder, :per_page => APP_CONFIG[:messages_page_size]
 
-    logged_user.toggle!(:has_new_message) if logged_user.has_new_message? && folder == Message::INBOX && page == 1
-
+    if logged_user.has_new_message? && folder == Message::INBOX && page == 1
+      logged_user.toggle!(:has_new_message)
+    end
     session[:messenger_folder] = folder
     session[:messenger_page] = page
   end
@@ -20,37 +21,27 @@ class MessagesController < ApplicationController
   def show
     logger.debug ':-) messages_controller.show'
     @message = Message.find params[:id]
-    ensure_ownership @message
-    @message.toggle! :unread if @message.unread?
+    @message.ensure_ownership logged_user
+    @message.set_read
   end
     
   def new
     logger.debug ':-) messages_controller.new'
-    @message = Message.new params[:message]
+    @message = Message.make_new params[:message],
+                                logged_user,
+                                :message_id => params[:message_id],
+                                :to => params[:to],
+                                :reply => params[:reply] == '1',
+                                :forward => params[:forward] == '1'
     unless request.post?
-      unless params[:message_id].blank?
-        old_message = Message.find params[:message_id]
-        ensure_ownership old_message
-        prepare_to_reply @message, old_message if params[:reply] == '1'
-        prepare_to_forward @message, old_message if params[:forward] == '1'
-      end
+      params[:to] = @message.replying_to if params[:reply] == '1'
     else
       unless cancelled?
-        prepare_new_message @message        
-        if @message.valid?
-          unless @message.receiver.system_user?
-            @message.save
-            save_sent if logged_user.save_sent
-            delete_replied if logged_user.delete_on_reply && !params[:replied_id].blank?
-            @message.owner.toggle! :has_new_message unless @message.owner.has_new_message?
-            logger.debug ':-) message sent'
-            flash[:notice] = t('controller.messages.new.success')
-            redirect_to :action => 'folder', :id => session[:messenger_folder], :page => session[:messenger_page]
-          else
-            flash.now[:error] = t('controller.messages.new.for_system')
-          end
-        else
-          logger.debug ':-o message not sent'
+        if @message.deliver(params[:replied_id])
+          @message.owner.toggle! :has_new_message unless @message.owner.has_new_message?
+          logger.debug ':-) message sent'
+          flash[:notice] = t('controller.messages.new.success')
+          redirect_to :action => 'folder', :id => session[:messenger_folder], :page => session[:messenger_page]
         end
       else
         redirect_to :action => 'folder', :id => session[:messenger_folder], :page => session[:messenger_page]
@@ -64,86 +55,20 @@ class MessagesController < ApplicationController
     raise ArgumentError unless Message.valid_folder? destination_folder
     unless cancelled?
       unless params[:id].blank? # user was reading a message and decided to move it
-        message = Message.find params[:id]
-        ensure_ownership message
-        message.update_attribute :folder, destination_folder
+        Message.find(params[:id]).move_to_folder(destination_folder, logged_user)
         logger.debug ':-) message moved'
         flash[:notice] = t('controller.messages.move.moved_single')
       end
     end
     unless params[:selected_messages].blank? # user was browsing the messages and decided to move some
       messages = Message.find params[:selected_messages]
-      messages.each do |m|
-        ensure_ownership m
-        m.folder = destination_folder
-        m.save
-      end
+      messages.each {|m| m.move_to_folder(destination_folder, logged_user) }
       logger.debug ':-) messages moved'
       flash[:notice] = t('controller.messages.move.moved_list')
     end
     redirect_to :action => 'folder', :id => session[:messenger_folder], :page => session[:messenger_page]
   end
-
-  private
-
-  def ensure_ownership(m)
-    access_denied unless m.owned_by? logged_user
-  end
-
-  def prepare_new_message(m)
-    m.owner = m.receiver = User.find_by_username(params[:to])
-    m.sender = logged_user
-    m.created_at = Time.now
-    m.subject = t('controller.messages.prepare_new_message.no_subject') if @message.subject.blank?
-    m.unread = true
-    m.folder = Message::INBOX
-  end
-
-  def prepare_to_reply(m, old_message)
-    m.subject = "#{ 'Re: ' unless old_message.subject.starts_with?('Re:') }#{old_message.subject}"
-    m.body = "\n\n\n----
-              \n#{old_message.sender.username} #{t('controller.messages.prepare_to_reply.wrote')}:
-              \n\n#{old_message.body}"
-    params[:to] = old_message.sender.username
-  end
-
-  def prepare_to_forward(m, old_message)
-    m.subject = "#{ 'Fwd: ' unless old_message.subject.starts_with?('Fwd:') }#{old_message.subject}"
-    m.body = "\n\n\n----
-             \n#{old_message.sender.username} #{t('controller.messages.prepare_to_forward.wrote')}:
-             \n\n#{old_message.body}"
-  end
-
-  def delete_replied
-    m = Message.find params[:replied_id]
-    ensure_ownership m
-    m.update_attribute :folder, Message::TRASH
-    logger.debug ':-) replied message sent to trash'
-  end
-
-  def save_sent
-    m = @message.clone
-    m.owner = logged_user
-    m.folder = Message::SENT
-    m.save
-    logger.debug ':-) copy saved in sent folder'
-  end
 end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

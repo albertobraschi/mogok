@@ -40,17 +40,10 @@ en:
 
     messages:
       new:
-        success: Message successfully sent.
-        for_system: Messages for system are not accepted.
+        success: Message successfully sent.        
       move:
         moved_single: Message successfully moved.
         moved_list: Message(s) successfully moved.
-      prepare_new_message:
-        no_subject: no subject
-      prepare_to_reply:
-        wrote: wrote
-      prepare_to_forward:
-        wrote: wrote
 
     posts:
       new:
@@ -150,10 +143,17 @@ en:
         subject: invitation to our site
         
     message:
+      new:
+        no_subject: no subject
+      prepare_to_reply:
+        wrote: wrote
+      prepare_to_forward:
+        wrote: wrote
       errors:
         receiver:
           invalid: User not found.
           inactive: User is not active.
+          system: System do not accept messages.
 
     user:
       errors:
