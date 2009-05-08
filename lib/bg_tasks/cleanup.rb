@@ -5,18 +5,11 @@ module BgTasks
     include BgTasks::Utils
 
     def exec(bg_task, config, logger = nil, force = false)
-      exec_begin_at = Time.now
+      begin_at = Time.now
 
-      unless force
-        exec_now = bg_task.next_exec_at && bg_task.next_exec_at < Time.now
-        if exec_now || bg_task.next_exec_at.blank?
-          bg_task.next_exec_at = Time.now + bg_task.interval_minutes.minutes
-          bg_task.save
-          logger.debug ":-) TASK #{bg_task.name} scheduled to #{bg_task.next_exec_at.to_s :db}" if logger
-        end
-      end
+      bg_task.schedule(logger) unless force
 
-      if force || exec_now
+      if force || bg_task.exec_now?
         begin
           Log.delete_all ['created_at < ?', config[:log_max_age_days].days.ago]
           Message.delete_all ['folder = ?', Message::TRASH]
@@ -47,9 +40,7 @@ module BgTasks
           logger.error ":-( TASK #{bg_task.name} ERROR: #{e.message}" if logger
           raise e if force
         end
-      end
-      if status && !force
-        log_task_exec bg_task.name, status, exec_begin_at, Time.now, bg_task.next_exec_at
+        bg_task.log_exec(status, begin_at, Time.now) unless force
       end
     end
   end

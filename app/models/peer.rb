@@ -42,9 +42,9 @@ class Peer < ActiveRecord::Base
 
   def self.search(params, args)
     paginate :conditions => search_conditions(params),
-                           :order => 'started_at DESC',
-                           :page => current_page(params[:page]),
-                           :per_page => args[:per_page]
+             :order => 'started_at DESC',
+             :page => current_page(params[:page]),
+             :per_page => args[:per_page]
   end
 
   def self.find_for_announce_resp(torrent, announcer, args)
@@ -53,6 +53,10 @@ class Peer < ActiveRecord::Base
          :conditions => ['torrent_id = ? AND user_id != ?', torrent.id, announcer.id],
          :order => cols.rand, # simple way to randomize retrieved peers
          :limit => args[:limit]
+  end
+
+  def self.delete_inactives(threshold)
+    destroy_all ['last_action_at < ?', threshold]
   end
 
   def self.make_compact_ip(ip, port)

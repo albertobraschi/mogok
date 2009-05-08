@@ -2,7 +2,7 @@
 class CreateDefaultData < ActiveRecord::Migration
 
   def self.up
-    # application database params (value will be evaluated to code by Kernel method eval)
+    # application database params (only 'true', 'false' or a numeric string is allowed)
     AppParam.create :name => 'signup_open', :value => 'true'
     AppParam.create :name => 'signup_by_invitation_only', :value => 'true'
 

@@ -5,7 +5,7 @@
   <h2>Task Logs</h2>
 
   <div class="links">
-    <%= link_to '[ clear ]', {:action => 'clear_logs'}, {:method => :post, :class => 'admin'} %>
+    <%= link_to '[ clear ]', {:action => 'clear_logs'}, {:method => :post, :class => 'admin', :confirm => 'Are you sure?'} %>
   </div>
 
   <%= render :partial => 'logs_table', :locals => {:task_logs => @task_logs} %>

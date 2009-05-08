@@ -106,9 +106,8 @@ be logged.
 
 - Application params
   Some configuration parameters are stored in the database so they can be changed without
-restarting the application. They can be set in the application parameters page. Currently the parameters
-can only be 'true', 'false' or a number. Such parameters are executed (evaluated) as Ruby code, so be
-very careful if you want to change the application to support other values.
+restarting the application. They can be set in the application parameters page. Currently
+the parameters can only be 'true', 'false' or a number.
 
 - Login Block
   After a limited number of login attempts (currently 5) the used IP will remain blocked by a
@@ -143,6 +142,7 @@ implemented if necessary. Currently the application won't send an activation ema
   These are tasks that run periodically to keep the site tidy. They clean stale data, update things, etc.
   - the module BgTasks is in lib/bg_tasks/
   - to add a new task create the task class, add a configuration entry in app_config.yml and reload the tasks
+  - for security reasons tasks names must follow the pattern 'BgTasks::TaskClassName'
   - the tasks scripts are in script/
   - tasks can be executed individually in the tasks page (that won't alter the schedule)
   - there is a log page where the tasks report their execution status

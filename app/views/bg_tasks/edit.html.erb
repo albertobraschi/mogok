@@ -18,7 +18,7 @@
             class_name:
           </td>
           <td>
-            <%= f.text_field :class_name, :size => 25 %>
+            <%= text_field_tag :class_name, @bg_task.class_name, {:size => 25, :disabled => true} %>
           </td>
           <td class="label">
             interval_minutes:

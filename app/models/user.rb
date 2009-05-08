@@ -119,6 +119,15 @@ class User < ActiveRecord::Base
     find :all, :conditions => ['last_seen_at < ? AND active = TRUE', threshold]
   end
 
+  def self.update_user_counters(user, uploaded, downloaded)
+    User.transaction do
+      u = find user.id, :lock => true
+      u.uploaded += uploaded
+      u.downloaded += downloaded
+      u.save
+    end
+  end
+
   def announce_passkey(torrent)
     hmac = CryptUtils.hmac_md5 torrent.announce_key, self.passkey
     hmac + self.id.to_s # append user id to hmac

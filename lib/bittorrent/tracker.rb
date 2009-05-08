@@ -106,12 +106,7 @@ module Bittorrent
 
     def update_user_counters(req)
       if req.up_offset > 0 || req.down_offset > 0
-        User.transaction do
-          u = User.find req.user.id, :lock => true
-          u.uploaded += req.up_offset
-          u.downloaded += req.down_offset
-          u.save
-        end
+        User.update_user_counters req.user, req.up_offset, req.down_offset
       end
     end
 
@@ -126,15 +121,8 @@ module Bittorrent
     end
 
     def register_snatch(req)
-      Torrent.transaction do
-        Snatch.create :user => req.user, :torrent => req.torrent, :created_at => Time.now
-        t = Torrent.find req.torrent.id, :lock => true
-        t.increment :snatches_count
-        t.increment :seeders_count
-        t.decrement :leechers_count if t.leechers_count > 0
-        t.save
-        req.torrent = t
-      end
+      snatch = Snatch.create req.torrent, req.user
+      req.torrent = snatch.torrent
       logger.debug ':-) torrent snatch registered'
     end
 

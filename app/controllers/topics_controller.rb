@@ -55,10 +55,9 @@ class TopicsController < ApplicationController
     @topic = Topic.find params[:id]
     if request.post?
       unless cancelled?
-        f = @topic.forum
         @topic.destroy
         flash[:notice] = t('controller.topics.destroy.success')
-        redirect_to forums_path(:action => 'show', :id => f)
+        redirect_to forums_path(:action => 'show', :id => @topic.forum)
       else
         redirect_to :action => 'show', :id => @topic
       end
