@@ -40,7 +40,7 @@ class User < ActiveRecord::Base
   end
 
   def before_create
-    self.role = Role.find_by_name(Role::USER)
+    self.role = Role.find_by_name(Role::USER) unless self.role
     self.created_at = Time.now
     self.reset_token
     self.reset_passkey
