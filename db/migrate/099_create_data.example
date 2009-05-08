@@ -304,7 +304,7 @@ class CreateData < ActiveRecord::Migration
 
   def self.create_role(name, description, css_class, tickets = nil)
     r = Role.new :description => description, :css_class => css_class, :tickets => tickets
-    r.name = name # attribute name is protected
+    r.name = name # attribute name must be assigned separately
     r.save
   end
 
@@ -319,10 +319,9 @@ class CreateData < ActiveRecord::Migration
                  :style_id => style.id,
                  :country_id => country.id,
                  :email => "#{username}@mail.com",
-                 :avatar => APP_CONFIG[:default_avatar],
                  :uploaded => rand(1.gigabyte),
                  :downloaded => rand(1.gigabyte))
-    u.role = role # attribute role_id is protected
+    u.role = role # attribute role_id must be assigned separately
     u.reset_passkey
     u.save(false)
   end

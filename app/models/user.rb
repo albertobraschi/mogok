@@ -39,6 +39,14 @@ class User < ActiveRecord::Base
     self.info = self.info[0, 4000] if self.info
   end
 
+  def before_create
+    self.role = Role.find_by_name(Role::USER)
+    self.created_at = Time.now
+    self.reset_token
+    self.reset_passkey
+    self.style = Style.find(:first)
+  end
+
   def before_destroy
     raise ArgumentError if self.id == 1
   end

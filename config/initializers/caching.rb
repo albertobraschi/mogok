@@ -8,7 +8,7 @@ if CACHE_ENABLED
   # rails cache store
     ActionController::Base.cache_store = :mem_cache_store, memcached_config[:servers], memcached_config
 
-  # application custom cache
+  # application cache
     CACHE = MemCache.new memcached_config
     CACHE.servers = memcached_config[:servers]
 
@@ -29,11 +29,11 @@ if CACHE_ENABLED
     class ActiveRecord::Base
       is_cached :repository => $cache
     end
-else
-  # disable cache_money code in the models
-    class ActiveRecord::Base
-      def self.index(*args)
-      end
+else  
+  class ActiveRecord::Base
+    def self.index(*args)
+      # cache_money disabled
     end
+  end
 end
 

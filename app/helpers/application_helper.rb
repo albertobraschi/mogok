@@ -39,7 +39,8 @@ module ApplicationHelper
   end
 
   def avatar_image(user)
-    image_tag user ? user.avatar : APP_CONFIG[:default_avatar], :class => 'avatar', :alt => 'Avatar'
+    url = user.avatar.blank? ? APP_CONFIG[:default_avatar] : user.avatar
+    image_tag url, :class => 'avatar', :alt => 'Avatar'
   end
 
   def country_image(c)

@@ -157,23 +157,12 @@ class AccountController < ApplicationController
       u.email = i.email
       logger.debug ":-) inviter id: #{u.inviter_id}"    
     end
-    set_new_user u
     if u.save
       logger.debug ":-) user created. id: #{u.id}"
       i.destroy if i
       return true
     end
     false
-  end
-
-  def set_new_user(u)
-    u.role = Role.find_by_name Role::USER
-    u.created_at = Time.now
-    u.reset_token
-    u.token_expires_at = APP_CONFIG[:user_max_inactivity_minutes].minutes.from_now
-    u.reset_passkey
-    u.avatar = APP_CONFIG[:default_avatar]
-    u.style = Style.find :first
   end
 
   def clean_login_attempts

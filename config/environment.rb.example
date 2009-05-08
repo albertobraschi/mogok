@@ -10,7 +10,7 @@ require File.join(File.dirname(__FILE__), 'boot')
 # enables caching in development (more logs are shown but requires restart after any change in the app)
 cache_in_development = false
 
-CACHE_ENABLED = !Rails.env.development? || cache_in_development
+CACHE_ENABLED = RAILS_ENV != 'development' || cache_in_development
 
 
 Rails::Initializer.run do |config|

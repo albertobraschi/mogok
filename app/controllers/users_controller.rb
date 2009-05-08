@@ -23,16 +23,11 @@ class UsersController < ApplicationController
   def new
     logger.debug ':-) users_controller.new'
     @user = User.new params[:user]
-    unless request.post?
-      @user.avatar = APP_CONFIG[:default_avatar]
-    else
+    if request.post?
       logger.debug ':-) post request'
       unless cancelled?
-        @user.role = Role.find_by_name(Role::USER)
         if @user.valid?
-          @user.created_at = Time.now
           @user.inviter = logged_user
-          @user.reset_passkey
           @user.save
           logger.debug ":-) user created. id: #{@user.id}"
           redirect_to :action => 'show', :id => @user
@@ -56,7 +51,6 @@ class UsersController < ApplicationController
     if request.post?
       logger.debug ':-) post request'
       unless cancelled?
-        @user.avatar = APP_CONFIG[:default_avatar] if @user.avatar.blank?
         if @user.edit(params[:user], logged_user, params[:current_password])
           logger.debug ':-) user edited'
           flash[:notice] = t('controller.users.edit.success')
