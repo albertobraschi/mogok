@@ -44,21 +44,15 @@ module WillPaginate
 
         total_pages = (total_entries / per_page.to_f).ceil
 
-        page = total_pages if last_page && total_pages > 0
-
-        page = total_pages if page > total_pages
+        if total_pages > 0
+          page = total_pages if last_page || page > total_pages
+        else
+          page = 1
+        end
         
-        loop do
-          c = WillPaginate::Collection.create(page, per_page, total_entries) do |pager|
-            find_options.update(:offset => pager.offset, :limit => pager.per_page)
-            pager.replace send(finder, *args, &block)
-          end
-
-          if c.empty? && page > 1 # if collection is empty and not first page, look for previous pages
-            page -= 1 
-          else
-            return c
-          end
+        WillPaginate::Collection.create(page, per_page, total_entries) do |pager|
+          find_options.update(:offset => pager.offset, :limit => pager.per_page)
+          pager.replace send(finder, *args, &block)
         end
       end
     end
