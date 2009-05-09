@@ -21,6 +21,10 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  def t(key, args = {})
+    super "controller.#{params[:controller]}.#{params[:action]}.#{key}", args # I18n shortcut, check 'en.yml'
+  end
+
   def add_log(text, reason = nil, admin = false)    
     text << " (#{reason})" unless reason.blank?
     text << '.'

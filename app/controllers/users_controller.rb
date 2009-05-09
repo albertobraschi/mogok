@@ -39,9 +39,7 @@ class UsersController < ApplicationController
         redirect_to :action => 'index'
       end
     end
-    @genders = Gender.cached_all
-    @countries = Country.cached_all
-    @styles = Style.cached_all
+    set_collections
   end
   
   def edit
@@ -53,7 +51,7 @@ class UsersController < ApplicationController
       unless cancelled?
         if @user.edit(params[:user], logged_user, params[:current_password])
           logger.debug ':-) user edited'
-          flash[:notice] = t('controller.users.edit.success')
+          flash[:notice] = t('success')
           redirect_to :action => 'show', :id => @user
         else
           logger.debug ':-o user not edited'
@@ -63,12 +61,8 @@ class UsersController < ApplicationController
         redirect_to :action => 'show', :id => @user
       end
     end
-    @genders = Gender.cached_all
-    @countries = Country.cached_all
-    @styles = Style.cached_all
-    if logged_user.admin?
-      @roles = logged_user.owner? ? Role.all_for_owner : Role.all_for_admin
-    end
+    set_collections    
+    @roles = Role.all_for_user_edition(logged_user) if logged_user.admin?
   end
 
   def destroy
@@ -80,8 +74,8 @@ class UsersController < ApplicationController
       unless cancelled?
         @user.destroy
         logger.debug ':-) user destroyed'        
-        flash[:notice] = t('controller.users.destroy.success')
-        add_log t('controller.users.destroy.log', :user => @user.username, :by => logged_user.username)
+        flash[:notice] = t('success')
+        add_log t('log', :user => @user.username, :by => logged_user.username)
         redirect_to :action => 'index'
       else
         redirect_to :action => 'show', :id => @user
@@ -92,14 +86,11 @@ class UsersController < ApplicationController
   def reset_passkey
     logger.debug ':-) users_controller.reset_passkey'
     @user = User.find params[:id]
-    access_denied if @user != logged_user && !@user.admin?
+    access_denied if @user != logged_user && !logged_user.admin?
     if request.post?
       unless cancelled?
-        @user.reset_passkey!
-        add_log t('controller.users.reset_passkey.log', :user => @user.username, :by => logged_user.username), nil, true
-        notify_passkey_reset @user if @user != logged_user
-        logger.debug ':-) paskey reset'
-        flash[:notice] = t('controller.users.reset_passkey.success')
+        reset_user_passkey
+        flash[:notice] = t('success')
       end
       redirect_to :action => 'show', :id => @user
     end
@@ -126,10 +117,10 @@ class UsersController < ApplicationController
         unless params[:reason].blank?
           target_path = url_for :action => 'show', :id => @user, :only_path => true
           Report.create :created_at => Time.now, :label => "user [#{@user.username}]", :target_path => target_path, :user => logged_user, :reason => params[:reason]
-          flash[:notice] = t('controller.users.report.success')
+          flash[:notice] = t('success')
           redirect_to :action => 'show', :id => @user
         else
-          flash.now[:error] = t('controller.users.reset_passkey.reason_required')
+          flash.now[:error] = t('reason_required')
         end
       else
         redirect_to :action => 'show', :id => @user
@@ -151,6 +142,12 @@ class UsersController < ApplicationController
     unless @torrents.blank?
       @torrents.desc_by_default = APP_CONFIG[:torrents_desc_by_default]
     end
+  end
+
+  def stuck
+    logger.debug ':-) users_controller.stuck'
+    @torrents = logged_user.paginate_stuck params, :per_page => 20
+    set_bookmarked @torrents
   end
   
   def show_activity
@@ -180,7 +177,13 @@ class UsersController < ApplicationController
   end
   
   private
-  
+
+  def set_collections
+    @genders = Gender.cached_all
+    @countries = Country.cached_all
+    @styles = Style.cached_all
+  end
+
   def set_bookmarked(torrents)
     unless torrents.blank?
       unless logged_user.bookmarks.blank?
@@ -189,6 +192,15 @@ class UsersController < ApplicationController
         end
       end
     end
+  end
+
+  def reset_user_passkey
+    @user.reset_passkey!    
+    add_log t('log', :user => @user.username, :by => logged_user.username), nil, true    
+    if @user != logged_user
+      deliver_message_notification @user, t('notification_subject'), t('notification_body')
+    end
+    logger.debug ':-) paskey reset'
   end
 end
 

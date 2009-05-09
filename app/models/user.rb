@@ -10,7 +10,7 @@ class User < ActiveRecord::Base
   has_many :snatches, :dependent => :nullify
   has_many :comments, :dependent => :nullify
   has_many :messages, :foreign_key => 'owner_id', :dependent => :destroy
-  has_many :invitations, :dependent => :destroy
+  has_many :invitations, :dependent => :destroy, :order => 'created_at DESC'
   has_many :invitees, :class_name => 'User', :foreign_key => 'inviter_id', :dependent => :nullify
   has_many :announce_logs, :dependent => :destroy
   has_many :password_recoveries, :dependent => :destroy
@@ -96,13 +96,6 @@ class User < ActiveRecord::Base
              :per_page => args[:per_page]
   end
 
-  def self.user_invitees(user, params, args)
-    paginate_by_inviter_id user,
-                           :order => 'created_at',
-                           :page => current_page(params[:page]),
-                           :per_page => args[:per_page]
-  end
-
   def self.top_uploaders(args)
     find :all, :order => 'uploaded DESC', :conditions => 'uploaded > 0', :limit => args[:limit]
   end
@@ -155,7 +148,7 @@ class User < ActiveRecord::Base
   end
   
   def editable_by?(updater)
-    unless updater == self || updater.system_user?
+    if updater != self && !updater.system_user?
       if updater.owner?
         return false if system_user? || owner? # owner: all but system and owners
       elsif updater.admin?
@@ -185,6 +178,10 @@ class User < ActiveRecord::Base
 
   def mod?
     self.role.mod?
+  end
+
+  def save_sent?
+    self.save_sent && !system_user?
   end
 
   def has_ticket?(ticket)
@@ -231,6 +228,30 @@ class User < ActiveRecord::Base
                                                        :page => self.class.current_page(params[:page]),
                                                        :per_page => args[:per_page],
                                                        :include => :tags
+  end
+
+  def paginate_stuck(params, args)
+    Torrent.paginate :conditions => stuck_conditions,
+                     :order => 'leechers_count DESC, name',
+                     :page => self.class.current_page(params[:page]),
+                     :per_page => args[:per_page],
+                     :include => :tags
+  end
+
+
+  def paginate_invitees(params, args)
+    self.class.paginate_by_inviter_id self.id,
+                                      :order => 'created_at',
+                                      :page => self.class.current_page(params[:page]),
+                                      :per_page => args[:per_page]
+  end
+
+  def paginate_messages(args)
+    Message.paginate_by_owner_id self.id,
+                                 :conditions => {:folder => args[:folder]},
+                                 :order => 'created_at DESC',
+                                 :page => args[:page],
+                                 :per_page => args[:per_page]
   end
 
   def paginate_snatches(params, args)
@@ -282,6 +303,16 @@ class User < ActiveRecord::Base
     else
       order_by(params[:order_by], params[:desc])
     end
+  end
+
+
+  def stuck_conditions
+    s, h = '', {}
+    s << 'active = TRUE AND seeders_count = 0 AND leechers_count > 0 '
+    s << 'AND '
+    s << '(user_id = :user_id OR id IN (SELECT torrent_id FROM snatches WHERE user_id = :user_id))'
+    h[:user_id] = self.id
+    [s, h]
   end
 
   def set_attributes(params, updater, current_password)
@@ -344,7 +375,7 @@ class User < ActiveRecord::Base
 
   def role_update_allowed?(params, updater)
     new_role = Role.find params[:role_id]
-    if updater.system? || updater.owner?
+    if updater.system_user? || updater.owner?
       return false if new_role.system?
     elsif updater.admin?
       return false if new_role.reserved?

@@ -18,10 +18,10 @@ class TopicsController < ApplicationController
       unless cancelled?
         unless params[:title].blank? || params[:body].blank?
           t = @forum.add_topic(params, logged_user)
-          flash[:notice] = t('controller.topics.new.success')
+          flash[:notice] = t('success')
           redirect_to :action => 'show', :id => t
         else
-          flash[:error] = t('controller.topics.new.empty')
+          flash[:error] = t('empty')
         end
       else
         redirect_to forums_path(:action => 'show', :id => @forum)
@@ -39,10 +39,10 @@ class TopicsController < ApplicationController
       unless cancelled?
         unless params[:title].blank? || params[:body].blank?
           @topic.edit params, logged_user
-          flash[:notice] = t('controller.topics.edit.success')
+          flash[:notice] = t('success')
           redirect_to :action => 'show', :id => @topic
         else
-          flash[:error] = t('controller.topics.edit.empty')
+          flash[:error] = t('empty')
         end
       else
         redirect_to :action => 'show', :id => @topic
@@ -56,7 +56,7 @@ class TopicsController < ApplicationController
     if request.post?
       unless cancelled?
         @topic.destroy
-        flash[:notice] = t('controller.topics.destroy.success')
+        flash[:notice] = t('success')
         redirect_to forums_path(:action => 'show', :id => @topic.forum)
       else
         redirect_to :action => 'show', :id => @topic
@@ -72,10 +72,10 @@ class TopicsController < ApplicationController
         unless params[:reason].blank?
           target_path = topics_path(:forum_id => @topic.forum_id, :action => 'show', :id => @topic)
           Report.create @topic, target_path, logged_user, params[:reason]
-          flash[:notice] = t('controller.topics.report.success')
+          flash[:notice] = t('success')
           redirect_to topics_path(:action => 'show', :id => @topic)
         else
-          flash.now[:error] = t('controller.topics.report.reason_required')
+          flash.now[:error] = t('reason_required')
         end
       else
         redirect_to topics_path(:action => 'show', :id => @topic)

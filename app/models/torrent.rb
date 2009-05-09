@@ -164,14 +164,6 @@ class Torrent < ActiveRecord::Base
              :include => :tags
   end
 
-  def self.stuck_by_user(user, params, args)
-    paginate :conditions => stuck_conditions(user),
-             :order => 'leechers_count DESC, name',
-             :page => current_page(params[:page]),
-             :per_page => args[:per_page],
-             :include => :tags
-  end
-
   def self.bookmarked_by_user(user, params, args)
     paginate :conditions => bookmarked_by_user_conditions(user),
              :order => 'category_id, name',
@@ -319,15 +311,6 @@ class Torrent < ActiveRecord::Base
         end
       end
     end
-    [s, h]
-  end
-
-  def self.stuck_conditions(user)
-    s, h = '', {}
-    s << 'active = TRUE AND seeders_count = 0 AND leechers_count > 0 '
-    s << 'AND '
-    s << '(user_id = :user_id OR id IN (SELECT torrent_id FROM snatches WHERE user_id = :user_id))'
-    h[:user_id] = user.id
     [s, h]
   end
 

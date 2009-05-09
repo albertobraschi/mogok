@@ -55,12 +55,15 @@ class Message < ActiveRecord::Base
     m
   end
 
-  def self.user_messages(user, params, args)
-    paginate_by_owner_id user,
-                         :conditions => {:folder => args[:folder]},
-                         :order => 'created_at DESC',
-                         :page => current_page(params[:page]),
-                         :per_page => args[:per_page]
+  def self.deliver_system_message(receiver)
+    m = new
+    m.owner = m.receiver = receiver
+    m.sender = User.system_user
+    m.created_at = Time.now
+    m.unread = true
+    m.folder = INBOX
+    yield m
+    m.deliver
   end
 
   def owned_by?(user)
@@ -75,11 +78,12 @@ class Message < ActiveRecord::Base
     toggle! :unread if unread?
   end
 
-  def deliver(replied_id)
+  def deliver(replied_id = nil)
     if valid?
-      delete_replied(replied_id) if self.sender.delete_on_reply
+      delete_replied(replied_id) if replied_id && self.sender.delete_on_reply
       save
-      save_sent if self.sender.save_sent
+      save_sent if self.sender.save_sent?
+      self.owner.toggle! :has_new_message unless self.owner.has_new_message?
       return true
     end
     false

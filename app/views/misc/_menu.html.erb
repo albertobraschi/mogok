@@ -4,9 +4,9 @@
       <li><%= link_to 'Home', root_path %></li>
       <li><%= link_to 'Torrents', {:controller => 'torrents'} %></li>
       <% if APP_CONFIG[:torrent_upload_enabled] %>
-        <li><%= link_to 'Upload', {:controller => 'torrents', :action => 'upload'} %></li>
+        <li><%= link_to 'Upload', upload_path %></li>
       <% end %>
-      <li><%= link_to 'Stuck', {:controller => 'torrents', :action => 'stuck'} %></li>
+      <li><%= link_to 'Stuck', stuck_path %></li>
       <li><%= link_to 'Forums', {:controller => 'forums'} %></li>
       <li><%= link_to 'Users', {:controller => 'users'} %></li>
       <li><%= link_to 'Logs', {:controller => 'logs'} %></li>      

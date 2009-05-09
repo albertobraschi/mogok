@@ -7,8 +7,8 @@ class InvitationsController < ApplicationController
     logger.debug ':-) invitations_controller.index'
     ticket_required(:inviter)
     @app_params = AppParam.load
-    @invitations = Invitation.user_invitations logged_user
-    @invitees = User.user_invitees logged_user, params, :per_page => APP_CONFIG[:users_page_size]
+    @invitations = logged_user.invitations
+    @invitees = logged_user.paginate_invitees params, :per_page => APP_CONFIG[:users_page_size]
   end
   
   def new
@@ -21,21 +21,21 @@ class InvitationsController < ApplicationController
         email = params[:email] = HtmlHelper.sanitize(params[:email])
         if User.valid_email? email
           if User.find_by_email(email) || Invitation.find_by_email(email)
-            flash[:error] = t('controller.invitations.new.email_in_use')
+            flash[:error] = t('email_in_use')
           else
             code = User.make_invite_code
             begin
               AppMailer.deliver_invitation email, logged_user, code
               Invitation.create :created_at => Time.now, :code => code, :user_id => logged_user.id, :email => email
-              flash[:notice] = t('controller.invitations.new.success', :email => email)
+              flash[:notice] = t('success', :email => email)
               redirect_to :action => 'index'
             rescue => e
               log_error e
-              flash.now[:error] = t('controller.invitations.new.delivery_error')
+              flash.now[:error] = t('delivery_error')
             end
           end
         else
-          flash[:error] = t('controller.invitations.new.invalid_email')
+          flash[:error] = t('invalid_email')
         end
       else
         redirect_to :action => 'index'
@@ -49,7 +49,7 @@ class InvitationsController < ApplicationController
       i = Invitation.find params[:id]
       access_denied if i.user_id != logged_user.id
       i.destroy
-      flash[:notice] = t('controller.invitations.destroy.success')
+      flash[:notice] = t('success')
     end
     redirect_to :action => 'index'
   end

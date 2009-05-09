@@ -14,12 +14,11 @@ class PostsController < ApplicationController
     access_denied if @topic.locked? && !logged_user.admin_mod?
     unless params[:body].blank?
       @topic.add_post params, logged_user
-      flash[:notice] = t('controller.posts.new.success')
-      redirect_to topics_path(:action => 'show', :id => @topic, :page => 'last')
+      flash[:notice] = t('success')      
     else
-      flash[:error] = t('controller.posts.new.empty')
-      redirect_to topics_path(:action => 'show', :id => @topic, :page => params[:page])
-    end    
+      flash[:error] = t('empty')      
+    end
+    redirect_to_topic @topic.id, 'last'
   end
   
   def quote
@@ -37,13 +36,13 @@ class PostsController < ApplicationController
         unless params[:body].blank?
           @post.edit params, logged_user
           logger.debug ':-) post saved'
-          flash[:notice] = t('controller.posts.edit.success')
-          redirect_to topics_path(:action => 'show', :id => @post.topic_id, :page => params[:page])
+          flash[:notice] = t('success')
+          redirect_to_topic
         else
-          flash[:error] = t('controller.posts.edit.empty')
+          flash[:error] = t('empty')
         end
       else
-        redirect_to topics_path(:action => 'show', :id => @post.topic_id, :page => params[:page])
+        redirect_to_topic
       end      
     end
   end
@@ -56,15 +55,23 @@ class PostsController < ApplicationController
         unless params[:reason].blank?
           target_path = posts_path(:forum_id => @post.forum_id, :action => 'show', :id => @post)
           Report.create @post, target_path, logged_user, params[:reason]
-          flash[:notice] = t('controller.posts.report.success')
-          redirect_to topics_path(:action => 'show', :id => @post.topic_id, :page => params[:page])
+          flash[:notice] = t('success')
+          redirect_to_topic
         else
-          flash.now[:error] = t('controller.posts.report.reason_required')
+          flash.now[:error] = t('reason_required')
         end
       else
-        redirect_to topics_path(:action => 'show', :id => @post.topic_id, :page => params[:page])
+        redirect_to_topic
       end
     end
+  end
+
+  private
+
+  def redirect_to_topic(topic_id = nil, page = nil)
+    topic_id ||= @post.topic_id
+    page ||= params[:page]
+    redirect_to topics_path(:action => 'show', :id => topic_id, :page => page)
   end
 end
 

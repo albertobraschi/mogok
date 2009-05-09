@@ -13,12 +13,12 @@ class Role < ActiveRecord::Base
     find(:all).delete_if {|r| r.system? }
   end
 
-  def self.all_for_owner
-    find(:all).delete_if {|r| r.system? }
-  end
-
-  def self.all_for_admin
-    find(:all).delete_if {|r| r.reserved? }
+  def self.all_for_user_edition(editor)
+    if editor.owner?
+      find(:all).delete_if {|r| r.system? }
+    elsif editor.admin?
+      find(:all).delete_if {|r| r.reserved? }
+    end
   end
 
   def has_ticket?(ticket)
@@ -38,11 +38,11 @@ class Role < ActiveRecord::Base
   end
 
   def owner?
-    (is? OWNER) || (is? SYSTEM)
+    (is? OWNER) || system?
   end
 
   def admin?
-    (is? ADMINISTRATOR) || (is? OWNER)
+    (is? ADMINISTRATOR) || owner?
   end
 
   def mod?

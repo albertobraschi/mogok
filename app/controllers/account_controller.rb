@@ -12,7 +12,7 @@ class AccountController < ApplicationController
     login_attempt = LoginAttempt.fetch(request.remote_ip)
     if login_attempt.blocked?
       logger.debug ":-) login is temporarily blocked for this ip: #{login_attempt.ip}"
-      flash.now[:error] = t('controller.account.login.blocked') unless flash[:notice]
+      flash.now[:error] = t('blocked') unless flash[:notice]
     else
       if request.post?
         logger.debug ':-) post request'
@@ -27,7 +27,7 @@ class AccountController < ApplicationController
             redirect_to uri || {:controller => 'content'}
           else
             logger.debug ':-o user not active'
-            flash.now[:error] = t('controller.account.login.account_disabled')
+            flash.now[:error] = t('account_disabled')
           end
         else
           logger.debug ':-o user not authenticated'
@@ -49,8 +49,8 @@ class AccountController < ApplicationController
     logger.debug ':-) account_controller.signup'
     signup_block = SignupBlock.find_by_ip request.remote_ip
     if signup_block && signup_block.still_blocked?
-      logger.debug ":-) signup is temporarily blocked for this ip: #{signup_block.ip}"
-      flash[:error] = t('controller.account.signup.blocked')
+      logger.debug ":-) signup temporarily blocked for this ip: #{signup_block.ip}"
+      flash[:error] = t('blocked')
       redirect_to :action => 'login'
     else
       @app_params = AppParam.load
@@ -78,16 +78,16 @@ class AccountController < ApplicationController
         code = user.create_password_recovery
         begin
           AppMailer.deliver_password_recovery user, code
-          flash[:notice] = t('controller.account.password_recovery.sent', :email => user.email)
+          flash[:notice] = t('sent', :email => user.email)
         rescue => e
           log_error e
           PasswordRecovery.delete_all_by_user user
-          flash.now[:error] = t('controller.account.password_recovery.delivery_error')
+          flash.now[:error] = t('delivery_error')
         end
         redirect_to :action => 'login'
       else
         params[:email] = HtmlHelper.sanitize params[:email]
-        flash.now[:error] = t('controller.account.password_recovery.invalid_email', :email => params[:email])
+        flash.now[:error] = t('invalid_email', :email => params[:email])
       end
     end
   end
@@ -105,7 +105,7 @@ class AccountController < ApplicationController
             logger.debug ':-) user password changed'            
             password_recovery.destroy
             clean_login_attempts
-            flash[:notice] = t('controller.account.change_password.changed')
+            flash[:notice] = t('changed')
             redirect_to :action => 'login', :username => @user.username
           else
             logger.debug ':-o user password not changed'
@@ -116,7 +116,7 @@ class AccountController < ApplicationController
       end
     else
       logger.debug ':-o invalid recovery code'
-      flash[:error] = t('controller.account.change_password.invalid_link')
+      flash[:error] = t('invalid_link')
       redirect_to :action => 'login'
     end
   end
@@ -125,11 +125,9 @@ class AccountController < ApplicationController
 
   def set_login_failed_message(login_attempt)
     if login_attempt.blocked?
-      flash.now[:error] = t('controller.account.set_login_failed_message.blocked',
-                            :hours => BLOCK_TIME_HOURS)
+      flash.now[:error] = t('blocked', :hours => BLOCK_TIME_HOURS)
     else
-      flash.now[:error] = t('controller.account.set_login_failed_message.invalid_login', 
-                            :remaining => MAX_LOGIN_ATTEMPTS - login_attempt.attempts_count)
+      flash.now[:error] = t('invalid_login', :remaining => MAX_LOGIN_ATTEMPTS - login_attempt.attempts_count)
     end
   end
 

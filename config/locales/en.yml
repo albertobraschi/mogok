@@ -76,11 +76,19 @@ en:
       remove:
         destroyed: Torrent successfully deleted from system.
         destroyed_log: Torrent "{{torrent}}" was removed by {{user}}
-        inactivated: Torrent was successfully inactivated.
-        inactivated_log: Torrent "{{torrent}}" was inactivated by {{user}}
+        destroyed_notification_subject: torrent removed
+        destroyed_notification_body: Your torrent "{{name}}" was removed by {{by}} ({{reason}}).
+        inactivated_title: Torrent Inactivated
+        inactivated_message: Your torrent will stay inactive until a moderator removes it.
+        inactivated_flash: Torrent successfully inactivated.
+        inactivated_log: Torrent "{{torrent}}" inactivated by {{user}}
+        inactivated_notification_subject: torrent inactivated
+        inactivated_notification_body: Your torrent "{{name}}" was inactivated by {{by}} ({{reason}}).
       activate:
         success: Torrent was successfully activated.
         log: Torrent "{{torrent}}" was activated by {{user}}
+        notification_subject: torrent activated
+        notification_body: Your torrent "{{name}}" was activated by {{by}}.
       report:
         success: Torrent successfully reported.
         reason_required: Reason is required.
@@ -90,24 +98,21 @@ en:
 
     tracker:
       scrape:
-        failure:
-          not_allowed: Tracker does not allow scrape.
-          malformed_request: Client sent a malformed request.
-          server_error: Inexpected server error.
+        not_allowed: Tracker does not allow scrape.
+        malformed_request: Client sent a malformed request.
+        server_error: Inexpected server error.
+        invalid_torrent: Torrent not found.
+        invalid_passkey: Invalid passkey.
+        invalid_user: Invalid user.
       announce:
-        failure:
-          malformed_request: Client sent a malformed request.
-          invalid_request: Client sent a request with invalid data.
-          client_banned: Client not allowed.
-          client_version_banned: Client version not allowed.
-          server_error: Inexpected server error.
-      set_torrent:
-        failure:
-          invalid_torrent: Torrent not found.
-      set_user:
-        failure:
-          invalid_passkey: Invalid passkey.
-          invalid_user: Invalid user.
+        malformed_request: Client sent a malformed request.
+        invalid_request: Client sent a request with invalid data.
+        client_banned: Client not allowed.
+        client_version_banned: Client version not allowed.
+        server_error: Inexpected server error.
+        invalid_torrent: Torrent not found.
+        invalid_passkey: Invalid passkey.
+        invalid_user: Invalid user.
 
     users:
       edit:
@@ -118,6 +123,8 @@ en:
       reset_passkey:
         success: Passkey successfully reset.
         log: User {{user}} PASSKEY was reset by {{by}}
+        notification_subject: passkey reset
+        notification_body: Your passkey was reset for security reasons, please re-download your active torrents.
       report:
         success: User successfully reported.
         reason_required: Reason is required.
@@ -186,19 +193,6 @@ en:
           invalid: Invalid year.
         tags:
           max: Tags limit is {{max}}.
-
-  lib:
-    message_notification:
-      notify_torrent_inactivated:
-        subject: torrent inactivated
-        body: Your torrent "{{name}}" was inactivated by {{by}} ({{reason}}).
-      notify_torrent_deleted:
-        subject: torrent removed
-        body: Your torrent "{{name}}" was removed by {{by}} ({{reason}}).
-      notify_passkey_reset:
-        subject: passkey reset
-        body: Your passkey was reset for security reasons, please re-download your active torrents.
-
 
   activerecord:
     errors:

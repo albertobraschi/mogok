@@ -21,11 +21,13 @@ ActionController::Routing::Routes.draw do |map|
   # user
   map.bookmarks 'bookmarks', :controller => 'users', :action => 'bookmarks'
   map.uploads 'uploads', :controller => 'users', :action => 'uploads'
-  map.profile 'profile', :controller => 'users', :action => 'edit'
+  map.stuck 'stuck', :controller => 'users', :action => 'stuck'
+  map.messages 'messages', :controller => 'messages', :action => 'folder'
 
   # torrents
   map.torrents 'torrents/:action/:id', :controller => 'torrents'
   map.comments 'torrents/:torrent_id/comments/:action/:id', :controller => 'comments'
+  map.upload 'upload', :controller => 'torrents', :action => 'upload'
 
   # forums
   map.forums 'forums/:action/:id', :controller => 'forums'

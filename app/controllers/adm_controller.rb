@@ -18,7 +18,7 @@ class AdmController < ApplicationController
           h[:status] = s.status
           h[:stats] = CACHE.stats["#{s.host}:#{s.port}"].symbolize_keys!
           @memcached_servers << h
-        end
+        end         
       end      
     end
   end
