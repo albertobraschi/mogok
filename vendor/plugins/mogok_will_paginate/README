@@ -1,5 +1,6 @@
 
 This plugin extends the functionality of will_paginate.
+
 It adds the following features:
 
 1 - An alternative link renderer
@@ -21,31 +22,36 @@ It adds the following features:
     Product.paginate :page => :last, :per_page => 50
 
 
-4 - A view helper to decorate browse table headers.
+4 - If the last element of the last page is deleted, will_paginate will return an empty
+  collection, even if there is a previous page. This extension will look for previous pages and
+  make sure that there are no more elements to show.
+
+
+5 - A view helper to add sort links to the browse table headers.
   - Requires three entries in your css file:
     > the header link class (name 'header')
     > the header td class (name 'header')
     > the header td class for the ordered column (name 'header_order_by')
   - Usage
     > getting the td header css class
-      table_header_css_class(database_column_name, collection)
+      table_header_css_class(database_column_name)
     > rendering the header link
-      table_header_link('Link Text', 'database_column', @wp_collection, 'link_css_class')
+      table_header_link('Link Text', 'database_column', @wp_collection)
     Example:
-      <td class="<%= table_header_css_class 'name', @users %>">
+      <td class="<%= table_header_css_class 'name' %>">
         <%= table_header_link 'Name', 'name', @users %>
       </td>
+  - It is possible to choose which columns are to be shown in a decrescent way when
+    the header link is clicked the first time. Used when a higher value is more interesting
+    to the user than a low value. Set usually in the controller.
+    Example:
+      @computers.desc_by_default = ['clock_rate', 'storage_capacity']
 
 
-5 - Support for html anchor in the pagination links.
+6 - Support for html anchor in the pagination links.
   The html anchor associated with the list. Will be included in the rendered links.
   Example:
     @comments.html_anchor = 'comments'
 
-
-6 - Possibility to choose which columns are to be shown in a decrescent way when the header link is
-clicked the first time. Used when a higher value is more interesting to the user than a low value.
-  Example:
-    @computers.desc_by_default = ['clock_rate', 'storage_capacity']
 
 

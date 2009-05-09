@@ -77,7 +77,7 @@ class TorrentsController < ApplicationController
         unless cancelled?
           if !@torrent.active? || params[:destroy] == '1'
             destroy_torrent
-            flash[:notice] = t('destroyed')
+            flash[:notice] = t('destroyed_flash')
             redirect_to :action => 'index'
           else
             inactivate_torrent

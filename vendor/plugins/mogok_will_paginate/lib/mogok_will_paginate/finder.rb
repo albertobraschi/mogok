@@ -1,6 +1,8 @@
 
-module WillPaginate  
-  module Finder   
+module WillPaginate
+
+  module Finder
+
     module ClassMethods
 
       def current_page(page)
@@ -12,7 +14,8 @@ module WillPaginate
         "#{order_by}#{' DESC' if desc == '1'}"
       end
 
-      alias :old_paginate :paginate      
+      alias :old_paginate :paginate
+      
       def paginate(*args, &block)                
         options = args.pop
         
@@ -38,18 +41,36 @@ module WillPaginate
           
         # magic counting for user convenience:
         total_entries = wp_count(count_options, args, finder) unless total_entries
+
+        total_pages = (total_entries / per_page.to_f).ceil
+
+        page = total_pages if last_page && total_pages > 0
+
+        page = total_pages if page > total_pages
         
-        if last_page
-          total_pages = (total_entries / per_page.to_f).ceil          
-          page = total_pages if total_pages > 0
-        end
-        
-        WillPaginate::Collection.create(page, per_page, total_entries) do |pager|
-          find_options.update(:offset => pager.offset, :limit => pager.per_page)
-          # @options_from_last_find = nil
-          pager.replace send(finder, *args, &block)
+        loop do
+          c = WillPaginate::Collection.create(page, per_page, total_entries) do |pager|
+            find_options.update(:offset => pager.offset, :limit => pager.per_page)
+            pager.replace send(finder, *args, &block)
+          end
+
+          if c.empty? && page > 1 # if collection is empty and not first page, look for previous pages
+            page -= 1 
+          else
+            return c
+          end
         end
       end
     end
   end
 end
+
+
+
+
+
+
+
+
+
+

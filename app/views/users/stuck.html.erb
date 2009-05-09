@@ -1,0 +1,98 @@
+
+<% page_name 'Stuck Torrents' %>
+
+<div class="main">
+  <h2>Stuck Torrents</h2>
+
+  <div class="center" style="margin-bottom:10px">
+    Torrents you've downloaded or uploaded that are in need of seeders.
+  </div>
+    
+  <% if !@torrents.blank? && @torrents.length > 15 %>
+    <%= will_paginate @torrents %>
+  <% end %>
+    
+  <table class="browse">
+    <tr>
+      <td class="header">
+        &nbsp;
+      </td>
+      <td width="99%" class="header" colspan="2">
+        Name
+      </td>
+      <td class="header">
+        Files
+      </td>
+      <td class="header">
+        Added
+      </td>
+      <td class="header">
+        Size
+      </td>
+      <td class="header">
+        <%= image_tag('comments.png', :alt => 'Commented', :title => 'Commented') %>
+      </td>
+      <td class="header">
+        <%= image_tag('snatches.gif', :alt => 'Snatched', :title => 'Snatched') %>
+      </td>
+      <td class="header">
+        <%= image_tag('seeders.png', :alt => 'Seeders', :title => 'Seeders') %>
+      </td>
+      <td class="header_order_by">
+        <%= image_tag('leechers.png', :alt => 'Leechers', :title => 'Leechers') %>
+      </td>
+    </tr>
+    <% unless @torrents.blank? %>
+      <% @torrents.each do |t| %>
+        <tr>
+          <td class="no_padding">
+            <%= category_label t.category %>
+          </td>
+          <td class="left no_right_border">
+            <%= torrent_link t, :browse %>
+            <%= torrent_additional_info t %>
+            <div class="tags"><%= t.tags_str %></div>
+          </td>
+          <td class="torrent_download_bookmark">
+            <div class="float_right">
+              <ul class="compact">
+                <li><%= torrent_download_link t %></li>
+                <li><%= bookmark_link_image t %></li>
+              </ul>
+            </div>
+          </td>
+          <td>
+            <%= t.files_count %>
+          </td>
+          <td class="no_wrap">
+            <%= textual_time_interval t.created_at, 'ago' %>
+          </td>
+          <td class="no_wrap">
+            <%= textual_data_amount t.size %>
+          </td>
+          <td>
+            <%= t.comments_count %>
+          </td>
+          <td>
+            <%= t.snatches_count %>
+          </td>
+          <td>
+            <%= t.seeders_count %>
+          </td>
+          <td>
+            <%= t.leechers_count %>
+          </td>
+        </tr>
+      <% end %>
+    <% else %>
+      <tr>
+        <td colspan="11">
+          No torrents found.
+        </td>
+      </tr>
+    <% end %>
+  </table>
+
+  <%= will_paginate @torrents %>
+  
+</div>

@@ -74,14 +74,14 @@ en:
         success: Torrent successfully edited.
         log: Torrent "{{torrent}}" was edited by {{user}}
       remove:
-        destroyed: Torrent successfully deleted from system.
+        destroyed_flash: Torrent successfully deleted from system.
         destroyed_log: Torrent "{{torrent}}" was removed by {{user}}
         destroyed_notification_subject: torrent removed
         destroyed_notification_body: Your torrent "{{name}}" was removed by {{by}} ({{reason}}).
-        inactivated_title: Torrent Inactivated
-        inactivated_message: Your torrent will stay inactive until a moderator removes it.
         inactivated_flash: Torrent successfully inactivated.
         inactivated_log: Torrent "{{torrent}}" inactivated by {{user}}
+        inactivated_title: Torrent Inactivated
+        inactivated_message: Your torrent will stay inactive until a moderator removes it.
         inactivated_notification_subject: torrent inactivated
         inactivated_notification_body: Your torrent "{{name}}" was inactivated by {{by}} ({{reason}}).
       activate:
