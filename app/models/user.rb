@@ -135,6 +135,13 @@ class User < ActiveRecord::Base
     hmac + self.id.to_s # append user id to hmac
   end
 
+  def self.parse_id_from_announce_passkey(passkey)
+    if passkey && passkey.size > 32
+      return passkey[32, passkey.size - 1]
+    end
+    nil
+  end
+
   def create_password_recovery
     code = User.make_password_recovery_code
     PasswordRecovery.delete_all_by_user self

@@ -70,17 +70,17 @@ class TrackerController < ApplicationController
   private
 
   def set_torrent(req, info_hash = nil)
-    req.torrent = Torrent.find_by_info_hash_hex(CryptUtils.hexencode(info_hash || req.info_hash)) # hex because memcached has problems with binary keys
+    req.torrent = Torrent.find_by_info_hash_hex(CryptUtils.hexencode(req.info_hash || info_hash)) # hex because memcached has problems with binary keys
     if req.torrent && req.torrent.active?
       logger.debug ":-) valid torrent: #{req.torrent.id} [#{req.torrent.name}]"
     else
-      logger.debug ":-o torrent not found for info hash hex #{CryptUtils.hexencode(info_hash || req.info_hash)}"
+      logger.debug ":-o torrent not found or inactive for info hash hex #{CryptUtils.hexencode(info_hash || req.info_hash)}"
       failure 'invalid_torrent'
     end
   end
 
   def set_user(req)        
-    req.user = User.find_by_id parse_user_id(req.passkey)
+    req.user = User.find_by_id(User.parse_id_from_announce_passkey(req.passkey))
     if req.user && req.user.active?
       logger.debug ":-) valid user: #{req.user.id} [#{req.user.username}]"
       if req.user.announce_passkey(req.torrent) != req.passkey
@@ -96,9 +96,5 @@ class TrackerController < ApplicationController
   
   def failure(error_key)
     raise TrackerFailure.new(error_key)
-  end
-
-  def parse_user_id(announce_passkey)
-    announce_passkey[32, announce_passkey.size - 1]
   end
 end
