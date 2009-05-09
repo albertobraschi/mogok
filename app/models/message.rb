@@ -14,17 +14,25 @@ class Message < ActiveRecord::Base
 
   attr_accessor :replying_to # holds username of user being replied
 
-  validates_presence_of :receiver_id, :message => I18n.t('model.message.errors.receiver.invalid')
+  def self.t_error(field, key, args = {})
+    I18n.t("model.message.errors.#{field}.#{key}", args)
+  end
+
+  validates_presence_of :receiver_id, :message => t_error('receiver_id', 'invalid')
   validates_inclusion_of :folder, :in => FOLDERS, :message => 'invalid folder'
 
   def validate
     if self.receiver
       if !self.receiver.active?
-        errors.add :receiver_id, I18n.t('model.message.errors.receiver.inactive')
+        add_error :receiver_id, 'inactive'
       elsif self.receiver.system_user?
-        errors.add :receiver_id, I18n.t('model.message.errors.receiver.system')
+        add_error :receiver_id, 'system'
       end
     end
+  end
+
+  def add_error(field, key, args = {})
+    errors.add field, self.class.t_error(field.to_s, key, args)
   end
 
   def before_save
@@ -38,7 +46,7 @@ class Message < ActiveRecord::Base
 
   def self.make_new(params, sender, args)
     m = new params
-    if !args[:to].blank?
+    unless args[:to].blank?
       m.owner = m.receiver = User.find_by_username(args[:to])
       m.sender = sender
       m.created_at = Time.now

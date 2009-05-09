@@ -22,8 +22,8 @@ ActionController::Routing::Routes.draw do |map|
   map.bookmarks 'bookmarks', :controller => 'users', :action => 'bookmarks'
   map.uploads 'uploads', :controller => 'users', :action => 'uploads'
   map.stuck 'stuck', :controller => 'users', :action => 'stuck'
-  map.messages 'messages', :controller => 'messages', :action => 'folder'
-
+  map.messages 'messages', :controller => 'messages', :action => 'folder'  
+  
   # torrents
   map.torrents 'torrents/:action/:id', :controller => 'torrents'
   map.comments 'torrents/:torrent_id/comments/:action/:id', :controller => 'comments'

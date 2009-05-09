@@ -157,8 +157,8 @@ en:
       prepare_to_forward:
         wrote: wrote
       errors:
-        receiver:
-          invalid: User not found.
+        receiver_id:
+          invalid: A valid username is required.
           inactive: User is not active.
           system: System do not accept messages.
 

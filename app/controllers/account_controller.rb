@@ -111,7 +111,7 @@ class AccountController < ApplicationController
             logger.debug ':-o user password not changed'
           end
         else
-          @user.errors.add :password, t('model.user.password.required')
+          @user.add_error :password, 'required'
         end
       end
     else
@@ -147,7 +147,7 @@ class AccountController < ApplicationController
     i = Invitation.find_by_code params[:invite_code] if params[:invite_code]
     unless i
       if invite_required
-        u.errors.add :invite_code, t('model.user.invite_code.invalid')
+        u.add_error :invite_code, 'invalid'
         return false
       end
     else

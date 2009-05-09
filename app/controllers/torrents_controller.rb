@@ -8,8 +8,8 @@ class TorrentsController < ApplicationController
   class TorrentFileError < StandardError
     attr_accessor :args
     
-    def initialize(message_key, args)
-      super message_key
+    def initialize(error_key, args)
+      super error_key
       self.args = args
     end
   end
@@ -157,8 +157,8 @@ class TorrentsController < ApplicationController
         end
       rescue TorrentFileError => e
         logger.debug ":-o torrent file error: #{e.message}"
-        @torrent.valid? # first check if there are also other errors to show in the view
-        @torrent.errors.add :torrent_file, I18n.t("model.torrent.errors.torrent_file.#{e.message}", e.args)
+        @torrent.valid? # check other errors
+        @torrent.add_error :torrent_file, e.message, e.args
       end
       @category = @torrent.category
     end
@@ -250,8 +250,8 @@ class TorrentsController < ApplicationController
     end
   end
   
-  def torrent_file_error(message_key, args = {})
-    raise TorrentFileError.new(message_key, args)
+  def torrent_file_error(error_key, args = {})
+    raise TorrentFileError.new(error_key, args)
   end
 
   def get_file_data(f)
@@ -269,7 +269,7 @@ class TorrentsController < ApplicationController
 
   def check_uploaded_file(f)
     if f.blank?
-      torrent_file_error t('required')
+      torrent_file_error 'required'
     else
       logger.debug ":-) file uploaded as #{f.class.name}"
       if f.respond_to?(:original_filename) && !f.original_filename.downcase.ends_with?('.torrent')

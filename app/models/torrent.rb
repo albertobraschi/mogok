@@ -25,16 +25,23 @@ class Torrent < ActiveRecord::Base
   attr_accessor :bookmarked
   attr_accessor :inactivated
 
-  validates_uniqueness_of :info_hash, :message => I18n.t('model.torrent.errors.info_hash.taken')
-  validates_numericality_of :year, :message => I18n.t('model.torrent.errors.year.invalid'), :allow_blank => true
+  MAX_TAGS = 4
+
+  def self.t_error(field, key, args = {})
+    I18n.t("model.torrent.errors.#{field}.#{key}", args)
+  end
+
+  validates_uniqueness_of :info_hash, :on => :create, :message => t_error('info_hash', 'taken')
+  validates_numericality_of :year, :message => t_error('year', 'invalid'), :allow_blank => true
   validates_presence_of :name
   validates_presence_of :category_id
 
-
-  MAX_TAGS = 4
-
   def validate
-    errors.add(:tags, I18n.t('model.torrent.errors.tags.max', :max => MAX_TAGS)) if self.tags.length > MAX_TAGS
+    add_error(:tags, 'max', :max => MAX_TAGS) if self.tags.length > MAX_TAGS
+  end
+
+  def add_error(field, key, args = {})
+    errors.add field, self.class.t_error(field.to_s, key, args)
   end
 
   def before_create
@@ -148,7 +155,8 @@ class Torrent < ActiveRecord::Base
       logger.debug ':-) torrent file is valid' if logger
     rescue InvalidTorrentError => e
       logger.debug ":-o torrent parsing error: #{e.message}" if logger
-      errors.add :torrent_file, I18n.t('model.torrent.errors.torrent_file.invalid')
+      valid? # check other errors
+      add_error :torrent_file, 'invalid'      
       return false
     end
     meta_info[INFO][PRIVATE] = '1' if force_private

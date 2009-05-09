@@ -52,6 +52,7 @@ class CreateDefaultData < ActiveRecord::Migration
                  :style_id => style.id,
                  :country_id => (country.id if country),
                  :email => "#{username}@mail.com",
+                 :save_sent => false,
                  :display_downloads => false,
                  :display_last_seen_at => false,
                  :uploaded => 0,

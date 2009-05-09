@@ -24,16 +24,36 @@ class User < ActiveRecord::Base
 
   EMAIL_FORMAT = /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i
 
-  validates_presence_of :username, :message => I18n.t('model.user.errors.username.required')
-  validates_uniqueness_of :username, :on => :create, :case_sensitive => false, :message => I18n.t('model.user.errors.username.taken')
-  validates_length_of :username, :minimum => 3, :too_short => I18n.t('model.user.errors.username.invalid_length')
-  validates_length_of :username, :maximum => 20, :too_long => I18n.t('model.user.errors.username.invalid_length')
-  validates_presence_of :email, :message => I18n.t('model.user.errors.email_required')
-  validates_uniqueness_of :email, :on => :create, :case_sensitive => false, :message => I18n.t('model.user.errors.email.taken')
-  validates_format_of :email, :with => EMAIL_FORMAT, :message => I18n.t('model.user.errors.email.invalid')
+  def self.t_error(field, key, args = {})
+    I18n.t("model.user.errors.#{field}.#{key}", args)
+  end
+
+  validates_presence_of :username, :message => t_error('username', 'required')
+  validates_uniqueness_of :username, :on => :create, :case_sensitive => false, :message => t_error('username','taken')
+  validates_length_of :username, :minimum => 3, :too_short => t_error('username', 'invalid_length')
+  validates_length_of :username, :maximum => 20, :too_long => t_error('username', 'invalid_length')
+  validates_presence_of :email, :message => t_error('email', 'required')
+  validates_uniqueness_of :email, :on => :create, :case_sensitive => false, :message => t_error('email', 'taken')
+  validates_format_of :email, :with => EMAIL_FORMAT, :message => t_error('email', 'invalid')
 
   attr_accessor :password_confirmation
   attr_reader :password
+
+  def validate
+    if self.encrypted_password.blank?
+      add_error :password, 'required'
+    elsif self.password
+      if self.password.size < 5
+        add_error :password, 'too_short'
+      elsif self.password != self.password_confirmation
+        add_error :password_confirmation, 'invalid_confirmation'
+      end
+    end
+  end
+
+  def add_error(field, key, args = {})
+    errors.add field, self.class.t_error(field.to_s, key, args)
+  end
 
   def before_save
     self.info = self.info[0, 4000] if self.info
@@ -51,17 +71,6 @@ class User < ActiveRecord::Base
     raise ArgumentError if self.id == 1
   end
 
-  def validate
-    if self.encrypted_password.blank?
-      errors.add :password, I18n.t('model.user.errors.password.required')
-    elsif self.password
-      if self.password.size < 5
-        errors.add :password, I18n.t('model.user.errors.password.too_short')
-      elsif self.password != self.password_confirmation
-        errors.add :password_confirmation, I18n.t('model.user.errors.password.invalid_confirmation')
-      end
-    end
-  end
       
   def self.authenticate(username, password)
     u = self.find_by_username username

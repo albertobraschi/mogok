@@ -44,7 +44,7 @@ class UsersController < ApplicationController
   
   def edit
     logger.debug ':-) users_controller.edit'
-    @user = User.find(params[:id] || logged_user.id)
+    @user = User.find params[:id]
     access_denied unless @user.editable_by? logged_user
     if request.post?
       logger.debug ':-) post request'
