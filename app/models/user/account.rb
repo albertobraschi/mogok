@@ -3,6 +3,9 @@ class User
 
   # account concern
 
+  attr_reader :password
+  attr_accessor :password_confirmation  
+
   def self.authenticate(username, password)
     u = self.find_by_username username
     if u && u.encrypted_password == CryptUtils.encrypt_password(password, u.salt)
@@ -17,6 +20,14 @@ class User
 
   def self.make_password_recovery_code
     CryptUtils.md5_token
+  end
+
+  def password=(password)    
+    unless password.blank?
+      self.salt = CryptUtils.md5_token object_id
+      self.encrypted_password = CryptUtils.encrypt_password password, self.salt
+    end
+    @password = password
   end
 
   def change_password(password, confirmation)
@@ -41,7 +52,6 @@ class User
     PasswordRecovery.create :created_at => Time.now, :code => code, :user => self
     code
   end
-
 end
 
 

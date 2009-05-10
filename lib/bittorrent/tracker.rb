@@ -37,76 +37,59 @@ module Bittorrent
 
       req.current_action = Time.now      
 
-      p = Peer.find :first,
-                    :conditions => {:torrent_id => req.torrent.id, :user_id => req.user.id, :ip => req.ip, :port => req.port}
-      unless p
-        logger.debug ':-) new peer'
-        create_peer req, resp unless req.stopped?
+      peer = Peer.find_peer req.torrent, req.user, req.ip, req.port
+
+      if peer
+        calculate_offsets req, peer
+        unless req.stopped?
+          register_snatch req if req.completed?      
+          update_peer peer, req
+        else
+          destroy_peer peer
+        end
+        update_user_counters req
       else
-        logger.debug ':-) peer already exists'
-        update_peer p, req, resp
+        create_peer req unless req.stopped?
       end
 
       AnnounceLog.create req if log_announce
-      
-      include_peers_in_response req, resp unless req.stopped?
+
+      prepare_resp req, resp unless req.stopped?
     end
 
     private
 
-    def create_peer(req, resp)
+    def create_peer(req)
+      logger.debug ':-) create peer'
       p = Peer.new
-      p.set_attributes req
-      p.started_at = Time.now      
+      p.init_attributes req
       set_peer_connectivity p
       p.save
-      resp.complete = p.torrent.seeders_count
-      resp.incomplete = p.torrent.leechers_count
-      logger.debug ':-) peer created'
+      req.torrent = p.torrent      
     end
 
-    def update_peer(p, req, resp)
+    def update_peer(p, req)
+      logger.debug ':-) update peer'
       req.last_action_at = p.last_action_at      
-      if req.started?
-        p.started_at = Time.now
-      elsif req.stopped?
-        destroy_peer p
-      elsif req.completed?
-        register_snatch req
-      else
-        # no event, just routine announce
-      end
-      calculate_offsets req, p
-      unless req.stopped?
-        p.set_attributes req
-        set_peer_connectivity p
-        p.save
-        resp.complete = req.torrent.seeders_count
-        resp.incomplete = req.torrent.leechers_count
-      end      
-      update_user_counters req
+      p.set_attributes req
+      set_peer_connectivity p
+      p.save      
     end
 
     def destroy_peer(p)
-      p.destroy
-      logger.debug ':-) peer deleted'
+      logger.debug ':-) destroy peer'
+      p.destroy      
     end
 
     def set_peer_connectivity(p)
       # orphaned peer_conns are wiped by a background task
       if p.new_record?
-        peer_conn = PeerConn.find :first, :conditions => {:ip => p.ip, :port => p.port}        
+        peer_conn = PeerConn.find_peer_conn(p.ip, p.port)
         p.peer_conn = peer_conn || PeerConn.new(:ip => p.ip, :port => p.port)
       end
       if p.peer_conn.connectable.nil? # also in case an existing peer_conn is still nil due to timeouted
         p.peer_conn.connectable = Ping.pingecho p.peer_conn.ip, 5, p.peer_conn.port # nil if timeouted
         p.peer_conn.save
-      end
-    end
-
-    def update_user_counters(req)
-      if req.up_offset > 0 || req.down_offset > 0
-        User.update_user_counters req.user, req.up_offset, req.down_offset
       end
     end
 
@@ -120,13 +103,25 @@ module Bittorrent
       end
     end
 
+    def update_user_counters(req)
+      if req.up_offset > 0 || req.down_offset > 0
+        req.user.update_counters req.up_offset, req.down_offset
+      end
+    end
+
     def register_snatch(req)
       snatch = Snatch.create req.torrent, req.user
       req.torrent = snatch.torrent
       logger.debug ':-) torrent snatch registered'
     end
 
-    def include_peers_in_response req, resp
+    def prepare_resp(req, resp)
+      resp.complete = req.torrent.seeders_count
+      resp.incomplete = req.torrent.leechers_count
+      set_resp_peers req, resp
+    end
+
+    def set_resp_peers req, resp
       resp.peers = Peer.find_for_announce_resp req.torrent, req.user, :limit => req.numwant
       resp.compact = req.compact
       resp.no_peer_id = req.no_peer_id

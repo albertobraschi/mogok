@@ -16,7 +16,7 @@ class TrackerController < ApplicationController
         failure 'malformed_request'
       end
       
-      set_torrent req, req.info_hashs[0] # only one torrent allowed due to the passkey validation (usually clients send only one info_hash anyway)
+      set_torrent req, req.info_hashs[0] # only one torrent allowed due to the passkey validation
       set_user req
 
       exec_scrape req, resp
@@ -70,12 +70,15 @@ class TrackerController < ApplicationController
   private
 
   def set_torrent(req, info_hash = nil)
-    req.torrent = Torrent.find_by_info_hash_hex(CryptUtils.hexencode(info_hash || req.info_hash)) # hex because memcached has problems with binary keys
+    info_hash_hex = CryptUtils.hexencode(info_hash || req.info_hash)
+
+    req.torrent = Torrent.find_by_info_hash_hex(info_hash_hex) # hex because memcached has problems with binary keys
+    
     if req.torrent && req.torrent.active?
       logger.debug ":-) valid torrent: #{req.torrent.id} [#{req.torrent.name}]"
     else
-      logger.debug ":-o torrent not found or inactive for info hash hex #{CryptUtils.hexencode(info_hash || req.info_hash)}"
       failure 'invalid_torrent'
+      logger.debug ":-o torrent not found or inactive for info hash hex #{info_hash_hex}"
     end
   end
 
@@ -84,12 +87,12 @@ class TrackerController < ApplicationController
     if req.user && req.user.active?
       logger.debug ":-) valid user: #{req.user.id} [#{req.user.username}]"
       if req.user.announce_passkey(req.torrent) != req.passkey
-        logger.debug ":-o invalid announce passkey: #{req.passkey}"
         failure 'invalid_passkey'
+        logger.debug ":-o invalid announce passkey: #{req.passkey}"        
       end
     else
-      logger.debug ':-o user not found or inactive'
       failure 'invalid_user'
+      logger.debug ':-o user not found or inactive'      
     end
     logger.debug ':-) valid announce passkey'
   end

@@ -4,30 +4,44 @@ class Peer < ActiveRecord::Base
   belongs_to :torrent
   belongs_to :peer_conn  
 
+  def before_create
+    self.started_at = Time.now
+  end
+
   def after_create
     t = Torrent.find self.torrent_id, :lock => true
-    t.increment! :seeders_count if seeder?
-    t.increment! :leechers_count unless seeder?
+    if seeder?
+      t.increment! :seeders_count
+    else
+      t.increment! :leechers_count
+    end
     self.torrent = t
   end
 
   def before_destroy
     t = Torrent.find self.torrent_id, :lock => true
-    t.decrement! :seeders_count if seeder? && t.seeders_count > 0
-    t.decrement! :leechers_count if !seeder? && t.leechers_count > 0
+    if seeder?
+      t.decrement! :seeders_count if t.seeders_count > 0
+    else
+      t.decrement! :leechers_count if t.leechers_count > 0
+    end
+  end
+
+  def init_attributes(announce_req)
+    self.torrent = announce_req.torrent
+    self.user = announce_req.user
+    self.ip = announce_req.ip
+    self.port = announce_req.port
+    self.compact_ip = Peer.make_compact_ip announce_req.ip, announce_req.port
+    set_attributes(announce_req)
   end
 
   def set_attributes(announce_req)
-    self.torrent = announce_req.torrent
-    self.user = announce_req.user
     self.uploaded = announce_req.uploaded
     self.downloaded = announce_req.downloaded
     self.leftt = announce_req.left
     self.seeder = announce_req.seeder
     self.peer_id = announce_req.peer_id
-    self.ip = announce_req.ip
-    self.port = announce_req.port
-    self.compact_ip = Peer.make_compact_ip announce_req.ip, announce_req.port
     self.last_action_at = announce_req.current_action
     self.client_code = announce_req.client.code
     self.client_name = announce_req.client.name
@@ -45,6 +59,10 @@ class Peer < ActiveRecord::Base
              :order => 'started_at DESC',
              :page => current_page(params[:page]),
              :per_page => args[:per_page]
+  end
+
+  def self.find_peer(t, u, ip, port)
+    find :first, :conditions => {:torrent_id => t, :user_id => u, :ip => ip, :port => port}
   end
 
   def self.find_for_announce_resp(torrent, announcer, args)

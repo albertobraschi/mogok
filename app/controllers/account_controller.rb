@@ -39,7 +39,6 @@ class AccountController < ApplicationController
         end
       end      
     end
-    params[:password] = nil
   end
 
   def logout

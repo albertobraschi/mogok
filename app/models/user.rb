@@ -25,9 +25,6 @@ class User < ActiveRecord::Base
   belongs_to :style
   belongs_to :inviter, :class_name => 'User', :foreign_key => 'inviter_id'
 
-  attr_accessor :password_confirmation
-  attr_reader :password
-
   def before_save
     self.info = self.info[0, 4000] if self.info
   end
@@ -42,14 +39,6 @@ class User < ActiveRecord::Base
 
   def before_destroy
     raise ArgumentError if self.id == 1
-  end
-      
-  def password=(password)
-    @password = password
-    unless password.blank?
-      self.salt = CryptUtils.md5_token object_id
-      self.encrypted_password = CryptUtils.encrypt_password @password, self.salt
-    end
   end
 
   def save_sent?

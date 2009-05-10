@@ -1,7 +1,7 @@
 
 class User
 
-  # access control concern
+  # role concern
 
   def system_user?
     self.role.system?

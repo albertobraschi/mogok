@@ -8,4 +8,8 @@ class PeerConn < ActiveRecord::Base
     # delete peer_conns that does not have any peer
     connection.execute 'DELETE FROM peer_conns WHERE peer_conns.id NOT IN (SELECT DISTINCT peer_conn_id FROM peers)'
   end
+
+  def self.find_peer_conn(ip, port)
+    find :first, :conditions => {:ip => ip, :port => port}
+  end
 end
