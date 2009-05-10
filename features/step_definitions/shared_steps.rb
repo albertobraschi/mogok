@@ -16,7 +16,7 @@ When /^I follow the link (.*)$/ do |link|
 end
 
 When /^I specify file field (.*) as (.*)$/ do |field, file_name|
-  # NOTE: the test framework corrupts binary files on windows
+  # NOTE: test framework may corrupt binary files on Windows
   attach_file field, File.join(TEST_DATA_DIR, file_name)
 end
 

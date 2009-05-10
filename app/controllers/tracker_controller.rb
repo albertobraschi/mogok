@@ -70,7 +70,7 @@ class TrackerController < ApplicationController
   private
 
   def set_torrent(req, info_hash = nil)
-    req.torrent = Torrent.find_by_info_hash_hex(CryptUtils.hexencode(req.info_hash || info_hash)) # hex because memcached has problems with binary keys
+    req.torrent = Torrent.find_by_info_hash_hex(CryptUtils.hexencode(info_hash || req.info_hash)) # hex because memcached has problems with binary keys
     if req.torrent && req.torrent.active?
       logger.debug ":-) valid torrent: #{req.torrent.id} [#{req.torrent.name}]"
     else

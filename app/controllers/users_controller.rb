@@ -130,7 +130,7 @@ class UsersController < ApplicationController
 
   def bookmarks
     logger.debug ':-) users_controller.bookmarks'
-    @torrents = Torrent.bookmarked_by_user logged_user, params, :per_page => 20
+    @torrents = logged_user.paginate_bookmarks params, :per_page => 20
     @torrents.each {|t| t.bookmarked = true} if @torrents
   end
 
