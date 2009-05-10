@@ -35,7 +35,7 @@ module AccessControl
       logger.debug ':-) not logged in, redirecting to login page'
       reset_session
       session[:original_uri] = request.request_uri
-      redirect_to :controller => 'account', :action => 'login'
+      redirect_to login_path
     else
       after_login_required
     end    

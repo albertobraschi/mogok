@@ -5,81 +5,70 @@
   <h2>Sign Up</h2>
 </div>
 
-<% unless @app_params[:signup_open] %>
-  
-  <br>
-  <div class="error">Sign up is currently closed.</div>
-  <br>
+<%= render :partial => 'misc/flash', :locals => {:flash => flash} %>
 
-<% else %>
-
-  <% if @app_params[:signup_by_invitation_only] && params[:invite_code].blank? %>
-    <div class="alert">Sign up currently by invitation only.</div>
-  <% end %>
-
-  <div class="fields_box" style="width:350px;">
-    <% form_for :user, :action => 'signup' do |f| %>
-      <%= hidden_field_tag :invite_code, params[:invite_code] if params[:invite_code] %>
-      <table cellpadding="3" cellspacing="1">
-        <tr>
-          <td class="label">
-            Username:
-          </td>
-          <td>
-            <%= f.text_field :username, :size => 30, :maxlength => 20, :focus => true %>
-            <%= field_error @user.errors[:username] %>
-          </td>
-        </tr>
-        <tr>
-          <td class="label">
-            Password:
-          </td>
-          <td>
-            <%= f.password_field :password, :size => 30, :maxlength => 30 %>
-            <%= field_error @user.errors[:password] %>
-          </td>
-        </tr>
-        <tr>
-          <td class="label">
-            Confirm:
-          </td>
-          <td>
-            <%= f.password_field :password_confirmation, :size => 30, :maxlength => 30 %>
-            <%= field_error @user.errors[:password_confirmation] %>
-          </td>
-        </tr>
-        <% if params[:invite_code].blank? %>
-          <% if @app_params[:signup_by_invitation_only] %>
-            <tr>
-              <td class="label">
-                Invite code:
-              </td>
-              <td>
-                <%= text_field_tag :invite_code, params[:invite_code], {:size => 30, :maxlength => 80} %>
-                <%= field_error @user.errors[:invite_code] %>
-              </td>
-            </tr>
-          <% else %>
-            <tr>
-              <td class="label">
-                Email:
-              </td>
-              <td>
-                <%= f.text_field :email, :size => 30, :maxlength => 200 %>
-                <%= field_error @user.errors[:email] %>
-              </td>
-            </tr>
-          <% end %>
-        <% end %>
-        <tr>
-          <td colspan="2" class="center">
-            <%= submit_tag 'Sign Up', :class => 'submit' %>
-          </td>
-        </tr>
-      </table>
-    <% end %>
-  </div>
+<% if @app_params[:signup_by_invitation_only] && params[:invite_code].blank? && @user.errors[:invite_code].blank? %>
+  <div class="alert">Sign up currently by invitation only.</div>
 <% end %>
+
+<div class="fields_box" style="width:350px;">
+  <% form_for :user, :action => 'signup' do |f| %>
+    <table cellpadding="3" cellspacing="1">
+      <tr>
+        <td class="label">
+          Username:
+        </td>
+        <td>
+          <%= f.text_field :username, :size => 30, :maxlength => 20, :focus => true %>
+          <%= field_error @user.errors[:username] %>
+        </td>
+      </tr>
+      <tr>
+        <td class="label">
+          Password:
+        </td>
+        <td>
+          <%= f.password_field :password, :size => 30, :maxlength => 30 %>
+          <%= field_error @user.errors[:password] %>
+        </td>
+      </tr>
+      <tr>
+        <td class="label">
+          Confirm:
+        </td>
+        <td>
+          <%= f.password_field :password_confirmation, :size => 30, :maxlength => 30 %>
+          <%= field_error @user.errors[:password_confirmation] %>
+        </td>
+      </tr>
+      <tr>
+        <td class="label">
+          Email:
+        </td>
+        <td>
+          <%= f.text_field :email, :size => 30, :maxlength => 200 %>
+          <%= field_error @user.errors[:email] %>
+        </td>
+      </tr>
+      <% if params[:invite_code] || @app_params[:signup_by_invitation_only] %>
+        <tr>
+          <td class="label">
+            Invite code:
+          </td>
+          <td>
+            <%= text_field_tag :invite_code, params[:invite_code], {:size => 30, :maxlength => 80} %>
+            <%= field_error @user.errors[:invite_code] %>
+          </td>
+        </tr>
+      <% end %>
+      <tr>
+        <td colspan="2" class="center">
+          <%= submit_tag 'Sign Up', :class => 'submit' %>
+        </td>
+      </tr>
+    </table>
+  <% end %>
+</div>
 
 <br>
   

@@ -1,7 +1,7 @@
 
 
 class User < ActiveRecord::Base
-  concerns :access_control, :account, :finders, :tracker, :validation
+  concerns :account, :authorization, :finders, :tracker, :validation
   
   strip_attributes! # strip_attributes
   

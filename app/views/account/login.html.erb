@@ -48,8 +48,15 @@
 
 <div class="links bold">
   <%= link_to '[ password recovery ]', password_recovery_path %>
-  <br><br>
-  <%= link_to '[ sign up ]', signup_path(:invite_code => nil) %>
+
+  <br>
+  <br>
+    
+  <% if @app_params[:signup_open] %>
+    <%= link_to '[ sign up ]', signup_path(:invite_code => nil) %>
+  <% else %>
+    <span class="bold">[ sign up currently closed ]</span>
+  <% end %>
 </div>
 
 

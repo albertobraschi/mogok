@@ -112,7 +112,7 @@ the parameters can only be 'true', 'false' or a number.
 - Login Block
   After a limited number of login attempts (currently 5) the used IP will remain blocked by a
 period of time (currently 4 hours), but if the user changes its password using a password recovery
-email the block is cancelled. In the page 'blocks' you can see how many times an IP was blocked.
+email the block is cancelled.
 
 - Signup
   After a successful signup the used IP will be blocked for a period of time (currently 1 day). This
@@ -208,7 +208,7 @@ operations, see below).
   The most critical features, like login, signup, tracker services, have Cucumber features
 tests, check the directory features/.
   IMPORTANT: tests involving torrent files may be problematic on Windows (files may get corrupted).
-  - to run the tests (test database must be created first):
+  - to run the tests ('test' database must be created first):
     mogok$ rake features
 
 - Caching

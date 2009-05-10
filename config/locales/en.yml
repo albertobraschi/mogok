@@ -3,20 +3,20 @@ en:
   controller:
     account:
       login:
-        blocked: Login is temporarily blocked for your machine. Try to recover your password.
-        account_disabled: This account was disabled.
+        temporarily_blocked: Login is temporarily blocked for your machine. Try to recover your password.
+        account_disabled: This account is disabled.
+        blocked: Login will remain blocked for {{hours}} hours. Try to recover your password.
+        invalid_login: "Invalid login data. Remaining attempts: {{remaining}}"
       signup:
+        closed: Signup is currently closed.
         blocked: Signup is temporarily blocked for your machine.
       password_recovery:
-        sent: A password recovery link has been sent to {{email}}.
+        success: A password recovery link has been sent to {{email}}.
         delivery_error: An error occurred and the email could be not sent. Please try again later.
         invalid_email: Email address {{email}} is not valid.
       change_password:
-        changed: Password successfully changed.
-        invalid_link: Invalid password recovery link.
-      set_login_failed_message:
-        blocked: Login will now remain blocked for {{hours}} hours. Try to recover your password.
-        invalid_login: "Invalid login data. Remaining attempts: {{remaining}}"
+        success: Password successfully changed.
+        invalid_code: Invalid password recovery link.
 
     comments:
       new:
@@ -172,6 +172,7 @@ en:
           required: Password required.
           incorrect:  Password incorrect.
           too_short: Password length must be at least 5.
+        password_confirmation:
           invalid_confirmation: Incorrect password confirmation.
         email:
           required: Email required.

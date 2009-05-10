@@ -5,12 +5,12 @@ module BgTasks
     include BgTasks::Utils
 
     def self.exec(config, logger = nil, env = nil)
-      new.exec config, logger, env
+      new.exec_all config, logger, env
     end
 
-    def exec(config, logger = nil, env = nil)
+    def exec_all(config, logger = nil, env = nil)
       begin        
-        exec_all config, logger, env
+        do_exec_all config, logger, env
       rescue => e
         log_error e, 'BgTasks::Dispatcher'
       end
@@ -18,7 +18,7 @@ module BgTasks
 
     private
 
-    def exec_all(config, logger = nil, env = nil)
+    def do_exec_all(config, logger = nil, env = nil)
       tasks = fetch_tasks config
       unless tasks.blank?
         BgTask.log_exec "Dispatcher [ENV:#{env}]"
@@ -27,6 +27,12 @@ module BgTasks
         end
       else
         BgTask.log_exec "Dispatcher [ENV:#{env}]", 'NO TASKS FOUND'
+      end
+    end
+
+    def exec_task(bg_task, config, logger = nil, force = false)
+      if bg_task.class_name =~ /^BgTasks::[A-Za-z]+\Z/
+        Kernel.eval(bg_task.class_name).new.exec bg_task, config, logger, force
       end
     end
   end

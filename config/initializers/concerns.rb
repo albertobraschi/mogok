@@ -1,5 +1,5 @@
 
-# technoweenie's concern pattern (http://pastie.org/pastes/200292)
+# technoweenie's concerns pattern (http://pastie.org/pastes/200292)
 	# usage:
     # app/models/user.rb
     #   class User < ActiveRecord::Base

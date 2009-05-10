@@ -5,6 +5,7 @@ class ApplicationController < ActionController::Base
   helper_method :logged_user
   protect_from_forgery
   filter_parameter_logging :password
+  
   rescue_from Exception, :with => :handle_error
 
   protected

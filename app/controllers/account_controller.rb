@@ -1,8 +1,10 @@
 
-class AccountController < ApplicationController
-  before_filter :set_mailer_host, :only => :password_recovery
+class AccountController < ApplicationController  
   before_filter :login_required, :only => :logout
   before_filter :not_logged_in_required, :only => [:login, :signup, :password_recovery, :change_password]
+
+  before_filter :set_mailer_host, :only => :password_recovery
+  
   layout 'public'
 
   MAX_LOGIN_ATTEMPTS, BLOCK_TIME_HOURS = 5, 4
@@ -10,10 +12,11 @@ class AccountController < ApplicationController
   def login
     logger.debug ':-) account_controller.login'
     login_attempt = LoginAttempt.fetch(request.remote_ip)
+    @app_params = AppParam.load
     if login_attempt.blocked?
       logger.debug ":-) login is temporarily blocked for this ip: #{login_attempt.ip}"
-      flash.now[:error] = t('blocked') unless flash[:notice]
-    else
+      flash.now[:error] = t('temporarily_blocked') unless flash[:notice]
+    else      
       if request.post?
         logger.debug ':-) post request'
         u = User.authenticate params[:username], params[:password]
@@ -24,7 +27,7 @@ class AccountController < ApplicationController
             log_user_in u, params[:stay_logged_in] == '1'
             clean_login_attempts
             uri, session[:original_uri] = session[:original_uri], nil
-            redirect_to uri || {:controller => 'content'}
+            redirect_to uri || root_path
           else
             logger.debug ':-o user not active'
             flash.now[:error] = t('account_disabled')
@@ -34,9 +37,9 @@ class AccountController < ApplicationController
           login_attempt.increment_or_block(MAX_LOGIN_ATTEMPTS, BLOCK_TIME_HOURS)
           set_login_failed_message login_attempt
         end
-      end
-      params[:password] = nil
+      end      
     end
+    params[:password] = nil
   end
 
   def logout
@@ -47,38 +50,47 @@ class AccountController < ApplicationController
   
   def signup    
     logger.debug ':-) account_controller.signup'
-    signup_block = SignupBlock.find_by_ip request.remote_ip
-    if signup_block && signup_block.still_blocked?
-      logger.debug ":-) signup temporarily blocked for this ip: #{signup_block.ip}"
-      flash[:error] = t('blocked')
-      redirect_to :action => 'login'
-    else
-      @app_params = AppParam.load
+    @app_params = AppParam.load
+    if signup_open? && signup_not_blocked?
       @user = User.new params[:user]
-      if request.post?
+      unless request.post?
+        if params[:invite_code]
+          i = Invitation.find_by_code params[:invite_code]
+          if i
+            @user.email = i.email
+          else
+            if @app_params[:signup_by_invitation_only]
+              @user.add_error :invite_code, 'invalid'
+            else
+              params[:invite_code] = nil # if code invalid but not required
+            end
+          end
+        end
+      else
         logger.debug ':-) post request'
-        access_denied unless @app_params[:signup_open]
-        if save_new_user(@user, @app_params[:signup_by_invitation_only])
+        if save_new_user
           SignupBlock.create(:ip => request.remote_ip, :blocked_until => 1.day.from_now)
-          log_user_in @user
+          log_user_in
           redirect_to root_path
         else
           logger.debug ':-o user data invalid'
           @user.password = @user.password_confirmation = ''
         end
       end
+    else
+      redirect_to login_path
     end
   end
   
   def password_recovery
     logger.debug ':-) account_controller.password_recovery'
     if request.post?
-      user = User.find_by_email params[:email] if User.valid_email? params[:email]
+      user = User.find_by_email params[:email]
       if user && user.active?
         code = user.create_password_recovery
         begin
           AppMailer.deliver_password_recovery user, code
-          flash[:notice] = t('sent', :email => user.email)
+          flash[:notice] = t('success', :email => user.email)
         rescue => e
           log_error e
           PasswordRecovery.delete_all_by_user user
@@ -105,7 +117,7 @@ class AccountController < ApplicationController
             logger.debug ':-) user password changed'            
             password_recovery.destroy
             clean_login_attempts
-            flash[:notice] = t('changed')
+            flash[:notice] = t('success')
             redirect_to :action => 'login', :username => @user.username
           else
             logger.debug ':-o user password not changed'
@@ -116,8 +128,8 @@ class AccountController < ApplicationController
       end
     else
       logger.debug ':-o invalid recovery code'
-      flash[:error] = t('invalid_link')
-      redirect_to :action => 'login'
+      flash[:error] = t('invalid_code')
+      redirect_to login_path
     end
   end
 
@@ -131,7 +143,8 @@ class AccountController < ApplicationController
     end
   end
 
-  def log_user_in(u, keep_logged_in = false)
+  def log_user_in(u = nil, keep_logged_in = false)
+    u ||= @user
     u.last_login_at = Time.now
     u.reset_token
     u.token_expires_at = keep_logged_in ? 30.days.from_now : APP_CONFIG[:user_max_inactivity_minutes].minutes.from_now
@@ -143,20 +156,39 @@ class AccountController < ApplicationController
     session[:adm_menu] = true if u.admin?
   end
 
-  def save_new_user(u, invite_required)    
-    i = Invitation.find_by_code params[:invite_code] if params[:invite_code]
+  def signup_open?
+    unless @app_params[:signup_open]
+      logger.debug ':-) signup is closed'
+      flash[:error] = t('closed')      
+      return false
+    end
+    true
+  end
+
+  def signup_not_blocked?
+    signup_block = SignupBlock.find_by_ip request.remote_ip
+    if signup_block && signup_block.blocked?
+      logger.debug ":-) signup temporarily blocked for this ip: #{signup_block.ip}"
+      flash[:error] = t('blocked')
+      return false
+    end
+    true
+  end
+
+  def save_new_user
+    # note: new user may have an invite even if it is not required
+    i = Invitation.find_by_code params[:invite_code]
     unless i
-      if invite_required
-        u.add_error :invite_code, 'invalid'
+      if @app_params[:signup_by_invitation_only]
+        @user.add_error :invite_code, 'invalid'
         return false
       end
     else
-      u.inviter_id = i.user_id
-      u.email = i.email
-      logger.debug ":-) inviter id: #{u.inviter_id}"    
+      @user.inviter_id = i.user_id
+      logger.debug ":-) inviter id: #{@user.inviter_id}"
     end
-    if u.save
-      logger.debug ":-) user created. id: #{u.id}"
+    if @user.save
+      logger.debug ":-) user created. id: #{@user.id}"
       i.destroy if i
       return true
     end

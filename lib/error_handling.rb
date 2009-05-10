@@ -9,7 +9,8 @@ module ErrorHandling
     layout = 'public' unless logged_user # also set logged user if necessary
 
     if e.is_a? ActionController::InvalidAuthenticityToken
-      redirect_to_home(e)
+      log_error e
+      redirect_to root_path
     else
       case e
         when ActiveRecord::RecordNotFound
@@ -31,18 +32,17 @@ module ErrorHandling
     end
   end
 
-  def redirect_to_home(e)
-    log_error e
-    redirect_to :controller => 'content'
-  end
+  def log_error(e, template = nil, force = false)
+    if !Rails.env.production? || force
+      m =  "Error: #{e.class}\n"
+      m << "Page: #{template}\n" if template
+      m << "Message: #{e.clean_message}"
 
-  def log_error(e, template = nil, force_log = false)
-    if force_log || !Rails.env.production?
-      if ErrorLog.count(:all) < 50
-        ErrorLog.create :created_at => Time.now,
-                        :message => "Error: #{e.class.name}\n Page: #{template}\n Message: #{e.clean_message[0, 500]}",
-                        :location => (e.backtrace[0, 20].join("\n")[0, 2000] unless e.backtrace.blank?)
-      end
+      l = clean_backtrace(e)[0, 15].join("\n")
+    
+      ErrorLog.create :created_at => Time.now, :message => m, :location => l
     end
   end
 end
+
+
