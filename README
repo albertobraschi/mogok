@@ -333,20 +333,20 @@ to 'lib/mysql.rb' if the application can't find your mysql gem.
     > mongrel (useful to run in development mode, run using 'ruby script/server' or 'script/server')
       sudo gem1.8 install mongrel --no-ri --no-rdoc
 
-    > passenger
+    > passenger (tested for 2.2.2)
       sudo gem1.8 install passenger
       sudo /usr/bin/passenger-install-apache2-module (and follow the instructions)
 
       > your apache conf file (etc/apache2/httpd.conf) should have something like:
-        LoadModule passenger_module /usr/lib/ruby/gems/1.8/gems/passenger-2.1.2/ext/apache2/mod_passenger.so
-        PassengerRoot /usr/lib/ruby/gems/1.8/gems/passenger-2.1.2
+        LoadModule passenger_module HOME_PATH/.gem/ruby/1.8/gems/passenger-2.2.2/ext/apache2/mod_passenger.so
+        PassengerRoot HOME_PATH/.gem/ruby/1.8/gems/passenger-2.2.2
         PassengerRuby /usr/bin/ruby1.8
 
         RailEnv development (you can use this parameter to change the environment, default is production)
 
         <VirtualHost *:80>
           ServerName localhost
-          DocumentRoot /your/app/path/mogok/public
+          DocumentRoot PATH_TO_APP/mogok/public
         </VirtualHost>
 
       > you can also try Passenger with Nginx: http://www.modrails.com/documentation/Users guide Nginx.html
@@ -379,7 +379,17 @@ to 'lib/mysql.rb' if the application can't find your mysql gem.
       - restart apache and windows if needed
       - now you can open http://localhost on Windows and it will be forwarded to port 8080 on VirtualBox
 
+    > useful commands
+      - restart passenger
+        mogok$ touch tmp/restart.txt
 
+      - apache control
+        sudo /etc/init.d/apache2 stop
+        sudo /etc/init.d/apache2 start
+
+      - passenger info
+        passenger-memory-stats
+        passenger-status
 
 
 
