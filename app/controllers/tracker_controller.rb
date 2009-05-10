@@ -39,25 +39,13 @@ class TrackerController < ApplicationController
         failure 'malformed_request'
       end     
 
-      set_torrent req
-      set_user req
+      prepare_announce_req req
 
-      req.ip = request.remote_ip
-      req.set_numwant APP_CONFIG[:tracker_announce_resp_max_peers]
-      req.client = parse_client req.peer_id, APP_CONFIG[:tracker_ban_unknown_clients]      
+      ensure_announce_req_valid req
 
-      if !req.valid?
-        failure 'invalid_request'
-      elsif req.client.banned?
-        failure 'client_banned'
-      elsif req.client.banned_version?
-        failure 'client_version_banned'
-      end      
-        
       exec_announce req, resp, APP_CONFIG[:tracker_log_announces]
-        
-      resp.interval = APP_CONFIG[:tracker_announce_interval_seconds]
-      resp.min_interval = APP_CONFIG[:tracker_announce_min_interval_seconds]
+
+      prepare_announce_resp resp
     rescue TrackerFailure => e
       resp.failure_reason = t(e.message)
     rescue => e
@@ -68,6 +56,29 @@ class TrackerController < ApplicationController
   end
 
   private
+
+  def prepare_announce_req(req)
+    set_torrent req
+    set_user req
+    req.ip = request.remote_ip
+    req.set_numwant APP_CONFIG[:tracker_announce_resp_max_peers]
+    req.client = parse_client req.peer_id, APP_CONFIG[:tracker_ban_unknown_clients]
+  end
+
+  def prepare_announce_resp(resp)
+    resp.interval = APP_CONFIG[:tracker_announce_interval_seconds]
+    resp.min_interval = APP_CONFIG[:tracker_announce_min_interval_seconds]
+  end
+
+  def ensure_announce_req_valid(req)
+    if !req.valid?
+      failure 'invalid_request'
+    elsif req.client.banned?
+      failure 'client_banned'
+    elsif req.client.banned_version?
+      failure 'client_version_banned'
+    end
+  end
 
   def set_torrent(req, info_hash = nil)
     info_hash_hex = CryptUtils.hexencode(info_hash || req.info_hash)
