@@ -6,13 +6,18 @@ class Message < ActiveRecord::Base
   belongs_to :sender, :class_name => 'User', :foreign_key => 'sender_id'
   belongs_to :receiver, :class_name => 'User', :foreign_key => 'receiver_id'
 
+  attr_accessor :replying_to # holds username of user being replied
+  
   class NotOwnerError < StandardError
   end
 
   INBOX, OLDS, SENT, TRASH = 'inbox', 'olds', 'sent', 'trash'
+
   FOLDERS = [INBOX, OLDS, SENT, TRASH]
 
-  attr_accessor :replying_to # holds username of user being replied
+  def self.valid_folder?(value)
+    FOLDERS.include? value
+  end
 
   def self.t_error(field, key, args = {})
     I18n.t("model.message.errors.#{field}.#{key}", args)
@@ -38,10 +43,6 @@ class Message < ActiveRecord::Base
   def before_save
     self.subject = self.subject[0, 50]
     self.body = self.body[0, 2000] if self.body
-  end
-
-  def self.valid_folder?(value)
-    FOLDERS.include? value
   end
 
   def self.make_new(params, sender, args)
