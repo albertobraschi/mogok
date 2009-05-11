@@ -36,7 +36,7 @@ class Torrent < ActiveRecord::Base
   end
   
   def after_create
-    TorrentFulltext.create :torrent_id => self, :body => "#{self.name} #{self.description}"
+    TorrentFulltext.create :torrent => self, :body => "#{self.name} #{self.description}"
   end
 
   def after_update

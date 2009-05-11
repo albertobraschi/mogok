@@ -11,7 +11,7 @@ class Topic < ActiveRecord::Base
   attr_accessor :last_post
 
   def after_create
-    TopicFulltext.create :topic_id => self, :body => "#{self.title} #{self.topic_post.body}"
+    TopicFulltext.create :topic => self, :body => "#{self.title} #{self.topic_post.body}"
   end
 
   def after_update

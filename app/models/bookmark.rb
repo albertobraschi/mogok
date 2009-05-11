@@ -9,7 +9,7 @@ class Bookmark < ActiveRecord::Base
       b.destroy
       t.bookmarked = false
     else
-      b = Bookmark.create :torrent_id => t.id, :user_id => u.id
+      b = Bookmark.create :torrent => t, :user => u
       t.bookmarked = true
     end
   end

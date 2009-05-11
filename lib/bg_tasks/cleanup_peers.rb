@@ -12,12 +12,12 @@ module BgTasks
       if force || bg_task.exec_now?
         begin
           Peer.delete_inactives config[:peer_max_inactivity_minutes].minutes.ago
-          logger.debug ":-) TASK #{bg_task.name} successfully executed" if logger
-          status = 'OK'
+          logger.debug ":-) task #{bg_task.name} successfully executed" if logger
+          status = 'ok'
         rescue => e
-          status = 'FAILED'
+          status = 'failed'
           log_error e, bg_task.name
-          logger.error ":-( TASK #{bg_task.name} ERROR: #{e.message}" if logger
+          logger.error ":-( task #{bg_task.name} error: #{e.message}" if logger
           raise e if force
         end
         bg_task.log_exec(status, begin_at, Time.now) unless force

@@ -40,8 +40,8 @@ class Message < ActiveRecord::Base
     errors.add field, self.class.t_error(field.to_s, key, args)
   end
 
-  def before_save
-    self.subject = self.subject[0, 50]
+  def before_create
+    self.subject = self.subject.blank? ? I18n.t('model.message.before_create.no_subject') : self.subject[0, 50]
     self.body = self.body[0, 2000] if self.body
   end
 
@@ -50,8 +50,7 @@ class Message < ActiveRecord::Base
     unless args[:to].blank?
       m.owner = m.receiver = User.find_by_username(args[:to])
       m.sender = sender
-      m.created_at = Time.now
-      m.subject = I18n.t('model.message.new.no_subject') if m.subject.blank?
+      m.created_at = Time.now     
       m.unread = true
       m.folder = INBOX
     end

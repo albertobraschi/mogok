@@ -150,7 +150,7 @@ en:
         subject: invitation to our site
         
     message:
-      new:
+      before_create:
         no_subject: no subject
       prepare_to_reply:
         wrote: wrote

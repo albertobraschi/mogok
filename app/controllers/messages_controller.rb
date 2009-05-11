@@ -36,7 +36,9 @@ class MessagesController < ApplicationController
                                 :reply => params[:reply] == '1',
                                 :forward => params[:forward] == '1'
     unless request.post?
-      params[:to] = @message.replying_to if params[:reply] == '1'
+      if params[:reply] == '1'
+        params[:to] = @message.replying_to
+      end
     else
       unless cancelled?
         if @message.deliver(params[:replied_id])          

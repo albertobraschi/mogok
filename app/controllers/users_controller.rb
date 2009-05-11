@@ -110,7 +110,7 @@ class UsersController < ApplicationController
   end
 
   def report
-    logger.debug ':-) TorrentsController.report'
+    logger.debug ':-) users_controller.report'
     @user = User.find params[:id]
     if request.post?
       unless cancelled?

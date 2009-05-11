@@ -336,7 +336,7 @@ to 'lib/mysql.rb' if the application can't find your mysql gem.
     > mongrel (useful to run in development mode, run using 'ruby script/server' or 'script/server')
       sudo gem1.8 install mongrel
 
-    > passenger (tested for 2.2.2)
+    > passenger (example for 2.2.2)
       sudo gem1.8 install passenger
       sudo /usr/bin/passenger-install-apache2-module
 

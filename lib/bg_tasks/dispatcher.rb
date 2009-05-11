@@ -21,12 +21,12 @@ module BgTasks
     def do_exec_all(config, logger = nil, env = nil)
       tasks = fetch_tasks config
       unless tasks.blank?
-        BgTask.log_exec "Dispatcher [ENV:#{env}]"
+        BgTask.log_exec "Dispatcher[#{env}]"
         tasks.each do |t|
           exec_task(t, config, logger) if t.active? && t.interval_minutes
         end
       else
-        BgTask.log_exec "Dispatcher [ENV:#{env}]", 'NO TASKS FOUND'
+        BgTask.log_exec "Dispatcher[#{env}]", 'NO TASKS FOUND'
       end
     end
 
