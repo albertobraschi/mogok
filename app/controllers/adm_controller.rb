@@ -6,8 +6,13 @@ class AdmController < ApplicationController
 
   def env
     logger.debug ':-) adm_controller.env'
+    
     @server_hostname = %x{uname -a}
-    @on_passenger = defined? PhusionPassenger
+
+    if defined? PhusionPassenger
+      @passenger_version = PhusionPassenger::VERSION_STRING
+    end
+    
     if CACHE_ENABLED
       unless CACHE.servers.blank?
         @memcached_servers = []
@@ -45,7 +50,7 @@ class AdmController < ApplicationController
     end
   end
 
-  def passenger_restart
+  def restart_passenger
     logger.debug ':-) adm_controller.passenger_restart'
     if request.post?
       %x{touch #{File.join(RAILS_ROOT, 'tmp/restart.txt')}}

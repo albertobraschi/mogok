@@ -44,6 +44,9 @@ if LOG_TO_STDOUT
 end
 
 puts "> CACHE_ENABLED = #{CACHE_ENABLED}"
+
 puts "> I18n.default_locale = #{I18n.default_locale}"
+
+
 
 

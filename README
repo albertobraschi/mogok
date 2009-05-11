@@ -286,70 +286,75 @@ by Sun Microsystems.
 to 'lib/mysql.rb' if the application can't find your mysql gem.
 
 - Deploying on Ubuntu (tested for 8.04) with Passenger:
+  NOTE: Passenger also works on Nginx: http://www.modrails.com/documentation/Users guide Nginx.html
 
-  > ubuntu update
+  - ubuntu update
     sudo apt-get install update
     sudo apt-get install dist-upgrade
 
-  > build-essential
+  - build-essential
     sudo apt-get install build-essential
 
-  > apache
+  - apache
     sudo apt-get install apache2
     sudo apt-get install apache2-prefork-dev
 
-  > mysql server
+  - mysql server
     sudo apt-get install mysql-server
     sudo apt-get install libmysqlclient15-dev
     sudo apt-get install libdbd-mysql-ruby
 
-  > memcached (there is also a Windows version, just look for it)
+  - memcached (there is also a Windows version, just look for it)
     sudo apt-get install memcached
 
-  > rails 2.3.2 with ruby 1.8
+  - rails 2.3.2 with ruby 1.8
+
     sudo apt-get install ruby1.8 ruby1.8-dev rdoc1.8 ri1.8 irb libopenssl-ruby
-    > gems 1.3.1+ is required
-      sudo apt-get install rubygems
-      sudo gem sources -a http://gems.github.com
-      sudo gem update --system (probably will install as gem1.8)
-      > use 'gem -v' or 'gem1.8 -v' to confirm the version, it must be at least 1.3.1
-    sudo gem1.8 install rails --no-ri --no-rdoc
-    sudo gem1.8 install mysql --no-ri --no-rdoc
+
+    > install RubyGems (version 1.3.1+ required)
+      - look on the net about how to install it properly, it changes all the time
+      sudo gem1.8 sources -a http://gems.github.com (add github gems repository)
+      sudo gem1.8 update --system (update RubyGems if necessary)
+
+    sudo gem1.8 install rails
+
+    sudo gem1.8 install mysql
 
     > gems required to run the features tests
-      sudo gem1.8 install ruby-debug --no-ri --no-rdoc
-      sudo gem1.8 install rspec --no-ri --no-rdoc
-      sudo gem1.8 install rspec-rails --no-ri --no-rdoc
-      sudo gem1.8 install cucumber --no-ri --no-rdoc
+      sudo gem1.8 install ruby-debug
+      sudo gem1.8 install rspec
+      sudo gem1.8 install rspec-rails
+      sudo gem1.8 install cucumber
       sudo apt-get install libxml2 libxml2-dev libxslt1.1 libxslt1-dev libxml-ruby libxslt-ruby
-      sudo gem1.8 install webrat --no-ri --no-rdoc
-      > NOTE: if rails can't find rspec and rspec-rails, install as a plugin or copy the gems to vendor/plugins
+      sudo gem1.8 install webrat
 
     > gems required for caching
-      sudo gem1.8 install memcache-client --no-ri --no-rdoc
-      sudo gem1.8 install nkallen-cache-money --no-ri --no-rdoc
-      sudo gem1.8 install SystemTimer --no-ri --no-rdoc
+      sudo gem1.8 install memcache-client
+      sudo gem1.8 install nkallen-cache-money
+      sudo gem1.8 install SystemTimer
 
     > mongrel (useful to run in development mode, run using 'ruby script/server' or 'script/server')
-      sudo gem1.8 install mongrel --no-ri --no-rdoc
+      sudo gem1.8 install mongrel
 
     > passenger (tested for 2.2.2)
       sudo gem1.8 install passenger
-      sudo /usr/bin/passenger-install-apache2-module (and follow the instructions)
+      sudo /usr/bin/passenger-install-apache2-module
 
-      > your apache conf file (etc/apache2/httpd.conf) should have something like:
-        LoadModule passenger_module HOME_PATH/.gem/ruby/1.8/gems/passenger-2.2.2/ext/apache2/mod_passenger.so
-        PassengerRoot HOME_PATH/.gem/ruby/1.8/gems/passenger-2.2.2
-        PassengerRuby /usr/bin/ruby1.8
+      - passenger will ask you to edit your apache conf file
+        sudo gedit /etc/apache2/httpd.conf
 
-        RailEnv development (you can use this parameter to change the environment, default is production)
+        - the file should have something like:
 
-        <VirtualHost *:80>
-          ServerName localhost
-          DocumentRoot PATH_TO_APP/mogok/public
-        </VirtualHost>
+          LoadModule passenger_module /usr/lib/ruby/gems/1.8/gems/passenger-2.2.2/ext/apache2/mod_passenger.so
+          PassengerRoot /usr/lib/ruby/gems/1.8/gems/passenger-2.2.2
+          PassengerRuby /usr/bin/ruby1.8
 
-      > you can also try Passenger with Nginx: http://www.modrails.com/documentation/Users guide Nginx.html
+          RailsEnv development (you can use this parameter to change the environment, default is production)
+
+          <VirtualHost *:80>
+            ServerName localhost
+            DocumentRoot PATH_TO_APP/mogok/public
+          </VirtualHost>
 
     > execute the migrations
       mogok$ rake db:create
@@ -371,12 +376,12 @@ to 'lib/mysql.rb' if the application can't find your mysql gem.
     > open http://localhost and use owner/owner or system/system to log in
 
     > if you are using VirtualBox and want to access the app from Windows, a port forward is needed:
-      - set the app to run on port 8080 on Ubuntu (change /etc/apache2/ports.conf and etc/apache2/httpd.conf)
-      - execute the commands on Windows (VBoxManage is in VirtualBox's install dir):
-        VBoxManage setextradata "ubuntu-804" "VBoxInternal/Devices/pcnet/0/LUN#0/Config/apache/Protocol" TCP
-        VBoxManage setextradata "ubuntu-804" "VBoxInternal/Devices/pcnet/0/LUN#0/Config/apache/GuestPort" 8080
-        VBoxManage setextradata "ubuntu-804" "VBoxInternal/Devices/pcnet/0/LUN#0/Config/apache/HostPort" 80
-      - restart apache and windows if needed
+      - set the app to run on port 8080 on VirtualBox
+      - execute the commands on Windows (VBoxManage is in the VirtualBox's install dir):
+        VBoxManage setextradata "ubuntu_box_name" "VBoxInternal/Devices/pcnet/0/LUN#0/Config/apache/Protocol" TCP
+        VBoxManage setextradata "ubuntu_box_name" "VBoxInternal/Devices/pcnet/0/LUN#0/Config/apache/GuestPort" 8080
+        VBoxManage setextradata "ubuntu_box_name" "VBoxInternal/Devices/pcnet/0/LUN#0/Config/apache/HostPort" 80
+      - restart Apache and Windows if needed
       - now you can open http://localhost on Windows and it will be forwarded to port 8080 on VirtualBox
 
     > useful commands

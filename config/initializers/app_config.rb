@@ -3,9 +3,6 @@ require 'yaml'
 # application config (used throughout the app)
 APP_CONFIG = open(File.join(RAILS_ROOT, 'config/app_config.yml')) {|f| YAML.load(f) }
 APP_CONFIG.symbolize_keys!
-
-APP_CONFIG[:started_at] = Time.now
-
 APP_CONFIG.freeze
 
 # default locale
