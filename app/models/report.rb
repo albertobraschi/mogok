@@ -13,24 +13,17 @@ class Report < ActiveRecord::Base
     find :all, :order => 'created_at DESC'
   end
 
-  def self.create(target, target_path, user, reason)
+  def self.create(target, target_path, reporter, reason)
     super :created_at => Time.now,
           :label => report_label(target),
           :target_path => target_path,
-          :user => user,
+          :user => reporter,
           :reason => reason
   end
 
   private
 
   def self.report_label(obj)
-    id = obj.id
-    name = case obj
-             when Topic: 'topic'
-             when Post: 'post'
-             when Torrent: 'torrent'
-             when Comment: 'comment'
-           end
-    "#{name} [#{id}]"
+    "#{obj.class.name.downcase} [#{obj.id}]"
   end
 end

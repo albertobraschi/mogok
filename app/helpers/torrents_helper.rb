@@ -41,9 +41,9 @@ module TorrentsHelper
     s << '.torrent'
   end
 
-  def torrent_additional_info(t, new_torrent_period = nil)
+  def torrent_additional_info(t, new_torrent_threshold_time = nil)
     s = ''
-    if new_torrent_period && (t.created_at + new_torrent_period.minutes > Time.now)
+    if new_torrent_period && (t.created_at + new_torrent_threshold_time.minutes > Time.now)
       s << content_tag('span', 'new', :class => 'torrent_new_label')
       previous = true
     end

@@ -26,7 +26,7 @@ class InvitationsController < ApplicationController
             code = User.make_invite_code
             begin
               AppMailer.deliver_invitation email, logged_user, code
-              Invitation.create :created_at => Time.now, :code => code, :user_id => logged_user.id, :email => email
+              Invitation.create :code => code, :user => logged_user, :email => email, :created_at => Time.now
               flash[:notice] = t('success', :email => email)
               redirect_to :action => 'index'
             rescue => e
