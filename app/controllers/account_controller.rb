@@ -25,7 +25,7 @@ class AccountController < ApplicationController
           if u.active?
             logger.debug ':-) user active'
             log_user_in u, params[:stay_logged_in] == '1'
-            clean_login_attempts
+            clear_login_attempts
             uri, session[:original_uri] = session[:original_uri], nil
             redirect_to uri || root_path
           else
@@ -93,7 +93,7 @@ class AccountController < ApplicationController
         rescue => e
           log_error e
           PasswordRecovery.delete_all_by_user user
-          flash.now[:error] = t('delivery_error')
+          flash[:error] = t('delivery_error')
         end
         redirect_to :action => 'login'
       else
@@ -174,7 +174,7 @@ class AccountController < ApplicationController
     @user.save_with_invite params[:invite_code], @app_params[:signup_by_invitation_only]
   end
 
-  def clean_login_attempts
+  def clear_login_attempts
     LoginAttempt.delete_all_by_ip request.remote_ip
   end
   

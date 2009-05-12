@@ -15,12 +15,12 @@ class User
     self.role.admin?
   end
 
-  def admin_mod?
-    self.role.admin? || self.role.mod?
-  end
-
   def mod?
     self.role.mod?
+  end
+
+  def admin_mod?
+    admin? || mod?
   end
 
   def has_ticket?(ticket)

@@ -56,7 +56,6 @@ class Topic < ActiveRecord::Base
     end
   end
 
-
   def paginate_posts(params, args)
     Post.paginate_by_topic_id self,
                               :order => 'created_at',

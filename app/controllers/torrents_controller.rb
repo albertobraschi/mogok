@@ -111,7 +111,7 @@ class TorrentsController < ApplicationController
       if request.post?
         unless cancelled?
           unless params[:reason].blank?
-            target_path = url_for :action => 'show', :id => @torrent, :only_path => true
+            target_path = torrents_path :action => 'show', :id => @torrent
             Report.create @torrent, target_path, logged_user, params[:reason]
             flash[:notice] = t('success')
             redirect_to :action => 'show', :id => @torrent

@@ -2,15 +2,15 @@
   <div class="menu">
     <ul>
       <li><%= link_to 'Home', root_path %></li>
-      <li><%= link_to 'Torrents', {:controller => 'torrents'} %></li>
+      <li><%= link_to 'Torrents', torrents_path %></li>
       <% if APP_CONFIG[:torrent_upload_enabled] %>
         <li><%= link_to 'Upload', upload_path %></li>
       <% end %>
       <li><%= link_to 'Stuck', stuck_path %></li>
-      <li><%= link_to 'Forums', {:controller => 'forums'} %></li>
-      <li><%= link_to 'Users', {:controller => 'users'} %></li>
-      <li><%= link_to 'Logs', {:controller => 'logs'} %></li>      
-      <li><%= link_to 'Stats', {:controller => 'stats'} %></li>
+      <li><%= link_to 'Forums', forums_path %></li>
+      <li><%= link_to 'Users', users_path %></li>
+      <li><%= link_to 'Logs', logs_path %></li>
+      <li><%= link_to 'Stats', stats_path %></li>
       <li><%= link_to 'Help', help_path %></li>
       <li><%= link_to 'Staff', staff_path %></li>
       <li><%= link_to 'Logout', logout_path, {:confirm => 'Are you sure?'} %></li>

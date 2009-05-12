@@ -19,10 +19,13 @@ ActionController::Routing::Routes.draw do |map|
   end
 
   # user
+  map.users 'users/:action/:id', :controller => 'users'
   map.bookmarks 'bookmarks', :controller => 'users', :action => 'bookmarks'
   map.uploads 'uploads', :controller => 'users', :action => 'uploads'
   map.stuck 'stuck', :controller => 'users', :action => 'stuck'
-  map.messages 'messages', :controller => 'messages', :action => 'folder'  
+
+  # messages (in this case :id is being used to define the folder)
+  map.messages 'messages/:action/:id', :controller => 'messages'
   
   # torrents
   map.torrents 'torrents/:action/:id', :controller => 'torrents'
@@ -34,7 +37,13 @@ ActionController::Routing::Routes.draw do |map|
   map.topics 'forums/:forum_id/topics/:action/:id', :controller => 'topics'
   map.posts 'forums/:forum_id/posts/:action/:id', :controller => 'posts'
 
-  # tracker (also used to generate the tracker announce urls)
+  # logs
+  map.logs 'logs', :controller => 'logs'
+
+  # stats
+  map.stats 'stats', :controller => 'stats'
+
+  # tracker
   map.tracker 'tracker/:passkey/:action', :controller => 'tracker'
   
   # default

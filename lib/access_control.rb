@@ -13,9 +13,7 @@ module AccessControl
     u = User.find_by_id session[:user_id]
     if u && u.active? && u.token == session[:token] && u.token_expires_at > Time.now
       logger.debug ":-) user is logged in: #{u.username}"
-      u.last_seen_at = Time.now
-      u.slide_token_expiration APP_CONFIG[:user_max_inactivity_minutes]
-      u.save
+      u.register_access(APP_CONFIG[:user_max_inactivity_minutes].minutes.from_now)
       @logged_user = u      
     else
       unless u

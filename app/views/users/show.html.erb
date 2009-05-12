@@ -19,17 +19,17 @@
           <div class="float_right">
             <ul class="menu">
               <% if logged_user.admin? && @user.editable_by?(logged_user) %>
-                <li><%= link_to 'edit', {:controller => 'users', :action => 'edit', :id => @user} %></li>
+                <li><%= link_to 'edit', {:action => 'edit', :id => @user} %></li>
                 <li>|</li>
               <% end %>
 
               <% if @user != logged_user && @user.editable_by?(logged_user) %>
-                <li><%= link_to 'remove', {:controller => 'users', :action => 'destroy', :id => @user}, {:class => 'admin'} %></li>
+                <li><%= link_to 'remove', {:action => 'destroy', :id => @user}, {:class => 'admin'} %></li>
                 <li>|</li>
               <% end %>
               
               <% if logged_user.has_ticket?(:staff) %>
-                <li><%= link_to 'staff info', {:controller => 'users', :action => 'edit_staff_info', :id => @user}, {:class => 'staff'} %></li>
+                <li><%= link_to 'staff info', {:action => 'edit_staff_info', :id => @user}, {:class => 'staff'} %></li>
                 <li>|</li>
               <% end %>
 
@@ -44,7 +44,7 @@
               <% end %>
               
               <% if @user.active? %>
-                <li><%= link_to 'message', {:controller => 'messages', :action => 'new', :to => @user.username } %></li>
+                <li><%= link_to 'message', messages_path(:action => 'new', :to => @user.username) %></li>
               <% else %>
                 <li><span class="grey">message</span></li>
               <% end %>

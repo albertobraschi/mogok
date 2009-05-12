@@ -30,7 +30,7 @@ module ApplicationHelper
           html_options[:title] = u.role.description
         end
       end
-      link_to u.username, {:controller => 'users', :action => 'show', :id => u}, html_options
+      link_to u.username, users_path(:action => 'show', :id => u), html_options
     end
   end
 

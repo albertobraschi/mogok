@@ -22,10 +22,18 @@ class User
     CryptUtils.md5_token
   end
 
-  def log_in(keep_logged_in, max_inactivity_threshold)
+  def register_access(inactivity_threshold)
+    self.last_seen_at = Time.now
+    if self.token_expires_at <= inactivity_threshold
+      self.token_expires_at = inactivity_threshold # slide token expiration
+    end
+    save
+  end
+
+  def log_in(keep_logged_in, inactivity_threshold)
     self.last_login_at = Time.now
     reset_token
-    self.token_expires_at = keep_logged_in ? 30.days.from_now : max_inactivity_threshold
+    self.token_expires_at = keep_logged_in ? 30.days.from_now : inactivity_threshold
     save
   end
 
@@ -43,10 +51,7 @@ class User
     save
   end
 
-  def slide_token_expiration(limit_period)
-    if self.token_expires_at <= limit_period.minutes.from_now
-      self.token_expires_at = limit_period.minutes.from_now
-    end
+  def slide_token_expiration(max_inactivity_threshold)
   end
 
   def reset_token
