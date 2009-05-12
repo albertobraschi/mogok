@@ -147,9 +147,8 @@ class TorrentsController < ApplicationController
       @torrent.user = logged_user
       begin
         torrent_data = get_file_data params[:torrent_file]
-        if @torrent.set_meta_info(torrent_data, true, logger) # torrent file parsing
+        if @torrent.set_meta_info(torrent_data, true) # torrent file parsing
           if @torrent.save
-            logger.debug ':-) torrent saved'
             add_log t('log', :torrent => @torrent.name, :user => logged_user.username)
             flash[:alert] = t('success')
             redirect_to :action => 'show', :id => @torrent
@@ -218,8 +217,7 @@ class TorrentsController < ApplicationController
   end
 
   def destroy_torrent
-    @torrent.destroy
-    logger.debug ':-) torrent destroyed'
+    @torrent.destroy    
     add_log t('destroyed_log', :torrent => @torrent.name, :user => logged_user.username), params[:reason]
     if @torrent.user != logged_user
       s = t('destroyed_notification_subject')
@@ -230,7 +228,6 @@ class TorrentsController < ApplicationController
 
   def inactivate_torrent
     @torrent.inactivate
-    logger.debug ':-) torrent inactivated'
     add_log t('inactivated_log', :torrent => @torrent.name, :user => logged_user.username), params[:reason]
     if @torrent.user != logged_user
       s = t('inactivated_notification_subject')
@@ -241,7 +238,6 @@ class TorrentsController < ApplicationController
 
   def activate_torrent
     @torrent.activate
-    logger.debug ':-) torrent activated'
     add_log t('log', :torrent => @torrent.name, :user => logged_user.username)
     if @torrent.user != logged_user
       s = t('notification_subject')

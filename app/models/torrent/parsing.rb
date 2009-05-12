@@ -15,12 +15,12 @@ class Torrent
     root.out
   end
 
-  def set_meta_info(torrent_data, force_private = false, logger = nil)
+  def set_meta_info(torrent_data, force_private = false)
     begin
       meta_info = parse(torrent_data, logger) # parse and check if meta-info is valid
-      logger.debug ':-) torrent file is valid' if logger
+      logger.debug ':-) torrent file is valid'
     rescue InvalidTorrentError => e
-      logger.debug ":-o torrent parsing error: #{e.message}" if logger
+      logger.debug ":-o torrent parsing error: #{e.message}"
       valid? # check other errors
       add_error :torrent_file, 'invalid'
       return false

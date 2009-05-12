@@ -34,7 +34,7 @@ torrent_file_prefix: mogok
 torrent_file_comment: Downloaded from Mogok
 
 # size of pages when browsing data
-torrents_page_size: 50
+torrents_page_size: 100
 torrent_peers_page_size: 20
 torrent_snatches_page_size: 20
 torrent_comments_page_size: 20

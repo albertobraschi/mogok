@@ -144,14 +144,10 @@ class AccountController < ApplicationController
 
   def log_user_in(u = nil, keep_logged_in = false)
     u ||= @user
-    u.last_login_at = Time.now
-    u.reset_token
-    u.token_expires_at = keep_logged_in ? 30.days.from_now : APP_CONFIG[:user_max_inactivity_minutes].minutes.from_now
+    u.log_in keep_logged_in, APP_CONFIG[:user_max_inactivity_minutes].minutes.from_now
     logger.debug ":-) user token expires at: #{u.token_expires_at}"
-    u.save
     reset_session
-    session[:user_id] = u.id
-    session[:token] = u.token
+    session[:user_id], session[:token] = u.id, u.token
     session[:adm_menu] = true if u.admin?
   end
 
@@ -175,23 +171,7 @@ class AccountController < ApplicationController
   end
 
   def save_new_user
-    # note: new user may have an invite even if it is not required
-    i = Invitation.find_by_code params[:invite_code]
-    unless i
-      if @app_params[:signup_by_invitation_only]
-        @user.add_error :invite_code, 'invalid'
-        return false
-      end
-    else
-      @user.inviter_id = i.user_id
-      logger.debug ":-) inviter id: #{@user.inviter_id}"
-    end
-    if @user.save
-      logger.debug ":-) user created. id: #{@user.id}"
-      i.destroy if i
-      return true
-    end
-    false
+    @user.save_with_invite params[:invite_code], @app_params[:signup_by_invitation_only]
   end
 
   def clean_login_attempts

@@ -37,10 +37,15 @@ class Torrent < ActiveRecord::Base
   
   def after_create
     TorrentFulltext.create :torrent => self, :body => "#{self.name} #{self.description}"
+    logger.debug ':-) torrent created'
   end
 
   def after_update
     self.torrent_fulltext.update_attribute :body, "#{self.name} #{self.description}" if @update_fulltext
+  end
+
+  def after_destroy
+    logger.debug ':-) torrent destroyed'
   end
 
   def tags_str=(s)
@@ -66,10 +71,12 @@ class Torrent < ActiveRecord::Base
   def inactivate
     self.inactivated = true # flag used by cache sweeper
     update_attribute :active, false
+    logger.debug ':-) torrent inactivated'
   end
 
   def activate
     update_attribute :active, true
+    logger.debug ':-) torrent activated'
   end
 
   def add_comment(params, user)

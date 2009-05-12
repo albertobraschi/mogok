@@ -1,9 +1,9 @@
 
 class ApplicationController < ActionController::Base
   include AccessControl, ErrorHandling
-  helper :all
-  helper_method :logged_user
   protect_from_forgery
+  helper :all
+  helper_method :logged_user  
   filter_parameter_logging :password
   
   rescue_from Exception, :with => :handle_error

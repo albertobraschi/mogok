@@ -22,6 +22,13 @@ class User
     CryptUtils.md5_token
   end
 
+  def log_in(keep_logged_in, max_inactivity_threshold)
+    self.last_login_at = Time.now
+    reset_token
+    self.token_expires_at = keep_logged_in ? 30.days.from_now : max_inactivity_threshold
+    save
+  end
+
   def password=(password)    
     unless password.blank?
       self.salt = CryptUtils.md5_token object_id
@@ -51,6 +58,26 @@ class User
     PasswordRecovery.delete_all_by_user self
     PasswordRecovery.create :created_at => Time.now, :code => code, :user => self
     code
+  end
+
+  def save_with_invite(code, invite_required)
+    # note: new user may have an invite even if it is not required
+    i = Invitation.find_by_code code
+    unless i
+      if invite_required
+        add_error :invite_code, 'invalid'
+        return false
+      end
+    else
+      self.inviter_id = i.user_id
+      logger.debug ":-) inviter id: #{self.inviter_id}"
+    end
+    if save
+      logger.debug ":-) user created. id: #{self.id}"
+      i.destroy if i
+      return true
+    end
+    false
   end
 end
 
