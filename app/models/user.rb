@@ -109,6 +109,10 @@ class User < ActiveRecord::Base
     User.find_by_username(params[:username], :conditions => ['id != ?', self.id]).blank?
   end
 
+  def email_available?(params)
+    User.find_by_email(params[:email], :conditions => ['id != ?', self.id]).blank?
+  end
+
   def role_update_allowed?(params, updater)
     new_role = Role.find params[:role_id]
     if updater.system_user? || updater.owner?
@@ -119,10 +123,6 @@ class User < ActiveRecord::Base
       return false
     end
     true
-  end
-
-  def email_available?(params)
-    User.find_by_email(params[:email], :conditions => ['id != ?', self.id]).blank?
   end
 end
 

@@ -1,13 +1,7 @@
 
 
-  <% if flash[:notice] %>
-    <div class="notice"><%= flash[:notice] %></div>
-  <% end %>
+  <%= content_tag 'div', flash[:notice], :class => 'notice' if flash[:notice] %>
 
-  <% if flash[:alert] %>
-    <div class="alert"><%= flash[:alert] %></div>
-  <% end %>
+  <%= content_tag 'div', flash[:alert], :class => 'alert' if flash[:alert] %>
 
-  <% if flash[:error] %>
-    <div class="error"><%= flash[:error] %></div>
-  <% end %>
+  <%= content_tag 'div', flash[:error], :class => 'error' if flash[:error] %>

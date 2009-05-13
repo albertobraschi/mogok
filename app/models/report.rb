@@ -19,6 +19,9 @@ class Report < ActiveRecord::Base
           :reason => reason
   end
 
+  def has_open?
+    !find(:first, :conditions => {:handler_id => nil}).blank?
+  end
   private
 
   def trim_reason

@@ -9,7 +9,7 @@ module AccessControl
 
   def set_logged_user
     logger.debug ':-) access_control.set_logged_user'
-    logger.debug ":-) session[user_id]: #{session[:user_id]} | session[token]: #{session[:token]}"
+    logger.debug ":-) session[user_id]: #{session[:user_id]} - session[token]: #{session[:token]}"
     u = User.find_by_id session[:user_id]
     if u && u.active? && u.token == session[:token] && u.token_expires_at > Time.now
       logger.debug ":-) user is logged in: #{u.username}"

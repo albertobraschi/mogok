@@ -1,6 +1,10 @@
 
 module ApplicationHelper
 
+  def page_name(s)
+    content_for :title_page_name, "#{APP_CONFIG[:app_name]} : : #{s}"
+  end
+
   def self.process_search_keywords(param, max_keywords = nil)
     unless param.blank?
       keywords = ''
@@ -10,10 +14,6 @@ module ApplicationHelper
       a.each {|s| keywords << s << ' ' if s.size >= 4 }
       keywords.strip
     end
-  end
-
-  def page_name(s)
-    content_for :title_page_name, " : : #{s}"
   end
 
   def user_link(u, include_stats = false)

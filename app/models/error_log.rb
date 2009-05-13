@@ -7,6 +7,10 @@ class ErrorLog < ActiveRecord::Base
     find :all, :order => 'created_at DESC', :limit => args[:limit]
   end
 
+  def self.has?
+    !find(:first).blank?
+  end
+
   protected
 
   def trim_attributes

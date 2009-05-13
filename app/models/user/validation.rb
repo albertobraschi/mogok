@@ -15,8 +15,7 @@ class User
 
   validates_presence_of :username, :message => t_error('username', 'required')
   validates_uniqueness_of :username, :on => :create, :case_sensitive => false, :message => t_error('username','taken')
-  validates_length_of :username, :minimum => 3, :too_short => t_error('username', 'invalid_length')
-  validates_length_of :username, :maximum => 20, :too_long => t_error('username', 'invalid_length')
+  validates_length_of :username, :within => 3..20, :wrong_length => t_error('username', 'invalid_length')
 
   validates_presence_of :email, :message => t_error('email', 'required')
   validates_uniqueness_of :email, :on => :create, :case_sensitive => false, :message => t_error('email', 'taken')

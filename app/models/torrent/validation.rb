@@ -10,7 +10,7 @@ class Torrent
   end
 
   validates_uniqueness_of :info_hash, :on => :create, :message => t_error('info_hash', 'taken')
-  validates_numericality_of :year, :message => t_error('year', 'invalid'), :allow_blank => true
+  validates_format_of :year, :with => /\d{4}/, :message => t_error('year', 'invalid'), :allow_blank => true
   validates_presence_of :name
   validates_presence_of :category_id
 

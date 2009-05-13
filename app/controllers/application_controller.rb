@@ -2,9 +2,10 @@
 class ApplicationController < ActionController::Base
   include AccessControl, ErrorHandling
   protect_from_forgery
-  helper :all
-  helper_method :logged_user  
+  helper :all  
   filter_parameter_logging :password
+
+  helper_method :logged_user  
   
   rescue_from Exception, :with => :handle_error
 
@@ -16,9 +17,9 @@ class ApplicationController < ActionController::Base
 
   def set_user_warnings
     if logged_user.admin?
-      @error_log_alert = true if ErrorLog.find(:first) # check if there are error logs
+      @error_log_alert = ErrorLog.has? # check if there are error logs
     elsif logged_user.mod?
-      @report_alert = true if Report.find(:first, :conditions => {:handler_id => nil}) # check if there are reports
+      @report_alert = Report.has_open? # check if there are open reports
     end
   end
 
