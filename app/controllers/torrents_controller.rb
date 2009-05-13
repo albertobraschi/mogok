@@ -134,7 +134,7 @@ class TorrentsController < ApplicationController
   def switch_lock_comments
     logger.debug ':-) torrents_controller.switch_lock_comments'
     t = Torrent.find params[:id]
-    t.toggle! :locked
+    t.toggle! :comments_locked
     redirect_to :action => 'show', :id => t
   end
 

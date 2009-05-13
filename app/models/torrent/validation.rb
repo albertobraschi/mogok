@@ -14,11 +14,15 @@ class Torrent
   validates_presence_of :name
   validates_presence_of :category_id
 
-  def validate
-    add_error(:tags, 'max', :max => MAX_TAGS) if self.tags.length > MAX_TAGS
-  end
+  validate :validate_tags
 
   def add_error(field, key, args = {})
     errors.add field, self.class.t_error(field.to_s, key, args)
+  end
+
+  private
+
+  def validate_tags
+    add_error(:tags, 'max', :max => MAX_TAGS) if self.tags.length > MAX_TAGS
   end
 end

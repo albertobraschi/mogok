@@ -12,7 +12,7 @@ class TopicsController < ApplicationController
   def new
     logger.debug ':-) topics_controller.new'
     @forum = Forum.find params[:forum_id]
-    access_denied if @forum.locked? && !logged_user.admin_mod?
+    access_denied if @forum.topics_locked? && !logged_user.admin_mod?
     if request.post?
       logger.debug ':-) post request'
       unless cancelled?
@@ -90,10 +90,10 @@ class TopicsController < ApplicationController
     redirect_to :action => 'show', :id => t
   end
 
-  def switch_lock
-    logger.debug ':-) topics_controller.switch_lock'
+  def switch_lock_posts
+    logger.debug ':-) topics_controller.switch_lock_posts'
     t = Topic.find params[:id]
-    t.toggle! :locked
+    t.toggle! :posts_locked
     redirect_to :action => 'show', :id => t
   end
 end

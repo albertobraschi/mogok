@@ -3,12 +3,11 @@ class Comment < ActiveRecord::Base
   strip_attributes! # strip_attributes
   
   belongs_to :user
-  belongs_to :torrent  
-  validates_presence_of :body
+  belongs_to :torrent
 
-  def before_save
-    self.body = self.body[0, 2000] if self.body
-  end
+  before_save :trim_body
+
+  validates_presence_of :body
 
   def editable_by?(user)
     user.id == self.user_id || user.admin_mod?
@@ -19,5 +18,11 @@ class Comment < ActiveRecord::Base
     self.edited_at = Time.now
     self.edited_by = editor.username
     save
+  end
+
+  protected
+
+  def trim_body
+    self.body = self.body[0, 2000] if self.body
   end
 end

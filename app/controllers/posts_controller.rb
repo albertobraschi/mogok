@@ -11,7 +11,7 @@ class PostsController < ApplicationController
   def new
     logger.debug ':-) posts_controller.new'
     @topic = Topic.find params[:topic_id]
-    access_denied if @topic.locked? && !logged_user.admin_mod?
+    access_denied if @topic.posts_locked? && !logged_user.admin_mod?
     unless params[:body].blank?
       @topic.add_post params, logged_user
       flash[:notice] = t('success')      

@@ -31,7 +31,7 @@
                   <li><%= link_to 'activate', {:action => 'activate', :id => @torrent}, {:class => 'mod', :confirm => 'Are you sure?'} %></li>
                     <li>|</li>
                   <% end %>
-                  <li><%= link_to @torrent.locked? ? 'unlock' : 'lock', {:action => 'switch_lock_comments', :id => @torrent}, {:class => 'mod'} %></li>
+                  <li><%= link_to @torrent.comments_locked? ? 'unlock' : 'lock', {:action => 'switch_lock_comments', :id => @torrent}, {:class => 'mod'} %></li>
                   <li>|</li>
                 <% end %>
               <% else %>
@@ -228,7 +228,7 @@
 
     <%= will_paginate @comments %>
 
-    <% if !@torrent.locked? || logged_user.admin_mod? %>
+    <% if !@torrent.comments_locked? || logged_user.admin_mod? %>
       <h3>Comment</h3>
       <%= render :partial => 'comment_box', :locals => {:torrent => @torrent} %>
     <% end %>

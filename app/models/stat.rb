@@ -1,10 +1,7 @@
 
 class Stat < ActiveRecord::Base
 
-  def before_save
-    self.top_contributors = self.top_contributors.blank? ? nil : [Marshal.dump(self.top_contributors)].pack('m*')
-    self.top_uploaders = self.top_uploaders.blank? ? nil : [Marshal.dump(self.top_uploaders)].pack('m*')
-  end
+  before_save :marshal_attributes
 
   def top_contributors_list
     Marshal.load(self.top_contributors.unpack('m')[0]) if self.top_contributors
@@ -20,5 +17,12 @@ class Stat < ActiveRecord::Base
 
   def self.paginate(params, args)
     super :order => 'created_at DESC', :page => current_page(params[:page]), :per_page => args[:per_page]
+  end
+
+  private
+
+  def marshal_attributes
+    self.top_contributors = self.top_contributors.blank? ? nil : [Marshal.dump(self.top_contributors)].pack('m*')
+    self.top_uploaders = self.top_uploaders.blank? ? nil : [Marshal.dump(self.top_uploaders)].pack('m*')
   end
 end

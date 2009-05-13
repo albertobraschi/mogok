@@ -63,7 +63,6 @@ module TorrentsHelper
     end
     css_class = t.seeders_count > 0 ? 'torrent_info' : 'torrent_dead_info'
     s.blank? ? nil : content_tag('span', "[ #{s} ]", :class => css_class)
-
   end
 
   def bookmark_link_text(t, spinner_id)

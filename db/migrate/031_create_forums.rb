@@ -7,7 +7,7 @@ class CreateForums < ActiveRecord::Migration
       t.column :description, :text
       t.column :topics_count, :integer, :null => false, :default => 0
       t.column :position, :integer, :null => false
-      t.column :locked, :boolean, :null => false, :default => false
+      t.column :topics_locked, :boolean, :null => false, :default => false
     end
   end
 

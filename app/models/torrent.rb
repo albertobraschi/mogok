@@ -1,6 +1,6 @@
 
 class Torrent < ActiveRecord::Base
-  concerns :finders, :parsing, :tracker, :validation
+  concerns :callbacks, :finders, :parsing, :tracker, :validation
 
   strip_attributes! # strip_attributes
   
@@ -23,30 +23,6 @@ class Torrent < ActiveRecord::Base
   attr_accessor :tags_str
   attr_accessor :bookmarked
   attr_accessor :inactivated
-
-  def before_create
-    self.created_at = Time.now
-    self.tags = Tag.parse_tags self.tags_str, self.category_id
-    self.announce_key = CryptUtils.md5_token rand, 10    
-    self.info_hash_hex = CryptUtils.hexencode self.info_hash
-  end
-
-  def before_save
-    self.description = self.description[0, 10000] if self.description
-  end
-  
-  def after_create
-    TorrentFulltext.create :torrent => self, :body => "#{self.name} #{self.description}"
-    logger.debug ':-) torrent created'
-  end
-
-  def after_update
-    self.torrent_fulltext.update_attribute :body, "#{self.name} #{self.description}" if @update_fulltext
-  end
-
-  def after_destroy
-    logger.debug ':-) torrent destroyed'
-  end
 
   def tags_str=(s)
     self.tags = Tag.parse_tags s

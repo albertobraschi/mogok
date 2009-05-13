@@ -15,7 +15,7 @@ end
 
 Given /^I have the invite code (.*) created by user (.*) with email (.*)$/ do |invite_code, username, email|
   inviter = fetch_user username
-  Invitation.create :user_id => inviter.id, :code => invite_code, :created_at => Time.now, :email => email
+  Invitation.create invite_code, inviter, email
 end
 
 

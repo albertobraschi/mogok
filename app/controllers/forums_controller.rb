@@ -60,10 +60,10 @@ class ForumsController < ApplicationController
     end
   end
 
-  def switch_lock
-    logger.debug ':-) forums_controller.switch_lock'
+  def switch_lock_topics
+    logger.debug ':-) forums_controller.switch_lock_topics'
     f = Forum.find params[:id]
-    f.toggle! :locked
+    f.toggle! :topics_locked
     redirect_to :action => 'show', :id => f
   end
 end

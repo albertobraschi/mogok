@@ -230,6 +230,9 @@ en:
     ratio:
       format:
         precision: 3
+    peer_completion:
+      format:
+        precision: 1
     data_amount:
       format:
         precision: 2

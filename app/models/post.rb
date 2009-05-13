@@ -6,11 +6,8 @@ class Post < ActiveRecord::Base
   belongs_to :forum
   belongs_to :user
 
-  def before_save
-    limit = self.is_topic_post ? 10000 : 4000
-    self.body = self.body[0, limit] if self.body
-  end
-  
+  before_save :trim_body
+
   def editable_by?(user)
     user.id == self.user_id || user.admin_mod?
   end
@@ -20,5 +17,12 @@ class Post < ActiveRecord::Base
     self.edited_at = Time.now
     self.edited_by = editor.username
     save
+  end
+
+  private
+  
+  def trim_body
+    limit = self.is_topic_post ? 10000 : 4000
+    self.body = self.body[0, limit] if self.body
   end
 end

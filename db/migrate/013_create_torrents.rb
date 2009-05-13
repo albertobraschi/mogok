@@ -20,7 +20,7 @@ class CreateTorrents < ActiveRecord::Migration
       t.column :seeders_count, :integer, :null => false, :default => 0
       t.column :leechers_count, :integer, :null => false, :default => 0
       t.column :active, :boolean, :null => false, :default => true
-      t.column :locked, :boolean, :null => false, :default => false
+      t.column :comments_locked, :boolean, :null => false, :default => false
       t.column :announce_key, :string, :limit => 10, :null => false
       # meta info
       t.column :creation_date, :datetime

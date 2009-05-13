@@ -25,24 +25,13 @@ class Message < ActiveRecord::Base
 
   validates_presence_of :receiver_id, :message => t_error('receiver_id', 'invalid')
   validates_inclusion_of :folder, :in => FOLDERS, :message => 'invalid folder'
+  
+  validate :validate_receiver
 
-  def validate
-    if self.receiver
-      if !self.receiver.active?
-        add_error :receiver_id, 'inactive'
-      elsif self.receiver.system_user?
-        add_error :receiver_id, 'system'
-      end
-    end
-  end
+  before_create :set_subject, :trim_body
 
   def add_error(field, key, args = {})
     errors.add field, self.class.t_error(field.to_s, key, args)
-  end
-
-  def before_create
-    self.subject = self.subject.blank? ? I18n.t('model.message.before_create.no_subject') : self.subject[0, 50]
-    self.body = self.body[0, 2000] if self.body
   end
 
   def self.make_new(params, sender, args)
@@ -101,8 +90,26 @@ class Message < ActiveRecord::Base
     ensure_ownership mover
     update_attribute :folder, folder
   end
-  
+
   private
+
+  def validate_receiver
+    if self.receiver
+      if !self.receiver.active?
+        add_error :receiver_id, 'inactive'
+      elsif self.receiver.system_user?
+        add_error :receiver_id, 'system'
+      end
+    end
+  end
+
+  def set_subject
+    self.subject = self.subject.blank? ? I18n.t('model.message.before_create.no_subject') : self.subject[0, 50]
+  end
+
+  def trim_body
+    self.body = self.body[0, 2000] if self.body
+  end
 
   def self.prepare_for_reply(m, old_message)
     m.subject = "#{ 'Re: ' unless old_message.subject.starts_with?('Re:') }#{old_message.subject}"

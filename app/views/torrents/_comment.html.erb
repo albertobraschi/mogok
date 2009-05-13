@@ -34,7 +34,7 @@
               <li>|</li>
             <% end %>
 
-            <% if !torrent.locked || logged_user.admin_mod? %>
+            <% if !torrent.comments_locked || logged_user.admin_mod? %>
               <li>
                 <%= link_to_remote 'quote',
                                    :url => {:controller => 'comments', :action => 'quote', :id => comment, :username => (comment.user ? comment.user.username : 'unknown')},

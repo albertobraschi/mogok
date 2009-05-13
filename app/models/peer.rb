@@ -1,38 +1,17 @@
 
 class Peer < ActiveRecord::Base
+  concerns :callbacks, :finders
+
   belongs_to :user
   belongs_to :torrent
-  belongs_to :peer_conn  
-
-  def before_create
-    self.started_at = Time.now
-  end
-
-  def after_create
-    t = Torrent.find self.torrent_id, :lock => true
-    if seeder?
-      t.increment! :seeders_count
-    else
-      t.increment! :leechers_count
-    end
-    self.torrent = t
-  end
-
-  def before_destroy
-    t = Torrent.find self.torrent_id, :lock => true
-    if seeder?
-      t.decrement! :seeders_count if t.seeders_count > 0
-    else
-      t.decrement! :leechers_count if t.leechers_count > 0
-    end
-  end
+  belongs_to :peer_conn
 
   def init_attributes(announce_req)
     self.torrent = announce_req.torrent
     self.user = announce_req.user
     self.ip = announce_req.ip
     self.port = announce_req.port
-    self.compact_ip = Peer.make_compact_ip announce_req.ip, announce_req.port
+    self.compact_ip = self.class.make_compact_ip self.ip, self.port
     set_attributes(announce_req)
   end
 
@@ -49,28 +28,13 @@ class Peer < ActiveRecord::Base
   end
 
   def completion_percentage
-    return 100 if self.leftt == 0
-    return 0 if self.torrent.size == self.leftt
-    sprintf "%.1f", ((self.torrent.size - self.leftt) / self.torrent.size.to_f) * 100
-  end
-
-  def self.search(params, args)
-    paginate :conditions => search_conditions(params),
-             :order => 'started_at DESC',
-             :page => current_page(params[:page]),
-             :per_page => args[:per_page]
-  end
-
-  def self.find_peer(t, u, ip, port)
-    find :first, :conditions => {:torrent_id => t, :user_id => u, :ip => ip, :port => port}
-  end
-
-  def self.find_for_announce_resp(torrent, announcer, args)
-    cols = ['id', 'torrent_id', 'user_id', 'uploaded', 'downloaded', 'leftt', 'port', 'started_at', 'last_action_at']
-    find :all,
-         :conditions => ['torrent_id = ? AND user_id != ?', torrent.id, announcer.id],
-         :order => cols.rand, # simple way to randomize retrieved peers
-         :limit => args[:limit]
+    if self.leftt == 0
+      return 100
+    elsif self.torrent.size == self.leftt
+      return 0
+    else
+      ((self.torrent.size - self.leftt) / self.torrent.size.to_f) * 100
+    end
   end
 
   def self.delete_inactives(threshold)
@@ -90,43 +54,6 @@ class Peer < ActiveRecord::Base
       return compact_ip << compact_port.reverse
     end
     return nil
-  end
-
-  private
-
-  def self.search_conditions(params)
-    s, h = '', {}
-    unless params[:user_id].blank?
-      s << 'user_id = :user_id '
-      h[:user_id] = params[:user_id].to_i
-      previous = true
-    end
-    unless params[:torrent_id].blank?
-      s << 'AND ' if previous
-      s << 'torrent_id = :torrent_id '
-      h[:torrent_id] = params[:torrent_id].to_i
-      previous = true
-    end
-    if params[:seeder] == '1'
-      params[:leecher] = '0'
-      s << 'seeder = TRUE '
-      previous = true
-    elsif params[:leecher] == '1'
-      s << 'seeder = FALSE '
-      previous = true
-    end
-    unless params[:ip].blank?
-      s << 'AND ' if previous
-      s << 'ip = :ip '
-      h[:ip] = params[:ip]
-      previous = true
-    end
-    unless params[:port].blank?
-      s << 'AND ' if previous
-      s << 'port = :port '
-      h[:port] = params[:port].to_i
-    end
-    [s, h]
   end
 end
 

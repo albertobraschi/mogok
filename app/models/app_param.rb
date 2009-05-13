@@ -1,13 +1,7 @@
 
 class AppParam < ActiveRecord::Base
 
-  def validate
-    begin
-      self.class.parse_value self.value
-    rescue
-      errors.add :value, 'value not supported'
-    end
-  end
+  validate :validate_value
 
   def self.load
     h = {}
@@ -20,6 +14,14 @@ class AppParam < ActiveRecord::Base
   end
 
   private
+
+  def validate_value
+    begin
+      self.class.parse_value self.value
+    rescue
+      errors.add :value, 'value not supported'
+    end
+  end
 
   def self.parse_value(v)
     case v

@@ -22,6 +22,13 @@ class CreatePeers < ActiveRecord::Migration
       t.column :peer_conn_id, :integer
     end
      add_index :peers, [:torrent_id, :user_id, :ip, :port], :unique => true
+     
+     # the indes below are used mostly for random find (see Peer.find_for_announce_resp)
+     add_index :torrent_id
+     add_index :user_id
+     add_index :port
+     add_index :started_at
+     add_index :last_action_at
   end
 
   def self.down

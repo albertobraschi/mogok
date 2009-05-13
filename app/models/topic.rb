@@ -10,13 +10,8 @@ class Topic < ActiveRecord::Base
   
   attr_accessor :last_post
 
-  def after_create
-    TopicFulltext.create :topic => self, :body => "#{self.title} #{self.topic_post.body}"
-  end
-
-  def after_update
-    self.topic_fulltext.update_attribute :body, "#{self.title} #{self.topic_post.body}"
-  end
+  after_create :create_fulltext
+  after_update :update_fulltext
 
   def editable_by?(user)
     user.id == self.user_id || user.admin_mod?
@@ -61,5 +56,15 @@ class Topic < ActiveRecord::Base
                               :order => 'created_at',
                               :page => self.class.current_page(params[:page]),
                               :per_page => args[:per_page]
+  end
+
+  private
+
+  def create_fulltext
+    TopicFulltext.create :topic => self, :body => "#{self.title} #{self.topic_post.body}"
+  end
+
+  def update_fulltext
+    self.topic_fulltext.update_attribute :body, "#{self.title} #{self.topic_post.body}"
   end
 end

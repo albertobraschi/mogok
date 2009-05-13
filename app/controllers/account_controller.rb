@@ -115,7 +115,7 @@ class AccountController < ApplicationController
           if @user.change_password(params[:password], params[:password_confirmation])
             logger.debug ':-) user password changed'            
             password_recovery.destroy
-            clean_login_attempts
+            clear_login_attempts
             flash[:notice] = t('success')
             redirect_to :action => 'login', :username => @user.username
           else

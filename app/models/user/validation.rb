@@ -22,8 +22,15 @@ class User
   validates_uniqueness_of :email, :on => :create, :case_sensitive => false, :message => t_error('email', 'taken')
   validates_format_of :email, :with => EMAIL_FORMAT, :message => t_error('email', 'invalid')
 
+  validate :validate_password
 
-  def validate
+  def add_error(field, key, args = {})
+    errors.add field, self.class.t_error(field.to_s, key, args)
+  end
+
+  private
+
+  def validate_password
     if self.encrypted_password.blank?
       add_error :password, 'required'
     elsif self.password
@@ -34,8 +41,7 @@ class User
       end
     end
   end
-
-  def add_error(field, key, args = {})
-    errors.add field, self.class.t_error(field.to_s, key, args)
-  end
 end
+
+
+

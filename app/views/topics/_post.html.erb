@@ -32,7 +32,7 @@
                 <li>|</li>
                 <li><%= link_to((topic.stuck? ? 'unstick' : 'stick'), topics_path(:action => 'switch_stick', :id => topic), {:class => 'mod'}) %></li>
                 <li>|</li>
-                <li><%= link_to((topic.locked? ? 'unlock' : 'lock'), topics_path(:action => 'switch_lock', :id => topic), {:class => 'mod'}) %></li>
+                <li><%= link_to((topic.posts_locked? ? 'unlock' : 'lock'), topics_path(:action => 'switch_lock_posts', :id => topic), {:class => 'mod'}) %></li>
                 <li>|</li>
               <% end %>
 
@@ -60,7 +60,7 @@
 
             <% end %>
             
-            <% if !topic.locked || logged_user.admin_mod? %>
+            <% if !topic.posts_locked? || logged_user.admin_mod? %>
               <li>
                 <%= link_to_remote 'quote',
                                    :url => {:controller => 'posts', :action => 'quote', :id => post, :username => (post.user ? post.user.username : 'unknown')},

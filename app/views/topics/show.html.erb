@@ -15,7 +15,7 @@
 
     <%= will_paginate @posts %>
 
-    <% if !@topic.locked? || logged_user.admin_mod? %>
+    <% if !@topic.posts_locked? || logged_user.admin_mod? %>
       <h3>Reply</h3>
 
       <%= render :partial => 'reply_box', :locals => {:current_page => @posts.current_page, :topic => @topic} %>

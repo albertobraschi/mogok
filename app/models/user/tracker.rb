@@ -27,10 +27,10 @@ class User
 
   def update_counters(up_offset, down_offset)
     User.transaction do
-      u = self.class.find self.id, :lock => true # get a fresh and locked instance
-      u.uploaded += up_offset
-      u.downloaded += down_offset
-      u.save
+      lock!
+      self.uploaded += up_offset
+      self.downloaded += down_offset
+      save
     end
   end
 

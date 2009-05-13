@@ -11,7 +11,7 @@ class CommentsController < ApplicationController
   def new
     logger.debug ':-) comments_controller.new'
     t = Torrent.find params[:torrent_id]
-    access_denied if t.locked? && !logged_user.admin_mod?
+    access_denied if t.comments_locked? && !logged_user.admin_mod?
     unless params[:body].blank?
       t.add_comment params, logged_user
       flash[:comment_notice] = t('success')
