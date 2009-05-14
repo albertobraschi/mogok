@@ -84,7 +84,7 @@ class User
   end
 
   def self.find_absents(threshold)
-    find :all, :conditions => ['last_seen_at < ? AND active = TRUE', threshold]
+    find :all, :conditions => ['last_request_at < ? AND active = TRUE', threshold]
   end
 
   private

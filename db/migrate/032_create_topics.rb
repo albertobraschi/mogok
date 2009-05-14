@@ -12,7 +12,8 @@ class CreateTopics < ActiveRecord::Migration
       t.column :last_post_by, :string
       t.column :stuck, :boolean, :null => false, :default => false
       t.column :posts_locked, :boolean, :null => false, :default => false
-    end    
+    end
+
     add_index :topics, [:stuck, :created_at]
   end
 

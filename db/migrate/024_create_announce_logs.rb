@@ -17,6 +17,7 @@ class CreateAnnounceLogs < ActiveRecord::Migration
       t.column :client_name, :string
       t.column :client_version, :string
     end
+
     add_index :announce_logs, :created_at
     add_index :announce_logs, :torrent_id
     add_index :announce_logs, :user_id

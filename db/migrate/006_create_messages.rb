@@ -12,6 +12,7 @@ class CreateMessages < ActiveRecord::Migration
       t.column :unread, :boolean, :null => false, :default => true 
       t.column :folder, :string, :null => false, :limit => 15
     end
+
     add_index :messages, [:folder, :owner_id]
     add_index :messages, :created_at    
   end

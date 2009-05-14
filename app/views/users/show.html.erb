@@ -116,13 +116,13 @@
           <%= I18n.l @user.created_at, :format => :date %>
         </td>
       </tr>
-      <% if @user.last_seen_at? && (@user.display_last_seen_at? || @user == current_user || current_user.admin?) %>
+      <% if @user.last_request_at? && (@user.display_last_request_at? || @user == current_user || current_user.admin?) %>
         <tr>  
           <td class="label">
             Last seen
           </td>
           <td>
-            <%= textual_time_interval @user.last_seen_at, 'ago' %>
+            <%= textual_time_interval @user.last_request_at, 'ago' %>
           </td>
         </tr>
       <% end %>

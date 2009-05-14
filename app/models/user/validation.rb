@@ -30,7 +30,7 @@ class User
   private
 
     def validate_password
-      if self.encrypted_password.blank?
+      if self.crypted_password.blank?
         add_error :password, 'required'
       elsif self.password
         if self.password.size < 5

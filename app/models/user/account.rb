@@ -8,7 +8,7 @@ class User
 
   def self.authenticate(username, password)
     u = self.find_by_username username
-    if u && u.encrypted_password == CryptUtils.encrypt_password(password, u.salt)
+    if u && u.crypted_password == CryptUtils.encrypt_password(password, u.password_salt)
       return u
     end
     nil
@@ -23,7 +23,7 @@ class User
   end
 
   def register_access(inactivity_threshold)
-    self.last_seen_at = Time.now
+    self.last_request_at = Time.now
     if self.token_expires_at <= inactivity_threshold
       self.token_expires_at = inactivity_threshold # slide token expiration
     end
@@ -39,8 +39,8 @@ class User
 
   def password=(password)    
     unless password.blank?
-      self.salt = CryptUtils.md5_token object_id
-      self.encrypted_password = CryptUtils.encrypt_password password, self.salt
+      self.password_salt = CryptUtils.md5_token object_id
+      self.crypted_password = CryptUtils.encrypt_password password, self.password_salt
     end
     @password = password
   end

@@ -48,13 +48,13 @@ class CreateDefaultData < ActiveRecord::Migration
                  :password => username,
                  :created_at => Time.now,
                  :last_login_at => Time.now,
-                 :last_seen_at => Time.now,
+                 :last_request_at => Time.now,
                  :style_id => style.id,
                  :country_id => (country.id if country),
                  :email => "#{username}@mail.com",
                  :save_sent => false,
                  :display_downloads => false,
-                 :display_last_seen_at => false,
+                 :display_last_request_at => false,
                  :uploaded => 0,
                  :downloaded => 0)
     u.role = role # attribute role_id must be assigned separately

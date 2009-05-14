@@ -29,7 +29,8 @@ class CreateTorrents < ActiveRecord::Migration
       t.column :encoding, :string, :limit => 20
       t.column :piece_length, :integer, :null => false
       t.column :dir_name, :string
-    end  
+    end
+
     add_index :torrents, :created_at
     add_index :torrents, :info_hash_hex
     add_index :torrents, :name

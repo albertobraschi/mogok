@@ -6,7 +6,8 @@ class CreateLogs < ActiveRecord::Migration
       t.column :body, :string, :null => false
       t.column :created_at, :datetime, :null => false
       t.column :admin, :boolean, :null => false, :default => false
-    end    
+    end
+
     add_index :logs, :created_at
   end
 

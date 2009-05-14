@@ -6,6 +6,7 @@ class CreateTopicFulltexts < ActiveRecord::Migration
       t.column :topic_id, :integer, :null => false
       t.column :body, :text, :null => false
     end
+
     execute 'ALTER TABLE topic_fulltexts ENGINE = MyISAM'
     execute 'CREATE FULLTEXT INDEX fulltext_topics ON topic_fulltexts (body)'
   end

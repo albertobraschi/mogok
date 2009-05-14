@@ -315,7 +315,7 @@ class CreateData < ActiveRecord::Migration
                  :password => 'rrrrr',
                  :created_at => Time.now,
                  :last_login_at => Time.now,
-                 :last_seen_at => Time.now,
+                 :last_request_at => Time.now,
                  :style_id => style.id,
                  :country_id => country.id,
                  :email => "#{username}@mail.com",

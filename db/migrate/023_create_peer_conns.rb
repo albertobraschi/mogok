@@ -7,6 +7,7 @@ class CreatePeerConns < ActiveRecord::Migration
       t.column :port, :integer, :null => false, :limit => 5
       t.column :connectable, :boolean
     end
+
     add_index :peer_conns, [:ip, :port], :unique => true 
   end
 

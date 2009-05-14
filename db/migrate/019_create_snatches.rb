@@ -6,7 +6,8 @@ class CreateSnatches < ActiveRecord::Migration
       t.column :user_id, :integer
       t.column :torrent_id, :integer, :null => false
       t.column :created_at, :datetime, :null => false
-    end    
+    end
+
     add_index :snatches, [:user_id, :torrent_id], :unique => true 
     add_index :snatches, :torrent_id
   end

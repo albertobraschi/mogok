@@ -59,7 +59,7 @@ class User < ActiveRecord::Base
       self.info = params[:info]
       self.save_sent = params[:save_sent]
       self.delete_on_reply = params[:delete_on_reply]
-      self.display_last_seen_at = params[:display_last_seen_at]
+      self.display_last_request_at = params[:display_last_request_at]
       self.display_downloads = params[:display_downloads]
 
       if self.email != params[:email]
@@ -75,7 +75,7 @@ class User < ActiveRecord::Base
           add_error :current_password, 'required'
           return false
         else
-          unless self.encrypted_password == CryptUtils.encrypt_password(current_password, self.salt)
+          unless self.crypted_password == CryptUtils.encrypt_password(current_password, self.password_salt)
             add_error :current_password, 'incorrect'
             return false
           end

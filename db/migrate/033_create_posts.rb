@@ -12,7 +12,8 @@ class CreatePosts < ActiveRecord::Migration
       t.column :edited_by, :string
       t.column :is_topic_post, :boolean, :null => false, :default => false
       t.column :post_number, :integer, :null => false
-    end    
+    end
+
     add_index :posts, :created_at
     add_index :posts, :topic_id
   end
