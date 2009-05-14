@@ -29,17 +29,17 @@ class User
 
   private
 
-  def validate_password
-    if self.encrypted_password.blank?
-      add_error :password, 'required'
-    elsif self.password
-      if self.password.size < 5
-        add_error :password, 'too_short'
-      elsif self.password != self.password_confirmation
-        add_error :password_confirmation, 'invalid_confirmation'
+    def validate_password
+      if self.encrypted_password.blank?
+        add_error :password, 'required'
+      elsif self.password
+        if self.password.size < 5
+          add_error :password, 'too_short'
+        elsif self.password != self.password_confirmation
+          add_error :password_confirmation, 'invalid_confirmation'
+        end
       end
     end
-  end
 end
 
 

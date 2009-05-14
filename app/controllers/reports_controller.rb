@@ -11,7 +11,7 @@ class ReportsController < ApplicationController
   def grab
     logger.debug ':-) reports_controller.grab'
     if request.post?
-      Report.find(params[:id]).update_attribute :handler_id, logged_user.id
+      Report.find(params[:id]).update_attribute :handler_id, current_user.id
     end
     redirect_to :action => 'index'
   end

@@ -9,25 +9,25 @@ class Peer
 
   private
   
-  def init_new_record
-    self.started_at = Time.now
-  end
-
-  def increment_torrent_counters
-    t = self.torrent.lock!
-    if seeder?
-      t.increment! :seeders_count
-    else
-      t.increment! :leechers_count
+    def init_new_record
+      self.started_at = Time.now
     end
-  end
 
-  def decrement_torrent_counters
-    t = self.torrent.lock!
-    if seeder?
-      t.decrement! :seeders_count if t.seeders_count > 0
-    else
-      t.decrement! :leechers_count if t.leechers_count > 0
+    def increment_torrent_counters
+      t = self.torrent.lock!
+      if seeder?
+        t.increment! :seeders_count
+      else
+        t.increment! :leechers_count
+      end
     end
-  end
+
+    def decrement_torrent_counters
+      t = self.torrent.lock!
+      if seeder?
+        t.decrement! :seeders_count if t.seeders_count > 0
+      else
+        t.decrement! :leechers_count if t.leechers_count > 0
+      end
+    end
 end

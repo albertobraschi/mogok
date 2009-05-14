@@ -22,13 +22,14 @@ class Report < ActiveRecord::Base
   def has_open?
     !find(:first, :conditions => {:handler_id => nil}).blank?
   end
+
   private
 
-  def trim_reason
-    self.reason = self.reason[0, 200]
-  end
+    def trim_reason
+      self.reason = self.reason[0, 200]
+    end
 
-  def self.report_label(obj)
-    "#{obj.class.name.downcase} [#{obj.id}]"
-  end
+    def self.report_label(obj)
+      "#{obj.class.name.downcase} [#{obj.id}]"
+    end
 end

@@ -9,14 +9,14 @@
   <div class="fields_box" style="width:620px;">
     <% form_tag :action => 'remove' do %>
       <table>
-        <% unless logged_user.admin_mod? %>
+        <% unless current_user.admin_mod? %>
           <tr>
             <td class="center">
               <div class="grey bold">The torrent will stay inactive until a moderator removes it.</div>
             </td>
           </tr>
         <% end %>
-        <% if logged_user.admin_mod? && !@torrent.active? %>
+        <% if current_user.admin_mod? && !@torrent.active? %>
           <tr>
             <td>
               <div class="grey bold center">torrent will be removed from system</div>
@@ -33,7 +33,7 @@
                 <td>
                   <%= text_field_tag :reason, '', {:size => 70, :maxlength => 100, :focus => true} %>
                 </td>
-                <% if logged_user.admin_mod? && @torrent.active? %>
+                <% if current_user.admin_mod? && @torrent.active? %>
                   <td class="label">
                     DELETE:
                   </td>

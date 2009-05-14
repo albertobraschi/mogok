@@ -3,8 +3,6 @@ module BgTasks
 
   module Utils
 
-    module_function
-
     def fetch_tasks(config)
       tasks = BgTask.all
       tasks = load_tasks config if tasks.blank?

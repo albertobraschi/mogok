@@ -30,7 +30,7 @@
   <% if session[:adm_domain_menu] %>
     <div class="adm_domain_menu">
       <ul>
-        <% if logged_user.owner? %>
+        <% if current_user.owner? %>
           <li><%= link_to 'roles', {:controller => 'roles'}, {:class => 'owner'} %></li>
           <li>|</li>
         <% end %>

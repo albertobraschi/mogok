@@ -78,20 +78,20 @@ class Torrent < ActiveRecord::Base
 
   private
 
-  def set_attributes(params)
-    if self.name != params[:name]
-      self.name = params[:name]
-      @update_fulltext = true
+    def set_attributes(params)
+      if self.name != params[:name]
+        self.name = params[:name]
+        @update_fulltext = true
+      end
+      self.category_id = params[:category_id]
+      self.format_id = params[:format_id]
+      self.tags = Tag.parse_tags params[:tags_str], self.category_id
+      if self.description != params[:description]
+        self.description = params[:description]
+        @update_fulltext = true
+      end
+      self.year = params[:year]
+      self.country_id = params[:country_id]
     end
-    self.category_id = params[:category_id]
-    self.format_id = params[:format_id]
-    self.tags = Tag.parse_tags params[:tags_str], self.category_id
-    if self.description != params[:description]
-      self.description = params[:description]
-      @update_fulltext = true
-    end
-    self.year = params[:year]
-    self.country_id = params[:country_id]
-  end
 end
 

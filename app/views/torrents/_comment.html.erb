@@ -24,17 +24,17 @@
 
         <div class="float_right">
           <ul class="menu">
-            <% if comment.editable_by? logged_user %>
+            <% if comment.editable_by? current_user %>
               <li><%= link_to 'edit', comments_path(:torrent_id => torrent, :action => 'edit', :id => comment, :page => current_page) %></li>
               <li>|</li>
             <% end %>
 
-            <% if logged_user != comment.user %>
+            <% if current_user != comment.user %>
               <li><%= link_to 'report', {:controller => 'comments', :action => 'report', :id => comment, :page => current_page} %></li>
               <li>|</li>
             <% end %>
 
-            <% if !torrent.comments_locked || logged_user.admin_mod? %>
+            <% if !torrent.comments_locked || current_user.admin_mod? %>
               <li>
                 <%= link_to_remote 'quote',
                                    :url => {:controller => 'comments', :action => 'quote', :id => comment, :username => (comment.user ? comment.user.username : 'unknown')},

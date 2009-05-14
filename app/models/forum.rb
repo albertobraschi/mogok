@@ -53,18 +53,18 @@ class Forum < ActiveRecord::Base
   private
 
 
-  def search_conditions(params)
-    self.class.search_all_conditions params
-  end
-
-  def self.search_all_conditions(params)
-    s, h = '', {}
-    unless params[:keywords].blank?
-      s << 'id IN (SELECT topic_id FROM topic_fulltexts WHERE MATCH(body) AGAINST (:keywords IN BOOLEAN MODE) ) '
-      h[:keywords] = params[:keywords]
+    def search_conditions(params)
+      self.class.search_all_conditions params
     end
-    [s, h]
-  end
+
+    def self.search_all_conditions(params)
+      s, h = '', {}
+      unless params[:keywords].blank?
+        s << 'id IN (SELECT topic_id FROM topic_fulltexts WHERE MATCH(body) AGAINST (:keywords IN BOOLEAN MODE) ) '
+        h[:keywords] = params[:keywords]
+      end
+      [s, h]
+    end
 end
 
 

@@ -86,48 +86,48 @@ module Bittorrent
 
     private
 
-    def do_parse(data)
-      return nil if data.eof?
-      byte = data.read(1)
-      case byte
-        when DICTIONARY
-          h = {}
-          loop do
-            key = do_parse data
-            return h unless key # no more entries to the dictionary
-            h[key] = do_parse data
-          end
-        when LIST
-          a = []
-          loop do
-            e = do_parse data
-            return a unless e
-            a << e
-          end
-        when NUMBER
-          n = ''
-          loop do
-            byte = data.read(1)
-            return Integer(n) if byte == END_MARK  # exception if not a number
-            n << byte
-          end          
-        when END_MARK
-          return nil
-        else
-          size = parse_size data, byte
-          s = ''
-          size.times { s << data.read(1) }
-          return s
-      end
-    end
-    
-    def parse_size(data, byte)
-      size = ''
-      while byte != ':'
-        size << byte
+      def do_parse(data)
+        return nil if data.eof?
         byte = data.read(1)
+        case byte
+          when DICTIONARY
+            h = {}
+            loop do
+              key = do_parse data
+              return h unless key # no more entries to the dictionary
+              h[key] = do_parse data
+            end
+          when LIST
+            a = []
+            loop do
+              e = do_parse data
+              return a unless e
+              a << e
+            end
+          when NUMBER
+            n = ''
+            loop do
+              byte = data.read(1)
+              return Integer(n) if byte == END_MARK  # exception if not a number
+              n << byte
+            end
+          when END_MARK
+            return nil
+          else
+            size = parse_size data, byte
+            s = ''
+            size.times { s << data.read(1) }
+            return s
+        end
       end
-      Integer(size)
-    end
+
+      def parse_size(data, byte)
+        size = ''
+        while byte != ':'
+          size << byte
+          byte = data.read(1)
+        end
+        Integer(size)
+      end
   end
 end

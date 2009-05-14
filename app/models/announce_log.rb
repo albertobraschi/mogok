@@ -32,30 +32,30 @@ class AnnounceLog < ActiveRecord::Base
 
   private
 
-  def self.search_conditions(params)
-    s, h = '', {}
-    unless params[:user_id].blank?
-      s << 'user_id = :user_id '
-      h[:user_id] = params[:user_id].to_i
-      previous = true
+    def self.search_conditions(params)
+      s, h = '', {}
+      unless params[:user_id].blank?
+        s << 'user_id = :user_id '
+        h[:user_id] = params[:user_id].to_i
+        previous = true
+      end
+      unless params[:torrent_id].blank?
+        s << 'AND ' if previous
+        s << 'torrent_id = :torrent_id '
+        h[:torrent_id] = params[:torrent_id].to_i
+        previous = true
+      end
+      unless params[:ip].blank?
+        s << 'AND ' if previous
+        s << 'ip = :ip '
+        h[:ip] = params[:ip]
+        previous = true
+      end
+      unless params[:port].blank?
+        s << 'AND ' if previous
+        s << 'port = :port '
+        h[:port] = params[:port].to_i
+      end
+      [s, h]
     end
-    unless params[:torrent_id].blank?
-      s << 'AND ' if previous
-      s << 'torrent_id = :torrent_id '
-      h[:torrent_id] = params[:torrent_id].to_i
-      previous = true
-    end
-    unless params[:ip].blank?
-      s << 'AND ' if previous
-      s << 'ip = :ip '
-      h[:ip] = params[:ip]
-      previous = true
-    end
-    unless params[:port].blank?
-      s << 'AND ' if previous
-      s << 'port = :port '
-      h[:port] = params[:port].to_i
-    end
-    [s, h]
-  end
 end

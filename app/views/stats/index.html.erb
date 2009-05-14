@@ -21,7 +21,7 @@
           </td>
           <td>
             <%= textual_time_interval @stat.created_at, 'ago' %>&nbsp;
-            <%= link_to '[ history ]', {:action => 'history'}, {:class => 'admin'} if logged_user.admin? %>
+            <%= link_to '[ history ]', {:action => 'history'}, {:class => 'admin'} if current_user.admin? %>
           </td>
         </tr>
         <tr>

@@ -9,7 +9,7 @@
       <div id="advanced_fields" class="<%= advanced_fields_class params %>">
         <table>
           <tr>
-            <% if logged_user.admin_mod? %>
+            <% if current_user.admin_mod? %>
               <td>
                 <%= check_box_tag :inactive, '1', params[:inactive] == '1', {:title => 'inactives only'} %>
               </td>

@@ -6,7 +6,7 @@
 
   <%= render :partial => 'misc/flash', :locals => {:flash => flash} %>
 
-  <% if @app_params[:signup_open] || logged_user.admin? %>
+  <% if @app_params[:signup_open] || current_user.admin? %>
     <div class="links">
       <%= link_to '[ invite ]', {:action => 'new'} %>
     </div>

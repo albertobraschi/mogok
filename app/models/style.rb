@@ -3,7 +3,9 @@ class Style < ActiveRecord::Base
   extend CachingMethods
 
   CACHED_ALL_KEY = 'styles.all'
-  
+
+  before_destroy :ensure_not_default
+
   validates_presence_of :name, :stylesheet
 
   def self.reset_cached_all
@@ -23,7 +25,7 @@ class Style < ActiveRecord::Base
 
   protected
 
-  def before_destroy
-    raise ArgumentError if self.id == 1
-  end
+    def ensure_not_default
+      raise ArgumentError if self.id == 1
+    end
 end

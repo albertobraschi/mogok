@@ -7,7 +7,7 @@
   <div class="user_header"><%= user_link @user %></div>
 
   <div class="fields_box" style="width:550px;">    
-    <% unless logged_user.admin? %>
+    <% unless current_user.admin? %>
       <br>
       <h3 class="grey">If you reset your passkey, you'll have to re-download all your active torrents.</h3>      
     <% end %>    

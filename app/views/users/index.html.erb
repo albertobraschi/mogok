@@ -4,7 +4,7 @@
 <div class="main">
   <h2>Users</h2>
 
-  <% if logged_user.admin? %>
+  <% if current_user.admin? %>
     <div class="links">
       <%= link_to '[ new ]', {:action => 'new'}, {:class => 'admin'} %>
     </div>

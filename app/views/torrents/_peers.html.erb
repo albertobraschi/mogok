@@ -22,7 +22,7 @@
       <td class="header">
         %
       </td>
-      <% if logged_user.admin? %>
+      <% if current_user.admin? %>
         <td class="header">
           ip
         </td>
@@ -64,7 +64,7 @@
           <td>
             <%= peer_completion p.completion_percentage %>
           </td>
-          <% if logged_user.admin? %>
+          <% if current_user.admin? %>
             <td>
               <%= p.ip %>
             </td>
@@ -79,14 +79,14 @@
       <% end %>
       <% if @peers.total_pages > 1 %>
         <tr>
-          <td class="pagination" colspan="<%= logged_user.admin? ? '9' : '7'%>">
+          <td class="pagination" colspan="<%= current_user.admin? ? '9' : '7'%>">
             <%= will_paginate_remote @peers, {:container => false}, {:spinner_id => 'peers_spinner', :spinner_class => 'spinner_left'} %>
           </td>
         </tr>
       <% end %>
     <% else %>
       <tr>
-        <td colspan="<%= logged_user.admin? ? '10' : '8'%>">
+        <td colspan="<%= current_user.admin? ? '10' : '8'%>">
           No peers found.
         </td>
       </tr>

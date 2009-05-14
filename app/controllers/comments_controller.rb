@@ -11,9 +11,9 @@ class CommentsController < ApplicationController
   def new
     logger.debug ':-) comments_controller.new'
     t = Torrent.find params[:torrent_id]
-    access_denied if t.comments_locked? && !logged_user.admin_mod?
+    access_denied if t.comments_locked? && !current_user.admin_mod?
     unless params[:body].blank?
-      t.add_comment params, logged_user
+      t.add_comment params, current_user
       flash[:comment_notice] = t('success')
     else
       flash[:comment_error] = t('empty')
@@ -29,12 +29,11 @@ class CommentsController < ApplicationController
   def edit
     logger.debug ':-) comments_controller.edit_comment'
     @comment = Comment.find params[:id]
-    access_denied unless @comment.editable_by? logged_user
+    access_denied unless @comment.editable_by? current_user
     if request.post?
-      logger.debug ':-) post request'
       unless cancelled?
         unless params[:body].blank?
-          @comment.edit params, logged_user
+          @comment.edit params, current_user
           logger.debug ':-) comment saved'
           flash[:comment_notice] = t('success')
           redirect_to_torrent
@@ -54,7 +53,7 @@ class CommentsController < ApplicationController
       unless cancelled?
         unless params[:reason].blank?
           target_path = comments_path(:torrent_id => @comment.torrent_id, :action => 'show', :id => @comment)
-          Report.create @comment, target_path, logged_user, params[:reason]
+          Report.create @comment, target_path, current_user, params[:reason]
           flash[:notice] = t('success')
           redirect_to_torrent
         else
@@ -68,13 +67,13 @@ class CommentsController < ApplicationController
 
   private
 
-  def redirect_to_torrent(torrent_id = nil, page = nil)
-    torrent_id ||= @comment.torrent_id
-    page ||= params[:page]
-    redirect_to torrents_path(:action => 'show',
-                              :id => torrent_id,
-                              :page => page,
-                              :anchor => 'comments')
-  end
+    def redirect_to_torrent(torrent_id = nil, page = nil)
+      torrent_id ||= @comment.torrent_id
+      page ||= params[:page]
+      redirect_to torrents_path(:action => 'show',
+                                :id => torrent_id,
+                                :page => page,
+                                :anchor => 'comments')
+    end
 end
 

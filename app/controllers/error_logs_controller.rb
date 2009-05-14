@@ -5,7 +5,7 @@ class ErrorLogsController < ApplicationController
   
   def index
     logger.debug ':-) error_logs_controller.index'
-    access_denied unless logged_user.admin?
+    access_denied unless current_user.admin?
     @error_logs = ErrorLog.all :limit => 200
   end
    

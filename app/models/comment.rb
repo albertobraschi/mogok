@@ -20,9 +20,9 @@ class Comment < ActiveRecord::Base
     save
   end
 
-  protected
+  private
 
-  def trim_body
-    self.body = self.body[0, 2000] if self.body
-  end
+    def trim_body
+      self.body = self.body[0, 2000] if self.body
+    end
 end

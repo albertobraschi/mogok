@@ -10,22 +10,22 @@ class Log < ActiveRecord::Base
 
   private
 
-  def self.search_conditions(params, searcher)
-    s, h = '', {}
-    if searcher.admin?
-      if params[:admin] == '1'
-        s << 'admin = TRUE '
+    def self.search_conditions(params, searcher)
+      s, h = '', {}
+      if searcher.admin?
+        if params[:admin] == '1'
+          s << 'admin = TRUE '
+          previous = true
+        end
+      else
+        s << 'admin = FALSE '
         previous = true
       end
-    else
-      s << 'admin = FALSE '
-      previous = true
+      unless params[:keywords].blank?
+        s << 'AND ' if previous
+        s << 'body LIKE :keywords'
+        h[:keywords] = "%#{params[:keywords]}%"
+      end
+      [s, h]
     end
-    unless params[:keywords].blank?
-      s << 'AND ' if previous
-      s << 'body LIKE :keywords'
-      h[:keywords] = "%#{params[:keywords]}%"
-    end
-    [s, h]
-  end
 end

@@ -15,22 +15,22 @@ class AppParam < ActiveRecord::Base
 
   private
 
-  def validate_value
-    begin
-      self.class.parse_value self.value
-    rescue
-      errors.add :value, 'value not supported'
-    end
-  end
-
-  def self.parse_value(v)
-    case v
-      when 'true'
-        return true
-      when 'false'
-        return false
-      else
-        return Integer(v) # error unless 'true', 'false' or a numeric string
+    def validate_value
+      begin
+        self.class.parse_value self.value
+      rescue
+        errors.add :value, 'value not supported'
       end
-  end
+    end
+
+    def self.parse_value(v)
+      case v
+        when 'true'
+          return true
+        when 'false'
+          return false
+        else
+          return Integer(v) # error unless 'true', 'false' or a numeric string
+        end
+    end
 end

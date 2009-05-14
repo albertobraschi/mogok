@@ -52,12 +52,12 @@ module BgTasks
 
     private
 
-    def ratio(uploaded, downloaded)
-      if uploaded == 0 || downloaded == 0
-        0
-      else
-        sprintf "%.3f", (uploaded / downloaded.to_f)
+      def ratio(uploaded, downloaded)
+        if uploaded == 0 || downloaded == 0
+          0
+        else
+          sprintf "%.3f", (uploaded / downloaded.to_f)
+        end
       end
-    end
   end
 end

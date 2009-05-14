@@ -4,7 +4,7 @@
 <div class="main">
   <h2>Stats History</h2>
 
-  <% if logged_user.owner? %>
+  <% if current_user.owner? %>
     <div class="links">
       <%= link_to '[ clear ]', {:action => 'clear_all'}, {:method => :post, :class => 'owner',  :confirm => 'Are you sure?'} %>
     </div>

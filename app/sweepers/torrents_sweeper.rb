@@ -20,10 +20,10 @@ class TorrentsSweeper < ActionController::Caching::Sweeper
 
   private
   
-  def expire_fragment_cache
-    logger.debug ':-) torrents_sweeper.expire_fragment_cache' if logger
-    5.times do |i|
-      expire_timed_fragment("torrents.index.page.#{i + 1}", true) # expires only the first five pages
+    def expire_fragment_cache
+      logger.debug ':-) torrents_sweeper.expire_fragment_cache' if logger
+      5.times do |i|
+        expire_timed_fragment("torrents.index.page.#{i + 1}", true) # expires only the first five pages
+      end
     end
-  end
 end

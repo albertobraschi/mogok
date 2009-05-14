@@ -8,7 +8,7 @@ class UsersController < ApplicationController
     logger.debug ':-) users_controller.index'
     params[:order_by] = 'username' if params[:order_by].blank?
 
-    @users = User.search params, logged_user, :per_page => APP_CONFIG[:users_page_size]
+    @users = User.search params, current_user, :per_page => APP_CONFIG[:users_page_size]
     @users.desc_by_default = APP_CONFIG[:users_desc_by_default]
     
     @roles = Role.all_for_search
@@ -24,10 +24,9 @@ class UsersController < ApplicationController
     logger.debug ':-) users_controller.new'
     @user = User.new params[:user]
     if request.post?
-      logger.debug ':-) post request'
       unless cancelled?
         if @user.valid?
-          @user.inviter = logged_user
+          @user.inviter = current_user
           @user.save
           logger.debug ":-) user created. id: #{@user.id}"
           redirect_to :action => 'show', :id => @user
@@ -45,11 +44,10 @@ class UsersController < ApplicationController
   def edit
     logger.debug ':-) users_controller.edit'
     @user = User.find params[:id]
-    access_denied unless @user.editable_by? logged_user
+    access_denied unless @user.editable_by? current_user
     if request.post?
-      logger.debug ':-) post request'
       unless cancelled?
-        if @user.edit(params[:user], logged_user, params[:current_password])
+        if @user.edit(params[:user], current_user, params[:current_password])
           logger.debug ':-) user edited'
           flash[:notice] = t('success')
           redirect_to :action => 'show', :id => @user
@@ -62,20 +60,19 @@ class UsersController < ApplicationController
       end
     end
     set_collections    
-    @roles = Role.all_for_user_edition(logged_user) if logged_user.admin?
+    @roles = Role.all_for_user_edition(current_user) if current_user.admin?
   end
 
   def destroy
     logger.debug ':-) users_controller.destroy'
     @user = User.find params[:id]
-    access_denied if !@user.editable_by?(logged_user) || @user == logged_user
+    access_denied if !@user.editable_by?(current_user) || @user == current_user
     if request.post?
-      logger.debug ':-) post request'
       unless cancelled?
         @user.destroy
         logger.debug ':-) user destroyed'        
         flash[:notice] = t('success')
-        add_log t('log', :user => @user.username, :by => logged_user.username)
+        add_log t('log', :user => @user.username, :by => current_user.username)
         redirect_to :action => 'index'
       else
         redirect_to :action => 'show', :id => @user
@@ -86,7 +83,7 @@ class UsersController < ApplicationController
   def reset_passkey
     logger.debug ':-) users_controller.reset_passkey'
     @user = User.find params[:id]
-    access_denied if @user != logged_user && !logged_user.admin?
+    access_denied if @user != current_user && !current_user.admin?
     if request.post?
       unless cancelled?
         reset_user_passkey
@@ -101,7 +98,6 @@ class UsersController < ApplicationController
     ticket_required(:staff)
     @user = User.find params[:id]
     if request.post?
-      logger.debug ':-) post request'
       unless cancelled?
         @user.update_attribute :staff_info, params[:staff_info]
       end
@@ -117,7 +113,7 @@ class UsersController < ApplicationController
         unless params[:reason].blank?
           Report.create @user, 
                         users_path(:action => 'show', :id => @user),
-                        logged_user,
+                        current_user,
                         params[:reason]
           flash[:notice] = t('success')
           redirect_to :action => 'show', :id => @user
@@ -132,14 +128,14 @@ class UsersController < ApplicationController
 
   def bookmarks
     logger.debug ':-) users_controller.bookmarks'
-    @torrents = logged_user.paginate_bookmarks params, :per_page => 20
+    @torrents = current_user.paginate_bookmarks params, :per_page => 20
     @torrents.each {|t| t.bookmarked = true} if @torrents
   end
 
   def uploads
     logger.debug ':-) users_controller.uploads'
     params[:order_by], params[:desc]= 'created_at', '1' if params[:order_by].blank?
-    @torrents = logged_user.paginate_uploads params, :per_page => APP_CONFIG[:user_history_page_size]
+    @torrents = current_user.paginate_uploads params, :per_page => APP_CONFIG[:user_history_page_size]
     set_bookmarked @torrents
     unless @torrents.blank?
       @torrents.desc_by_default = APP_CONFIG[:torrents_desc_by_default]
@@ -148,7 +144,7 @@ class UsersController < ApplicationController
 
   def stuck
     logger.debug ':-) users_controller.stuck'
-    @torrents = logged_user.paginate_stuck params, :per_page => 20
+    @torrents = current_user.paginate_stuck params, :per_page => 20
     set_bookmarked @torrents
   end
   
@@ -156,7 +152,7 @@ class UsersController < ApplicationController
     logger.debug ':-) users_controller.show_activity'
     @seeding = params[:seeding] == '1'
     @user = User.find params[:id]
-    if !@seeding && @user != logged_user && !logged_user.admin?
+    if !@seeding && @user != current_user && !current_user.admin?
       access_denied unless @user.display_downloads?
     end
     @peers = @user.paginate_peers params, :per_page => APP_CONFIG[:user_activity_page_size]
@@ -172,7 +168,7 @@ class UsersController < ApplicationController
   def show_snatches
     logger.debug ':-) users_controller.show_snatches'
     @user = User.find params[:id]
-    if @user != logged_user && !logged_user.admin?
+    if @user != current_user && !current_user.admin?
       access_denied unless @user.display_downloads?
     end
     @snatches = @user.paginate_snatches params, :per_page => APP_CONFIG[:user_history_page_size]
@@ -180,30 +176,30 @@ class UsersController < ApplicationController
   
   private
 
-  def set_collections
-    @genders = Gender.cached_all
-    @countries = Country.cached_all
-    @styles = Style.cached_all
-  end
+    def set_collections
+      @genders = Gender.cached_all
+      @countries = Country.cached_all
+      @styles = Style.cached_all
+    end
 
-  def set_bookmarked(torrents)
-    unless torrents.blank?
-      unless logged_user.bookmarks.blank?
-        torrents.each do |t|
-          logged_user.bookmarks.each {|b| t.bookmarked = true if t.id == b.torrent_id }
+    def set_bookmarked(torrents)
+      unless torrents.blank?
+        unless current_user.bookmarks.blank?
+          torrents.each do |t|
+            current_user.bookmarks.each {|b| t.bookmarked = true if t.id == b.torrent_id }
+          end
         end
       end
     end
-  end
 
-  def reset_user_passkey
-    @user.reset_passkey!    
-    add_log t('log', :user => @user.username, :by => logged_user.username), nil, true    
-    if @user != logged_user
-      deliver_message_notification @user, t('notification_subject'), t('notification_body')
+    def reset_user_passkey
+      @user.reset_passkey!
+      add_log t('log', :user => @user.username, :by => current_user.username), nil, true
+      if @user != current_user
+        deliver_message_notification @user, t('notification_subject'), t('notification_body')
+      end
+      logger.debug ':-) paskey reset'
     end
-    logger.debug ':-) paskey reset'
-  end
 end
 
 

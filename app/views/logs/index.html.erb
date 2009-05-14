@@ -8,7 +8,7 @@
     <% form_tag({:action => 'index'}, :method => :get) do %>
       <table>
         <tr>
-          <% if logged_user.admin? %>
+          <% if current_user.admin? %>
             <td>
               <%= check_box_tag :admin, '1', params[:admin] == '1', {:title => 'admin only'} %>
             </td>

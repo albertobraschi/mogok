@@ -57,9 +57,9 @@ module Bittorrent
 
     private
 
-    def value?(v)
-      !v.nil? && !v.empty?
-    end
+      def value?(v)
+        !v.nil? && !v.empty?
+      end
   end
 end
 

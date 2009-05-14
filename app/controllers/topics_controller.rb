@@ -12,12 +12,11 @@ class TopicsController < ApplicationController
   def new
     logger.debug ':-) topics_controller.new'
     @forum = Forum.find params[:forum_id]
-    access_denied if @forum.topics_locked? && !logged_user.admin_mod?
+    access_denied if @forum.topics_locked? && !current_user.admin_mod?
     if request.post?
-      logger.debug ':-) post request'
       unless cancelled?
         unless params[:title].blank? || params[:body].blank?
-          t = @forum.add_topic(params, logged_user)
+          t = @forum.add_topic(params, current_user)
           flash[:notice] = t('success')
           redirect_to :action => 'show', :id => t
         else
@@ -32,13 +31,13 @@ class TopicsController < ApplicationController
   def edit
     logger.debug ':-) topics_controller.edit'
     @topic = Topic.find params[:id]
-    access_denied unless @topic.editable_by? logged_user
+    access_denied unless @topic.editable_by? current_user
     unless request.post?
       params[:title], params[:body] = @topic.title, @topic.topic_post.body
     else
       unless cancelled?
         unless params[:title].blank? || params[:body].blank?
-          @topic.edit params, logged_user
+          @topic.edit params, current_user
           flash[:notice] = t('success')
           redirect_to :action => 'show', :id => @topic
         else
@@ -71,7 +70,7 @@ class TopicsController < ApplicationController
       unless cancelled?
         unless params[:reason].blank?
           target_path = topics_path(:forum_id => @topic.forum_id, :action => 'show', :id => @topic)
-          Report.create @topic, target_path, logged_user, params[:reason]
+          Report.create @topic, target_path, current_user, params[:reason]
           flash[:notice] = t('success')
           redirect_to topics_path(:action => 'show', :id => @topic)
         else

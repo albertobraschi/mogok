@@ -11,9 +11,9 @@ class PostsController < ApplicationController
   def new
     logger.debug ':-) posts_controller.new'
     @topic = Topic.find params[:topic_id]
-    access_denied if @topic.posts_locked? && !logged_user.admin_mod?
+    access_denied if @topic.posts_locked? && !current_user.admin_mod?
     unless params[:body].blank?
-      @topic.add_post params, logged_user
+      @topic.add_post params, current_user
       flash[:notice] = t('success')      
     else
       flash[:error] = t('empty')      
@@ -29,12 +29,11 @@ class PostsController < ApplicationController
   def edit
     logger.debug ':-) posts_controller.edit'
     @post = Post.find params[:id]
-    access_denied unless @post.editable_by? logged_user
+    access_denied unless @post.editable_by? current_user
     if request.post?
-      logger.debug ':-) post request'
       unless cancelled?
         unless params[:body].blank?
-          @post.edit params, logged_user
+          @post.edit params, current_user
           logger.debug ':-) post saved'
           flash[:notice] = t('success')
           redirect_to_topic
@@ -54,7 +53,7 @@ class PostsController < ApplicationController
       unless cancelled?
         unless params[:reason].blank?
           target_path = posts_path(:forum_id => @post.forum_id, :action => 'show', :id => @post)
-          Report.create @post, target_path, logged_user, params[:reason]
+          Report.create @post, target_path, current_user, params[:reason]
           flash[:notice] = t('success')
           redirect_to_topic
         else
@@ -68,11 +67,11 @@ class PostsController < ApplicationController
 
   private
 
-  def redirect_to_topic(topic_id = nil, page = nil)
-    topic_id ||= @post.topic_id
-    page ||= params[:page]
-    redirect_to topics_path(:action => 'show', :id => topic_id, :page => page)
-  end
+    def redirect_to_topic(topic_id = nil, page = nil)
+      topic_id ||= @post.topic_id
+      page ||= params[:page]
+      redirect_to topics_path(:action => 'show', :id => topic_id, :page => page)
+    end
 end
 
 

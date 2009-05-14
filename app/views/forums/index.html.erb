@@ -7,7 +7,7 @@
 
     <%= render :partial => 'search_box', :locals => {:action_name => 'search'} %>
 
-    <% if logged_user.admin? %>
+    <% if current_user.admin? %>
       <div class="links">
         <%= link_to '[ new forum ]', {:action => 'new'}, {:class => 'owner'} %>
       </div>

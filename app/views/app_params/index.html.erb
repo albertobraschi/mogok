@@ -42,7 +42,7 @@
             <%= link_to '[ edit ]', {:action => 'edit', :id => t}, {:class => 'admin'} %>
           </td>
           <td class="no_wrap">
-            <% if logged_user.owner? %>
+            <% if current_user.owner? %>
               <%= link_to '[ delete ]', {:action => 'destroy', :id => t}, {:method => :post, :class => 'owner', :confirm => 'Are you sure?'} %>
             <% else %>
               <span class="grey">[ delete ]</span>

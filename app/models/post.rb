@@ -21,8 +21,8 @@ class Post < ActiveRecord::Base
 
   private
   
-  def trim_body
-    limit = self.is_topic_post ? 10000 : 4000
-    self.body = self.body[0, limit] if self.body
-  end
+    def trim_body
+      limit = self.is_topic_post ? 10000 : 4000
+      self.body = self.body[0, limit] if self.body
+    end
 end

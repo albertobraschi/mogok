@@ -78,7 +78,7 @@
             <% end %>
           </td>
         </tr>
-        <% if logged_user.admin_mod? %>
+        <% if current_user.admin_mod? %>
           <tr>
             <td class="label">
               REASON

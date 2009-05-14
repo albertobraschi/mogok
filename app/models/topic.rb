@@ -60,11 +60,11 @@ class Topic < ActiveRecord::Base
 
   private
 
-  def create_fulltext
-    TopicFulltext.create :topic => self, :body => "#{self.title} #{self.topic_post.body}"
-  end
+    def create_fulltext
+      TopicFulltext.create :topic => self, :body => "#{self.title} #{self.topic_post.body}"
+    end
 
-  def update_fulltext
-    self.topic_fulltext.update_attribute :body, "#{self.title} #{self.topic_post.body}"
-  end
+    def update_fulltext
+      self.topic_fulltext.update_attribute :body, "#{self.title} #{self.topic_post.body}"
+    end
 end

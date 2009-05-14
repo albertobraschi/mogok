@@ -89,58 +89,58 @@ class User
 
   private
 
-  def paginate_bookmarks_conditions
-    s, h = '', {}
-    unless admin_mod?
-      s << 'active = TRUE '
-      previous = true
-    end
-    s << 'AND ' if previous
-    s << 'id in (SELECT torrent_id FROM bookmarks WHERE user_id = :user_id)'
-    h[:user_id] = self.id
-    [s, h]
-  end
-
-  def stuck_conditions
-    s, h = '', {}
-    s << 'active = TRUE AND seeders_count = 0 AND leechers_count > 0 '
-    s << 'AND '
-    s << '(user_id = :user_id OR id IN (SELECT torrent_id FROM snatches WHERE user_id = :user_id))'
-    h[:user_id] = self.id
-    [s, h]
-  end
-
-  def self.search_conditions(params, searcher)
-    s, h = '', {}
-    unless searcher.system_user?
-      s << 'id != 1 ' # hide system user
-      previous = true
-    end
-    unless params[:username].blank?
+    def paginate_bookmarks_conditions
+      s, h = '', {}
+      unless admin_mod?
+        s << 'active = TRUE '
+        previous = true
+      end
       s << 'AND ' if previous
-      s << 'username LIKE :username '
-      h[:username] = "%#{params[:username]}%"
-      previous = true
+      s << 'id in (SELECT torrent_id FROM bookmarks WHERE user_id = :user_id)'
+      h[:user_id] = self.id
+      [s, h]
     end
-    unless params[:role_id].blank?
-      s << 'AND ' if previous
-      s << 'role_id = :role_id '
-      h[:role_id] = params[:role_id].to_i
-      previous = true
-    end
-    unless params[:country_id].blank?
-      s << 'AND ' if previous
-      s << 'country_id = :country_id '
-      h[:country_id] = params[:country_id].to_i
-    end
-    [s, h]
-  end
 
-  def self.search_order_by(params)
-    if params[:order_by] == 'ratio'
-      "uploaded/downloaded#{' DESC' if params[:desc] == '1'}"
-    else
-      order_by(params[:order_by], params[:desc])
+    def stuck_conditions
+      s, h = '', {}
+      s << 'active = TRUE AND seeders_count = 0 AND leechers_count > 0 '
+      s << 'AND '
+      s << '(user_id = :user_id OR id IN (SELECT torrent_id FROM snatches WHERE user_id = :user_id))'
+      h[:user_id] = self.id
+      [s, h]
     end
-  end
+
+    def self.search_conditions(params, searcher)
+      s, h = '', {}
+      unless searcher.system_user?
+        s << 'id != 1 ' # hide system user
+        previous = true
+      end
+      unless params[:username].blank?
+        s << 'AND ' if previous
+        s << 'username LIKE :username '
+        h[:username] = "%#{params[:username]}%"
+        previous = true
+      end
+      unless params[:role_id].blank?
+        s << 'AND ' if previous
+        s << 'role_id = :role_id '
+        h[:role_id] = params[:role_id].to_i
+        previous = true
+      end
+      unless params[:country_id].blank?
+        s << 'AND ' if previous
+        s << 'country_id = :country_id '
+        h[:country_id] = params[:country_id].to_i
+      end
+      [s, h]
+    end
+
+    def self.search_order_by(params)
+      if params[:order_by] == 'ratio'
+        "uploaded/downloaded#{' DESC' if params[:desc] == '1'}"
+      else
+        order_by(params[:order_by], params[:desc])
+      end
+    end
 end

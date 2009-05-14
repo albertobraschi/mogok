@@ -8,7 +8,7 @@
     
     <%= javascript_include_tag :defaults %>
     
-    <%= stylesheet_link_tag logged_user.style.stylesheet %>
+    <%= stylesheet_link_tag current_user.style.stylesheet %>
   </head>
   
   <body>
@@ -19,7 +19,7 @@
         <%= render :partial => 'misc/menu' %>
       <% end %>
 
-      <%= render :partial => 'misc/adm_menu' if logged_user.admin? && session[:adm_menu] %>
+      <%= render :partial => 'misc/adm_menu' if current_user.admin? && session[:adm_menu] %>
       
       <%= yield :layout %>
       

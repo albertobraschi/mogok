@@ -51,79 +51,79 @@ class User < ActiveRecord::Base
 
   private
 
-  def set_attributes(params, updater, current_password)
-    self.country_id = params[:country_id]
-    self.style_id = params[:style_id]
-    self.gender_id = params[:gender_id]
-    self.avatar = params[:avatar]
-    self.info = params[:info]
-    self.save_sent = params[:save_sent]
-    self.delete_on_reply = params[:delete_on_reply]
-    self.display_last_seen_at = params[:display_last_seen_at]
-    self.display_downloads = params[:display_downloads]
+    def set_attributes(params, updater, current_password)
+      self.country_id = params[:country_id]
+      self.style_id = params[:style_id]
+      self.gender_id = params[:gender_id]
+      self.avatar = params[:avatar]
+      self.info = params[:info]
+      self.save_sent = params[:save_sent]
+      self.delete_on_reply = params[:delete_on_reply]
+      self.display_last_seen_at = params[:display_last_seen_at]
+      self.display_downloads = params[:display_downloads]
 
-    if self.email != params[:email]
-      self.email = params[:email]
-      unless email_available?(params)
-        add_error :email, 'taken'
-        return false
+      if self.email != params[:email]
+        self.email = params[:email]
+        unless email_available?(params)
+          add_error :email, 'taken'
+          return false
+        end
       end
-    end
 
-    unless updater.admin?
-      if current_password.blank?
-        add_error :current_password, 'required'
-        return false
+      unless updater.admin?
+        if current_password.blank?
+          add_error :current_password, 'required'
+          return false
+        else
+          unless self.encrypted_password == CryptUtils.encrypt_password(current_password, self.salt)
+            add_error :current_password, 'incorrect'
+            return false
+          end
+        end
       else
-        unless self.encrypted_password == CryptUtils.encrypt_password(current_password, self.salt)
-          add_error :current_password, 'incorrect'
-          return false
+        if self.username != params[:username]
+          self.username = params[:username]
+          unless username_available?(params)
+            add_error :username, 'taken'
+            return false
+          end
         end
-      end
-    else
-      if self.username != params[:username]
-        self.username = params[:username]
-        unless username_available?(params)
-          add_error :username, 'taken'
-          return false
+        if self.role_id != params[:role_id].to_i && role_update_allowed?(params, updater)
+          self.role_id = params[:role_id]
         end
+        self.tickets = params[:tickets]
+        self.active = params[:active] if self.id != 1
+        self.staff_info = params[:staff_info]
+        self.uploaded, self.downloaded = params[:uploaded], params[:downloaded] if params[:update_stats] == '1'
       end
-      if self.role_id != params[:role_id].to_i && role_update_allowed?(params, updater)
-        self.role_id = params[:role_id]
+
+      unless params[:password].blank?
+        self.password = params[:password]
+        self.password_confirmation = params[:password_confirmation]
       end
-      self.tickets = params[:tickets]
-      self.active = params[:active] if self.id != 1
-      self.staff_info = params[:staff_info]
-      self.uploaded, self.downloaded = params[:uploaded], params[:downloaded] if params[:update_stats] == '1'
+
+      return true
     end
 
-    unless params[:password].blank?
-      self.password = params[:password]
-      self.password_confirmation = params[:password_confirmation]
+    def username_available?(params)
+      User.find_by_username(params[:username], :conditions => ['id != ?', self.id]).blank?
     end
 
-    return true
-  end
-
-  def username_available?(params)
-    User.find_by_username(params[:username], :conditions => ['id != ?', self.id]).blank?
-  end
-
-  def email_available?(params)
-    User.find_by_email(params[:email], :conditions => ['id != ?', self.id]).blank?
-  end
-
-  def role_update_allowed?(params, updater)
-    new_role = Role.find params[:role_id]
-    if updater.system_user? || updater.owner?
-      return false if new_role.system?
-    elsif updater.admin?
-      return false if new_role.reserved?
-    else
-      return false
+    def email_available?(params)
+      User.find_by_email(params[:email], :conditions => ['id != ?', self.id]).blank?
     end
-    true
-  end
+
+    def role_update_allowed?(params, updater)
+      new_role = Role.find params[:role_id]
+      if updater.system_user? || updater.owner?
+        return false if new_role.system?
+      elsif updater.admin?
+        return false if new_role.reserved?
+      else
+        return false
+      end
+      true
+    end
 end
 
 

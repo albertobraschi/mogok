@@ -27,7 +27,7 @@
           <ul class="menu">
             <% if post.is_topic_post? %>              
 
-              <% if logged_user.admin_mod? %>
+              <% if current_user.admin_mod? %>
                 <li><%= link_to 'remove', topics_path(:forum_id => topic.forum, :action => 'destroy',  :id => topic), {:class => 'mod'} %></li>
                 <li>|</li>
                 <li><%= link_to((topic.stuck? ? 'unstick' : 'stick'), topics_path(:action => 'switch_stick', :id => topic), {:class => 'mod'}) %></li>
@@ -36,31 +36,31 @@
                 <li>|</li>
               <% end %>
 
-              <% if logged_user != topic.user %>
+              <% if current_user != topic.user %>
                 <li><%= link_to 'report',{:controller => 'topics', :action => 'report', :id => topic} %></li>
                 <li>|</li>
               <% end %>
 
-              <% if topic.editable_by? logged_user %>
+              <% if topic.editable_by? current_user %>
                 <li><%= link_to 'edit', topics_path(:forum_id => topic.forum,  :action => 'edit', :id => topic) %></li>
                 <li>|</li>
               <% end %>
 
             <% else %>
 
-              <% if logged_user != post.user %>
+              <% if current_user != post.user %>
                 <li><%= link_to 'report',{:controller => 'posts', :action => 'report', :id => post, :page => current_page} %></li>
                 <li>|</li>
               <% end %>
 
-              <% if post.editable_by? logged_user %>
+              <% if post.editable_by? current_user %>
                 <li><%= link_to 'edit', posts_path(:forum_id => post.forum, :action => 'edit', :id => post, :page => current_page) %></li>
                 <li>|</li>
               <% end %>
 
             <% end %>
             
-            <% if !topic.posts_locked? || logged_user.admin_mod? %>
+            <% if !topic.posts_locked? || current_user.admin_mod? %>
               <li>
                 <%= link_to_remote 'quote',
                                    :url => {:controller => 'posts', :action => 'quote', :id => post, :username => (post.user ? post.user.username : 'unknown')},

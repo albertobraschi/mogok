@@ -93,51 +93,51 @@ class Message < ActiveRecord::Base
 
   private
 
-  def validate_receiver
-    if self.receiver
-      if !self.receiver.active?
-        add_error :receiver_id, 'inactive'
-      elsif self.receiver.system_user?
-        add_error :receiver_id, 'system'
+    def validate_receiver
+      if self.receiver
+        if !self.receiver.active?
+          add_error :receiver_id, 'inactive'
+        elsif self.receiver.system_user?
+          add_error :receiver_id, 'system'
+        end
       end
     end
-  end
 
-  def set_subject
-    self.subject = self.subject.blank? ? I18n.t('model.message.before_create.no_subject') : self.subject[0, 50]
-  end
-
-  def trim_body
-    self.body = self.body[0, 2000] if self.body
-  end
-
-  def self.prepare_for_reply(m, old_message)
-    m.subject = "#{ 'Re: ' unless old_message.subject.starts_with?('Re:') }#{old_message.subject}"
-    m.body = "\n\n\n----
-              \n#{old_message.sender.username} #{I18n.t('model.message.prepare_to_reply.wrote')}:
-              \n\n#{old_message.body}"
-    m.replying_to = old_message.sender.username
-  end
-
-  def self.prepare_for_forward(m, old_message)
-    m.subject = "#{ 'Fwd: ' unless old_message.subject.starts_with?('Fwd:') }#{old_message.subject}"
-    m.body = "\n\n\n----
-             \n#{old_message.sender.username} #{I18n.t('model.message.prepare_to_forward.wrote')}:
-             \n\n#{old_message.body}"
-  end
-
-  def delete_replied(replied_id)
-    unless replied_id.blank?
-      m = find replied_id
-      m.ensure_ownership self.sender
-      m.update_attribute :folder, TRASH
+    def set_subject
+      self.subject = self.subject.blank? ? I18n.t('model.message.before_create.no_subject') : self.subject[0, 50]
     end
-  end
 
-  def save_sent
-    clone = self.clone
-    clone.owner = self.sender
-    clone.folder = SENT
-    clone.save
-  end
+    def trim_body
+      self.body = self.body[0, 2000] if self.body
+    end
+
+    def self.prepare_for_reply(m, old_message)
+      m.subject = "#{ 'Re: ' unless old_message.subject.starts_with?('Re:') }#{old_message.subject}"
+      m.body = "\n\n\n----
+                \n#{old_message.sender.username} #{I18n.t('model.message.prepare_to_reply.wrote')}:
+                \n\n#{old_message.body}"
+      m.replying_to = old_message.sender.username
+    end
+
+    def self.prepare_for_forward(m, old_message)
+      m.subject = "#{ 'Fwd: ' unless old_message.subject.starts_with?('Fwd:') }#{old_message.subject}"
+      m.body = "\n\n\n----
+               \n#{old_message.sender.username} #{I18n.t('model.message.prepare_to_forward.wrote')}:
+               \n\n#{old_message.body}"
+    end
+
+    def delete_replied(replied_id)
+      unless replied_id.blank?
+        m = find replied_id
+        m.ensure_ownership self.sender
+        m.update_attribute :folder, TRASH
+      end
+    end
+
+    def save_sent
+      clone = self.clone
+      clone.owner = self.sender
+      clone.folder = SENT
+      clone.save
+    end
 end

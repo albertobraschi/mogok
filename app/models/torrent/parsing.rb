@@ -32,65 +32,65 @@ class Torrent
 
   private
 
-  def populate_meta_info(meta_info)
-    self.creation_date = Time.at(meta_info[CREATION_DATE]) unless meta_info[CREATION_DATE].blank?
-    self.created_by = meta_info[CREATED_BY]
-    self.comment = meta_info[COMMENT][0, 100] unless meta_info[COMMENT].blank?
-    self.encoding = meta_info[ENCODING]
+    def populate_meta_info(meta_info)
+      self.creation_date = Time.at(meta_info[CREATION_DATE]) unless meta_info[CREATION_DATE].blank?
+      self.created_by = meta_info[CREATED_BY]
+      self.comment = meta_info[COMMENT][0, 100] unless meta_info[COMMENT].blank?
+      self.encoding = meta_info[ENCODING]
 
-    info = meta_info[INFO]
-    self.piece_length = info[PIECE_LENGTH]
-    self.mapped_files = []
-    if info[FILES].blank? # single file mode
-      self.mapped_files << MappedFile.new(:name => info[NAME], :length => info[LENGTH])
-      self.size = info[LENGTH]
-      self.files_count = 1
-    else
-      self.dir_name = info[NAME]
-      size = 0
-      info[FILES].each do |file|
-        file_path = file_name = ''
-        file[PATH].each do |path| # path comes splited in a list
-          if path == file[PATH].last
-            file_name = path # last path item is the filename
-          else
-            file_path << path << '/'
+      info = meta_info[INFO]
+      self.piece_length = info[PIECE_LENGTH]
+      self.mapped_files = []
+      if info[FILES].blank? # single file mode
+        self.mapped_files << MappedFile.new(:name => info[NAME], :length => info[LENGTH])
+        self.size = info[LENGTH]
+        self.files_count = 1
+      else
+        self.dir_name = info[NAME]
+        size = 0
+        info[FILES].each do |file|
+          file_path = file_name = ''
+          file[PATH].each do |path| # path comes splited in a list
+            if path == file[PATH].last
+              file_name = path # last path item is the filename
+            else
+              file_path << path << '/'
+            end
           end
+          self.mapped_files << MappedFile.new(:name => file_name, :length => file[LENGTH], :path => file_path)
+          size += file[LENGTH]
         end
-        self.mapped_files << MappedFile.new(:name => file_name, :length => file[LENGTH], :path => file_path)
-        size += file[LENGTH]
+        self.size = size
+        self.files_count = info[FILES].size
       end
-      self.size = size
-      self.files_count = info[FILES].size
+
+      self.raw_info = RawInfo.new :data => make_info_entry(meta_info[INFO])
+      self.info_hash = CryptUtils.sha1_digest self.raw_info.data
     end
 
-    self.raw_info = RawInfo.new :data => make_info_entry(meta_info[INFO])
-    self.info_hash = CryptUtils.sha1_digest self.raw_info.data
-  end
+    # Make the complete INFO entry so it can be kept ready to go, avoiding extra work
+    # when a torrent file is generated.
+    def make_info_entry(info)
+      root = BDictionary.new
 
-  # Make the complete INFO entry so it can be kept ready to go, avoiding extra work
-  # when a torrent file is generated.
-  def make_info_entry(info)
-    root = BDictionary.new
-
-    if info[FILES].blank? # single file mode
-      root[LENGTH] = BNumber.new(info[LENGTH])
-    else
-      files_list = BList.new
-      info[FILES].each do |info_file|
-        file = BDictionary.new
-        file[LENGTH] = BNumber.new(info_file[LENGTH])
-        file_path_list = BList.new
-        info_file[PATH].each {|info_file_path| file_path_list << BString.new(info_file_path) }
-        file[PATH] = file_path_list
-        files_list << file
+      if info[FILES].blank? # single file mode
+        root[LENGTH] = BNumber.new(info[LENGTH])
+      else
+        files_list = BList.new
+        info[FILES].each do |info_file|
+          file = BDictionary.new
+          file[LENGTH] = BNumber.new(info_file[LENGTH])
+          file_path_list = BList.new
+          info_file[PATH].each {|info_file_path| file_path_list << BString.new(info_file_path) }
+          file[PATH] = file_path_list
+          files_list << file
+        end
+        root[FILES] = files_list
       end
-      root[FILES] = files_list
+      root[NAME] = BString.new(info[NAME])
+      root[PIECE_LENGTH] = BNumber.new(info[PIECE_LENGTH])
+      root[PIECES] = BString.new(info[PIECES])
+      root[PRIVATE] = BNumber.new(info[PRIVATE]) if info[PRIVATE]
+      root.out
     end
-    root[NAME] = BString.new(info[NAME])
-    root[PIECE_LENGTH] = BNumber.new(info[PIECE_LENGTH])
-    root[PIECES] = BString.new(info[PIECES])
-    root[PRIVATE] = BNumber.new(info[PRIVATE]) if info[PRIVATE]
-    root.out
-  end
 end

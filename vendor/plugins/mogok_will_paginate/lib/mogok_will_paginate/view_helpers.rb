@@ -103,58 +103,58 @@ module WillPaginate
     
     private
 
-    def setup()
-      return if @collection.per_page >= @collection.total_entries
-      @items = []
-      current_page = @collection.current_page      
-      num_pages = (@collection.total_entries / @collection.per_page.to_f).ceil
-      rest = @collection.total_entries % @collection.per_page
-      if num_pages <= 11
-        make_items(1, num_pages, rest)
-      elsif num_pages >= 11 && (current_page < 3 || current_page > num_pages  - 2)
-        middle_page = num_pages / 2
-        make_items(1, 3)
-        @items << GAP
-        make_items(middle_page - 1, middle_page + 1)
-        @items << GAP
-        make_items(num_pages - 2, num_pages, rest)
-      else
-        if current_page <= 5
-          final_page = current_page + 1;
-          final_page = 3 if final_page < 3        
-          make_items(1, final_page)          
-          @items << GAP
-          make_items(num_pages - 2, num_pages, rest)
-        elsif current_page > 4 && current_page < num_pages - 4
+      def setup()
+        return if @collection.per_page >= @collection.total_entries
+        @items = []
+        current_page = @collection.current_page
+        num_pages = (@collection.total_entries / @collection.per_page.to_f).ceil
+        rest = @collection.total_entries % @collection.per_page
+        if num_pages <= 11
+          make_items(1, num_pages, rest)
+        elsif num_pages >= 11 && (current_page < 3 || current_page > num_pages  - 2)
+          middle_page = num_pages / 2
           make_items(1, 3)
           @items << GAP
-          make_items(current_page - 1, current_page + 1)
+          make_items(middle_page - 1, middle_page + 1)
           @items << GAP
           make_items(num_pages - 2, num_pages, rest)
         else
-          initial_page = current_page - 1
-          initial_page = num_pages - 2 if initial_page > num_pages - 2
-          make_items(1, 3)
-          @items << GAP
-          make_items(initial_page, num_pages, rest)
+          if current_page <= 5
+            final_page = current_page + 1;
+            final_page = 3 if final_page < 3
+            make_items(1, final_page)
+            @items << GAP
+            make_items(num_pages - 2, num_pages, rest)
+          elsif current_page > 4 && current_page < num_pages - 4
+            make_items(1, 3)
+            @items << GAP
+            make_items(current_page - 1, current_page + 1)
+            @items << GAP
+            make_items(num_pages - 2, num_pages, rest)
+          else
+            initial_page = current_page - 1
+            initial_page = num_pages - 2 if initial_page > num_pages - 2
+            make_items(1, 3)
+            @items << GAP
+            make_items(initial_page, num_pages, rest)
+          end
         end
       end
-    end
 
-    def make_items(initial_page, final_page, rest = 0)
-      initial_page -= 1
-      for i in initial_page...final_page do      
-        first_item = (@collection.per_page * i) + 1
-        if i == (final_page - 1) && rest > 0  # if last page is parcial.
-          last_item = (first_item + rest) - 1
-        else
-          last_item = @collection.per_page * (i + 1)
+      def make_items(initial_page, final_page, rest = 0)
+        initial_page -= 1
+        for i in initial_page...final_page do
+          first_item = (@collection.per_page * i) + 1
+          if i == (final_page - 1) && rest > 0  # if last page is parcial.
+            last_item = (first_item + rest) - 1
+          else
+            last_item = @collection.per_page * (i + 1)
+          end
+          text = "#{sprintf('%.2d', first_item)}&nbsp;-&nbsp;#{sprintf('%.2d', last_item)}"
+          page = (i != @collection.current_page - 1) ? (i + 1) : nil # nil if current page
+          @items << PaginationItem.new(text, page)
+          @items << SEPARATOR unless i == final_page - 1 # if not last item.
         end
-        text = "#{sprintf('%.2d', first_item)}&nbsp;-&nbsp;#{sprintf('%.2d', last_item)}" 
-        page = (i != @collection.current_page - 1) ? (i + 1) : nil # nil if current page
-        @items << PaginationItem.new(text, page)
-        @items << SEPARATOR unless i == final_page - 1 # if not last item.
       end
-    end
   end
 end

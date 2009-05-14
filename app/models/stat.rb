@@ -21,8 +21,8 @@ class Stat < ActiveRecord::Base
 
   private
 
-  def marshal_attributes
-    self.top_contributors = self.top_contributors.blank? ? nil : [Marshal.dump(self.top_contributors)].pack('m*')
-    self.top_uploaders = self.top_uploaders.blank? ? nil : [Marshal.dump(self.top_uploaders)].pack('m*')
-  end
+    def marshal_attributes
+      self.top_contributors = self.top_contributors.blank? ? nil : [Marshal.dump(self.top_contributors)].pack('m*')
+      self.top_uploaders = self.top_uploaders.blank? ? nil : [Marshal.dump(self.top_uploaders)].pack('m*')
+    end
 end

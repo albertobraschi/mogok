@@ -11,10 +11,10 @@ class ErrorLog < ActiveRecord::Base
     !find(:first).blank?
   end
 
-  protected
+  private
 
-  def trim_attributes
-    self.message = self.message[0, 1000] if self.message
-    self.location = self.location[0, 5000] if self.location
-  end
+    def trim_attributes
+      self.message = self.message[0, 1000] if self.message
+      self.location = self.location[0, 5000] if self.location
+    end
 end

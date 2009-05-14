@@ -7,7 +7,7 @@
 
     <% form_for :user, :action => 'edit', :id => @user do |f| %>
       <table class="details">
-        <% if logged_user.admin? %>
+        <% if current_user.admin? %>
           <tr>
             <td class="label">
               USERNAME
@@ -51,7 +51,7 @@
             </td>
           </tr>
         <% end %>
-        <% unless logged_user.admin? %>
+        <% unless current_user.admin? %>
           <tr>
             <td class="label">
               Current password
@@ -163,7 +163,7 @@
             <%= f.check_box :display_downloads %>
           </td>
         </tr>
-        <% if logged_user.admin? %>
+        <% if current_user.admin? %>
           <tr>
             <td class="label">
               UPDATE COUNTERS

@@ -25,7 +25,7 @@ class TorrentsController < ApplicationController
     @search_box_fragment_name = 'torrents.index.search_box'
 
     if !@perform_cache || (@perform_cache && expire_timed_fragment(@fragment_name)) # check mogok_timed_fragment_cache plugin
-      @torrents = Torrent.search params, logged_user, :per_page => APP_CONFIG[:torrents_page_size]
+      @torrents = Torrent.search params, current_user, :per_page => APP_CONFIG[:torrents_page_size]
       @torrents.desc_by_default = APP_CONFIG[:torrents_desc_by_default] unless @torrents.blank?
       @category = Category.find params[:category_id] unless params[:category_id].blank?
     end
@@ -36,7 +36,7 @@ class TorrentsController < ApplicationController
     logger.debug ':-) torrents_controller.show'
     @torrent = Torrent.find_by_id params[:id]
     if torrent_available?
-      @torrent.set_bookmarked logged_user
+      @torrent.set_bookmarked current_user
       @mapped_files = MappedFile.cached_by_torrent(@torrent)
       @comments = @torrent.paginate_comments params, :per_page => APP_CONFIG[:torrent_comments_page_size]
       @comments.html_anchor  = 'comments' if @comments
@@ -47,13 +47,12 @@ class TorrentsController < ApplicationController
     logger.debug ':-) torrents_controller.edit'
     @torrent = Torrent.find_by_id params[:id]
     if torrent_available?
-      access_denied unless @torrent.editable_by? logged_user
+      access_denied unless @torrent.editable_by? current_user
       if request.post?
-        logger.debug ':-) post request'
         unless cancelled?
           if @torrent.edit(params[:torrent])
             logger.debug ':-) torrent edited'
-            add_log t('log', :torrent => @torrent.name, :user => logged_user.username), params[:reason]
+            add_log t('log', :torrent => @torrent.name, :user => current_user.username), params[:reason]
             flash[:notice] = t('success')
             redirect_to :action => 'show', :id => @torrent
           else
@@ -72,7 +71,7 @@ class TorrentsController < ApplicationController
     logger.debug ':-) torrents_controller.remove'
     @torrent = Torrent.find_by_id params[:id]
     if torrent_available?
-      access_denied unless @torrent.editable_by? logged_user
+      access_denied unless @torrent.editable_by? current_user
       if request.post?
         unless cancelled?
           if !@torrent.active? || params[:destroy] == '1'
@@ -81,7 +80,7 @@ class TorrentsController < ApplicationController
             redirect_to :action => 'index'
           else
             inactivate_torrent
-            if logged_user.admin_mod?
+            if current_user.admin_mod?
               flash[:notice] = t('inactivated_flash')
               redirect_to :action => 'show', :id => @torrent
             else
@@ -112,7 +111,7 @@ class TorrentsController < ApplicationController
         unless cancelled?
           unless params[:reason].blank?
             target_path = torrents_path :action => 'show', :id => @torrent
-            Report.create @torrent, target_path, logged_user, params[:reason]
+            Report.create @torrent, target_path, current_user, params[:reason]
             flash[:notice] = t('success')
             redirect_to :action => 'show', :id => @torrent
           else
@@ -128,7 +127,7 @@ class TorrentsController < ApplicationController
   def bookmark
     logger.debug ':-) torrents_controller.bookmark'
     @torrent = Torrent.find params[:id]
-    Bookmark.toggle_bookmarked @torrent, logged_user
+    Bookmark.toggle_bookmarked @torrent, current_user
   end
 
   def switch_lock_comments
@@ -140,16 +139,15 @@ class TorrentsController < ApplicationController
 
   def upload
     logger.debug ':-) torrents_controller.upload'
-    access_denied if !APP_CONFIG[:torrent_upload_enabled] && !logged_user.admin?
+    access_denied if !APP_CONFIG[:torrent_upload_enabled] && !current_user.admin?
     @torrent = Torrent.new params[:torrent]
     if request.post?
-      logger.debug ':-) post request'
-      @torrent.user = logged_user
+      @torrent.user = current_user
       begin
         torrent_data = get_file_data params[:torrent_file]
         if @torrent.set_meta_info(torrent_data, true) # torrent file parsing
           if @torrent.save
-            add_log t('log', :torrent => @torrent.name, :user => logged_user.username)
+            add_log t('log', :torrent => @torrent.name, :user => current_user.username)
             flash[:alert] = t('success')
             redirect_to :action => 'show', :id => @torrent
           end
@@ -169,7 +167,7 @@ class TorrentsController < ApplicationController
     logger.debug ':-) torrents_controller.download'
     t = Torrent.find_by_id params[:id]
     if torrent_available?(t)
-      t.announce_url = announce_url logged_user.announce_passkey(t)
+      t.announce_url = announce_url current_user.announce_passkey(t)
       t.comment = APP_CONFIG[:torrent_file_comment] if APP_CONFIG[:torrent_file_comment]
       file_name = TorrentsHelper.torrent_file_name t, APP_CONFIG[:torrent_file_prefix]
       send_data t.out, :filename => file_name, :type => 'application/x-bittorrent', :disposition => 'attachment'
@@ -190,102 +188,102 @@ class TorrentsController < ApplicationController
     
   private
 
-  def torrent_available?(t = nil)
-    t ||= @torrent
-    if !t.blank? && (t.active? || logged_user.admin_mod?)
-      true
-    else
-      render :template => 'torrents/unavailable'
-      false
+    def torrent_available?(t = nil)
+      t ||= @torrent
+      if !t.blank? && (t.active? || current_user.admin_mod?)
+        true
+      else
+        render :template => 'torrents/unavailable'
+        false
+      end
     end
-  end
-  
-  def set_collections
-    @types = Type.cached_all
-    @categories = Category.cached_all    
-    @countries = Country.cached_all
-  end
 
-  def set_bookmarked(torrents)
-    unless torrents.blank?
-      unless logged_user.bookmarks.blank?
-        torrents.each do |t|
-          logged_user.bookmarks.each {|b| t.bookmarked = true if t.id == b.torrent_id }
+    def set_collections
+      @types = Type.cached_all
+      @categories = Category.cached_all
+      @countries = Country.cached_all
+    end
+
+    def set_bookmarked(torrents)
+      unless torrents.blank?
+        unless current_user.bookmarks.blank?
+          torrents.each do |t|
+            current_user.bookmarks.each {|b| t.bookmarked = true if t.id == b.torrent_id }
+          end
         end
       end
     end
-  end
 
-  def destroy_torrent
-    @torrent.destroy    
-    add_log t('destroyed_log', :torrent => @torrent.name, :user => logged_user.username), params[:reason]
-    if @torrent.user != logged_user
-      s = t('destroyed_notification_subject')
-      b = t('destroyed_notification_body', :name => @torrent.name, :by => logged_user.username, :reason => params[:reason])
-      deliver_message_notification @torrent.user, s, b
-    end
-  end
-
-  def inactivate_torrent
-    @torrent.inactivate
-    add_log t('inactivated_log', :torrent => @torrent.name, :user => logged_user.username), params[:reason]
-    if @torrent.user != logged_user
-      s = t('inactivated_notification_subject')
-      b = t('inactivated_notification_body', :name => @torrent.name, :by => logged_user.username, :reason => params[:reason])
-      deliver_message_notification @torrent.user, s, b
-    end
-  end
-
-  def activate_torrent
-    @torrent.activate
-    add_log t('log', :torrent => @torrent.name, :user => logged_user.username)
-    if @torrent.user != logged_user
-      s = t('notification_subject')
-      b = t('notification_body', :name => @torrent.name, :by => logged_user.username)
-      deliver_message_notification @torrent.user, s, b
-    end
-  end
-  
-  def torrent_file_error(error_key, args = {})
-    raise TorrentFileError.new(error_key, args)
-  end
-
-  def get_file_data(f)
-    check_uploaded_file(f)
-    
-    if f.respond_to? :string
-      data = f.string
-    elsif f.respond_to? :read
-      data = f.read
-    else
-      raise 'unable to handle uploaded file, check how the web server treats file uploads'
-    end
-    data
-  end
-
-  def check_uploaded_file(f)
-    if f.blank?
-      torrent_file_error 'required'
-    else
-      logger.debug ":-) file uploaded as #{f.class.name}"
-      if f.respond_to?(:original_filename) && !f.original_filename.downcase.ends_with?('.torrent')
-        torrent_file_error 'type'
-      end
-      if f.length > APP_CONFIG[:torrent_file_max_size_kb].kilobytes
-        torrent_file_error 'size', :max_size => APP_CONFIG[:torrent_file_max_size_kb]
+    def destroy_torrent
+      @torrent.destroy
+      add_log t('destroyed_log', :torrent => @torrent.name, :user => current_user.username), params[:reason]
+      if @torrent.user != current_user
+        s = t('destroyed_notification_subject')
+        b = t('destroyed_notification_body', :name => @torrent.name, :by => current_user.username, :reason => params[:reason])
+        deliver_message_notification @torrent.user, s, b
       end
     end
-  end
 
-  def index_perform_cache?
-    !logged_user.admin_mod? && # admin_mods can see inactive torrents
-    params[:order_by] == 'created_at' && params[:desc] == '1' &&
-    params[:keywords].blank? &&
-    params[:category_id].blank? &&
-    params[:format_id].blank? &&
-    params[:country_id].blank? &&
-    params[:tags_str].blank? &&
-    params[:inactive].blank?
-  end
+    def inactivate_torrent
+      @torrent.inactivate
+      add_log t('inactivated_log', :torrent => @torrent.name, :user => current_user.username), params[:reason]
+      if @torrent.user != current_user
+        s = t('inactivated_notification_subject')
+        b = t('inactivated_notification_body', :name => @torrent.name, :by => current_user.username, :reason => params[:reason])
+        deliver_message_notification @torrent.user, s, b
+      end
+    end
+
+    def activate_torrent
+      @torrent.activate
+      add_log t('log', :torrent => @torrent.name, :user => current_user.username)
+      if @torrent.user != current_user
+        s = t('notification_subject')
+        b = t('notification_body', :name => @torrent.name, :by => current_user.username)
+        deliver_message_notification @torrent.user, s, b
+      end
+    end
+
+    def torrent_file_error(error_key, args = {})
+      raise TorrentFileError.new(error_key, args)
+    end
+
+    def get_file_data(f)
+      check_uploaded_file(f)
+
+      if f.respond_to? :string
+        data = f.string
+      elsif f.respond_to? :read
+        data = f.read
+      else
+        raise 'unable to handle uploaded file, check how the web server treats file uploads'
+      end
+      data
+    end
+
+    def check_uploaded_file(f)
+      if f.blank?
+        torrent_file_error 'required'
+      else
+        logger.debug ":-) file uploaded as #{f.class.name}"
+        if f.respond_to?(:original_filename) && !f.original_filename.downcase.ends_with?('.torrent')
+          torrent_file_error 'type'
+        end
+        if f.length > APP_CONFIG[:torrent_file_max_size_kb].kilobytes
+          torrent_file_error 'size', :max_size => APP_CONFIG[:torrent_file_max_size_kb]
+        end
+      end
+    end
+
+    def index_perform_cache?
+      !current_user.admin_mod? && # admin_mods can see inactive torrents
+      params[:order_by] == 'created_at' && params[:desc] == '1' &&
+      params[:keywords].blank? &&
+      params[:category_id].blank? &&
+      params[:format_id].blank? &&
+      params[:country_id].blank? &&
+      params[:tags_str].blank? &&
+      params[:inactive].blank?
+    end
 end
 

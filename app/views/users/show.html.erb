@@ -18,27 +18,27 @@
           </div>
           <div class="float_right">
             <ul class="menu">
-              <% if logged_user.admin? && @user.editable_by?(logged_user) %>
+              <% if current_user.admin? && @user.editable_by?(current_user) %>
                 <li><%= link_to 'edit', {:action => 'edit', :id => @user} %></li>
                 <li>|</li>
               <% end %>
 
-              <% if @user != logged_user && @user.editable_by?(logged_user) %>
+              <% if @user != current_user && @user.editable_by?(current_user) %>
                 <li><%= link_to 'remove', {:action => 'destroy', :id => @user}, {:class => 'admin'} %></li>
                 <li>|</li>
               <% end %>
               
-              <% if logged_user.has_ticket?(:staff) %>
+              <% if current_user.has_ticket?(:staff) %>
                 <li><%= link_to 'staff info', {:action => 'edit_staff_info', :id => @user}, {:class => 'staff'} %></li>
                 <li>|</li>
               <% end %>
 
-              <% if @user == logged_user || logged_user.admin?%>
+              <% if @user == current_user || current_user.admin?%>
                 <%= link_to 'reset passkey', {:action => 'reset_passkey', :id => @user} %>
                 <li>|</li>
               <% end %>
 
-              <% if @user != logged_user && @user.active? %>                
+              <% if @user != current_user && @user.active? %>                
                 <li><%= link_to 'report', {:action => 'report', :id => @user } %></li>
                 <li>|</li>
               <% end %>
@@ -52,7 +52,7 @@
           </div>
         </td>
       </tr>
-      <% if logged_user.admin? %>
+      <% if current_user.admin? %>
         <tr>
           <td class="label">
             ID
@@ -70,7 +70,7 @@
           </td>
         </tr>
       <% end %>
-      <% if logged_user.has_ticket?(:staff) && !@user.staff_info.blank? %>
+      <% if current_user.has_ticket?(:staff) && !@user.staff_info.blank? %>
         <tr>
           <td class="label">
             STAFF INFO
@@ -88,7 +88,7 @@
           <%= @user.role.description %> 
         </td>
       </tr>
-      <% if !@user.tickets.blank? && (@user == logged_user || logged_user.admin?) %>
+      <% if !@user.tickets.blank? && (@user == current_user || current_user.admin?) %>
         <tr>
           <td class="label">
             Tickets
@@ -116,7 +116,7 @@
           <%= I18n.l @user.created_at, :format => :date %>
         </td>
       </tr>
-      <% if @user.last_seen_at? && (@user.display_last_seen_at? || @user == logged_user || logged_user.admin?) %>
+      <% if @user.last_seen_at? && (@user.display_last_seen_at? || @user == current_user || current_user.admin?) %>
         <tr>  
           <td class="label">
             Last seen
@@ -126,7 +126,7 @@
           </td>
         </tr>
       <% end %>
-      <% if @user == logged_user || logged_user.admin? %>
+      <% if @user == current_user || current_user.admin? %>
         <tr>  
           <td class="label">
             Passkey
@@ -205,7 +205,7 @@
           <div id="user_uploads" class="hide"></div>
         </td>
       </tr>
-      <% if @user.display_downloads? || @user == logged_user || logged_user.admin? %>
+      <% if @user.display_downloads? || @user == current_user || current_user.admin? %>
         <tr>
           <td class="label">
             Snatches
@@ -269,7 +269,7 @@
           <div id="user_seeding" class="hide"></div>                
         </td>
       </tr>
-      <% if @user.display_downloads? || @user == logged_user || logged_user.admin? %>
+      <% if @user.display_downloads? || @user == current_user || current_user.admin? %>
         <tr>  
           <td class="label">
             Leeching

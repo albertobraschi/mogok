@@ -1,5 +1,5 @@
 
-  <% display_ip = @user == logged_user || logged_user.admin? %>
+  <% display_ip = @user == current_user || current_user.admin? %>
 
   <table class="browse left">
     <tr>
@@ -75,7 +75,7 @@
       <% end %>
       <% if @peers.total_pages > 1 %>
         <tr>
-          <td class="pagination" colspan=" <%= logged_user.admin? ? '9' : '7'%>">
+          <td class="pagination" colspan=" <%= current_user.admin? ? '9' : '7'%>">
             <% spinner_id = @seeding ? 'seeching_spinner' : 'leeching_spinner'%>
             <%= will_paginate_remote @peers, {:container => false}, {:spinner_id => spinner_id, :spinner_class => 'spinner_left'} %>
           </td>
