@@ -11,6 +11,10 @@ class ErrorLog < ActiveRecord::Base
     !find(:first).blank?
   end
 
+  def self.create(message, location)
+    super :message => message, :location => location
+  end
+
   private
 
     def trim_attributes

@@ -1,6 +1,6 @@
 
 class AdmController < ApplicationController
-  before_filter :login_required
+  before_filter :logged_in_required
   before_filter :admin_required
 
   def env

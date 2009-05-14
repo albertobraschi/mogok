@@ -11,7 +11,7 @@ class ApplicationController < ActionController::Base
 
   protected
 
-    def after_login_required # callback from access_control
+    def after_logged_in_required # callback from access_control
       set_user_warnings
     end
 
@@ -30,7 +30,7 @@ class ApplicationController < ActionController::Base
     def add_log(text, reason = nil, admin = false)
       text << " (#{reason})" unless reason.blank?
       text << '.'
-      Log.create :created_at => Time.now, :body => text, :admin => admin
+      Log.create text, admin
     end
 
     def cancelled?

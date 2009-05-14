@@ -26,8 +26,7 @@ class BgTask < ActiveRecord::Base
   end
 
   def self.log_exec(task, status = nil, begin_at = nil, end_at = nil, next_at = nil)
-    BgTaskLog.create :created_at => Time.now,
-                     :task => task,
+    BgTaskLog.create :task => task,
                      :exec_begin_at => begin_at,
                      :exec_end_at => end_at,
                      :next_exec_at => next_at,

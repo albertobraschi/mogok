@@ -8,6 +8,10 @@ class Log < ActiveRecord::Base
              :per_page => args[:per_page]
   end
 
+  def self.create(body, admin = false)
+    super :body => body, :admin => admin
+  end
+
   private
 
     def self.search_conditions(params, searcher)

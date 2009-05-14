@@ -1,6 +1,6 @@
 
 class ContentController < ApplicationController
-  before_filter :login_required
+  before_filter :logged_in_required
   
   def index
     logger.debug ':-) content_controller.index'

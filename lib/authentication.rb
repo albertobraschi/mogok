@@ -27,19 +27,19 @@ module Authentication
       end
     end
 
-    def login_required
-      logger.debug ':-) access_control.login_required'
+    def logged_in_required
+      logger.debug ':-) access_control.logged_in_required'
       unless current_user
-        logger.debug ':-) not logged in, redirecting to login page'
+        logger.debug ':-o not logged in, redirecting to login page'
         reset_session
         session[:original_uri] = request.request_uri
         redirect_to login_path
       else
-        after_login_required
+        after_logged_in_required
       end
     end
 
-    def after_login_required
+    def after_logged_in_required
       # overwrite this method for additional processing
     end
 

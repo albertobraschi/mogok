@@ -37,7 +37,6 @@ class Topic < ActiveRecord::Base
       p = Post.new :user => user, 
                    :topic => self,
                    :forum_id => self.forum_id,
-                   :created_at => Time.now,
                    :body => params[:body]
       p.post_number = self.replies_count + 1
       p.save

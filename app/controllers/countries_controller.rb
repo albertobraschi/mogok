@@ -1,6 +1,6 @@
 
 class CountriesController < ApplicationController
-  before_filter :login_required
+  before_filter :logged_in_required
   before_filter :admin_required
   cache_sweeper :domain_sweeper, :only => [:new, :edit, :destroy]
 

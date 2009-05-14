@@ -3,7 +3,7 @@
 
 Given /^I have the recovery code (.*) requested by user (.*)$/ do |recovery_code, username|
   user = fetch_user username
-  PasswordRecovery.create :user_id => user.id, :code => recovery_code, :created_at => Time.now
+  PasswordRecovery.create user, recovery_code
 end
 
 # WHEN

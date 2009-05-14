@@ -28,7 +28,7 @@ module BgTasks
     end
 
     def log(text, admin = false)
-      Log.create :created_at => Time.now, :body => text, :admin => admin
+      Log.create text, admin
     end
 
     def log_error(e, task_name)

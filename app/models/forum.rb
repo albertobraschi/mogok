@@ -16,7 +16,6 @@ class Forum < ActiveRecord::Base
     t = Topic.new :forum => self,
                   :user => user,
                   :title => params[:title],
-                  :created_at => Time.now,
                   :last_post_at => Time.now
 
     t.topic_post = Post.new :user => user,
@@ -24,7 +23,6 @@ class Forum < ActiveRecord::Base
                             :forum => self,
                             :post_number => 1,
                             :is_topic_post => true,
-                            :created_at => Time.now,
                             :body => params[:body]
     Forum.transaction do
       t.save

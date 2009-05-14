@@ -5,6 +5,6 @@ class Invitation < ActiveRecord::Base
   validates_uniqueness_of :code
 
   def self.create(code, user, email)
-    super :code => code, :user => user, :email => email, :created_at => Time.now
+    super :code => code, :user => user, :email => email
   end
 end

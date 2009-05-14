@@ -313,7 +313,6 @@ class CreateData < ActiveRecord::Migration
     style = Style.find :first
     u = User.new(:username => username,
                  :password => 'rrrrr',
-                 :created_at => Time.now,
                  :last_login_at => Time.now,
                  :last_request_at => Time.now,
                  :style_id => style.id,

@@ -1,7 +1,7 @@
 
 class InvitationsController < ApplicationController
   before_filter :set_mailer_host, :only => :new
-  before_filter :login_required
+  before_filter :logged_in_required
     
   def index
     logger.debug ':-) invitations_controller.index'

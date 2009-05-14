@@ -12,8 +12,7 @@ class Report < ActiveRecord::Base
   end
 
   def self.create(target, target_path, reporter, reason)
-    super :created_at => Time.now,
-          :label => report_label(target),
+    super :label => report_label(target),
           :target_path => target_path,
           :user => reporter,
           :reason => reason

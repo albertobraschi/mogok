@@ -5,12 +5,12 @@ ActionController::Routing::Routes.draw do |map|
   map.root :controller => 'content'
   
   # account
-  map.login 'login', :controller => 'account', :action => 'login'
-  map.logout 'logout', :controller => 'account', :action => 'logout'
-  map.signup 'signup', :controller => 'account', :action => 'signup'
-  map.signup_with_invite 'signup/:invite_code', :controller => 'account', :action => 'signup'
-  map.password_recovery 'password_recovery', :controller => 'account', :action => 'password_recovery'
-  map.change_password 'change_password/:recovery_code', :controller => 'account', :action => 'change_password'
+  map.login 'login', :controller => 'login'
+  map.logout 'logout', :controller => 'login', :action => 'logout'
+  map.signup 'signup', :controller => 'signup'
+  map.signup_with_invite 'signup/:invite_code', :controller => 'signup'
+  map.password_recovery 'password_recovery', :controller => 'password_recovery'
+  map.change_password 'change_password/:recovery_code', :controller => 'password_recovery', :action => 'change_password'
   
   # content
   map.with_options :controller => 'content' do |content|

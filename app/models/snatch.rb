@@ -4,7 +4,7 @@ class Snatch < ActiveRecord::Base
   belongs_to :user
 
   def self.create(torrent, user)
-    snatch = Snatch.new :torrent => torrent, :user => user, :created_at => Time.now
+    snatch = Snatch.new :torrent => torrent, :user => user
     Snatch.transaction do      
       t = snatch.torrent.lock!
       t.increment :snatches_count

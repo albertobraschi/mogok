@@ -60,7 +60,6 @@ class Torrent < ActiveRecord::Base
       increment! :comments_count
       c = Comment.new :user => user,
                       :torrent => self,
-                      :created_at => Time.now,
                       :body => params[:body]
       c.comment_number = self.comments_count
       c.save

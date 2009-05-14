@@ -33,9 +33,9 @@ module BgTasks
             end
           end
           logger.debug ":-) task #{bg_task.name} successfully executed" if logger
-          status = 'ok'
+          status = 'OK'
         rescue => e
-          status = 'failed'
+          status = 'FAILED'
           log_error e, bg_task.name
           logger.error ":-( task #{bg_task.name} error: #{e.message}" if logger
           raise e if force

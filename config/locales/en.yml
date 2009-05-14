@@ -1,23 +1,6 @@
 
 en:
   controller:
-    account:
-      login:
-        temporarily_blocked: Login is temporarily blocked for your machine. Try to recover your password.
-        account_disabled: This account is disabled.
-        blocked: Login will remain blocked for {{hours}} hours. Try to recover your password.
-        invalid_login: "Invalid login data. Remaining attempts: {{remaining}}"
-      signup:
-        closed: Signup is currently closed.
-        blocked: Signup is temporarily blocked for your machine.
-      password_recovery:
-        success: A password recovery link has been sent to {{email}}.
-        delivery_error: An error occurred and the email could be not sent. Please try again later.
-        invalid_email: Email address {{email}} is not valid.
-      change_password:
-        success: Password successfully changed.
-        invalid_code: Invalid password recovery link.
-
     comments:
       new:
         success: Comment successfully added.
@@ -38,12 +21,28 @@ en:
       destroy:
         success: Invitation successfully cancelled.
 
+    login:
+      index:
+        temporarily_blocked: Login is temporarily blocked for your machine. Try to recover your password.
+        account_disabled: This account is disabled.
+        blocked: Login will remain blocked for {{hours}} hours. Try to recover your password.
+        invalid_login: "Invalid login data. Remaining attempts: {{remaining}}"
+
     messages:
       new:
         success: Message successfully sent.        
       move:
         moved_single: Message successfully moved.
         moved_list: Message(s) successfully moved.
+
+    password_recovery:
+      index:
+        success: A password recovery link has been sent to {{email}}.
+        delivery_error: An error occurred and the email could be not sent. Please try again later.
+        invalid_email: Email address is not valid.
+      change_password:
+        success: Password successfully changed.
+        invalid_code: Invalid password recovery link.
 
     posts:
       new:
@@ -55,6 +54,11 @@ en:
       report:
         success: Post successfully reported.
         reason_required: Reason is required.
+
+    signup:
+      index:
+        closed: Signup is currently closed.
+        blocked: Signup is temporarily blocked for your machine.
 
     topics:
       new:

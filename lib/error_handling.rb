@@ -34,13 +34,13 @@ module ErrorHandling
 
     def log_error(e, template = nil, force = false)
       if !Rails.env.production? || force
-        m =  "Error: #{e.class}\n"
-        m << "Page: #{template}\n" if template
-        m << "Message: #{e.clean_message}"
+        message =  "Error: #{e.class}\n"
+        message << "Page: #{template}\n" if template
+        message << "Message: #{e.clean_message}"
 
-        l = clean_backtrace(e)[0, 15].join("\n")
+        location = clean_backtrace(e)[0, 15].join("\n")
 
-        ErrorLog.create :created_at => Time.now, :message => m, :location => l
+        ErrorLog.create message, location
       end
     end
 end

@@ -7,4 +7,8 @@ class PasswordRecovery < ActiveRecord::Base
   def self.delete_all_by_user(user)
     delete_all ['user_id = ?', user.id]
   end
+
+  def self.create(user, code)
+    super :user => user, :code => code
+  end
 end

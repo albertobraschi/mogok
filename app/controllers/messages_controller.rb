@@ -1,6 +1,6 @@
 
 class MessagesController < ApplicationController
-  before_filter :login_required
+  before_filter :logged_in_required
   rescue_from Message::NotOwnerError, :with => :access_denied
 
   def folder
