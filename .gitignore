@@ -17,6 +17,7 @@ vendor/plugins/*
 !vendor/plugins/focus_fu
 !vendor/plugins/mogok_timed_fragment_cache
 !vendor/plugins/mogok_will_paginate
+!vendor/plugins/restful_authentication
 !vendor/plugins/strip_attributes
 !vendor/plugins/will_paginate-2.3.8
 !vendor/plugins/xss_terminate
