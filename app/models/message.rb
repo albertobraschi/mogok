@@ -39,7 +39,6 @@ class Message < ActiveRecord::Base
     unless args[:to].blank?
       m.owner = m.receiver = User.find_by_username(args[:to])
       m.sender = sender
-      m.created_at = Time.now     
       m.unread = true
       m.folder = INBOX
     end
@@ -56,7 +55,6 @@ class Message < ActiveRecord::Base
     m = new
     m.owner = m.receiver = receiver
     m.sender = User.system_user
-    m.created_at = Time.now
     m.unread = true
     m.folder = INBOX
     yield m

@@ -30,7 +30,6 @@ class CreateUsers < ActiveRecord::Migration
       t.column :token_expires_at, :datetime
       t.column :last_login_at, :datetime
       t.column :last_request_at, :datetime
-      t.column :failed_login_count, :integer, :null => false, :default => 0
 
       # authorization
       t.column :role_id, :integer, :null => false

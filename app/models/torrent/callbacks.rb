@@ -12,7 +12,6 @@ class Torrent
   private
 
     def init_new_record
-      self.created_at = Time.now
       self.tags = Tag.parse_tags self.tags_str, self.category_id
       self.announce_key = CryptUtils.md5_token rand, 10
       self.info_hash_hex = CryptUtils.hexencode self.info_hash
