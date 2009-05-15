@@ -172,6 +172,7 @@ en:
           required: Username required.
           taken: Username already in use.
           invalid_length: Length must be between 3 and 20.
+          invalid_format: Invalid characters.
         password:
           required: Password required.
           incorrect:  Password incorrect.
@@ -181,7 +182,8 @@ en:
         email:
           required: Email required.
           taken: Email already in use.
-          invalid: Invalid email.
+          invalid_format: Invalid email.
+          invalid_length: Length cannot exceed 100.
         invite_code:
           invalid: Invalid invite code.
           

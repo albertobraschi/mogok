@@ -5,6 +5,7 @@ config/database.yml
 config/memcached.yml
 config/initializers/action_mailer.rb
 config/initializers/session_store.rb
+config/initializers/site_keys.rb
 db/migrate/099_create_data.rb
 config/locales/*
 !config/locales/en.yml

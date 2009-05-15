@@ -1,6 +1,6 @@
 
 class RolesController < ApplicationController
-  before_filter :logged_in_required
+  before_filter :login_required
   before_filter :owner_required
   
   def index

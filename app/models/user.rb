@@ -75,7 +75,7 @@ class User < ActiveRecord::Base
           add_error :current_password, 'required'
           return false
         else
-          unless self.crypted_password == CryptUtils.encrypt_password(current_password, self.password_salt)
+          unless authenticated?(current_password)
             add_error :current_password, 'incorrect'
             return false
           end

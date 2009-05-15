@@ -26,17 +26,17 @@ module BgTasks
             next if u.has_ticket?(:staff)
             if u.torrents.count > 0
               u.toggle! :active # inactivate if user has at least one torrent
-              log "User #{u.username} inactivated by system.", true
+              app_log "User #{u.username} inactivated by system.", true
             else
               u.destroy
-              log "User #{u.username} removed by system.", true
+              app_log "User #{u.username} removed by system.", true
             end
           end
           logger.debug ":-) task #{bg_task.name} successfully executed" if logger
           status = 'OK'
         rescue => e
           status = 'FAILED'
-          log_error e, bg_task.name
+          log_task_error e, bg_task.name
           logger.error ":-( task #{bg_task.name} error: #{e.message}" if logger
           raise e if force
         end

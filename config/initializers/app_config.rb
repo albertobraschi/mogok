@@ -17,7 +17,7 @@ RAILS_DEFAULT_LOGGER.level = Rails.env.production? ? Logger::ERROR : Logger::DEB
 # get rid of the red divs in the invalid form fields
 ActionView::Base.field_error_proc = Proc.new {|html_tag, instance| "#{html_tag}" }
 
-# set session expiration (do not confuse with user token expiration)
+# set session expiration (note that what defines if user is logged in is the remember token expiration)
 ActionController::Base.session_options[:expire_after] = 1.year
 
 

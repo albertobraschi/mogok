@@ -12,7 +12,7 @@ module BgTasks
       begin        
         do_exec_all config, logger, env
       rescue => e
-        log_error e, 'BgTasks::Dispatcher'
+        log_task_error e, 'BgTasks::Dispatcher'
       end
     end
 
@@ -27,12 +27,6 @@ module BgTasks
           end
         else
           BgTask.log_exec "Dispatcher[#{env}]", 'NO TASKS FOUND'
-        end
-      end
-
-      def exec_task(bg_task, config, logger = nil, force = false)
-        if bg_task.class_name =~ /^BgTasks::[A-Za-z]+\Z/
-          Kernel.eval(bg_task.class_name).new.exec bg_task, config, logger, force
         end
       end
   end

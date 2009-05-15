@@ -1,7 +1,11 @@
 
-module ErrorHandling
-
+module AppErrorHandling
+  
   protected
+
+    def self.included(base)
+      base.send :rescue_from, Exception, :with => :handle_error
+    end
   
     def handle_error(e)
       logger.debug ':-o error_handling.handle_error'

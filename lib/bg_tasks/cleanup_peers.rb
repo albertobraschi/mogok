@@ -16,7 +16,7 @@ module BgTasks
           status = 'OK'
         rescue => e
           status = 'FAILED'
-          log_error e, bg_task.name
+          log_task_error e, bg_task.name
           logger.error ":-( task #{bg_task.name} error: #{e.message}" if logger
           raise e if force
         end

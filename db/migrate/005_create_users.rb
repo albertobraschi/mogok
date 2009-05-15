@@ -25,9 +25,9 @@ class CreateUsers < ActiveRecord::Migration
 
       # authentication
       t.column :crypted_password, :string, :null => false
-      t.column :password_salt, :string, :null => false
-      t.column :token, :string, :limit => 32
-      t.column :token_expires_at, :datetime
+      t.column :salt, :string, :null => false
+      t.column :remember_token, :string
+      t.column :remember_token_expires_at, :datetime
       t.column :last_login_at, :datetime
       t.column :last_request_at, :datetime
 
@@ -36,7 +36,7 @@ class CreateUsers < ActiveRecord::Migration
       t.column :tickets, :string
 
       # tracker
-      t.column :passkey, :string, :null => false, :limit => 32
+      t.column :passkey, :string, :null => false
       t.column :uploaded, 'BIGINT(20)', :null => false, :default => 0
       t.column :downloaded, 'BIGINT(20)', :null => false, :default => 0
     end

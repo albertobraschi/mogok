@@ -64,9 +64,9 @@ class SignupController < ApplicationController
 
     def log_user_in      
       @user.log_in false, APP_CONFIG[:user_max_inactivity_minutes].minutes.from_now
-      logger.debug ":-) user token expires at: #{@user.token_expires_at}"
+      logger.debug ":-) user token expires at: #{@user.remember_token_expires_at}"
       reset_session
-      session[:user_id], session[:token] = @user.id, @user.token
+      session[:user_id], session[:remember_token] = @user.id, @user.remember_token
       session[:adm_menu] = @user.admin?
     end
 end

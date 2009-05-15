@@ -1,7 +1,7 @@
 
 class BgTasksController < ApplicationController
   include BgTasks::Utils
-  before_filter :logged_in_required
+  before_filter :login_required
   before_filter :admin_required
   
   def index

@@ -72,8 +72,8 @@ def fetch_user(username, role = nil, email = nil)
     u.password_confirmation = username
     u.role = role
     u.created_at = Time.now
-    u.reset_token
-    u.token_expires_at = 30.minutes.from_now
+    u.reset_remember_token
+    u.remember_token_expires_at = 30.minutes.from_now
     u.reset_passkey
     u.avatar = 'none'
     u.email = email || "#{username}@testmailz.com"

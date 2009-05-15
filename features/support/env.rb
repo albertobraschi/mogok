@@ -23,28 +23,31 @@ end
 # force default locale as tests use interface messages
 I18n.default_locale = 'en'
 
-# app customizations
-TEST_DATA_DIR = File.join(RAILS_ROOT, 'features/support/test_data')
-LOG_TO_STDOUT = false
+# customizations
 
-if LOG_TO_STDOUT
-  ActiveRecord::Base::logger = Logger.new(STDOUT)
-  class ApplicationController
-    if LOG_TO_STDOUT
-      def handle_error(e)
-        puts e.message
-        e.backtrace.each {|i| puts i }
-      end
+  # where to put test data, like torrent files
+  TEST_DATA_DIR = File.join(RAILS_ROOT, 'features/support/test_data')
 
-      def logger
-        Logger.new(STDOUT)
+  # if true, all rails logs go to the console (messy but useful in some cases)
+  LOG_TO_STDOUT = false
+
+  if LOG_TO_STDOUT
+    ActiveRecord::Base::logger = Logger.new(STDOUT)
+    class ApplicationController
+      if LOG_TO_STDOUT
+        def handle_error(e)
+          puts e.message
+          e.backtrace.each {|i| puts i }
+        end
+
+        def logger
+          Logger.new(STDOUT)
+        end
       end
     end
   end
-end
 
 puts "> CACHE_ENABLED = #{CACHE_ENABLED}"
-
 puts "> I18n.default_locale = #{I18n.default_locale}"
 
 

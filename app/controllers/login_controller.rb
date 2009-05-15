@@ -1,7 +1,7 @@
 
 class LoginController < ApplicationController
-  before_filter :logged_in_required, :only => :logout
-  before_filter :not_logged_in_required, :only => :login
+  before_filter :login_required, :only => :logout
+  before_filter :not_logged_in_required, :only => :index
 
   layout 'public'
 
@@ -21,10 +21,8 @@ class LoginController < ApplicationController
           logger.debug ':-) user authenticated'
           if u.active?
             logger.debug ':-) user active'
-            log_user_in u, params[:stay_logged_in] == '1'
-            clear_login_attempts
-            uri, session[:original_uri] = session[:original_uri], nil
-            redirect_to uri || root_path
+            log_user_in u            
+            redirect_back_or_default root_path
           else
             logger.debug ':-o user not active'
             flash.now[:error] = t('account_disabled')
@@ -32,7 +30,7 @@ class LoginController < ApplicationController
         else
           logger.debug ':-o user not authenticated'
           login_attempt.increment_or_block(MAX_LOGIN_ATTEMPTS, BLOCK_TIME_HOURS)
-          set_login_failed_message login_attempt
+          note_failed_login login_attempt
         end
       end
     end
@@ -46,7 +44,7 @@ class LoginController < ApplicationController
 
   private
 
-    def set_login_failed_message(login_attempt)
+    def note_failed_login(login_attempt)
       if login_attempt.blocked?
         flash.now[:error] = t('blocked', :hours => BLOCK_TIME_HOURS)
       else
@@ -54,13 +52,18 @@ class LoginController < ApplicationController
       end
     end
 
-    def log_user_in(u, keep_logged_in)
-      u.log_in keep_logged_in, APP_CONFIG[:user_max_inactivity_minutes].minutes.from_now
-      logger.debug ":-) user token expires at: #{u.token_expires_at}"
+    def log_user_in(u)
+      remember_me = params[:remember_me] == '1'
+      inactivity_threshold = APP_CONFIG[:user_max_inactivity_minutes].minutes.from_now
+
+      u.log_in(remember_me, inactivity_threshold)
+      
       reset_session
-      session[:user_id], session[:token] = u.id, u.token
+      self.current_user = u
       session[:adm_menu] = true if u.admin?
-    end
+
+      clear_login_attempts
+    end   
 
     def clear_login_attempts
       LoginAttempt.delete_all_by_ip request.remote_ip

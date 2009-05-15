@@ -3,10 +3,6 @@ module CryptUtils
   require 'digest'
   require 'openssl'
 
-  def self.encrypt_password(password, salt)
-    Digest::SHA1.hexdigest("#{password} #{salt}").upcase
-  end
-
   def self.sha1_digest(data)
     Digest::SHA1.digest(data)
   end

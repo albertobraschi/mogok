@@ -1,6 +1,6 @@
 
 class StatsController < ApplicationController
-  before_filter :logged_in_required
+  before_filter :login_required
   before_filter :admin_required, :only => :history
   before_filter :owner_required, :only => :clear_all
 

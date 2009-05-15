@@ -5,57 +5,59 @@ module Bittorrent
 
   module Tracker
 
-    def parse_client(peer_id, ban_unknown = false)
-      if peer_id.size == 20
-        if peer_id[0, 1] == '-' && peer_id[7, 1] == '-' # azureus style
-          code = peer_id[1, 2]
-          version = peer_id[3, 4]
-        else # shadow style
-          code = peer_id[0, 1]
-          version = peer_id[1, 5].gsub('-', '')
+    protected
+
+      def parse_client(peer_id, ban_unknown = false)
+        if peer_id.size == 20
+          if peer_id[0, 1] == '-' && peer_id[7, 1] == '-' # azureus style
+            code = peer_id[1, 2]
+            version = peer_id[3, 4]
+          else # shadow style
+            code = peer_id[0, 1]
+            version = peer_id[1, 5].gsub('-', '')
+          end
+          c = Client.find_by_code code
         end
-        c = Client.find_by_code code
+        unless c
+          c = Client.new :code => code, :name => code
+          c.banned = true if ban_unknown
+        end
+        c.version = version
+        c
       end
-      unless c
-        c = Client.new :code => code, :name => code
-        c.banned = true if ban_unknown
+
+      def exec_scrape(req, resp)
+        logger.debug ':-) tracker.exec_scrape'
+        req.torrents.each do |t|
+          resp.add_file(t.info_hash, t.seeders_count, t.leechers_count, t.snatches_count)
+        end
       end
-      c.version = version
-      c
-    end
 
-    def exec_scrape(req, resp)
-      logger.debug ':-) tracker.exec_scrape'
-      req.torrents.each do |t|
-        resp.add_file(t.info_hash, t.seeders_count, t.leechers_count, t.snatches_count)
-      end
-    end
+      def exec_announce(req, resp, log_announce = true)
+        logger.debug ':-) tracker.exec_announce'
+        logger.debug ":-) event: #{req.event}"
 
-    def exec_announce(req, resp, log_announce = true)
-      logger.debug ':-) tracker.exec_announce'
-      logger.debug ":-) event: #{req.event}"
+        req.current_action = Time.now
 
-      req.current_action = Time.now      
+        peer = Peer.find_peer req.torrent, req.user, req.ip, req.port
 
-      peer = Peer.find_peer req.torrent, req.user, req.ip, req.port
-
-      if peer
-        calculate_offsets req, peer
-        unless req.stopped?
-          register_snatch req if req.completed?      
-          update_peer peer, req
+        if peer
+          calculate_offsets req, peer
+          unless req.stopped?
+            register_snatch req if req.completed?
+            update_peer peer, req
+          else
+            destroy_peer peer
+          end
+          update_user_counters req
         else
-          destroy_peer peer
+          create_peer req unless req.stopped?
         end
-        update_user_counters req
-      else
-        create_peer req unless req.stopped?
+
+        AnnounceLog.create req if log_announce
+
+        prepare_resp req, resp unless req.stopped?
       end
-
-      AnnounceLog.create req if log_announce
-
-      prepare_resp req, resp unless req.stopped?
-    end
 
     private
 
