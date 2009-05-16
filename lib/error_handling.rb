@@ -1,5 +1,5 @@
 
-module AppErrorHandling
+module ErrorHandling
   
   protected
 

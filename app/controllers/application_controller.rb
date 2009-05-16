@@ -1,12 +1,15 @@
 
 class ApplicationController < ActionController::Base
-  include AppAuthentication, AppAuthorization, AppErrorHandling
+  include AuthenticatedSystem, AuthorizedSystem, ErrorHandling
   protect_from_forgery
-  helper :all    
+  helper :all
+
+  filter_parameter_logging :password
 
   protected
 
-    def after_login_required # callback from access_control
+    def after_logged_in_required # callback from app_authorization
+      current_user.register_access
       set_user_warnings
     end
 

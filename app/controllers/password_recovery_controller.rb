@@ -15,7 +15,7 @@ class PasswordRecoveryController < ApplicationController
         password_recovery = u.create_password_recovery
         begin
           AppMailer.deliver_password_recovery u, password_recovery.code
-          flash[:notice] = t('success', :email => u.email)
+          flash[:notice] = t('success', :email => params[:email])
         rescue => e
           log_error e
           password_recovery.destroy

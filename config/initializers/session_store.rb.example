@@ -9,7 +9,7 @@
 # no regular words or you'll be exposed to dictionary attacks.
 
 ActionController::Base.session = {
-  :key => '_mogok_session',
+  :key => 'mogok_session',
   :secret => '8b9ce1uio809j58902vfewjioty53dsfds879jd7d2590515a6c10b8ab8101155cd271eeb4d5a56a2fe49021e9a'
 }
 

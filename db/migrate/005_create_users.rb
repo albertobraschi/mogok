@@ -18,18 +18,18 @@ class CreateUsers < ActiveRecord::Migration
       t.column :display_downloads, :boolean, :default => true
       t.column :active, :boolean, :default => true
       t.column :has_new_message, :boolean, :default => false
+      t.column :last_request_at, :datetime
       
       # timestamps
       t.column :created_at, :datetime, :null => false
-      t.column :updated_at, :datetime, :null => false
 
       # authentication
+      t.column :session_token, :string
       t.column :crypted_password, :string, :null => false
       t.column :salt, :string, :null => false
       t.column :remember_token, :string
       t.column :remember_token_expires_at, :datetime
-      t.column :last_login_at, :datetime
-      t.column :last_request_at, :datetime
+      t.column :last_login_at, :datetime      
 
       # authorization
       t.column :role_id, :integer, :null => false

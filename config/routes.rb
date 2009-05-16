@@ -5,7 +5,7 @@ ActionController::Routing::Routes.draw do |map|
   map.root :controller => 'content'
   
   # account
-  map.login 'login', :controller => 'login'
+  map.login 'login', :controller => 'login', :action => 'login'
   map.logout 'logout', :controller => 'login', :action => 'logout'
   map.signup 'signup', :controller => 'signup'
   map.signup_with_invite 'signup/:invite_code', :controller => 'signup'

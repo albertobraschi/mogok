@@ -8,7 +8,7 @@ class User
   end
 
   def save_new_with_invite(code, invite_required)
-    # note: new user may have an invite even if it is not required
+    # note that new user may have an invite even if it is not required
     i = Invitation.find_by_code code
     unless i
       if invite_required

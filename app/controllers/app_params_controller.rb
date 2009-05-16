@@ -1,6 +1,6 @@
 
 class AppParamsController < ApplicationController
-  before_filter :login_required
+  before_filter :logged_in_required
   before_filter :admin_required, :only => [:index, :new, :edit]
   before_filter :owner_required, :only => :destroy
 

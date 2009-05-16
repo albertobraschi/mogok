@@ -172,13 +172,15 @@ en:
           required: Username required.
           taken: Username already in use.
           invalid_length: Length must be between 3 and 20.
-          invalid_format: Invalid characters.
+          invalid_format: Username has invalid characters.
         password:
           required: Password required.
           incorrect:  Password incorrect.
           too_short: Password length must be at least 5.
         password_confirmation:
           invalid_confirmation: Incorrect password confirmation.
+        current_password:
+          required: Password required.
         email:
           required: Email required.
           taken: Email already in use.

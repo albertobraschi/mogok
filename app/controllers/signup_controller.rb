@@ -11,16 +11,7 @@ class SignupController < ApplicationController
       @user = User.new params[:user]
       unless request.post?
         if params[:invite_code]
-          i = Invitation.find_by_code params[:invite_code]
-          if i
-            @user.email = i.email
-          else
-            if @app_params[:signup_by_invitation_only]
-              @user.add_error :invite_code, 'invalid'
-            else
-              params[:invite_code] = nil # if code invalid but not required
-            end
-          end
+          set_invitation_info
         end
       else
         if save_new_user
@@ -58,15 +49,25 @@ class SignupController < ApplicationController
       true
     end
 
+    def set_invitation_info
+      i = Invitation.find_by_code params[:invite_code]
+      if i
+        @user.email = i.email
+      else
+        if @app_params[:signup_by_invitation_only]
+          @user.add_error :invite_code, 'invalid'
+        else
+          params[:invite_code] = nil # if code invalid but not required just ignore it
+        end
+      end
+    end
+
     def save_new_user
       @user.save_new_with_invite params[:invite_code], @app_params[:signup_by_invitation_only]
     end
 
-    def log_user_in      
-      @user.log_in false, APP_CONFIG[:user_max_inactivity_minutes].minutes.from_now
-      logger.debug ":-) user token expires at: #{@user.remember_token_expires_at}"
-      reset_session
-      session[:user_id], session[:remember_token] = @user.id, @user.remember_token
-      session[:adm_menu] = @user.admin?
+    def log_user_in
+      self.current_user = @user
+      handle_remember_cookie! false
     end
 end

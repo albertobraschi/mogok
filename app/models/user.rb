@@ -1,8 +1,10 @@
 
 
 class User < ActiveRecord::Base
-  concerns :authentication, :authorization, :callbacks, :finders, :signup, :tracker, :validation
-  
+  concerns :authentication, :authorization, :password_recovery, :signup
+  concerns :callbacks, :finders, :validation
+  concerns :tracker
+
   strip_attributes! # strip_attributes
   
   attr_protected :role_id, :tickets
@@ -24,6 +26,16 @@ class User < ActiveRecord::Base
   belongs_to :gender
   belongs_to :style
   belongs_to :inviter, :class_name => 'User', :foreign_key => 'inviter_id'
+
+  def register_access
+    if self.last_request_at.blank? || self.last_request_at < 3.minutes.ago
+      update_attribute :last_request_at, Time.now
+    end
+  end
+
+  def email=(value)
+    write_attribute :email, (value ? value.downcase : nil)
+  end
 
   def save_sent?
     self.save_sent && !system_user?

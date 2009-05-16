@@ -1,7 +1,6 @@
 
 class Torrent
-  include Bittorrent::Bcode
-  include Bittorrent::TorrentFile
+  include Bittorrent::Bcode, Bittorrent::TorrentFile
 
   # parsing concern
 
@@ -17,15 +16,15 @@ class Torrent
 
   def set_meta_info(torrent_data, force_private = false)
     begin
-      meta_info = parse(torrent_data, logger) # parse and check if meta-info is valid
+      meta_info = parse_torrent_file(torrent_data, logger) # parse and check if meta-info is valid
       logger.debug ':-) torrent file is valid'
     rescue InvalidTorrentError => e
       logger.debug ":-o torrent parsing error: #{e.message}"
-      valid? # check other errors
+      valid? # check other errors in the model
       add_error :torrent_file, 'invalid'
       return false
     end
-    meta_info[INFO][PRIVATE] = '1' if force_private
+    meta_info[INFO][PRIVATE] = PRIVATE_FLAG if force_private
     populate_meta_info meta_info
     true
   end
@@ -64,33 +63,13 @@ class Torrent
         self.files_count = info[FILES].size
       end
 
-      self.raw_info = RawInfo.new :data => make_info_entry(meta_info[INFO])
+      # the bencoded INFO is kept ready to go, avoiding extra work when generating a torrent file
+      self.raw_info = RawInfo.new :data => bencode_info_entry(meta_info[INFO])
+
+      # torrent info hash calculation
       self.info_hash = CryptUtils.sha1_digest self.raw_info.data
     end
-
-    # Make the complete INFO entry so it can be kept ready to go, avoiding extra work
-    # when a torrent file is generated.
-    def make_info_entry(info)
-      root = BDictionary.new
-
-      if info[FILES].blank? # single file mode
-        root[LENGTH] = BNumber.new(info[LENGTH])
-      else
-        files_list = BList.new
-        info[FILES].each do |info_file|
-          file = BDictionary.new
-          file[LENGTH] = BNumber.new(info_file[LENGTH])
-          file_path_list = BList.new
-          info_file[PATH].each {|info_file_path| file_path_list << BString.new(info_file_path) }
-          file[PATH] = file_path_list
-          files_list << file
-        end
-        root[FILES] = files_list
-      end
-      root[NAME] = BString.new(info[NAME])
-      root[PIECE_LENGTH] = BNumber.new(info[PIECE_LENGTH])
-      root[PIECES] = BString.new(info[PIECES])
-      root[PRIVATE] = BNumber.new(info[PRIVATE]) if info[PRIVATE]
-      root.out
-    end
 end
+
+
+

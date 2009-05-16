@@ -9,9 +9,6 @@ app_name: Mogok
 # default locale
 default_locale: en
 
-# if user didn't ask to stay logged in, their remember token will expire after this period
-user_max_inactivity_minutes: 15
-
 # default avatar image.
 default_avatar: no_avatar.jpg
 
