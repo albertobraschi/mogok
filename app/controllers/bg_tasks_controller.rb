@@ -17,10 +17,10 @@ class BgTasksController < ApplicationController
       begin
         bg_task = BgTask.find params[:id]
         exec_task bg_task, APP_CONFIG, logger, true
-        flash[:notice] = "task #{bg_task.name} successfully executed"
+        flash[:notice] = "Task #{bg_task.name} successfully executed."
       rescue => e
         log_error e
-        flash[:error] = "task #{bg_task.name} failed"
+        flash[:error] = "Task #{bg_task.name} failed."
       end
     end
     redirect_to :action => 'index'

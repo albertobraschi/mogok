@@ -31,7 +31,7 @@ class AdmController < ApplicationController
   end
 
   def restart_passenger
-    logger.debug ':-) adm_controller.passenger_restart'
+    logger.debug ':-) adm_controller.restart_passenger'
     if request.post?
       %x{touch #{File.join(RAILS_ROOT, 'tmp/restart.txt')}}
     end
