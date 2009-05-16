@@ -6,8 +6,9 @@ module AuthenticatedSystem
   #   - only session and auth cookie are checked to ensure that the user is logged in
   #   - it also requires a valid session token, so users cannot have multiple logins
   # 
-  # If you want the original authenticated_system behavior just replace this file by the
-  # original one, no other changes are needed.
+  # If you want the original authenticated_system behavior just replace this file with the
+  # original one, no other changes are needed (although you may want to clean up the session
+  # token methods in the user model).
 
   protected
 
@@ -73,7 +74,7 @@ module AuthenticatedSystem
     def logout_keeping_session!
       if @current_user.is_a? User
         @current_user.forget_me
-        @current_user.erase_session_token!
+        @current_user.clear_session_token!
       end
       @current_user = false
       kill_remember_cookie!

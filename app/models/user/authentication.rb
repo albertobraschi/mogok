@@ -15,12 +15,12 @@ class User
     end
     nil
   end
-
+  
   def reset_session_token!
     update_attribute :session_token, self.class.make_token
   end
 
-  def erase_session_token!
+  def clear_session_token!
     update_attribute :session_token, nil
   end
 
