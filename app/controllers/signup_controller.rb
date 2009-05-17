@@ -6,7 +6,7 @@ class SignupController < ApplicationController
 
   def index
     logger.debug ':-) signup_controller.index'
-    @app_params = AppParam.load
+    @app_params = AppParam.params_hash
     if signup_open? && signup_not_blocked?
       @user = User.new params[:user]
       unless request.post?

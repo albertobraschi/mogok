@@ -4,7 +4,7 @@ module BgTasks
   class RefreshStats    
     include BgTasks::Utils
 
-    def exec(bg_task, config, logger = nil, force = false)
+    def exec(bg_task, logger = nil, force = false)
       begin_at = Time.now
 
       bg_task.schedule(logger) unless force    

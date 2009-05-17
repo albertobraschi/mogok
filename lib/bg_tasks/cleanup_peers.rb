@@ -4,14 +4,15 @@ module BgTasks
   class CleanupPeers
     include BgTasks::Utils
     
-    def exec(bg_task, config, logger = nil, force = false)
+    def exec(bg_task, logger = nil, force = false)
       begin_at = Time.now
 
       bg_task.schedule(logger) unless force
 
       if force || bg_task.exec_now?
+        params = bg_task.params_hash
         begin
-          Peer.delete_inactives config[:peer_max_inactivity_minutes].minutes.ago
+          Peer.delete_inactives params[:peer_max_inactivity_minutes].minutes.ago
           logger.debug ":-) task #{bg_task.name} successfully executed" if logger
           status = 'OK'
         rescue => e

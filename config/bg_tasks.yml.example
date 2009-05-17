@@ -1,0 +1,23 @@
+
+cleanup_peers:
+  class_name: BgTasks::CleanupPeers
+  interval_minutes: 70
+  params:
+    peer_max_inactivity_minutes: 90
+
+cleanup:
+  class_name: BgTasks::Cleanup
+  interval_minutes: 150
+  params:
+    user_max_inactivity_days: 150
+    log_max_age_days: 30
+    announce_log_max_age_days: 2
+    message_max_age_months: 6
+    error_log_max_age_days: 5
+    password_recovery_max_age_days: 1
+    invitation_max_age_days: 3
+    task_log_max_age_days: 1
+
+refresh_stats:
+  class_name: BgTasks::RefreshStats
+  interval_minutes: 360

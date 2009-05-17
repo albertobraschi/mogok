@@ -9,112 +9,94 @@ app_name: Mogok
 # default locale
 default_locale: en
 
-# default avatar image.
-default_avatar: no_avatar.jpg
+users:
+  # default avatar image.
+  default_avatar: no_avatar.jpg
 
-# expiration time for the torrents browse cached pages (will expire when a new torrent is uploaded)
-torrents_refresh_minutes: 5
+torrents:
+  # expiration time for the torrents browse cached pages (cache expires when a torrent is added or removed)
+  refresh_minutes: 5
 
-# torrent file maximum size (such files are temporarily loaded in memory so be careful)
-torrent_file_max_size_kb: 256
+  # torrent file maximum size (such files are temporarily loaded in memory so be careful)
+  file_max_size_kb: 256
 
-# set to false to block torrent uploads for non-admins
-torrent_upload_enabled: true
+  # set to false to block torrent uploads for non-admins (mainly for demo purposes)
+  upload_enabled: true
 
-# period that a torrent remains labeled as new after it was uploaded
-torrent_new_period_minutes: 10
+  # period that a torrent remains labeled as new after it was uploaded
+  new_period_minutes: 10
 
-# if set will be put in the beginning of the torrent file name(e.g [mogok]Test.torrent)
-torrent_file_prefix: mogok
+  # if set will be put in the beginning of the torrent file name(e.g [mogok]Test.torrent)
+  file_prefix: mogok
 
-# if set will replace the original torrent file comment
-torrent_file_comment: Downloaded from Mogok
+  # if set will replace the original torrent file comment entry
+  file_comment: Downloaded from Mogok
 
-# size of pages when browsing data
-torrents_page_size: 100
-torrent_peers_page_size: 20
-torrent_snatches_page_size: 20
-torrent_comments_page_size: 20
-users_page_size: 40
-user_activity_page_size: 20
-user_history_page_size: 20
-messages_page_size: 20
-logs_page_size: 50
-announce_logs_page_size: 50
-peers_page_size: 50
-forum_topics_page_size: 40
-forum_posts_page_size: 20
-forum_search_results_page_size: 40
-stats_history_page_size: 40
+# size of pages when browsing data (aka pagination)
+page_size:
+  torrents: 100
+  torrent_peers: 20
+  torrent_snatches: 20
+  torrent_comments: 20
+  users: 40
+  user_activity: 20
+  user_history: 20
+  messages: 20
+  logs: 50
+  announce_logs: 50
+  peers: 50
+  forum_topics: 40
+  forum_posts: 20
+  forum_search_results: 40
+  stats_history: 40
 
 # browse table columns showed by default in a decrescent way when header is clicked the fist time
-users_desc_by_default:
- - uploaded
- - downloaded
- - ratio
-torrents_desc_by_default:
- - created_at
- - comments_count
- - snatches_count
- - seeders_count
- - leechers_count
-announce_logs_desc_by_default:
- - created_at
- - up_offset
- - down_offset
+desc_by_default:
+  users:
+    - uploaded
+    - downloaded
+    - ratio
+  torrents:
+    - created_at
+    - comments_count
+    - snatches_count
+    - seeders_count
+    - leechers_count
+  announce_logs:
+    - created_at
+    - up_offset
+    - down_offset
+
+
+# ADMINISTRATION
+
+adm:
+  # enable passenger restart in production
+  passenger_restart_production: false
+
+  # display sensitive environment information in production in the env page
+  display_env_info_production: false
 
 
 # TRACKER
 
-# set the url for an external tracker if necessary (check app/helpers/tracker_helper.rb)
-  # tracker_url: http://host:port/tracker
+tracker:
+  # set the url for an external tracker if necessary (check app/helpers/tracker_helper.rb)
+  # external_url: http://host:port/tracker
 
-# if tracker accepts scrape requests
-tracker_scrape_enabled: true
+  # if tracker accepts scrape requests
+  scrape_enabled: true
 
-# tracker responses parameters (1800 = 30 minutes)
-tracker_announce_interval_seconds: 1800
-tracker_announce_min_interval_seconds: 1800
-tracker_announce_resp_max_peers: 30
+  # announce response defaults
+  announce_interval_seconds: 1800
+  announce_min_interval_seconds: 1800
+  announce_resp_max_peers: 30
 
-# if tracker does not accept unregistered bittorrent clients
-tracker_ban_unknown_clients: false
+  # if tracker does not accept unregistered bittorrent clients
+  ban_unknown_clients: false
 
-# if announces from the bittorrent clients are to be logged
-tracker_log_announces: true
-
-
-# BACKGROUND TASKS
-
-# tasks (note that the actual execution depends on the cron job scheduling)
-bg_tasks:
-  - :name: Cleanup
-    :class_name: BgTasks::Cleanup
-    :interval_minutes: 150
-  - :name: Cleanup Peers
-    :class_name: BgTasks::CleanupPeers
-    :interval_minutes: 70
-  - :name: Refresh Stats
-    :class_name: BgTasks::RefreshStats
-    :interval_minutes: 360
-
-# tasks configuration
-peer_max_inactivity_minutes: 60
-user_max_inactivity_days: 150
-log_max_age_days: 30
-announce_log_max_age_days: 2
-message_max_age_months: 6
-error_log_max_age_days: 5
-password_recovery_max_age_days: 1
-invitation_max_age_days: 3
-task_log_max_age_days: 1
-
-
-
-
-
-
-
+  # if announces from the bittorrent clients are to be logged
+  log_announces: true
 
 
 

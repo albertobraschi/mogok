@@ -10,7 +10,7 @@ class LoginController < ApplicationController
   def login
     logger.debug ':-) login_controller.login'
     login_attempt = LoginAttempt.fetch(request.remote_ip)
-    @app_params = AppParam.load
+    @app_params = AppParam.params_hash
     if login_attempt.blocked?
       logger.debug ":-) login is temporarily blocked for this ip: #{login_attempt.ip}"
       flash.now[:error] = t('temporarily_blocked') unless flash[:notice]
@@ -49,7 +49,8 @@ class LoginController < ApplicationController
       
       self.current_user = user
       handle_remember_cookie!(remember_me)
-      
+
+      session[:adm_menu] = user.admin?
       clear_login_attempts
     end   
 

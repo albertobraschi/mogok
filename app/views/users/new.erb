@@ -12,7 +12,7 @@
             username
           </td>
           <td>
-            <%= f.text_field :username, :size => 30 %>
+            <%= f.text_field :username, :size => 30, :maxlength => 20, :focus => true %>
             <%= field_error @user.errors[:username] %>
           </td>
         </tr>
@@ -37,7 +37,7 @@
             password
           </td>
           <td>
-            <%= f.password_field :password, :size => 30 %>
+            <%= f.password_field :password, :size => 30, :maxlength => 40 %>
             <%= field_error @user.errors[:password] %>
           </td>
         </tr>
@@ -46,7 +46,7 @@
             confirm password
           </td>
           <td>
-            <%= f.password_field :password_confirmation, :size => 30 %>
+            <%= f.password_field :password_confirmation, :size => 30, :maxlength => 40 %>
             <%= field_error @user.errors[:password_confirmation] %>
           </td>
         </tr>
@@ -55,7 +55,7 @@
             email
           </td>
           <td>
-            <%= f.text_field :email, :size => 40 %>
+            <%= f.text_field :email, :size => 40, :maxlength => 100 %>
             <%= field_error @user.errors[:email] %>
           </td>
         </tr>

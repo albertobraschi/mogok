@@ -4,10 +4,12 @@ module TrackerHelper
   protected
 
     def announce_url(passkey)
-      unless APP_CONFIG[:tracker_url]
+      external_url = APP_CONFIG[:tracker][:external_url]
+      
+      unless external_url
         tracker_url :action => 'announce', :passkey => passkey # check routes.rb
       else
-        "#{APP_CONFIG[:tracker_url]}/#{passkey}/announce"
+        "#{external_url}/#{passkey}/announce"
       end
     end
 end

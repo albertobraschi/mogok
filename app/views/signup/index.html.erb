@@ -28,7 +28,7 @@
           Password:
         </td>
         <td>
-          <%= f.password_field :password, :size => 30, :maxlength => 30 %>
+          <%= f.password_field :password, :size => 30, :maxlength => 40 %>
           <%= field_error @user.errors[:password] %>
         </td>
       </tr>
@@ -37,7 +37,7 @@
           Confirm:
         </td>
         <td>
-          <%= f.password_field :password_confirmation, :size => 30, :maxlength => 30 %>
+          <%= f.password_field :password_confirmation, :size => 30, :maxlength => 40 %>
           <%= field_error @user.errors[:password_confirmation] %>
         </td>
       </tr>
@@ -46,7 +46,7 @@
           Email:
         </td>
         <td>
-          <%= f.text_field :email, :size => 30, :maxlength => 200 %>
+          <%= f.text_field :email, :size => 30, :maxlength => 100 %>
           <%= field_error @user.errors[:email] %>
         </td>
       </tr>

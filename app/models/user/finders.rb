@@ -13,7 +13,7 @@ class User
 
   def paginate_bookmarks(params, args)
     Torrent.paginate :conditions => paginate_bookmarks_conditions,
-                     :order => 'category_id, name',
+                     :order => 'name',
                      :page => self.class.current_page(params[:page]),
                      :per_page => args[:per_page],
                      :include => :tags

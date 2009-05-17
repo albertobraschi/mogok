@@ -24,9 +24,9 @@ class TorrentsController < ApplicationController
     @fragment_name = "torrents.index.page.#{params[:page] || 1}"
     @search_box_fragment_name = 'torrents.index.search_box'
 
-    if !@perform_cache || (@perform_cache && expire_timed_fragment(@fragment_name)) # check mogok_timed_fragment_cache plugin
-      @torrents = Torrent.search params, current_user, :per_page => APP_CONFIG[:torrents_page_size]
-      @torrents.desc_by_default = APP_CONFIG[:torrents_desc_by_default] unless @torrents.blank?
+    if !@perform_cache || (@perform_cache && expire_timed_fragment(@fragment_name)) # mogok_timed_fragment_cache plugin
+      @torrents = Torrent.search params, current_user, :per_page => APP_CONFIG[:page_size][:torrents]
+      @torrents.desc_by_default = APP_CONFIG[:desc_by_default][:torrents] unless @torrents.blank?
       @category = Category.find params[:category_id] unless params[:category_id].blank?
     end
     set_collections
@@ -38,7 +38,7 @@ class TorrentsController < ApplicationController
     if torrent_available?
       @torrent.set_bookmarked current_user
       @mapped_files = MappedFile.cached_by_torrent(@torrent)
-      @comments = @torrent.paginate_comments params, :per_page => APP_CONFIG[:torrent_comments_page_size]
+      @comments = @torrent.paginate_comments params, :per_page => APP_CONFIG[:page_size][:torrent_comments]
       @comments.html_anchor  = 'comments' if @comments
     end
   end  
@@ -139,7 +139,7 @@ class TorrentsController < ApplicationController
 
   def upload
     logger.debug ':-) torrents_controller.upload'
-    access_denied if !APP_CONFIG[:torrent_upload_enabled] && !current_user.admin?
+    access_denied if !APP_CONFIG[:torrents][:upload_enabled] && !current_user.admin?
     @torrent = Torrent.new params[:torrent]
     if request.post?
       @torrent.user = current_user
@@ -168,8 +168,8 @@ class TorrentsController < ApplicationController
     t = Torrent.find_by_id params[:id]
     if torrent_available?(t)
       t.announce_url = announce_url current_user.announce_passkey(t)
-      t.comment = APP_CONFIG[:torrent_file_comment] if APP_CONFIG[:torrent_file_comment]
-      file_name = TorrentsHelper.torrent_file_name t, APP_CONFIG[:torrent_file_prefix]
+      t.comment = APP_CONFIG[:torrents][:file_comment] if APP_CONFIG[:torrents][:file_comment]
+      file_name = TorrentsHelper.torrent_file_name t, APP_CONFIG[:torrents][:file_prefix]
       send_data t.out, :filename => file_name, :type => 'application/x-bittorrent', :disposition => 'attachment'
     end
   end
@@ -177,13 +177,13 @@ class TorrentsController < ApplicationController
   def show_peers
     logger.debug ':-) torrents_controller.show_peers'
     t = Torrent.find_by_id params[:id]
-    @peers = t.paginate_peers params, :per_page => APP_CONFIG[:torrent_peers_page_size] if t
+    @peers = t.paginate_peers params, :per_page => APP_CONFIG[:page_size][:torrent_peers] if t
   end  
   
   def show_snatches
     logger.debug ':-) torrents_controller.show_snatches'
     t = Torrent.find_by_id params[:id]
-    @snatches = t.paginate_snatches params, :per_page => APP_CONFIG[:torrent_snatches_page_size] if t
+    @snatches = t.paginate_snatches params, :per_page => APP_CONFIG[:page_size][:torrent_snatches] if t
   end  
     
   private
@@ -269,8 +269,8 @@ class TorrentsController < ApplicationController
         if f.respond_to?(:original_filename) && !f.original_filename.downcase.ends_with?('.torrent')
           torrent_file_error 'type'
         end
-        if f.length > APP_CONFIG[:torrent_file_max_size_kb].kilobytes
-          torrent_file_error 'size', :max_size => APP_CONFIG[:torrent_file_max_size_kb]
+        if f.length > APP_CONFIG[:torrents][:file_max_size_kb].kilobytes
+          torrent_file_error 'size', :max_size => APP_CONFIG[:torrents][:file_max_size_kb]
         end
       end
     end

@@ -78,7 +78,7 @@ module Bittorrent
     end
     
     
-    # Parse a bencoded string and return a hash containing the bcode entries.
+    # parse a bencoded string and return a hash containing the bcode entries
     def parse_bencoded(data)
       raise ArgumentError unless data.is_a? String
       do_parse StringIO.new(data)
@@ -94,7 +94,7 @@ module Bittorrent
             h = {}
             loop do
               key = do_parse data
-              return h unless key # no more entries to the dictionary
+              return h unless key
               h[key] = do_parse data
             end
           when LIST
@@ -108,7 +108,7 @@ module Bittorrent
             n = ''
             loop do
               byte = data.read(1)
-              return Integer(n) if byte == END_MARK  # raise exception if not a number
+              return Integer(n) if byte == END_MARK
               n << byte
             end
           when END_MARK

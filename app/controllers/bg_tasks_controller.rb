@@ -6,7 +6,7 @@ class BgTasksController < ApplicationController
   
   def index
     logger.debug ':-) bg_tasks_controller.index'
-    @bg_tasks = fetch_tasks APP_CONFIG
+    @bg_tasks = fetch_tasks
     @cron_jobs = list_cron_jobs
     @task_logs = BgTaskLog.all :limit => 10
   end
@@ -16,11 +16,11 @@ class BgTasksController < ApplicationController
     if request.post?
       begin
         bg_task = BgTask.find params[:id]
-        exec_task bg_task, APP_CONFIG, logger, true
+        exec_task bg_task, logger, true        
         flash[:notice] = "Task #{bg_task.name} successfully executed."
       rescue => e
         log_error e
-        flash[:error] = "Task #{bg_task.name} failed."
+        flash[:error] = "task #{bg_task.name} failed"
       end
     end
     redirect_to :action => 'index'
@@ -48,7 +48,7 @@ class BgTasksController < ApplicationController
   def reload
     logger.debug ':-) bg_tasks_controller.reload'
     if request.post?
-      reload_tasks APP_CONFIG
+      reload_tasks
     end
     redirect_to :action => 'index'
   end

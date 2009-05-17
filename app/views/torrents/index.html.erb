@@ -12,7 +12,7 @@
       <%= render :partial => 'index_search_box' %>
     <% end %>
 
-    <% cache(@fragment_name, APP_CONFIG[:torrents_refresh_minutes].minutes.from_now) do %>
+    <% cache(@fragment_name, APP_CONFIG[:torrents][:refresh_minutes].minutes.from_now) do %>
       <%= render :partial => 'index_content' %>
     <% end %>
     

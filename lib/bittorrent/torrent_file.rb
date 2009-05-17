@@ -59,8 +59,7 @@ module Bittorrent
         end
       end
 
-      # Bencode the INFO entry. The resulted string can be used to calculate the
-      # torrent's info hash.
+      # bencode the INFO entry, which is used to calculate the torrent's info hash
       def bencode_info_entry(info)
         root = BDictionary.new
 

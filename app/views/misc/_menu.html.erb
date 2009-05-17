@@ -3,7 +3,7 @@
     <ul>
       <li><%= link_to 'Home', root_path %></li>
       <li><%= link_to 'Torrents', torrents_path %></li>
-      <% if APP_CONFIG[:torrent_upload_enabled] %>
+      <% if APP_CONFIG[:torrents][:upload_enabled] %>
         <li><%= link_to 'Upload', upload_path %></li>
       <% end %>
       <li><%= link_to 'Stuck', stuck_path %></li>

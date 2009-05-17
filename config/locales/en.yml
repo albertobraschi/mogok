@@ -22,7 +22,7 @@ en:
         success: Invitation successfully cancelled.
 
     login:
-      index:
+      login:
         temporarily_blocked: Login is temporarily blocked for your machine. Try to recover your password.
         account_disabled: This account is disabled.
         blocked: Login will remain blocked for {{hours}} hours. Try to recover your password.
@@ -171,12 +171,12 @@ en:
         username:
           required: Username required.
           taken: Username already in use.
-          invalid_length: Length must be between 3 and 20.
+          invalid_size: Length must be between 3 and 20.
           invalid_format: Username has invalid characters.
         password:
           required: Password required.
           incorrect:  Password incorrect.
-          too_short: Password length must be at least 5.
+          invalid_size: Length must be between 5 and 40.
         password_confirmation:
           invalid_confirmation: Incorrect password confirmation.
         current_password:
@@ -185,7 +185,7 @@ en:
           required: Email required.
           taken: Email already in use.
           invalid_format: Invalid email.
-          invalid_length: Length cannot exceed 100.
+          invalid_size: Length cannot exceed 100.
         invite_code:
           invalid: Invalid invite code.
           

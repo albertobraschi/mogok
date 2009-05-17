@@ -3,6 +3,7 @@ config/environment.rb
 config/app_config.yml
 config/database.yml
 config/memcached.yml
+config/bg_tasks.yml
 config/initializers/action_mailer.rb
 config/initializers/session_store.rb
 config/initializers/site_keys.rb

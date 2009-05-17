@@ -4,8 +4,9 @@ class AdmController < ApplicationController
   before_filter :admin_required
 
   def env
-    logger.debug ':-) adm_controller.env'    
-    set_env_properties    
+    logger.debug ':-) adm_controller.env'
+    @display_sensitive = !Rails.env.production? || APP_CONFIG[:adm][:display_env_info_production]
+    @env = env_properties
   end
 
   def switch_menu
@@ -32,6 +33,7 @@ class AdmController < ApplicationController
 
   def restart_passenger
     logger.debug ':-) adm_controller.restart_passenger'
+    access_denied if Rails.env.production? && !APP_CONFIG[:adm][:passenger_restart_production]
     if request.post?
       %x{touch #{File.join(RAILS_ROOT, 'tmp/restart.txt')}}
     end
@@ -40,28 +42,34 @@ class AdmController < ApplicationController
 
   private
 
-    def set_env_properties
-      @env = {}
+    def env_properties
+      h = {}
 
-      @env[:server_hostname] = %x{uname -a}
+      h[:server_hostname] = %x{uname -a}
 
-      @env[:ruby_version] = "#{RUBY_VERSION} (#{RUBY_PLATFORM})"
-      @env[:ruby_gems_version] = Gem::RubyGemsVersion
+      h[:ruby_version] = "#{RUBY_VERSION} (#{RUBY_PLATFORM})"
+      h[:ruby_gems_version] = Gem::RubyGemsVersion
 
       if defined? PhusionPassenger
-        @env[:passenger_version] = PhusionPassenger::VERSION_STRING
+        h[:passenger_version] = PhusionPassenger::VERSION_STRING
+        h[:allow_passenger_restart] = !Rails.env.production || APP_CONFIG[:adm][:passenger_restart_production]
       end
 
-      @env[:rack_version] = ::Rack.release
+      h[:rack_version] = ::Rack.release
 
-      @env[:rails_version] = Rails.version
-      @env[:rails_env] = Rails.env
-      @env[:database_adapter] = ActiveRecord::Base.configurations[RAILS_ENV]['adapter']
-      @env[:rails_root] = Rails.root
-      @env[:public_path] = Rails.public_path
-      @env[:logger_level] = Rails.logger.level
+      h[:rails_version] = Rails.version
+      h[:rails_env] = Rails.env
 
-      @env[:locale] = I18n.locale
+      db = ActiveRecord::Base.configurations[Rails.env]
+      h[:database] = "#{db['database']} (#{db['adapter']})"
+
+      h[:rails_root] = Rails.root
+      h[:public_path] = Rails.public_path
+
+      logger_level = Rails.logger.level
+      h[:logger_level] = "#{logger_level} (#{logger_level_description logger_level})"
+
+      h[:locale] = I18n.locale
 
       if CACHE_ENABLED
         unless CACHE.servers.blank?
@@ -74,8 +82,28 @@ class AdmController < ApplicationController
             h[:stats] = CACHE.stats["#{s.host}:#{s.port}"].symbolize_keys!
             a << h
           end
-          @env[:memcached_servers] = a
+          h[:memcached_servers] = a
         end
+      end
+      h
+    end
+
+    def logger_level_description(level)
+      case level
+        when 0
+          'debug'
+        when 1
+          'info'
+        when 2
+          'warn'
+        when 3
+          'error'
+        when 4
+          'fatal'
+        when 5
+          'unknown'
+        else
+          '?????'
       end
     end
 end

@@ -39,7 +39,7 @@ module ApplicationHelper
   end
 
   def avatar_image(user)
-    url = user.avatar.blank? ? APP_CONFIG[:default_avatar] : user.avatar
+    url = user.avatar.blank? ? APP_CONFIG[:users][:default_avatar] : user.avatar
     image_tag url, :class => 'avatar', :alt => 'Avatar'
   end
 

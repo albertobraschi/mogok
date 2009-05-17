@@ -6,7 +6,7 @@ class TopicsController < ApplicationController
   def show
     logger.debug ':-) topics_controller.show'
     @topic = Topic.find params[:id]
-    @posts = @topic.paginate_posts params, :per_page => APP_CONFIG[:forum_posts_page_size]
+    @posts = @topic.paginate_posts params, :per_page => APP_CONFIG[:page_size][:forum_posts]
   end
 
   def new

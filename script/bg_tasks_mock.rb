@@ -17,7 +17,7 @@ loop do
   logger.debug ':-) bg_tasks_mock awake'
   logger.debug ":-) executing at #{Time.now}"
 
-  BgTasks::Dispatcher.exec APP_CONFIG, logger, RAILS_ENV
+  BgTasks::Dispatcher.exec logger, RAILS_ENV
   
   logger.debug ':-) bg_tasks_mock going asleep'
   puts

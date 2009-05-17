@@ -19,7 +19,7 @@ class AppParamsController < ApplicationController
 
   def edit
     @app_param = AppParam.find params[:id]
-    if request.post?      
+    if request.post?
       if @app_param.update_attributes params[:app_param]
         redirect_to :action => 'index'
       end

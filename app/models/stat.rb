@@ -11,7 +11,7 @@ class Stat < ActiveRecord::Base
     Marshal.load(self.top_uploaders.unpack('m')[0]) if self.top_uploaders
   end
 
-  def self.first
+  def self.newest
     find :first, :order => 'id DESC'
   end
 

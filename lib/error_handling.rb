@@ -10,7 +10,7 @@ module ErrorHandling
     def handle_error(e)
       logger.debug ':-o error_handling.handle_error'
 
-      layout = 'public' unless current_user # also set logged user if necessary
+      layout = 'public' unless current_user # also set current user if necessary
 
       if e.is_a? ActionController::InvalidAuthenticityToken
         log_error e

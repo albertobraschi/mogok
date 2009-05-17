@@ -30,8 +30,7 @@ module AuthenticatedSystem
       if new_user
         new_user.reset_session_token!
         session[:user_id] = new_user.id
-        session[:session_token] = new_user.session_token
-        session[:adm_menu] = new_user.admin?
+        session[:session_token] = new_user.session_token        
       else
         session[:user_id] = session[:session_token] = nil
       end

@@ -13,7 +13,7 @@ class MessagesController < ApplicationController
     if valid_folder?(folder)
       @messages = current_user.paginate_messages :page => page,
                                                 :folder => folder,
-                                                :per_page => APP_CONFIG[:messages_page_size]
+                                                :per_page => APP_CONFIG[:page_size][:messages]
       toggle_new_message_alert folder, page
       session[:messenger_folder] = folder
       session[:messenger_page] = page

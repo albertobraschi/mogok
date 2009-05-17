@@ -9,7 +9,7 @@ class TrackerController < ApplicationController
     logger.debug ':-) tracker_controller.scrape'
     resp = Bittorrent::ScrapeResponse.new
     begin
-      failure 'not_allowed' unless APP_CONFIG[:tracker_scrape_enabled]
+      failure 'not_allowed' unless APP_CONFIG[:tracker][:scrape_enabled]
       begin
         req = Bittorrent::ScrapeRequest.new params
       rescue
@@ -43,7 +43,7 @@ class TrackerController < ApplicationController
 
       ensure_announce_req_valid req
 
-      exec_announce req, resp, APP_CONFIG[:tracker_log_announces]
+      exec_announce req, resp, APP_CONFIG[:tracker][:log_announces]
 
       prepare_announce_resp resp
     rescue TrackerFailure => e
@@ -61,13 +61,13 @@ class TrackerController < ApplicationController
       set_torrent req
       set_user req
       req.ip = request.remote_ip
-      req.set_numwant APP_CONFIG[:tracker_announce_resp_max_peers]
-      req.client = parse_client req.peer_id, APP_CONFIG[:tracker_ban_unknown_clients]
+      req.set_numwant APP_CONFIG[:tracker][:announce_resp_max_peers]
+      req.client = parse_client req.peer_id, APP_CONFIG[:tracker][:ban_unknown_clients]
     end
 
     def prepare_announce_resp(resp)
-      resp.interval = APP_CONFIG[:tracker_announce_interval_seconds]
-      resp.min_interval = APP_CONFIG[:tracker_announce_min_interval_seconds]
+      resp.interval = APP_CONFIG[:tracker][:announce_interval_seconds]
+      resp.min_interval = APP_CONFIG[:tracker][:announce_min_interval_seconds]
     end
 
     def ensure_announce_req_valid(req)

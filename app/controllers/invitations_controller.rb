@@ -6,14 +6,14 @@ class InvitationsController < ApplicationController
   def index
     logger.debug ':-) invitations_controller.index'
     ticket_required :inviter
-    @app_params = AppParam.load
+    @app_params = AppParam.params_hash
     @invitations = current_user.invitations
-    @invitees = current_user.paginate_invitees params, :per_page => APP_CONFIG[:users_page_size]
+    @invitees = current_user.paginate_invitees params, :per_page => APP_CONFIG[:page_size][:users]
   end
   
   def new
     logger.debug ':-) invitations_controller.new'
-    @app_params = AppParam.load
+    @app_params = AppParam.params_hash
     access_denied if !@app_params[:signup_open] && !current_user.admin?
     ticket_required :inviter
     if request.post?

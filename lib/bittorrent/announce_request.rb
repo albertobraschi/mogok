@@ -3,18 +3,18 @@ module Bittorrent
 
   class AnnounceRequest
 
-    STARTED   = 'started';
-    STOPPED   = 'stopped';
-    COMPLETED = 'completed';
+    STARTED   = 'started'
+    STOPPED   = 'stopped'
+    COMPLETED = 'completed'
 
-    # params that come in the request
+    # params collected from the client request
     attr_accessor :event, :ip, :port
     attr_accessor :downloaded, :uploaded, :left
-    attr_accessor :peer_id, :info_hash
+    attr_accessor :passkey, :peer_id, :info_hash
     attr_accessor :numwant, :no_peer_id, :compact, :key
 
     # application info
-    attr_accessor :torrent, :passkey, :user, :client, :seeder
+    attr_accessor :torrent, :user, :client, :seeder
     attr_accessor :current_action, :last_action_at
     attr_accessor :up_offset, :down_offset
 
@@ -53,9 +53,16 @@ module Bittorrent
     end
 
     def valid?
-      return false if self.event == COMPLETED && self.left != 0
-      return false if self.info_hash.blank? || self.port.blank? || self.peer_id.blank?
-      true
+      case
+        when self.event == COMPLETED && self.left != 0
+          false
+        when self.info_hash.blank? || self.port.blank? || self.peer_id.blank?
+          false
+        else
+          true
+      end
     end
   end
 end
+
+

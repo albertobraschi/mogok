@@ -20,6 +20,9 @@
         value
       </td>
       <td class="header">
+        class
+      </td>
+      <td class="header">
         &nbsp;
       </td>
       <td class="header">
@@ -37,6 +40,9 @@
           </td>
           <td>
             <%= t.value %>
+          </td>
+          <td>
+            <%= t.value_object.class %>
           </td>
           <td class="no_wrap">
             <%= link_to '[ edit ]', {:action => 'edit', :id => t}, {:class => 'admin'} %>

@@ -8,8 +8,8 @@ class UsersController < ApplicationController
     logger.debug ':-) users_controller.index'
     params[:order_by] = 'username' if params[:order_by].blank?
 
-    @users = User.search params, current_user, :per_page => APP_CONFIG[:users_page_size]
-    @users.desc_by_default = APP_CONFIG[:users_desc_by_default]
+    @users = User.search params, current_user, :per_page => APP_CONFIG[:page_size][:users]
+    @users.desc_by_default = APP_CONFIG[:desc_by_default][:users]
     
     @roles = Role.all_for_search
     @countries = Country.cached_all
@@ -135,10 +135,10 @@ class UsersController < ApplicationController
   def uploads
     logger.debug ':-) users_controller.uploads'
     params[:order_by], params[:desc]= 'created_at', '1' if params[:order_by].blank?
-    @torrents = current_user.paginate_uploads params, :per_page => APP_CONFIG[:user_history_page_size]
+    @torrents = current_user.paginate_uploads params, :per_page => APP_CONFIG[:page_size][:user_history]
     set_bookmarked @torrents
     unless @torrents.blank?
-      @torrents.desc_by_default = APP_CONFIG[:torrents_desc_by_default]
+      @torrents.desc_by_default = APP_CONFIG[:desc_by_default][:torrents]
     end
   end
 
@@ -155,14 +155,14 @@ class UsersController < ApplicationController
     if !@seeding && @user != current_user && !current_user.admin?
       access_denied unless @user.display_downloads?
     end
-    @peers = @user.paginate_peers params, :per_page => APP_CONFIG[:user_activity_page_size]
+    @peers = @user.paginate_peers params, :per_page => APP_CONFIG[:page_size][:user_activity]
   end  
   
   def show_uploads
     logger.debug ':-) users_controller.show_uploads'
     params[:order_by], params[:desc]= 'created_at', '1'
     @user = User.find params[:id]
-    @torrents = @user.paginate_uploads params, :per_page => APP_CONFIG[:user_history_page_size]
+    @torrents = @user.paginate_uploads params, :per_page => APP_CONFIG[:page_size][:user_history]
   end  
   
   def show_snatches
@@ -171,7 +171,7 @@ class UsersController < ApplicationController
     if @user != current_user && !current_user.admin?
       access_denied unless @user.display_downloads?
     end
-    @snatches = @user.paginate_snatches params, :per_page => APP_CONFIG[:user_history_page_size]
+    @snatches = @user.paginate_snatches params, :per_page => APP_CONFIG[:page_size][:user_history]
   end
   
   private

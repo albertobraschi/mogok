@@ -5,7 +5,7 @@ class PeersController < ApplicationController
 
   def index
     logger.debug ':-) peers_controller.index'
-    @peers = Peer.search params, :per_page => APP_CONFIG[:peers_page_size]
+    @peers = Peer.search params, :per_page => APP_CONFIG[:page_size][:peers]
   end
 
   def destroy
