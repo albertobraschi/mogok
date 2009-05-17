@@ -5,11 +5,7 @@ class PeerConn < ActiveRecord::Base
   index [:ip, :port] #cache_money
 
   def self.delete_peerless
-    # delete peer_conns that does not have any peer
+    # delete peer_conns that don't have any associated peer
     connection.execute 'DELETE FROM peer_conns WHERE peer_conns.id NOT IN (SELECT DISTINCT peer_conn_id FROM peers)'
-  end
-
-  def self.find_peer_conn(ip, port)
-    find :first, :conditions => {:ip => ip, :port => port}
   end
 end

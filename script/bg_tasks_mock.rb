@@ -9,7 +9,7 @@ logger = RAILS_DEFAULT_LOGGER = Logger.new($stdout)
 
 require File.join(File.dirname(__FILE__), '../config/environment.rb')
 
-logger.debug ":-) bg_tasks_mock started - RAILS_ENV: #{RAILS_ENV}"
+logger.debug ":-) bg_tasks_mock started - env: #{RAILS_ENV}"
 
 loop do
   puts
@@ -17,7 +17,7 @@ loop do
   logger.debug ':-) bg_tasks_mock awake'
   logger.debug ":-) executing at #{Time.now}"
 
-  BgTasks::Dispatcher.exec logger, RAILS_ENV
+  BgTasks::Dispatcher.exec logger
   
   logger.debug ':-) bg_tasks_mock going asleep'
   puts

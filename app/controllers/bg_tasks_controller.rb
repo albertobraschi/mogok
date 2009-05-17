@@ -15,12 +15,12 @@ class BgTasksController < ApplicationController
     logger.debug ':-) bg_tasks_controller.exec'
     if request.post?
       begin
-        bg_task = BgTask.find params[:id]
-        exec_task bg_task, logger, true        
-        flash[:notice] = "Task #{bg_task.name} successfully executed."
+        t = BgTask.find params[:id]
+        exec_task t, logger, true
+        flash[:notice] = "Task #{t.name} successfully executed."
       rescue => e
         log_error e
-        flash[:error] = "task #{bg_task.name} failed"
+        flash[:error] = "Task #{t.name} failed."
       end
     end
     redirect_to :action => 'index'

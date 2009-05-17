@@ -1,4 +1,6 @@
 
+require 'ping'
+
 class Peer < ActiveRecord::Base
   concerns :callbacks, :finders
 
@@ -25,6 +27,21 @@ class Peer < ActiveRecord::Base
     self.client_code = announce_req.client.code
     self.client_name = announce_req.client.name
     self.client_version = announce_req.client.version
+  end
+
+  def set_connectivity
+    # note: orphaned peer_conns should be wiped by a background task
+    if new_record?
+      self.peer_conn = PeerConn.find_by_ip_and_port(self.ip, self.port) || PeerConn.new(:ip => self.ip, :port => self.port)
+    end
+    if self.peer_conn.connectable.nil? # also if not new peer and previous check was timeouted
+      self.peer_conn.connectable = Ping.pingecho(self.peer_conn.ip, 5, self.peer_conn.port) # nil if timeouted
+      self.peer_conn.save
+    end
+  end
+
+  def connectable?
+    self.peer_conn.connectable
   end
 
   def completion_percentage

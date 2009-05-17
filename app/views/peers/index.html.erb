@@ -138,7 +138,7 @@
             <%= p.port %>
           </td>
           <td>
-            <%= p.peer_conn.connectable ? p.peer_conn.connectable : '?' %>
+            <%= p.peer_conn.connectable.nil? ? 'nil' : p.peer_conn.connectable %>
           </td>
           <td>
             <%= "#{p.client_name} #{p.client_version}" %>

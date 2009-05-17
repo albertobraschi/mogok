@@ -12,10 +12,6 @@ module CryptUtils
     limit ? s[0, limit] : s
   end
 
-  def self.hmac_md5(key, data)
-    OpenSSL::HMAC.hexdigest(OpenSSL::Digest::MD5.new, key, data).upcase
-  end
-
   def self.hexencode(data)
     Digest.hexencode(data).upcase
   end

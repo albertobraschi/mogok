@@ -94,10 +94,10 @@ class TrackerController < ApplicationController
     end
 
     def set_user(req)
-      req.user = User.find_by_id(User.parse_id_from_announce_passkey(req.passkey))
+      req.user = User.find_by_id(parse_user_id_from_announce_passkey(req.passkey))
       if req.user && req.user.active?
         logger.debug ":-) valid user: #{req.user.id} [#{req.user.username}]"
-        if req.user.announce_passkey(req.torrent) != req.passkey
+        if req.passkey != make_announce_passkey(req.torrent, req.user)
           failure 'invalid_passkey'
           logger.debug ":-o invalid announce passkey: #{req.passkey}"
         end
@@ -112,3 +112,8 @@ class TrackerController < ApplicationController
       raise TrackerFailure.new(error_key)
     end
 end
+
+
+
+
+  

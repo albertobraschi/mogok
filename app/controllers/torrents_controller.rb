@@ -167,7 +167,7 @@ class TorrentsController < ApplicationController
     logger.debug ':-) torrents_controller.download'
     t = Torrent.find_by_id params[:id]
     if torrent_available?(t)
-      t.announce_url = announce_url current_user.announce_passkey(t)
+      t.announce_url = make_announce_url t, current_user
       t.comment = APP_CONFIG[:torrents][:file_comment] if APP_CONFIG[:torrents][:file_comment]
       file_name = TorrentsHelper.torrent_file_name t, APP_CONFIG[:torrents][:file_prefix]
       send_data t.out, :filename => file_name, :type => 'application/x-bittorrent', :disposition => 'attachment'

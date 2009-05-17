@@ -122,12 +122,12 @@ implemented if necessary. Currently the application won't send an activation ema
 - Announce URLs
   - are used by the bittorrent clients to send requests to the tracker
   - they contain a special value called announce passkey, that identifies the user who is sending the
-    request (e.g. http://localhost/tracker/ANNOUNCE_PASSKEY/announce)
-  - when a user downloads a torrent file, this special url is included in it
-  - this means that if a torrent is stolen, the thief will be able to download on the user's bill
-  - but the application generates the announce passkeys using the user personal passkey and the torrent
-    announce key (using OpenSSL::HMAC), so if a user has one torrent stolen it won't compromise all the
-    torrents of that particular user
+    request (e.g. http://localhost/tracker/USER_ANNOUNCE_PASSKEY/announce)
+  - when a user downloads a torrent file, this special url is included in it. this means that if a
+    torrent is stolen, the thief will be able to download on the user's bill. to minimize the damage the
+    application generates the announce passkeys using the user personal passkey and the torrent
+    announce key (using OpenSSL::HMAC), so if a user has one torrent stolen it will compromise only
+    that particular torrent
   - users have to be oriented to reset their passkeys if they notice any suspicious activity in their
     accounts, like peers with strange IPs or unusual ratio variation
 
@@ -146,7 +146,7 @@ implemented if necessary. Currently the application won't send an activation ema
   - the tasks scripts are in script/
   - tasks can be executed individually in the tasks page (that won't alter the schedule)
   - there is a log page where the tasks report their execution status
-  - the tasks' default interval of execution in the file bg_tasks.yml are optional
+  - the tasks' default interval of execution in the file bg_tasks.yml is optional
   - if next_exec_at is empty the task won't be executed, just scheduled
   - if interval is empty the task will be ignored
   - tasks are supposed to run as a cron job, but there is a mock for testing
@@ -159,15 +159,16 @@ implemented if necessary. Currently the application won't send an activation ema
   > Running as a cron job
     - edit your cron jobs using the command
       $ crontab -e
-    - use the command below (with your app path) to run the bg_tasks every hour at minute 5
+    - use the cron job below (with your app path) to run the bg_tasks every hour at minute 5
       5 * * * * RAILS_ENV=production /home/user/apps/mogok/script/runner /home/user/apps/mogok/script/bg_tasks.rb
     - or replace the '5' for '*' to run every minute if you are testing
     - IMPORTANT: the file APP_ROOT/script/runner must be an executable (chmod +x runner)
-    - in the tasks page you can see the current cron jobs in your system (note that in some systems cron jobs are separated by user)
+    - in the tasks page you can see the current cron jobs in your system (note that in some systems
+      cron jobs are separated by user)
     - other useful cron commands
       $ crontab -l (list cron jobs)
       $ crontab -r (remove all)
-    - you can check if the tasks are running properly in the the tasks logs page
+    - you can check if the tasks are running properly in the tasks logs page
 
 
 # SOME TECHNICAL THINGS

@@ -1,5 +1,5 @@
-require 'ping'
 require 'ipaddr'
+require 'openssl'
 
 module Bittorrent
 
@@ -24,6 +24,19 @@ module Bittorrent
         end
         c.version = version
         c
+      end
+
+      def make_announce_passkey(torrent, user)
+        hmac = OpenSSL::HMAC.hexdigest(OpenSSL::Digest::MD5.new, torrent.announce_key, user.passkey).upcase
+        hmac + user.id.to_s
+      end
+
+      def parse_user_id_from_announce_passkey(passkey)
+        begin
+          passkey.size > 32 ? Integer(passkey[32, passkey.size - 1]) : nil
+        rescue
+          nil
+        end
       end
 
       def exec_scrape(req, resp)
@@ -65,7 +78,7 @@ module Bittorrent
         logger.debug ':-) create peer'
         p = Peer.new
         p.init_attributes req
-        set_peer_connectivity p
+        p.set_connectivity
         p.save
         req.torrent = p.torrent
       end
@@ -74,25 +87,13 @@ module Bittorrent
         logger.debug ':-) update peer'
         req.last_action_at = p.last_action_at
         p.set_attributes req
-        set_peer_connectivity p
+        p.set_connectivity
         p.save
       end
 
       def destroy_peer(p)
         logger.debug ':-) destroy peer'
         p.destroy
-      end
-
-      def set_peer_connectivity(p)
-        # orphaned peer_conns are wiped by a background task
-        if p.new_record?
-          peer_conn = PeerConn.find_peer_conn(p.ip, p.port)
-          p.peer_conn = peer_conn || PeerConn.new(:ip => p.ip, :port => p.port)
-        end
-        if p.peer_conn.connectable.nil? # also in case an existing peer_conn is still nil due to timeouted
-          p.peer_conn.connectable = Ping.pingecho p.peer_conn.ip, 5, p.peer_conn.port # nil if timeouted
-          p.peer_conn.save
-        end
       end
 
       # calculate how much was uploaded and downloaded since the last announce

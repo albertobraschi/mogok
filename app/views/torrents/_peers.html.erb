@@ -47,13 +47,9 @@
             <%= textual_time_interval p.started_at, 'ago' %>
           </td>
           <td>
-            <% if p.peer_conn && p.peer_conn.connectable %>
-              <span class="<%= p.peer_conn.connectable? ? 'connectable' : 'unconnectable' %>">
-                <%= p.peer_conn.connectable? ? 'yes' : 'no' %>
-              </span>
-            <% else %>
-              n/a
-            <% end %>
+            <span class="<%= p.connectable? ? 'connectable' : 'unconnectable' %>">
+              <%= p.connectable? ? 'yes' : 'no' %>
+            </span>
           </td>          
           <td>
             <%= textual_data_amount p.uploaded %>

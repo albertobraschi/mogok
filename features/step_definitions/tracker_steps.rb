@@ -1,4 +1,6 @@
 
+include Bittorrent::Tracker
+
 # GIVEN
 
 Given /^the torrent (.*) has one seeding peer by user (.*) at ip (.*) and port (\d+)$/ do |torrent_name, username, ip, port|
@@ -20,7 +22,7 @@ end
 When /^user (.*) sends a scrape request for torrent (.*)$/ do |username, torrent_name|
   t = Torrent.find_by_name torrent_name
   u = fetch_user username
-  scrape_url = tracker_url(:action => 'scrape', :passkey => u.announce_passkey(t))
+  scrape_url = tracker_url(:action => 'scrape', :passkey => make_announce_passkey(t, u))
   get scrape_url, {:info_hash => t.info_hash}
 end
 
@@ -30,7 +32,7 @@ When /^user (.*) sends an announce with event (.*) for torrent (.*)$/ do |userna
   @leechers_count = t.leechers_count
   @seeders_count = t.seeders_count
   u = fetch_user username
-  announce_url = tracker_url(:action => 'announce', :passkey => u.announce_passkey(t))
+  announce_url = tracker_url(:action => 'announce', :passkey => make_announce_passkey(t, u))
   left = (event == 'completed') ? 0 : 12345
   get announce_url, {:info_hash => t.info_hash,
                      :compact => 0, # compact is 0 so we can analize the response
@@ -46,7 +48,7 @@ When /^user (.*) sends a no event announce for torrent (.*) with (\d+) uploaded 
   u = fetch_user username
   @downloaded = u.downloaded
   @uploaded = u.uploaded
-  announce_url = tracker_url(:action => 'announce', :passkey => u.announce_passkey(t))
+  announce_url = tracker_url(:action => 'announce', :passkey => make_announce_passkey(t, u))
   get announce_url, {:info_hash => t.info_hash,
                      :compact => 0,
                      :port => 33333,
