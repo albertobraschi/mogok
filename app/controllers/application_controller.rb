@@ -10,14 +10,19 @@ class ApplicationController < ActionController::Base
 
     def after_logged_in_required # callback from app_authorization
       current_user.register_access
-      set_user_warnings
+      set_user_alerts
     end
 
-    def set_user_warnings
+    def set_user_alerts
       if current_user.admin?
-        @error_log_alert = ErrorLog.has? # check if there are error logs
-      elsif current_user.mod?
-        @report_alert = Report.has_open? # check if there are open reports
+        def current_user.error_log?
+          ErrorLog.has?
+        end
+      end      
+      if current_user.mod?
+        def current_user.open_report?
+          Report.has_open?
+        end
       end
     end
 
