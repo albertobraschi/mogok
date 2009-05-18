@@ -47,14 +47,12 @@ module Bittorrent
       end
 
       def exec_announce(req, resp, log_announce = true)
-        logger.debug ':-) tracker.exec_announce'
-        logger.debug ":-) event: #{req.event}"
-
+        logger.debug ":-) tracker.exec_announce: event = [#{req.event}]"
         req.current_action = Time.now
-
         peer = Peer.find_peer req.torrent, req.user, req.ip, req.port
-
-        if peer
+        unless peer
+          create_peer req unless req.stopped?
+        else
           calculate_offsets req, peer
           unless req.stopped?
             register_snatch req if req.completed?
@@ -63,12 +61,8 @@ module Bittorrent
             destroy_peer peer
           end
           update_user_counters req
-        else
-          create_peer req unless req.stopped?
         end
-
         AnnounceLog.create req if log_announce
-
         prepare_resp req, resp unless req.stopped?
       end
 
@@ -77,7 +71,7 @@ module Bittorrent
       def create_peer(req)
         logger.debug ':-) create peer'
         p = Peer.new
-        p.init_attributes req
+        p.set_attributes req
         p.set_connectivity
         p.save
         req.torrent = p.torrent

@@ -141,6 +141,7 @@ implemented if necessary. Currently the application won't send an activation ema
 - Background Tasks
   These are tasks that run periodically to keep the site tidy. They clean stale data, update things, etc.
   - the module BgTasks is in lib/bg_tasks/
+  - the tasks configuration file is in config/bg_tasks.yml
   - to add a new task create the task class, add an entry to bg_tasks.yml and reload the tasks
   - for security reasons tasks names must follow the pattern 'BgTasks::TaskClassName'
   - the tasks scripts are in script/
