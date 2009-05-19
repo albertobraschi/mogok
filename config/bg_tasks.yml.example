@@ -1,7 +1,7 @@
 
 cleanup_peers:
   class_name: BgTasks::CleanupPeers
-  interval_minutes: 70
+  interval_minutes: 60
   params:
     peer_max_inactivity_minutes: 90
 
@@ -21,3 +21,47 @@ cleanup:
 refresh_stats:
   class_name: BgTasks::RefreshStats
   interval_minutes: 360
+
+promote_demote:
+  class_name: BgTasks::PromoteDemote
+  interval_minutes: 60
+  params:
+    user_x_power_user:
+      lower: user
+      higher: power_user
+      min_uploaded: 50
+      min_ratio: 0.5
+    power_user_x_uploader:
+      lower: power_user
+      higher: uploader
+      min_uploaded: 100
+      min_ratio: 0.5
+
+ratio_watch:
+  class_name: BgTasks::RatioWatch
+  interval_minutes: 60
+  params:
+    level_one:
+      min_downloaded: 10
+      max_downloaded: 20
+      min_ratio: 0.1
+      period: 15
+    level_two:
+      min_downloaded: 20
+      max_downloaded: 40
+      min_ratio: 0.2
+      period: 15
+    level_three:
+      min_downloaded: 40
+      max_downloaded: 80
+      min_ratio: 0.4
+      period: 30
+    level_four:
+      min_downloaded: 80
+      max_downloaded: 100
+      min_ratio: 0.5
+      period: 45
+    level_five:
+      min_downloaded: 100
+      min_ratio: 0.7
+      period: 60
