@@ -21,10 +21,10 @@ module BgTasks
           next if u.has_ticket?(:staff) || u.has_ticket?(:inactivity_exempt)
           if u.torrents.count > 0
             u.inactivate # inactivate if user has at least one torrent
-            app_log "User #{u.username} inactivated by system due to inactivity."
+            app_log "User #{u.username} inactivated by system (unused account)."
           else
             u.destroy
-            app_log "User #{u.username} removed by system due to inactivity."
+            app_log "User #{u.username} removed by system (unused account)."
           end
         end
       end

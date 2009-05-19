@@ -39,15 +39,15 @@ class User
   # Assign role 'defective' to all users whose downloaded data amount is between the specified
   # min and max and have ratio below the minimum. Also sets a date as the limit for the users to
   # fix their ratio.
-  def self.set_ratio_watch(min_downloaded, max_downloaded, min_ratio, watch_until)
+  def self.start_ratio_watch(min_downloaded, max_downloaded, min_ratio, watch_until)
     defective_role = Role.find_by_name(Role::DEFECTIVE)
 
     q, h = '', {}
     q << 'active = true '
+    q << 'AND ratio_watch_until IS NULL '
     q << 'AND downloaded > :min_downloaded '
     q << 'AND downloaded < :max_downloaded ' if max_downloaded
-    q << 'AND ratio < :min_ratio '
-    q << 'AND ratio_watch_until IS NULL '
+    q << 'AND ratio < :min_ratio '    
     h[:min_downloaded] = min_downloaded
     h[:max_downloaded] = max_downloaded if max_downloaded
     h[:min_ratio] = min_ratio
@@ -64,11 +64,11 @@ class User
     end
   end
 
-  # Search for all users already under ratio watch (role is 'defective' and ratio_watch_until
+  # Search for all users under ratio watch (role is 'defective' and ratio_watch_until
   # is not null) and check if the user achieved the minimum ratio required by its downloaded data
   # amount (between the min and max). If user has the required ratio then its role is set
   # back to 'user'. If not, user is inactivated or removed from the system.
-  def self.check_ratio_watch(min_downloaded, max_downloaded, min_ratio)
+  def self.finish_ratio_watch(min_downloaded, max_downloaded, min_ratio)
     defective_role = Role.find_by_name(Role::DEFECTIVE)
     user_role = Role.find_by_name(Role::USER)
 
@@ -92,11 +92,11 @@ class User
       else
         if u.torrents.count > 0 # if user has at least one torrent
           u.inactivate 
-          Log.create "User #{u.username} inactivated by system due to violation of ratio rules."
+          Log.create "User #{u.username} inactivated by system (ratio rules)."
           logger.debug ":-) user #{u.username} inactivated"
         else
           u.destroy
-          Log.create "User #{u.username} removed by system due to violation of ratio rules."
+          Log.create "User #{u.username} removed by system (ratio rules)."
           logger.debug ":-) user #{u.username} destroyed"
         end
       end

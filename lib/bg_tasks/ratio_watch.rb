@@ -14,8 +14,8 @@ module BgTasks
           min_ratio = rule[:min_ratio]
           watch_until = rule[:period].days.from_now
 
-          User.set_ratio_watch(min_downloaded, max_downloaded, min_ratio, watch_until)
-          User.check_ratio_watch(min_downloaded, max_downloaded, min_ratio)
+          User.start_ratio_watch(min_downloaded, max_downloaded, min_ratio, watch_until)
+          User.finish_ratio_watch(min_downloaded, max_downloaded, min_ratio)
         end
       end
   end

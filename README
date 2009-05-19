@@ -162,10 +162,10 @@ implemented if necessary. Currently the application won't send an activation ema
     - promote_demote
       assign roles to users based on their ratio and uploaded data amount
     - ratio_watch
-      require users to keep acceptable ratios based on how much data they've downloaded. when
-      users violate the ratio rules their roles are set to 'defective' and a date is defined as a
+      require users to maintain a minimum ratio based on how much data they've downloaded. when
+      users violate the ratio requirements their roles are set to 'defective' and a date is defined as a
       limit for them to improve their ratio. after this date the system will check if the defectives'
-      ratio is ok and set their role back to 'user' or invalidate/remove them.
+      ratio is ok and set their roles back to 'user' or invalidate/remove them.
   > Running the mock
     - also works in Windows
     - will run in 'development' mode by default
