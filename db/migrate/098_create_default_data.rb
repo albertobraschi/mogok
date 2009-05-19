@@ -12,6 +12,7 @@ class CreateDefaultData < ActiveRecord::Migration
     self.create_role 3, Role::ADMINISTRATOR, 'Administrator','user_admin', 'staff inviter'
     self.create_role 4, Role::MODERATOR, 'Moderator','user_mod', 'staff inviter'
     self.create_role 5, Role::USER, 'User','user_user'
+    self.create_role 5, Role::DEFECTIVE, 'Defective','user_defective'
 
     # style and country
     s = Style.create :id => 1, :name => 'default', :stylesheet => 'default.css'
@@ -35,27 +36,25 @@ class CreateDefaultData < ActiveRecord::Migration
 
   private
 
-  def self.create_role(id, name, description, css_class, tickets = nil)
-    r = Role.new :id => id, :description => description, :css_class => css_class, :tickets => tickets
-    r.name = name # attribute name must be assigned separately
-    r.save
-  end
+    def self.create_role(id, name, description, css_class, tickets = nil)
+      r = Role.new :id => id, :description => description, :css_class => css_class, :tickets => tickets
+      r.name = name # attribute name must be assigned separately
+      r.save
+    end
 
-  def self.create_user(id, username, role, style, country = nil)
-    style = Style.find_by_name 'default'
-    u = User.new(:id => id,
-                 :username => username,
-                 :password => username,
-                 :style_id => style.id,
-                 :country_id => (country.id if country),
-                 :email => "#{username}@mail.com",
-                 :save_sent => false,
-                 :display_downloads => false,
-                 :display_last_request_at => false,
-                 :uploaded => 0,
-                 :downloaded => 0)
-    u.role = role # attribute role_id must be assigned separately
-    u.reset_passkey
-    u.save(false)
-  end
+    def self.create_user(id, username, role, style, country = nil)
+      style = Style.find_by_name 'default'
+      u = User.new(:id => id,
+                   :username => username,
+                   :password => username,
+                   :style_id => style.id,
+                   :country_id => (country.id if country),
+                   :email => "#{username}@mail.com",
+                   :save_sent => false,
+                   :display_downloads => false,
+                   :display_last_request_at => false)
+      u.role = role # attribute role_id must be assigned separately
+      u.reset_passkey
+      u.save(false)
+    end
 end

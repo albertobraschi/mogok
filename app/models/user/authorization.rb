@@ -23,6 +23,10 @@ class User
     admin? || mod?
   end
 
+  def defective?
+    self.role.defective?
+  end
+
   def has_ticket?(ticket)
     self.role.has_ticket?(ticket) || (self.tickets && self.tickets.split(' ').include?(ticket.to_s))
   end  

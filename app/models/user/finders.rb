@@ -66,7 +66,7 @@ class User
     params[:username] = nil if params[:username] && params[:username].size < 3
 
     paginate :conditions => search_conditions(params, searcher),
-             :order => search_order_by(params),
+             :order => order_by(params[:order_by], params[:desc]),
              :page => current_page(params[:page]),
              :per_page => args[:per_page]
   end
@@ -76,8 +76,13 @@ class User
   end
 
   def self.top_contributors(args)
-    a = []
-    q = "SELECT user_id, COUNT(*) AS uploads FROM torrents WHERE user_id IS NOT NULL GROUP BY user_id ORDER BY uploads DESC LIMIT #{args[:limit]}"
+    q, a = '', []
+    q << 'SELECT user_id, COUNT(*) AS uploads '
+    q << '  FROM torrents '
+    q << '  WHERE user_id IS NOT NULL '
+    q << '  GROUP BY user_id '
+    q << '  ORDER BY uploads DESC '
+    q << "  LIMIT #{args[:limit]}"
     result = connection.select_all q
     result.each {|r| a << {:user => find(r['user_id']), :torrents => r['uploads']} }
     a
@@ -134,13 +139,5 @@ class User
         h[:country_id] = params[:country_id].to_i
       end
       [s, h]
-    end
-
-    def self.search_order_by(params)
-      if params[:order_by] == 'ratio'
-        "uploaded/downloaded#{' DESC' if params[:desc] == '1'}"
-      else
-        order_by(params[:order_by], params[:desc])
-      end
     end
 end

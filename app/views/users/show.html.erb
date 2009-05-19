@@ -5,6 +5,8 @@
   <div class="inner" style="width:880px;">
     <h2>User Details</h2>
 
+    <%= content_tag('div', flash[:ratio_watch], :class => 'alert') if flash[:ratio_watch] %>
+
     <%= render :partial => 'misc/flash', :locals => {:flash => flash} %>
     
     <table class="details">
@@ -69,6 +71,16 @@
             <%= @user.active %>
           </td>
         </tr>
+        <% if @user.ratio_watch_until %>
+          <tr>
+            <td class="label">
+              RATIO WATCH UNTIL
+            </td>
+            <td>
+              <%= l(@user.ratio_watch_until, :format => :db) %>
+            </td>
+          </tr>
+        <% end %>
       <% end %>
       <% if current_user.has_ticket?(:staff) && !@user.staff_info.blank? %>
         <tr>

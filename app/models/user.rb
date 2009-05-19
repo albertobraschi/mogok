@@ -1,9 +1,9 @@
 
 
 class User < ActiveRecord::Base
-  concerns :authentication, :authorization, :password_recovery, :signup
+  concerns :authentication, :authorization, :pass_recovery, :signup
   concerns :callbacks, :finders, :validation
-  concerns :tracker
+  concerns :ratio_policy, :tracker
 
   strip_attributes! # strip_attributes
   
@@ -27,6 +27,11 @@ class User < ActiveRecord::Base
   belongs_to :style
   belongs_to :inviter, :class_name => 'User', :foreign_key => 'inviter_id'
 
+  # I18n shortcut
+  def self.t(key, args = {})
+    I18n.t("model.user.#{key}", args)
+  end
+
   def register_access
     if self.last_request_at.blank? || self.last_request_at < 3.minutes.ago
       update_attribute :last_request_at, Time.now
@@ -39,6 +44,14 @@ class User < ActiveRecord::Base
 
   def save_sent?
     self.save_sent && !system_user?
+  end
+
+  def inactivate
+    update_attribute :active, false
+  end
+
+  def activate
+    update_attribute :active, true
   end
 
   def editable_by?(updater)
@@ -54,8 +67,8 @@ class User < ActiveRecord::Base
     true
   end
 
-  def edit(params, updater, current_password)
-    if set_attributes(params, updater, current_password)
+  def edit(params, updater, current_password, update_counters = false)
+    if set_attributes(params, updater, current_password, update_counters)
       return save
     end
     false
@@ -63,7 +76,7 @@ class User < ActiveRecord::Base
 
   private
 
-    def set_attributes(params, updater, current_password)
+    def set_attributes(params, updater, current_password, update_counters = false)
       self.country_id = params[:country_id]
       self.style_id = params[:style_id]
       self.gender_id = params[:gender_id]
@@ -106,7 +119,12 @@ class User < ActiveRecord::Base
         self.tickets = params[:tickets]
         self.active = params[:active] if self.id != 1
         self.staff_info = params[:staff_info]
-        self.uploaded, self.downloaded = params[:uploaded], params[:downloaded] if params[:update_stats] == '1'
+        self.ratio_watch_until = params[:ratio_watch_until]
+        if update_counters
+          self.uploaded = params[:uploaded]
+          self.downloaded = params[:downloaded]
+          self.ratio = calculate_ratio # tracker concern
+        end
       end
 
       unless params[:password].blank?

@@ -30,7 +30,8 @@ class CreateData < ActiveRecord::Migration
 
   def self.create_roles
     # roles 1 (owner), 2 (admin), 3 (mod) and 4 (user) are created in the create_default_data migration
-    self.create_role 'librarian', 'Librarian','user_librarian', 'staff inviter'
+    self.create_role 'power_user', 'Power user','user_power_user', 'inviter'
+    self.create_role 'uploader', 'Uploader','user_uploader', 'inviter'
     self.create_role 'vip', 'VIP','user_vip', 'inviter'
   end
 
@@ -292,7 +293,8 @@ class CreateData < ActiveRecord::Migration
   def self.create_test_users
     self.create_test_user 'admin', Role.find_by_name(Role::ADMINISTRATOR)
     self.create_test_user 'mod', Role.find_by_name(Role::MODERATOR)
-    self.create_test_user 'librarian', Role.find_by_name('librarian')
+    self.create_test_user 'power', Role.find_by_name('power_user')
+    self.create_test_user 'uploader', Role.find_by_name('uploader')
     self.create_test_user 'vip', Role.find_by_name('vip')
     self.create_test_user 'bill', Role.find_by_name(Role::USER)
     self.create_test_user 'jane', Role.find_by_name(Role::USER)
@@ -302,26 +304,35 @@ class CreateData < ActiveRecord::Migration
 
   private
 
-  def self.create_role(name, description, css_class, tickets = nil)
-    r = Role.new :description => description, :css_class => css_class, :tickets => tickets
-    r.name = name # attribute name must be assigned separately
-    r.save
-  end
+    def self.create_role(name, description, css_class, tickets = nil)
+      r = Role.new :description => description, :css_class => css_class, :tickets => tickets
+      r.name = name # attribute name must be assigned separately
+      r.save
+    end
 
-  def self.create_test_user(username, role)
-    country = Country.find(rand(150) + 1)
-    style = Style.find :first
-    u = User.new(:username => username,
-                 :password => 'rrrrr',
-                 :last_login_at => Time.now,
-                 :last_request_at => Time.now,
-                 :style_id => style.id,
-                 :country_id => country.id,
-                 :email => "#{username}@mail.com",
-                 :uploaded => rand(1.gigabyte),
-                 :downloaded => rand(1.gigabyte))
-    u.role = role # attribute role_id must be assigned separately
-    u.reset_passkey
-    u.save(false)
-  end
+    def self.create_test_user(username, role)
+      country = Country.find(rand(150) + 1)
+      style = Style.find :first
+
+      uploaded = rand(1.gigabyte)
+      downloaded = rand(1.gigabyte)
+
+      u = User.new(:username => username,
+                   :password => 'rrrrr',
+                   :last_login_at => Time.now,
+                   :last_request_at => Time.now,
+                   :style_id => style.id,
+                   :country_id => country.id,
+                   :email => "#{username}@mail.com",
+                   :uploaded => uploaded,
+                   :downloaded => downloaded,
+                   :ratio => calculate_ratio(uploaded, downloaded))
+      u.role = role # attribute role_id must be assigned separately
+      u.reset_passkey
+      u.save(false)
+    end
+
+    def self.calculate_ratio(uploaded, downloaded)
+      downloaded != 0 ? (uploaded / downloaded.to_f) : 0
+    end
 end

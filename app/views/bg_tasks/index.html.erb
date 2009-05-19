@@ -25,6 +25,9 @@
         next_exec
       </td>
       <td class="header">
+        active
+      </td>
+      <td class="header">
         &nbsp;
       </td>
       <td class="header">
@@ -48,6 +51,9 @@
           </td>
           <td>
             <%= I18n.l t.next_exec_at, :format => :db if t.next_exec_at %>
+          </td>
+          <td>
+            <%= t.active %>
           </td>
           <td class="no_wrap">
             <%= link_to "[ turn #{t.active? ? 'off' : 'on'} ]", {:action => 'switch', :id => t}, {:method => :post, :class => 'admin'} %>

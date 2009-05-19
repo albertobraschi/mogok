@@ -18,8 +18,7 @@ class ApplicationController < ActionController::Base
         def current_user.error_log?
           ErrorLog.has?
         end
-      end      
-      if current_user.mod?
+      elsif current_user.mod?
         def current_user.open_report?
           Report.has_open?
         end
@@ -27,7 +26,7 @@ class ApplicationController < ActionController::Base
     end
 
     def t(key, args = {})
-      super "controller.#{params[:controller]}.#{params[:action]}.#{key}", args # I18n shortcut, check 'en.yml'
+      super "controller.#{params[:controller]}.#{params[:action]}.#{key}", args # I18n convenience
     end
 
     def add_log(text, reason = nil, admin = false)

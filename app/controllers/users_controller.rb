@@ -18,6 +18,9 @@ class UsersController < ApplicationController
   def show
     logger.debug ':-) users_controller.show'
     @user = User.find params[:id]
+    if @user.ratio_watch? && @user == current_user && flash.empty?
+      flash.now[:ratio_watch] = t('ratio_watch', :until => l(@user.ratio_watch_until, :format => :date))
+    end
   end  
 
   def new
@@ -47,7 +50,7 @@ class UsersController < ApplicationController
     access_denied unless @user.editable_by? current_user
     if request.post?
       unless cancelled?
-        if @user.edit(params[:user], current_user, params[:current_password])
+        if @user.edit(params[:user], current_user, params[:current_password], params[:update_counters] == '1')
           logger.debug ':-) user edited'
           flash[:notice] = t('success')
           redirect_to :action => 'show', :id => @user

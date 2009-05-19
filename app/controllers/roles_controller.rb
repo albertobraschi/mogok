@@ -10,6 +10,7 @@ class RolesController < ApplicationController
   def new
     @role = Role.new params[:role]
     if request.post?
+      @role.name = params[:role][:name]
       if @role.save
         redirect_to :action => 'index'
       end      

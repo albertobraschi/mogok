@@ -5,7 +5,10 @@ class AdmController < ApplicationController
 
   def env
     logger.debug ':-) adm_controller.env'
-    @display_sensitive = !Rails.env.production? || APP_CONFIG[:adm][:display_env_info_production]
+    if defined?(PhusionPassenger)
+      @show_passenger_restart_link = !Rails.env.production || APP_CONFIG[:adm][:passenger_restart_production]
+    end
+    @show_sensitive = !Rails.env.production? || APP_CONFIG[:adm][:display_env_info_production]
     @env = env_properties
   end
 
@@ -51,8 +54,7 @@ class AdmController < ApplicationController
       h[:ruby_gems_version] = Gem::RubyGemsVersion
 
       if defined? PhusionPassenger
-        h[:passenger_version] = PhusionPassenger::VERSION_STRING
-        h[:allow_passenger_restart] = !Rails.env.production || APP_CONFIG[:adm][:passenger_restart_production]
+        h[:passenger_version] = PhusionPassenger::VERSION_STRING        
       end
 
       h[:rack_version] = ::Rack.release
@@ -89,22 +91,7 @@ class AdmController < ApplicationController
     end
 
     def logger_level_description(level)
-      case level
-        when 0
-          'debug'
-        when 1
-          'info'
-        when 2
-          'warn'
-        when 3
-          'error'
-        when 4
-          'fatal'
-        when 5
-          'unknown'
-        else
-          '?????'
-      end
+      (0..5).include?(level) ? ['debug', 'info', 'warn', 'error', 'fatal', 'unknown'][level] : '????'
     end
 end
 

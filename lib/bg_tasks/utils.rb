@@ -12,7 +12,6 @@ module BgTasks
       end
 
       def load_tasks
-        tasks = []
         config = open(File.join(RAILS_ROOT, 'config/bg_tasks.yml')) {|f| YAML.load(f) }
         config.symbolize_keys!
 
@@ -30,11 +29,9 @@ module BgTasks
               end
             end
             t.save
-            
-            tasks << t
           end
         end
-        tasks
+        BgTask.all
       end
 
       def reload_tasks

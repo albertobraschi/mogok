@@ -169,7 +169,7 @@
               UPDATE COUNTERS
             </td>
             <td>
-              <%= check_box_tag :update_stats, '1', false %>
+              <%= check_box_tag :update_counters, '1', false %>
             </td>
           </tr>
           <tr>
@@ -188,6 +188,16 @@
               <%= f.text_field :downloaded, :size => 25 %>
             </td>
           </tr>
+          <% if @user.ratio_watch_until %>
+            <tr>
+              <td class="label">
+                RATIO WATCH UNTIL
+              </td>
+              <td>
+                <%= f.text_field :ratio_watch_until, :size => 25 %>
+              </td>
+            </tr>
+          <% end %>
         <% end %>
         <tr>
           <td colspan="2" class="center">

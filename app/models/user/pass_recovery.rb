@@ -1,7 +1,7 @@
 
 class User
 
-  # password recovery concern
+  # password recovering concern
 
   def change_password(password, confirmation)
     if password.blank?
@@ -21,5 +21,4 @@ class User
   def self.make_password_recovery_code
     CryptUtils.md5_token
   end
-
 end

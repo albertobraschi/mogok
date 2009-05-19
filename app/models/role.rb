@@ -7,7 +7,12 @@ class Role < ActiveRecord::Base
   validates_presence_of :name, :css_class, :description
   validates_uniqueness_of :name, :case_sensitive => false
 
-  SYSTEM, OWNER, ADMINISTRATOR, MODERATOR, USER = 'system', 'owner', 'admin', 'mod', 'user'
+  SYSTEM        = 'system'
+  OWNER         = 'owner'
+  ADMINISTRATOR = 'admin'
+  MODERATOR     = 'mod'
+  USER          = 'user'
+  DEFECTIVE     = 'defective'
 
   def self.all_for_search
     find(:all).delete_if {|r| r.system? }
@@ -30,7 +35,7 @@ class Role < ActiveRecord::Base
   end
 
   def default?
-    true if [SYSTEM, OWNER, ADMINISTRATOR, MODERATOR, USER].include? self.name
+    true if [SYSTEM, OWNER, ADMINISTRATOR, MODERATOR, USER, DEFECTIVE].include? self.name
   end
 
   def system?
@@ -47,6 +52,10 @@ class Role < ActiveRecord::Base
 
   def mod?
     is? MODERATOR
+  end
+
+  def defective?
+    is? DEFECTIVE
   end
 
   def is?(role_name)

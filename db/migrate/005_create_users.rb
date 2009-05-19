@@ -39,6 +39,8 @@ class CreateUsers < ActiveRecord::Migration
       t.column :passkey, :string, :null => false
       t.column :uploaded, 'BIGINT(20)', :null => false, :default => 0
       t.column :downloaded, 'BIGINT(20)', :null => false, :default => 0
+      t.column :ratio, :decimal, :precision => 10, :scale => 3, :null => false, :default => 0
+      t.column :ratio_watch_until, :datetime
     end
     
     add_index :users, :username

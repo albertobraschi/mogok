@@ -70,20 +70,21 @@ when a category is selected).
 
 - User Roles
   Users are classified by roles, which define their rights to perform certain operations. The
-colors of the links in the interface indicate the minimum role that have access to it.
+colors of the links in the interface indicate the minimum role that has access to it.
   There are a set of reserved roles required by the application (check create_default_data
-migration file): system, owner, admin, mod and user. The system role is supposed to be used
-by just one user (must have id = 1) and is used to identify automatic messages (system user
-won't accept messages). Users with roles system, owner and admin can edit the profiles of
+migration file): system, owner, admin, mod, user and defective. The system role is supposed to
+be used by just one user (must have id = 1) and is used to identify automatic messages (system
+user won't accept messages). Users with roles system, owner and admin can edit the profiles of
 users with lower ranking.
-  Roles and users also have tickets to grant them rights, currently two tickets are implemented:
+  Roles and users also have tickets to grant them rights, currently three tickets are in use:
   - inviter: grants the right to send invitations
   - staff: grants right to see and edit staff info
+  - inactivity_exempt: will not be inactivated or removed if absent
 
 - Ratio policy
-  There are no features for ratio enforcement, cheat detection or ranking assignment based on ratio,
-currently the tracker only registers the data transfers reported by the clients. Such
-customizations can be easily implemented using the background tasks infra-structure (see below).
+  The application will apply ratio enforcement rules and promote users based on their ratio and
+upload credit, check the background tasks item below for more on that. Cheat detection scripts
+are not implemented though.
 
 - Mail
   The application can send emails for events like password recovery and invitation. It comes
@@ -151,6 +152,20 @@ implemented if necessary. Currently the application won't send an activation ema
   - if next_exec_at is empty the task won't be executed, just scheduled
   - if interval is empty the task will be ignored
   - tasks are supposed to run as a cron job, but there is a mock for testing
+  > Implemented tasks
+    - cleanup_peers
+      delete inactive peers based in a inactivity limit period
+    - cleanup
+      delete or inactivate records in various tables
+    - refresh_stats
+      gather stats about users, torrents, peers and so on
+    - promote_demote
+      assign roles to users based on their ratio and uploaded data amount
+    - ratio_watch
+      require users to keep acceptable ratios based on how much data they've downloaded. when
+      users violate the ratio rules their roles are set to 'defective' and a date is defined as a
+      limit for them to improve their ratio. after this date the system will check if the defectives'
+      ratio is ok and set their role back to 'user' or invalidate/remove them.
   > Running the mock
     - also works in Windows
     - will run in 'development' mode by default

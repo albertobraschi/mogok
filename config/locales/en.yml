@@ -119,6 +119,8 @@ en:
         invalid_user: Invalid user.
 
     users:
+      show:
+        ratio_watch: You are under ratio watch and have until {{until}} to fix it.
       edit:
         success: Profile successfully updated.
       destroy:
@@ -167,6 +169,9 @@ en:
           system: System do not accept messages.
 
     user:
+      apply_ratio_watch:
+        ratio_watch_notification_subject: you are under ratio watch
+        ratio_watch_notification_body: Your ratio is in violation of the site rules, you have until {{watch_until}} to fix it.
       errors:
         username:
           required: Username required.

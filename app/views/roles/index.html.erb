@@ -41,7 +41,7 @@
             <%= r.id %>
           </td>
           <td>
-            <%= r.name %>
+            <a class="<%= r.css_class %>"><%= r.name %></a>
           </td>
           <td>
             <%= r.css_class %>
@@ -66,7 +66,7 @@
       <% end %>
     <% else %>
       <tr>
-        <td colspan="7">
+        <td colspan="6">
           no roles found
         </td> 
       </tr>

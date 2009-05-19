@@ -1,28 +1,12 @@
  
 module BgTasks
 
-  class CleanupPeers
-    include BgTasks::Utils
-    
-    def exec(bg_task, logger = nil, force = false)
-      begin_at = Time.now
+  class CleanupPeers < AbstractBgTask
 
-      bg_task.schedule(logger) unless force
+    protected
 
-      if force || bg_task.exec_now?
-        params = bg_task.params_hash
-        begin
-          Peer.delete_inactives params[:peer_max_inactivity_minutes].minutes.ago
-          logger.debug ":-) task #{bg_task.name} successfully executed" if logger
-          status = 'OK'
-        rescue => e
-          status = 'FAILED'
-          log_task_error e, bg_task.name
-          logger.error ":-( task #{bg_task.name} error: #{e.message}" if logger
-          raise e if force
-        end
-        bg_task.log_exec(status, begin_at, Time.now) unless force
-      end      
-    end
+      def do_exec(params)
+        Peer.delete_inactives params[:peer_max_inactivity_minutes].minutes.ago
+      end
   end
 end
