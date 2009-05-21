@@ -1,0 +1,29 @@
+
+<% page_name 'Request Bounty Revoking' %>
+
+<div class="main">
+  <h2>Request Bounty Revoking</h2>
+
+  <div class="wish_header"><%= wish_link @wish_bounty.wish %></div>
+
+  <div class="fields_box" style="width:620px;">
+    <% form_tag :action => 'revoke' do %>
+      <table>
+        <tr>
+          <td class="grey bold">
+            After confirmation, the amount of
+            <%= textual_data_amount @wish_bounty.amount %>
+            will be refunded to your upload credit.
+          <td>
+        </tr>        <tr>
+          <td class="center">
+            <ul class="buttons">
+              <li><%= submit_tag 'Revoke', :class => 'submit' %></li>
+              <li><%= submit_tag 'Cancel', :name => 'cancel', :class => 'submit' %></li>
+            </ul>
+          </td>
+        </tr>
+      </table>
+    <% end %>
+  </div>
+</div>

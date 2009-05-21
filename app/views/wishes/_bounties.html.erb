@@ -1,0 +1,42 @@
+
+  <table class="browse left">
+    <tr>
+      <td class="header_order_by">
+        When
+      </td>
+      <td class="header">
+        User
+      </td>
+      <td class="header">
+        Amount
+      </td>
+    </tr>
+    <% unless @bounties.blank? %>
+      <% @bounties.each do |b| %>
+        <tr>
+          <td>
+            <%= textual_time_interval b.created_at, 'ago' %>
+          </td>
+          <td>
+            <%= b.user ? user_link(b.user) : 'unknown' %>
+          </td>
+          <td>
+            <%= textual_data_amount b.amount %>
+          </td>
+        </tr>
+      <% end %>
+      <% if @bounties.total_pages > 1 %>
+        <tr>
+          <td class="pagination" colspan="2">
+            <%= will_paginate_remote @bounties, {:container => false}, {:spinner_id => 'bounties_spinner', :spinner_class => 'spinner_left'} %>
+          </td>
+        </tr>
+      <% end %>
+    <% else %>
+      <tr>
+        <td colspan="3">
+          No bounties found.
+        </td>
+      </tr>
+    <% end %>
+  </table>

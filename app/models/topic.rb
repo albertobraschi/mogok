@@ -28,18 +28,17 @@ class Topic < ActiveRecord::Base
     end
   end
 
-  def add_post(params, user)
+  def add_post(body, user)
     Topic.transaction do
       self.replies_count += 1
       self.last_post_at = Time.now
       self.last_post_by = user.username
       save
-      p = Post.new :user => user, 
-                   :topic => self,
-                   :forum_id => self.forum_id,
-                   :body => params[:body]
-      p.post_number = self.replies_count + 1
-      p.save
+      Post.create :user => user,
+                  :topic => self,
+                  :forum_id => self.forum_id,
+                  :body => body,
+                  :post_number => self.replies_count + 1
     end
   end
 

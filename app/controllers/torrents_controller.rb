@@ -52,7 +52,7 @@ class TorrentsController < ApplicationController
         unless cancelled?
           if @torrent.edit(params[:torrent])
             logger.debug ':-) torrent edited'
-            add_log t('log', :torrent => @torrent.name, :user => current_user.username), params[:reason]
+            add_log t('log', :name => @torrent.name, :by => current_user.username), params[:reason]
             flash[:notice] = t('success')
             redirect_to :action => 'show', :id => @torrent
           else
@@ -147,7 +147,7 @@ class TorrentsController < ApplicationController
         torrent_data = get_file_data params[:torrent_file]
         if @torrent.set_meta_info(torrent_data, true) # torrent file parsing
           if @torrent.save
-            add_log t('log', :torrent => @torrent.name, :user => current_user.username)
+            add_log t('log', :name => @torrent.name, :by => current_user.username)
             flash[:alert] = t('success')
             redirect_to :action => 'show', :id => @torrent
           end
@@ -216,7 +216,7 @@ class TorrentsController < ApplicationController
 
     def destroy_torrent
       @torrent.destroy
-      add_log t('destroyed_log', :torrent => @torrent.name, :user => current_user.username), params[:reason]
+      add_log t('destroyed_log', :name => @torrent.name, :by => current_user.username), params[:reason]
       if @torrent.user != current_user
         s = t('destroyed_notification_subject')
         b = t('destroyed_notification_body', :name => @torrent.name, :by => current_user.username, :reason => params[:reason])
@@ -226,7 +226,7 @@ class TorrentsController < ApplicationController
 
     def inactivate_torrent
       @torrent.inactivate
-      add_log t('inactivated_log', :torrent => @torrent.name, :user => current_user.username), params[:reason]
+      add_log t('inactivated_log', :name => @torrent.name, :by => current_user.username), params[:reason]
       if @torrent.user != current_user
         s = t('inactivated_notification_subject')
         b = t('inactivated_notification_body', :name => @torrent.name, :by => current_user.username, :reason => params[:reason])
@@ -236,7 +236,7 @@ class TorrentsController < ApplicationController
 
     def activate_torrent
       @torrent.activate
-      add_log t('log', :torrent => @torrent.name, :user => current_user.username)
+      add_log t('log', :name => @torrent.name, :by => current_user.username)
       if @torrent.user != current_user
         s = t('notification_subject')
         b = t('notification_body', :name => @torrent.name, :by => current_user.username)
@@ -249,7 +249,7 @@ class TorrentsController < ApplicationController
     end
 
     def get_file_data(f)
-      check_uploaded_file(f)
+      ensure_valid_uploaded_file(f)
 
       if f.respond_to? :string
         data = f.string
@@ -261,7 +261,7 @@ class TorrentsController < ApplicationController
       data
     end
 
-    def check_uploaded_file(f)
+    def ensure_valid_uploaded_file(f)
       if f.blank?
         torrent_file_error 'required'
       else

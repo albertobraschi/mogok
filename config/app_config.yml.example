@@ -49,6 +49,7 @@ page_size:
   forum_posts: 20
   forum_search_results: 40
   stats_history: 40
+  wish_bounties: 20
 
 # browse table columns showed by default in a decrescent way when header is clicked the fist time
 desc_by_default:
@@ -66,6 +67,8 @@ desc_by_default:
     - created_at
     - up_offset
     - down_offset
+  wishes:
+    - total_bounty
 
 
 # ADMINISTRATION

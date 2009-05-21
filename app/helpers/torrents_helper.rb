@@ -22,7 +22,7 @@ module TorrentsHelper
     else
       text = t.name
     end
-    link_to text, {:controller => 'torrents', :action => 'show', :id => t}, html_options
+    link_to text, torrents_path(:action => 'show', :id => t), html_options
   end
 
   def torrent_download_link(t, text_link = false)
@@ -109,7 +109,7 @@ module TorrentsHelper
     end    
   end
 
-  def advanced_fields_class(params)
+  def torrents_search_advanced_fields_class(params)
     a = [params[:category_id], params[:format_id], params[:tags_str], params[:country_id], params[:inactive]]
     a.reject! {|e| e.blank? }
     a.blank? ? 'hide' : ''

@@ -46,16 +46,6 @@
           </div>
         </td>
       </tr>
-      <% if current_user.admin? %>
-        <tr>  
-          <td class="label">
-            ID
-          </td>
-          <td>
-            <%= @torrent.id %>          
-          </td>
-        </tr>
-      <% end %>
       <% if current_user.admin_mod? %>
         <tr>  
           <td class="label">
@@ -129,7 +119,7 @@
           Created by
         </td>
         <td>
-          <%= @torrent.user ? user_link(@torrent.user) : 'unknown' %> 
+          <%= @torrent.user ? user_link(@torrent.user, true) : 'unknown' %>
         </td>
       </tr>
       <tr>  

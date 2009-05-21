@@ -1,0 +1,76 @@
+
+  <table class="comment" id="comment_<%= wish_comment.id %>">
+    <tr>
+      <td class="head" colspan="2">
+        <div class="float_left">
+          <ul class="compact">
+            <li><%= wish_comment.comment_number %></li>
+            <li>|</li>
+            <li>
+              by
+              <%= wish_comment.user ? user_link(wish_comment.user) : 'unknown' %>
+              -
+              <%= textual_time_interval wish_comment.created_at, 'ago' %>
+            </li>
+            <% unless wish_comment.edited_at.blank? %>
+              <li>
+                <span class="edited_by">
+                  <%= "(edited by  #{wish_comment.edited_by} #{textual_time_interval wish_comment.edited_at, 'ago'})" %>
+                </span>
+              </li>
+            <% end %>
+          </ul>
+        </div>
+
+        <div class="float_right">
+          <ul class="menu">
+            <% if wish_comment.editable_by? current_user %>
+              <li><%= link_to 'edit', wish_comments_path(:wish_id => wish, :action => 'edit', :id => wish_comment, :page => current_page) %></li>
+              <li>|</li>
+            <% end %>
+
+            <% if current_user != wish_comment.user %>
+              <li><%= link_to 'report', {:controller => 'wish_comments', :action => 'report', :id => wish_comment, :page => current_page} %></li>
+              <li>|</li>
+            <% end %>
+
+            <% if !wish.comments_locked || current_user.admin_mod? %>
+              <li>
+                <%= link_to_remote 'quote',
+                                   :url => {:controller => 'wish_comments', :action => 'quote', :id => wish_comment, :username => (wish_comment.user ? wish_comment.user.username : 'unknown')},
+                                   :before => "this.blur();hide_show_div('quote_spinner_#{wish_comment.id}', 'spinner_right')",
+                                   :complete => "hide_show_div('quote_spinner_#{wish_comment.id}')" %>
+              </li>
+            <% else %>
+              <li><span class="grey">quote</span></li>
+            <% end %>
+          </ul>
+        </div>
+        <div id="quote_spinner<%= "_#{wish_comment.id}" %>" class="hide">
+          <%= spinner_image %>
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <td class="avatar">
+        <%= avatar_image wish_comment.user %>
+      </td>
+      <td class="body" valign="top">
+        <div class="user_content">
+          <%= HtmlHelper.to_html wish_comment.body %>
+        </div>
+      </td>
+    </tr>
+  </table>
+
+
+
+
+
+
+
+
+
+
+
+

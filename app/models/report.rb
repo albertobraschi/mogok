@@ -29,6 +29,6 @@ class Report < ActiveRecord::Base
     end
 
     def self.report_label(obj)
-      "#{obj.class.name.downcase} [#{obj.id}]"
+      "#{obj.class.name.underscore} [#{obj.id}]"
     end
 end

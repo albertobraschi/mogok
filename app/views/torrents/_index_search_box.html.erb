@@ -6,7 +6,7 @@
       <span class="left">
         <a title="toggle advanced" href="javascript:void(0)" onclick="hide_show_div('advanced_fields', '');this.blur()">[ + ]</a>
       </span>
-      <div id="advanced_fields" class="<%= advanced_fields_class params %>">
+      <div id="advanced_fields" class="<%= torrents_search_advanced_fields_class params %>">
         <table>
           <tr>
             <% if current_user.admin_mod? %>

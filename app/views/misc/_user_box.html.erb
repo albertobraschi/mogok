@@ -28,7 +28,7 @@
             <% end %>
             <% if current_user.mod? %>
               <li>|</li>
-              <li><%= link_to 'reports', {:controller => 'reports'}, {:class => current_user.open_report? ? 'report_alert' : nil} %></li>
+              <li><%= link_to 'reports', {:controller => 'reports'}, {:class => current_user.try(:open_report?) ? 'report_alert' : nil} %></li>
             <% end %>
             <li>|</li>
             <li><%= link_to 'profile', users_path(:action => 'edit', :id => current_user) %></li>

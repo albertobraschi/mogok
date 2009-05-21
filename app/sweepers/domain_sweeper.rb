@@ -15,13 +15,9 @@ class DomainSweeper < ActionController::Caching::Sweeper
     def expire_domain_cache(r)
       logger.debug ":-) domain_sweeper.expire_domain_cache: r is a #{r.class}" if logger
       case r
-      when Type
+      when Type, Format
         Type.reset_cached_all
-      when Format
-        Type.reset_cached_all
-      when Category
-        Category.reset_cached_all
-      when Tag
+      when Category, Tag
         Category.reset_cached_all
       when Country
         Country.reset_cached_all

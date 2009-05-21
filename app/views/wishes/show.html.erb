@@ -1,0 +1,148 @@
+
+<% page_name 'Request Details' %>
+
+<div class="main">
+  <div class="inner">
+    <h2>Request Details</h2>
+
+    <div class="wish_header"><%= wish_link @wish %></div>
+
+    <%= render :partial => 'misc/flash', :locals => {:flash => flash} %>
+
+    <table class="details margin_bottom">
+      <tr>
+        <td class="label">
+          Category
+        </td>
+        <td>
+          <div class="float_left">
+            <%= @wish.category.name %>
+          </div>
+          <div class="float_right">
+            <ul class="menu">
+              <% if current_user.admin_mod? || @wish.user == current_user %>
+                <li><%= link_to 'edit', {:action => 'edit', :id => @wish} %></li>
+                <li>|</li>
+                <li><%= link_to 'remove', {:action => 'remove', :id => @wish} %></li>
+                <li>|</li>
+                <% if current_user.admin_mod? %>
+                  <li><%= link_to @wish.comments_locked? ? 'unlock' : 'lock', {:action => 'switch_lock_comments', :id => @wish}, {:class => 'mod'} %></li>
+                  <li>|</li>
+                <% end %>
+              <% else %>
+                <li><%= link_to 'report', {:action => 'report', :id => @wish} %></li>
+                <li>|</li>
+              <% end %>              
+              <li><%= link_to 'bounties', wish_bounties_path(:wish_id => @wish) %></li>
+            </ul>
+          </div>
+        </td>
+      </tr>
+      <% if @wish.format_id %>
+        <tr>  
+          <td class="label">
+            Format
+          </td>
+          <td>
+            <%= @wish.format.name %>
+          </td>
+        </tr>
+      <% end %>
+      <% if @wish.year %>
+        <tr>
+          <td class="label">
+            Year
+          </td>
+          <td>
+            <%= @wish.year %>
+          </td>
+        </tr>
+      <% end %>
+      <% if @wish.country_id %>
+        <tr>
+          <td class="label">
+            Country
+          </td>
+          <td>
+            <%= country_image @wish.country %>
+          </td>
+        </tr>
+      <% end %>
+      <tr>  
+        <td class="label">
+          Description
+        </td>
+        <td>
+          <div class="user_content">
+            <%= HtmlHelper.to_html @wish.description %>
+          </div>
+        </td>
+      </tr>
+      <tr>  
+        <td class="label">
+          Created by
+        </td>
+        <td>
+          <%= @wish.user ? user_link(@wish.user) : 'unknown' %>
+        </td>
+      </tr>
+      <tr>  
+        <td class="label">
+          Created
+        </td>
+        <td>
+          <%= textual_time_interval(@wish.created_at, 'ago') %>
+        </td>
+      </tr>
+      <tr>
+        <td class="label">
+          Bounty
+        </td>
+        <td>
+          <%= textual_data_amount @wish.total_bounty %>
+        </td>
+      </tr>
+      <tr>
+        <td class="label">
+          Filled
+        </td>
+        <td>
+          <%= @wish.filled? ? 'Yes' : 'No' %>
+        </td>
+      </tr>
+      <% if @wish.filled? %>
+        <tr>
+          <td class="label">
+            Filled by
+          </td>
+          <td>
+            <%= @wish.filler ? user_link(@wish.filler) : 'unknown' %>
+          </td>
+        </tr>
+        <tr>
+          <td class="label">
+            Filled
+          </td>
+          <td>
+            <%= textual_time_interval(@wish.filled_at, 'ago') %>
+          </td>
+        </tr>
+      <% end %>
+    </table>
+
+    <a name="comments"></a>
+
+    <%= render :partial => 'wish_comment_flash', :locals => {:flash => flash} %>
+
+    <%= render :partial => 'wish_comment', :collection => @wish_comments, :locals => {:wish => @wish, :current_page => @wish_comments.current_page} %>
+
+    <%= will_paginate @wish_comments %>
+
+    <% if !@wish.comments_locked? || current_user.admin_mod? %>
+      <h3>Comment</h3>
+      <%= render :partial => 'wish_comment_box', :locals => {:wish => @wish} %>
+    <% end %>
+  </div>
+</div>
+
+

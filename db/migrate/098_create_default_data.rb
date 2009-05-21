@@ -3,16 +3,16 @@ class CreateDefaultData < ActiveRecord::Migration
 
   def self.up
     # application database params (only 'true', 'false' or a numeric string is allowed)
-    AppParam.create :name => 'signup_open', :value => 'true'
+    AppParam.create :name => 'signup_open'              , :value => 'true'
     AppParam.create :name => 'signup_by_invitation_only', :value => 'true'
 
     # user roles required by the application
-    self.create_role 1, Role::SYSTEM, 'System','user_system', 'staff'
-    self.create_role 2, Role::OWNER, 'Owner','user_owner', 'staff inviter'
-    self.create_role 3, Role::ADMINISTRATOR, 'Administrator','user_admin', 'staff inviter'
-    self.create_role 4, Role::MODERATOR, 'Moderator','user_mod', 'staff inviter'
-    self.create_role 5, Role::USER, 'User','user_user'
-    self.create_role 5, Role::DEFECTIVE, 'Defective','user_defective'
+    self.create_role 1, Role::SYSTEM       , 'System'       ,'user_system'   , 'staff'
+    self.create_role 2, Role::OWNER        , 'Owner'        ,'user_owner'    , 'staff inviter requester'
+    self.create_role 3, Role::ADMINISTRATOR, 'Administrator','user_admin'    , 'staff inviter requester'
+    self.create_role 4, Role::MODERATOR    , 'Moderator'    ,'user_mod'      , 'staff inviter requester'
+    self.create_role 5, Role::USER         , 'User'         ,'user_user'     , 'requester'
+    self.create_role 5, Role::DEFECTIVE    , 'Defective'    ,'user_defective'
 
     # style and country
     s = Style.create :id => 1, :name => 'default', :stylesheet => 'default.css'

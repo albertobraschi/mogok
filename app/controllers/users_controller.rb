@@ -75,7 +75,7 @@ class UsersController < ApplicationController
         @user.destroy
         logger.debug ':-) user destroyed'        
         flash[:notice] = t('success')
-        add_log t('log', :user => @user.username, :by => current_user.username)
+        add_log t('log', :username => @user.username, :by => current_user.username)
         redirect_to :action => 'index'
       else
         redirect_to :action => 'show', :id => @user
@@ -197,7 +197,7 @@ class UsersController < ApplicationController
 
     def reset_user_passkey
       @user.reset_passkey!
-      add_log t('log', :user => @user.username, :by => current_user.username), nil, true
+      add_log t('log', :username => @user.username, :by => current_user.username), nil, true
       if @user != current_user
         deliver_message_notification @user, t('notification_subject'), t('notification_body')
       end

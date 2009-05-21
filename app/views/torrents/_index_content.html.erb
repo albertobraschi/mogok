@@ -56,7 +56,7 @@
             <%= textual_time_interval t.created_at, 'ago' %>
           </td>
           <td>
-            <%= user_link t.user %>
+            <%= user_link t.user, true %>
           </td>
           <td class="no_wrap">
             <%= textual_data_amount t.size %>

@@ -18,24 +18,29 @@ ActionController::Routing::Routes.draw do |map|
     content.staff 'staff', :action => 'staff'
   end
 
-  # user
-  map.users 'users/:action/:id', :controller => 'users'
+  # user  
   map.bookmarks 'bookmarks', :controller => 'users', :action => 'bookmarks'
   map.uploads 'uploads', :controller => 'users', :action => 'uploads'
   map.stuck 'stuck', :controller => 'users', :action => 'stuck'
-
+  map.users 'users/:action/:id', :controller => 'users'
+  
   # messages (in this case :id is being used to define the folder)
   map.messages 'messages/:action/:id', :controller => 'messages'
   
-  # torrents
-  map.torrents 'torrents/:action/:id', :controller => 'torrents'
+  # torrents  
   map.comments 'torrents/:torrent_id/comments/:action/:id', :controller => 'comments'
   map.upload 'upload', :controller => 'torrents', :action => 'upload'
+  map.torrents 'torrents/:action/:id', :controller => 'torrents'
+  
+  # wishes (appears as 'requests' for the user)  
+  map.wish_comments 'requests/:wish_id/comments/:action/:id', :controller => 'wish_comments'
+  map.wish_bounties 'requests/:wish_id/bounties/:action/:id', :controller => 'wish_bounties'
+  map.wishes 'requests/:action/:id', :controller => 'wishes'
 
-  # forums
-  map.forums 'forums/:action/:id', :controller => 'forums'
-  map.topics 'forums/:forum_id/topics/:action/:id', :controller => 'topics'
+  # forums  
   map.posts 'forums/:forum_id/posts/:action/:id', :controller => 'posts'
+  map.topics 'forums/:forum_id/topics/:action/:id', :controller => 'topics'
+  map.forums 'forums/:action/:id', :controller => 'forums'
 
   # logs
   map.logs 'logs', :controller => 'logs'

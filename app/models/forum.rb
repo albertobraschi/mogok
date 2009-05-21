@@ -12,10 +12,10 @@ class Forum < ActiveRecord::Base
     find :all, :order => 'position'
   end
 
-  def add_topic(params, user)
+  def add_topic(title, body, user)
     t = Topic.new :forum => self,
                   :user => user,
-                  :title => params[:title],
+                  :title => title,
                   :last_post_at => Time.now
 
     t.topic_post = Post.new :user => user,
@@ -23,7 +23,7 @@ class Forum < ActiveRecord::Base
                             :forum => self,
                             :post_number => 1,
                             :is_topic_post => true,
-                            :body => params[:body]
+                            :body => body
     Forum.transaction do
       t.save
       increment! :topics_count

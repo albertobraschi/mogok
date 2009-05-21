@@ -1,0 +1,80 @@
+
+<% page_name 'Requests' %>
+
+<div class="main">
+  <h2>Requests</h2>
+  
+  <%= render :partial => 'misc/flash', :locals => {:flash => flash} %>
+
+  <%= render :partial => 'index_search_box' %>
+
+  <% if current_user.has_ticket?(:requester) %>
+    <div class="links"><%= link_to '[ new request ]', {:action => 'new'} %></div>
+  <% end %>
+  
+  <% if !@wishes.blank? && @wishes.length > 15 %>
+    <%= will_paginate @wishes %>
+  <% end %>
+
+  <table class="browse wide">
+    <tr>
+      <td class="header">
+        &nbsp;
+      </td>
+      <td width="99%" class="<%= table_header_css_class 'name'  %>">
+        <%= table_header_link 'Name', 'name', @wishes %>
+      </td>
+      <td class="<%= table_header_css_class 'created_at' %>">
+        <%= table_header_link 'Added', 'created_at', @wishes %>
+      </td>
+      <td class="header">
+        By
+      </td>
+      <td class="header">
+        Filled
+      </td>
+      <td class="header">
+        Filler
+      </td>
+      <td class="<%= table_header_css_class 'total_bounty' %>">
+        <%= table_header_link 'Bounty', 'total_bounty', @wishes %>
+      </td>
+    </tr>
+    <% unless @wishes.blank? %>
+      <% @wishes.each do |w| %>
+        <tr>
+          <td class="no_padding">
+            <%= category_label w.category, params, true %>
+          </td>
+          <td class="left no_right_border">
+            <%= wish_link w, :browse %>
+            <%= wish_additional_info w %>
+          </td>
+          <td class="no_wrap">
+            <%= textual_time_interval w.created_at, 'ago' %>
+          </td>
+          <td>
+            <%= user_link w.user, true %>
+          </td>
+          <td class="no_wrap">
+            <%= w.filled? ? 'yes' : 'no' %>
+          </td>
+          <td>
+            <%= w.filled? ? user_link(w.filler, true) : '-' %>
+          </td>
+          <td class="no_wrap">
+            <%= textual_data_amount w.total_bounty %>
+          </td>
+        </tr>
+      <% end %>
+    <% else %>
+      <tr>
+        <td colspan="8">
+          No requests found.
+        </td>
+      </tr>
+    <% end %>
+  </table>
+
+  <%= will_paginate @wishes %>
+</div>

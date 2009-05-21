@@ -1,0 +1,76 @@
+
+<% page_name 'New Request' %>
+
+<%= populate_formats_script @categories, @types %>
+
+<div class="main">
+  <div class="inner">
+    <h2>New Request</h2>
+
+    <% form_for :wish, :url => {:action => 'new'} do |f| %>
+      <table class="details">
+        <tr>
+          <td class="label">
+            Category
+          </td>
+          <td>
+            <%= collection_select :wish, :category_id, @categories, :id, :name, {}, {:onchange => 'populate_formats(this);'} %>
+          </td>
+        </tr>
+        <tr>
+          <td class="label">
+            Name
+          </td>
+          <td>
+            <%= f.text_field :name, :size => 62, :maxlength => 80, :focus => true %>
+            <%= field_error @wish.errors[:name] %>
+          </td>
+        </tr>
+        <tr>
+          <td class="label">
+            Format
+          </td>
+          <td>
+            <%= collection_select :wish, :format_id, @category.type.formats, :id, :name, {:prompt => ''}, {:id => 'format_id'} %>
+            <%= field_error @wish.errors[:format_id] %>
+          </td>
+        </tr>
+        <tr>
+          <td class="label">
+            Year
+          </td>
+          <td>
+            <%= f.text_field :year, :size => 6, :maxlength => 4 %>
+            <%= field_error @wish.errors[:year] %>
+          </td>
+        </tr>
+        <tr>
+          <td class="label">Country</td>
+          <td>
+            <%= collection_select :wish, :country_id, @countries, :id, :name, :include_blank => true %>
+          </td>
+        </tr>
+        <tr>
+          <td class="label">
+            Description
+          </td>
+          <td>
+            <% render :layout => 'misc/editor', :locals => {:target => 'wish_description', :align => 'left'} do %>
+              <%= f.text_area :description, :cols => 80, :rows => 8 %>
+            <% end %>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" class="center">
+            <%= submit_tag 'Create', :class => 'submit' %>
+          </td>
+        </tr>
+      </table>
+    <% end %>
+  </div>
+</div>
+
+
+
+
+

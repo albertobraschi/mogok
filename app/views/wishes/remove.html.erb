@@ -1,0 +1,37 @@
+
+<% page_name 'Request Remotion' %>
+
+<div class="main">
+  <h2>Request Remotion</h2>
+
+  <div class="wish_header"><%= wish_link @wish %></div>
+
+  <div class="fields_box" style="width:620px;">
+    <% form_tag :action => 'remove' do %>
+      <table>
+        <tr>
+          <td>
+            <table>
+              <tr>
+                <td class="label">
+                  Reason:
+                </td>
+                <td>
+                  <%= text_field_tag :reason, '', {:size => 70, :maxlength => 100, :focus => true} %>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <tr>
+          <td class="center">
+            <ul class="buttons">
+              <li><%= submit_tag 'Remove', :class => 'submit' %></li>
+              <li><%= submit_tag 'Cancel', :name => 'cancel', :class => 'submit' %></li>
+            </ul>
+          </td>
+        </tr>
+      </table>
+    <% end %>
+  </div>
+</div>

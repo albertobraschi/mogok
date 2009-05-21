@@ -80,6 +80,7 @@ users with lower ranking.
   - inviter: grants the right to send invitations
   - staff: grants right to see and edit staff info
   - inactivity_exempt: will not be inactivated or removed if absent
+  - requester: allow user to request torrents
 
 - Ratio policy
   The application will apply ratio enforcement rules and promote users based on their ratio and
@@ -125,10 +126,10 @@ implemented if necessary. Currently the application won't send an activation ema
   - they contain a special value called announce passkey, that identifies the user who is sending the
     request (e.g. http://localhost/tracker/USER_ANNOUNCE_PASSKEY/announce)
   - when a user downloads a torrent file, this special url is included in it. this means that if a
-    torrent is stolen, the thief will be able to download on the user's bill. to minimize the damage the
-    application generates the announce passkeys using the user personal passkey and the torrent
-    announce key (using OpenSSL::HMAC), so if a user has one torrent stolen it will compromise only
-    that particular torrent
+    torrent is stolen, the thief will be able to download using the user's credits. to minimize the
+    damage the application generates the announce passkeys combining the user personal passkey and the
+    torrent announce key (using OpenSSL::HMAC), so if a user has one torrent stolen it will compromise
+    only that particular torrent
   - users have to be oriented to reset their passkeys if they notice any suspicious activity in their
     accounts, like peers with strange IPs or unusual ratio variation
 
@@ -138,6 +139,11 @@ implemented if necessary. Currently the application won't send an activation ema
   - if the torrent is not set to private the application's torrent parser will add a private flag
     to it (such flag indicates that the torrent belongs to a private tracker, so the bittorrent clients will
     block DHT and only peers registered in the tracker will be allowed to join that torrent).
+
+- Requests
+  This feature allows users to request torrents that are not uploaded yet. After a request is created
+  users can add bounties to it as a way to reward the user who fills that request. Note that internally
+  'requests' are called 'wishes' to prevent confusion and naming conflicts with Rails' requests.
 
 - Background Tasks
   These are tasks that run periodically to keep the site tidy. They clean stale data, update things, etc.

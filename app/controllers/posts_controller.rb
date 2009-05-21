@@ -13,7 +13,7 @@ class PostsController < ApplicationController
     @topic = Topic.find params[:topic_id]
     access_denied if @topic.posts_locked? && !current_user.admin_mod?
     unless params[:body].blank?
-      @topic.add_post params, current_user
+      @topic.add_post params[:body], current_user
       flash[:notice] = t('success')      
     else
       flash[:error] = t('empty')      

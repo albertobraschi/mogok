@@ -1,0 +1,75 @@
+
+<% page_name 'Request Bounties' %>
+
+<div class="main">
+  <h2>Request Bounties</h2>
+
+  <div class="wish_header"><%= wish_link @wish %></div>
+
+  <%= render :partial => 'misc/flash', :locals => {:flash => flash} %>
+  
+  <div class="links">
+    <%= link_to '[ add bounty ]', {:action => 'new'} %>
+  </div>
+
+  <table class="browse">
+    <tr>
+      <td class="header">
+        &nbsp;&nbsp; # &nbsp;&nbsp;
+      </td>
+      <td class="header">
+        Added
+      </td>
+      <td class="header">
+        By
+      </td>
+      <td class="header">
+        Amount
+      </td>
+      <td class="header">
+        Status
+      </td>
+      <td class="header">
+        &nbsp;
+      </td>
+    </tr>
+    <% unless @wish_bounties.blank? %>
+      <% @wish_bounties.each do |b| %>
+        <tr>
+          <td>
+            <%= b.bounty_number %>
+          </td>
+          <td>
+            <%= I18n.l b.created_at, :format => :date %>
+          </td>
+          <td>
+            <%= user_link b.user, true %>
+          </td>
+          <td>
+            <%= textual_data_amount b.amount %>
+          </td>
+          <td>
+            <%= b.revoked? ? 'revoked' : 'active' %>
+          </td>
+          <td>
+            <%  if b.user == current_user && !b.revoked? %>
+              <%= link_to '[ revoke ]', wish_bounties_path(:action => 'revoke', :wish_id => @wish, :id => b) %>
+            <% else %>
+              &nbsp;&nbsp; - &nbsp;&nbsp;
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    <% else %>
+      <tr>
+        <td colspan="6">
+          This request has no bounties.
+        </td>
+      </tr>
+    <% end %>
+  </table>
+
+  <%= will_paginate @wish_bounties %>
+</div>
+
+

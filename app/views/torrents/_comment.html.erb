@@ -30,7 +30,7 @@
             <% end %>
 
             <% if current_user != comment.user %>
-              <li><%= link_to 'report', {:controller => 'comments', :action => 'report', :id => comment, :page => current_page} %></li>
+              <li><%= link_to 'report', comments_path(:torrent_id => torrent, :action => 'report', :id => comment, :page => current_page) %></li>
               <li>|</li>
             <% end %>
 

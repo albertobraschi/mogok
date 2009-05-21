@@ -21,7 +21,7 @@
       <li>|</li>
       <li><%= link_to 'reports', {:controller => 'reports' } %></li>
       <li>|</li>
-      <li><%= link_to 'errors', {:controller => 'error_logs'}, {:class => current_user.error_log? ? 'error_log_alert' : nil} %></li>
+      <li><%= link_to 'errors', {:controller => 'error_logs'}, {:class => current_user.try(:error_log?) ? 'error_log_alert' : nil} %></li>
       <li>|</li>
       <li><%= link_to 'hide', {:controller => 'adm', :action => 'switch_menu' } %></li>
     </ul>

@@ -1,0 +1,51 @@
+
+<% page_name 'Wish Comment Details' %>
+
+<div class="main">
+  <h2>Wish Comment Details</h2>
+
+  <div class="torrent_header"><%= torrent_link @wish_comment.wish %></div>
+
+  <table class="comment" id="comment_<%= @wish_comment.id %>">
+    <tr>
+      <td class="head" colspan="2">
+        <div class="float_left">
+          <%= @wish_comment.comment_number %>
+          |
+          by
+          <%= @wish_comment.user ? user_link(@wish_comment.user) : 'unknown' %>
+          &nbsp;
+          -
+          &nbsp;
+          <%= textual_time_interval @wish_comment.created_at, 'ago' %>
+          &nbsp;
+          <% unless @wish_comment.edited_at.blank? %>
+            <span class="edited_by">
+              <%= "(edited by  #{@wish_comment.edited_by} #{textual_time_interval @wish_comment.edited_at, 'ago'})" %>
+            </span>
+          <% end %>
+        </div>
+
+        <div class="float_right">
+          <%= link_to 'edit', wish_comments_path(:wish_id => @wish_comment.wish, :action => 'edit', :id => @wish_comment) %>
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <td class="avatar">
+        <%= avatar_image @wish_comment.user %>
+      </td>
+      <td class="body" valign="top">
+        <div class="user_content">
+          <%= HtmlHelper.to_html @wish_comment.body %>
+        </div>
+      </td>
+    </tr>
+  </table>
+</div>
+
+
+
+
+
+

@@ -16,7 +16,7 @@ class TopicsController < ApplicationController
     if request.post?
       unless cancelled?
         unless params[:title].blank? || params[:body].blank?
-          t = @forum.add_topic(params, current_user)
+          t = @forum.add_topic(params[:title], params[:body], current_user)
           flash[:notice] = t('success')
           redirect_to :action => 'show', :id => t
         else

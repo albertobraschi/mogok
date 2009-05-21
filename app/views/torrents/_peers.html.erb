@@ -38,7 +38,7 @@
       <% @peers.each do |p| %>
         <tr>
           <td>
-            <%= user_link p.user %>
+            <%= user_link p.user, true %>
           </td>
           <td>
             <%= country_image p.user.country %>

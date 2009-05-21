@@ -25,7 +25,7 @@ module ApplicationHelper
       else
         html_options[:class] = u.role.css_class
         if include_stats
-          html_options[:title] = "id: #{u.id} | up: #{textual_data_amount u.uploaded} | down: #{textual_data_amount u.downloaded} | ratio: #{number_to_ratio u.ratio}"
+          html_options[:title] = "up: #{textual_data_amount u.uploaded} | down: #{textual_data_amount u.downloaded} | ratio: #{number_to_ratio u.ratio}"
         else
           html_options[:title] = u.role.description
         end

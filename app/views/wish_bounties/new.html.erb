@@ -1,0 +1,42 @@
+
+<% page_name 'New Request Bounty' %>
+
+<div class="main">
+  <h2>New Request Bounty</h2>
+
+  <div class="wish_header"><%= wish_link @wish %></div>
+
+  <%= render :partial => 'misc/flash', :locals => {:flash => flash} %>
+
+  <div class="fields_box" style="width:700px;">
+    <% form_tag :action => 'new' do %>
+      <table>
+        <tr>
+          <td class="grey bold">
+            After confimation, the amount will be charged from your upload credit. Revoke it to get a refund.
+          <td>
+        </tr>
+        <tr>
+          <td class="center">
+            <ul>
+              <li>
+                <%= text_field_tag :bounty_amount, params[:bounty_amount], :size => 8, :maxlength => 10, :focus => true %>
+              </li>
+              <li>
+                <%= select_tag 'bounty_unit', options_from_collection_for_select(['MB', 'GB'], 'to_s', 'to_s', params[:bounty_unit]) %>
+              </li>
+            </ul>
+          </td>
+        </tr>
+        <tr>
+          <td class="center">
+            <ul class="buttons">
+              <li><%= submit_tag 'Confim', :class => 'submit' %></li>
+              <li><%= submit_tag 'Cancel', :name => 'cancel', :class => 'submit' %></li>
+            </ul>
+          </td>
+        </tr>
+      </table>
+    <% end %>
+  </div>
+</div>

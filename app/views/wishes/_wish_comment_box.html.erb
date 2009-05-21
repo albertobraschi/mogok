@@ -1,0 +1,19 @@
+
+  <div class="comment_box" style="width:550px;">
+    <% form_tag :controller => 'wish_comments', :action => 'new', :wish_id => wish do %>
+      <table>
+        <tr>
+          <td>
+            <% render :layout => 'misc/editor', :locals => {:target => 'body', :align => 'center'} do %>
+                <%= text_area_tag :body, {}, {:rows => 6, :cols => 65} %>
+            <% end %>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <%= submit_tag 'Submit', :class => 'submit' %>
+          </td>
+        </tr>
+      </table>
+    <% end %>
+  </div>

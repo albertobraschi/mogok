@@ -4,7 +4,7 @@ class User
   # validation concern
 
   def self.t_error(field, key, args = {})
-    I18n.t("model.user.errors.#{field}.#{key}", args)
+    I18n.t("model.user.errors.#{field}.#{key}", args) # I18n shortcut
   end
 
   validates_presence_of :username, :message => t_error('username', 'required')

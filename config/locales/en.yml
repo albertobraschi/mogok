@@ -76,21 +76,21 @@ en:
     torrents:
       edit:
         success: Torrent successfully edited.
-        log: Torrent "{{torrent}}" was edited by {{user}}
+        log: Torrent "{{name}}" was edited by {{by}}
       remove:
         destroyed_flash: Torrent successfully deleted from system.
-        destroyed_log: Torrent "{{torrent}}" was removed by {{user}}
+        destroyed_log: Torrent "{{name}}" was removed by {{by}}
         destroyed_notification_subject: torrent removed
         destroyed_notification_body: Your torrent "{{name}}" was removed by {{by}} ({{reason}}).
         inactivated_flash: Torrent successfully inactivated.
-        inactivated_log: Torrent "{{torrent}}" inactivated by {{user}}
+        inactivated_log: Torrent "{{name}}" inactivated by {{by}}
         inactivated_title: Torrent Inactivated
         inactivated_message: Your torrent will stay inactive until a moderator removes it.
         inactivated_notification_subject: torrent inactivated
         inactivated_notification_body: Your torrent "{{name}}" was inactivated by {{by}} ({{reason}}).
       activate:
         success: Torrent was successfully activated.
-        log: Torrent "{{torrent}}" was activated by {{user}}
+        log: Torrent "{{name}}" was activated by {{by}}
         notification_subject: torrent activated
         notification_body: Your torrent "{{name}}" was activated by {{by}}.
       report:
@@ -98,7 +98,7 @@ en:
         reason_required: Reason is required.
       upload:
         success: Your personal announce url was added to the torrent, please re-download it.
-        log: Torrent "{{torrent}}" was uploaded by {{user}}
+        log: Torrent "{{name}}" was uploaded by {{by}}
 
     tracker:
       scrape:
@@ -125,14 +125,47 @@ en:
         success: Profile successfully updated.
       destroy:
         success: User successfully destroyed.
-        log: User {{user}} removed by {{by}}
+        log: User {{username}} removed by {{by}}
       reset_passkey:
         success: Passkey successfully reset.
-        log: User {{user}} PASSKEY was reset by {{by}}
+        log: User {{username}} PASSKEY was reset by {{by}}
         notification_subject: passkey reset
         notification_body: Your passkey was reset for security reasons, please re-download your active torrents.
       report:
         success: User successfully reported.
+        reason_required: Reason is required.
+
+    wishes:
+      new:
+        success: Request successfully created.
+        log: Request "{{name}}" was edited by {{by}}
+      edit:
+        success: Request successfully edited.
+        log: Request "{{name}}" was edited by {{by}}
+      remove:
+        destroyed_flash: Request successfully deleted from system.
+        destroyed_log: Request "{{name}}" was removed by {{by}}
+        destroyed_notification_subject: request removed
+        destroyed_notification_body: Your request "{{name}}" was removed by {{by}} ({{reason}}).
+      report:
+        success: Request successfully reported.
+        reason_required: Reason is required.
+
+    wish_bounties:
+      new:
+        success: Request bounty successfully added.
+        invalid_bounty_amount: Invalid bounty amount.
+        insuficient_upload_credit: Your upload credit is insufficient.
+
+    wish_comments:
+      new:
+        success: Comment successfully added.
+        empty: Comment cannot be empty.
+      edit:
+        success: Comment successfully edited.
+        empty: Comment cannot be empty.
+      report:
+        success: Comment successfully reported.
         reason_required: Reason is required.
 
 
@@ -207,6 +240,13 @@ en:
           invalid: Invalid year.
         tags:
           max: Tags limit is {{max}}.
+
+    wish:
+      errors:
+        bounty_amount:
+          invalid: Invalid bounty amount.
+        year:
+          invalid: Invalid year.
 
   activerecord:
     errors:

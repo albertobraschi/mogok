@@ -21,6 +21,9 @@ class User < ActiveRecord::Base
   has_many :password_recoveries, :dependent => :destroy
   has_many :topics, :dependent => :nullify
   has_many :posts, :dependent => :nullify
+  has_many :wishes, :dependent => :nullify
+  has_many :filled_wishes, :class_name => 'Wish', :foreign_key => 'filler_id', :dependent => :nullify
+  has_many :wish_bounties, :dependent => :nullify
   belongs_to :role
   belongs_to :country
   belongs_to :gender

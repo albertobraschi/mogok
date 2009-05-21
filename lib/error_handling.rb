@@ -17,13 +17,9 @@ module ErrorHandling
         redirect_to root_path
       else
         case e
-          when ActiveRecord::RecordNotFound
+          when ArgumentError, ActiveRecord::RecordNotFound
             template = 'invalid_request'
-          when ArgumentError
-            template = 'invalid_request'
-          when ActionController::RoutingError
-            template = 'invalid_route'
-          when ActionController::UnknownAction
+          when ActionController::RoutingError, ActionController::UnknownAction
             template = 'invalid_route'
           when AccessDeniedError
             template = 'access_denied'
