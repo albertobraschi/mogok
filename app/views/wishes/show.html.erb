@@ -12,11 +12,11 @@
     <table class="details margin_bottom">
       <tr>
         <td class="label">
-          Category
+          Filled
         </td>
         <td>
           <div class="float_left">
-            <%= @wish.category.name %>
+            <%= @wish.filled? ? 'Yes' : 'No' %>
           </div>
           <div class="float_right">
             <ul class="menu">
@@ -38,6 +38,14 @@
           </div>
         </td>
       </tr>
+        <tr>
+          <td class="label">
+            Category
+          </td>
+          <td>
+            <%= @wish.category.name %>
+          </td>
+        </tr>
       <% if @wish.format_id %>
         <tr>  
           <td class="label">
@@ -100,14 +108,6 @@
         </td>
         <td>
           <%= textual_data_amount @wish.total_bounty %>
-        </td>
-      </tr>
-      <tr>
-        <td class="label">
-          Filled
-        </td>
-        <td>
-          <%= @wish.filled? ? 'Yes' : 'No' %>
         </td>
       </tr>
       <% if @wish.filled? %>
