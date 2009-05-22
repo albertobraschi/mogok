@@ -142,8 +142,10 @@ implemented if necessary. Currently the application won't send an activation ema
 
 - Requests
   This feature allows users to request torrents that are not uploaded yet. After a request is created
-  users can add bounties to it as a way to reward who fills that request. Note that internally'requests'
-  are called 'wishes' to prevent confusion and naming conflicts with Rails' requests.
+  users can add bounties to it as a way to reward who fills that request. After a request is filled it will
+  stay in pending status until a moderator approves or rejects the filling. Only after the approval the
+  bounty will be granted to the filler. Note that internally 'requests' are called 'wishes' to prevent
+  naming conflicts with Rails' requests.
 
 - Background Tasks
   These are tasks that run periodically to keep the site tidy. They clean stale data, update things, etc.

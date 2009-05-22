@@ -1,6 +1,6 @@
 
 class Comment < ActiveRecord::Base
-  strip_attributes! # strip_attributes
+  strip_attributes! # strip_attributes plugin
   
   belongs_to :user
   belongs_to :torrent

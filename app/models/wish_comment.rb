@@ -1,6 +1,6 @@
 
 class WishComment < ActiveRecord::Base
-  strip_attributes! # strip_attributes
+  strip_attributes! # strip_attributes plugin
   
   belongs_to :user
   belongs_to :wish
@@ -13,8 +13,8 @@ class WishComment < ActiveRecord::Base
     user.id == self.user_id || user.admin_mod?
   end
 
-  def edit(params, editor)
-    self.body = params[:body]
+  def edit(body, editor)
+    self.body = body
     self.edited_at = Time.now
     self.edited_by = editor.username
     save

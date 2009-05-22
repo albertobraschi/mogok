@@ -12,40 +12,53 @@
     <table class="details margin_bottom">
       <tr>
         <td class="label">
-          Filled
+          Status
         </td>
         <td>
           <div class="float_left">
-            <%= @wish.filled? ? 'Yes' : 'No' %>
+            <%= @wish.status %>
           </div>
           <div class="float_right">
             <ul class="menu">
-              <% if current_user.admin_mod? || @wish.user == current_user %>
-                <li><%= link_to 'edit', {:action => 'edit', :id => @wish} %></li>
+              <% if @wish.open? && @wish.user != current_user %>
+                <li><%= link_to 'fill this request', {:action => 'fill', :id => @wish} %></li>
                 <li>|</li>
-                <li><%= link_to 'remove', {:action => 'remove', :id => @wish} %></li>
+              <% end %>
+              <% if @wish.pending? && current_user.admin_mod? %>
+                <li><%= link_to 'approve', {:action => 'approve', :id => @wish}, {:class => 'mod', :method => :post, :confirm => 'Are you sure?'} %></li>
                 <li>|</li>
-                <% if current_user.admin_mod? %>
-                  <li><%= link_to @wish.comments_locked? ? 'unlock' : 'lock', {:action => 'switch_lock_comments', :id => @wish}, {:class => 'mod'} %></li>
+                <li><%= link_to 'reject', {:action => 'reject', :id => @wish}, {:class => 'mod'} %></li>
+                <li>|</li>
+              <% end %>
+
+              <% if @wish.open? || current_user.admin_mod? %>
+                <% if current_user.admin_mod? || @wish.user == current_user %>
+                  <li><%= link_to 'edit', {:action => 'edit', :id => @wish} %></li>
+                  <li>|</li>
+                  <li><%= link_to 'remove', {:action => 'destroy', :id => @wish} %></li>
+                  <li>|</li>
+                  <% if current_user.admin_mod? %>
+                    <li><%= link_to @wish.comments_locked? ? 'unlock' : 'lock', {:action => 'switch_lock_comments', :id => @wish}, {:class => 'mod'} %></li>
+                    <li>|</li>
+                  <% end %>
+                <% else %>
+                  <li><%= link_to 'report', {:action => 'report', :id => @wish} %></li>
                   <li>|</li>
                 <% end %>
-              <% else %>
-                <li><%= link_to 'report', {:action => 'report', :id => @wish} %></li>
-                <li>|</li>
-              <% end %>              
+              <% end %>
               <li><%= link_to 'bounties', wish_bounties_path(:wish_id => @wish) %></li>
             </ul>
           </div>
         </td>
       </tr>
-        <tr>
-          <td class="label">
-            Category
-          </td>
-          <td>
-            <%= @wish.category.name %>
-          </td>
-        </tr>
+      <tr>
+        <td class="label">
+          Category
+        </td>
+        <td>
+          <%= @wish.category.name %>
+        </td>
+      </tr>
       <% if @wish.format_id %>
         <tr>  
           <td class="label">
@@ -110,7 +123,7 @@
           <%= textual_data_amount @wish.total_bounty %>
         </td>
       </tr>
-      <% if @wish.filled? %>
+      <% if @wish.filled? || (@wish.pending && current_user.admin_mod?) %>
         <tr>
           <td class="label">
             Filled by
@@ -125,6 +138,14 @@
           </td>
           <td>
             <%= textual_time_interval(@wish.filled_at, 'ago') %>
+          </td>
+        </tr>
+        <tr>
+          <td class="label">
+            Torrent
+          </td>
+          <td class="bold">
+            <%= link_to 'link', torrents_path(:action => 'show', :id => @wish.torrent_id) %>
           </td>
         </tr>
       <% end %>

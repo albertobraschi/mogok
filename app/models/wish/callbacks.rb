@@ -3,7 +3,7 @@ class Wish
 
   # callbacks concern
 
-  after_create :create_fulltext
+  after_create :create_fulltext, :log_creation
   after_update :update_fulltext
 
   private

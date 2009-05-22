@@ -14,6 +14,8 @@ class Torrent
     root.out
   end
 
+  # Parse torrent file and populate the meta info attributes. Also add errors to model if needed.
+  # Return false if a parse error occurs or meta info is invalid
   def set_meta_info(torrent_data, force_private = false)
     begin
       meta_info = parse_torrent_file(torrent_data, logger) # parse and check if meta-info is valid

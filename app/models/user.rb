@@ -1,11 +1,10 @@
 
 
 class User < ActiveRecord::Base
-  concerns :authentication, :authorization, :pass_recovery, :signup
-  concerns :callbacks, :finders, :validation
-  concerns :ratio_policy, :tracker
+  concerns :authentication, :authorization, :callbacks, :finders, :logging, :notification
+  concerns :pass_recovery, :ratio_policy, :signup, :tracker, :validation
 
-  strip_attributes! # strip_attributes
+  strip_attributes! # strip_attributes plugin
   
   attr_protected :role_id, :tickets
 
@@ -55,6 +54,12 @@ class User < ActiveRecord::Base
 
   def activate
     update_attribute :active, true
+  end
+
+  def destroy_with_log(destroyer)
+    destroy
+    log_destruction(destroyer)
+    logger.debug ':-) user destroyed'
   end
 
   def editable_by?(updater)

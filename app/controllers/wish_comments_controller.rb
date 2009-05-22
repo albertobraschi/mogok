@@ -13,7 +13,7 @@ class WishCommentsController < ApplicationController
     w = Wish.find params[:wish_id]
     access_denied if w.comments_locked? && !current_user.admin_mod?
     unless params[:body].blank?
-      w.add_comment params, current_user
+      w.add_comment(params[:body], current_user)
       flash[:comment_notice] = t('success')
     else
       flash[:comment_error] = t('empty')
@@ -33,7 +33,7 @@ class WishCommentsController < ApplicationController
     if request.post?
       unless cancelled?
         unless params[:body].blank?
-          @wish_comment.edit params, current_user
+          @wish_comment.edit(params[:body], current_user)
           logger.debug ':-) wish_comment saved'
           flash[:comment_notice] = t('success')
           redirect_to_wish

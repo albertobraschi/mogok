@@ -72,10 +72,8 @@ class UsersController < ApplicationController
     access_denied if !@user.editable_by?(current_user) || @user == current_user
     if request.post?
       unless cancelled?
-        @user.destroy
-        logger.debug ':-) user destroyed'        
-        flash[:notice] = t('success')
-        add_log t('log', :username => @user.username, :by => current_user.username)
+        @user.destroy_with_log(current_user)              
+        flash[:notice] = t('success')        
         redirect_to :action => 'index'
       else
         redirect_to :action => 'show', :id => @user
@@ -89,7 +87,7 @@ class UsersController < ApplicationController
     access_denied if @user != current_user && !current_user.admin?
     if request.post?
       unless cancelled?
-        reset_user_passkey
+        @user.reset_passkey_with_notification(current_user)
         flash[:notice] = t('success')
       end
       redirect_to :action => 'show', :id => @user
@@ -114,10 +112,7 @@ class UsersController < ApplicationController
     if request.post?
       unless cancelled?
         unless params[:reason].blank?
-          Report.create @user, 
-                        users_path(:action => 'show', :id => @user),
-                        current_user,
-                        params[:reason]
+          Report.create @user, users_path(:action => 'show', :id => @user), current_user, params[:reason]
           flash[:notice] = t('success')
           redirect_to :action => 'show', :id => @user
         else
@@ -193,15 +188,6 @@ class UsersController < ApplicationController
           end
         end
       end
-    end
-
-    def reset_user_passkey
-      @user.reset_passkey!
-      add_log t('log', :username => @user.username, :by => current_user.username), nil, true
-      if @user != current_user
-        deliver_message_notification @user, t('notification_subject'), t('notification_body')
-      end
-      logger.debug ':-) paskey reset'
     end
 end
 

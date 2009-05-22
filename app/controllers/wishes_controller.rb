@@ -2,7 +2,7 @@
 class WishesController < ApplicationController
   include MessageNotification
   before_filter :logged_in_required
-  before_filter :admin_mod_required, :only => [:switch_lock_comments]
+  before_filter :admin_mod_required, :only => [:switch_lock_comments, :approve, :reject]
 
   def index
     logger.debug ':-) wishes_controller.index'
@@ -46,7 +46,6 @@ class WishesController < ApplicationController
       unless cancelled?
         if @wish.edit(params[:wish])
           logger.debug ':-) wish edited'
-          add_log t('log', :name => @wish.name, :by => current_user.username), params[:reason]
           flash[:notice] = t('success')
           redirect_to :action => 'show', :id => @wish
         else
@@ -60,18 +59,66 @@ class WishesController < ApplicationController
     @category = @wish.category
   end
 
-  def remove
+  def destroy
     logger.debug ':-) wishes_controller.remove'
     @wish = Wish.find params[:id]
     access_denied unless @wish.editable_by? current_user
     if request.post?
       unless cancelled?
-        destroy_wish
-        flash[:notice] = t('destroyed_flash')
+        @wish.destroy_with_notification current_user, params[:reason]
+        flash[:notice] = t('success')
         redirect_to :action => 'index'
       else
         redirect_to :action => 'show', :id => @wish
       end
+    end
+  end
+
+  def fill
+    logger.debug ':-) wishes_controller.fill'
+    @wish = Wish.find params[:id]
+    access_denied if @wish.user == current_user
+    if request.post?
+      unless cancelled?
+        t = Torrent.find_by_info_hash_hex params[:info_hash]
+        case
+          when t.blank?
+            flash.now[:error] = t('info_hash_invalid')
+          when Wish.find_by_torrent_id(t)
+            flash.now[:error] = t('torrent_taken')
+          when t.user != current_user
+            flash.now[:error] = t('not_torrent_uploader')
+          when @wish.user == t.user
+            flash.now[:error] = t('same_user')
+          else
+            @wish.fill t
+            Report.create @wish, wishes_path(:action => 'show', :id => @wish), current_user, t('report')
+            flash[:notice] = t('success')
+            redirect_to :action => 'show', :id => @wish
+        end
+      else
+        redirect_to :action => 'show', :id => @wish
+      end
+    end
+  end
+
+  def approve
+    logger.debug ':-) wishes_controller.approve'
+    @wish = Wish.find params[:id]
+    if request.post?
+      @wish.approve
+      flash[:notice] = t('success')
+      redirect_to :action => 'show', :id => @wish
+    end
+  end
+
+  def reject
+    logger.debug ':-) wishes_controller.reject'
+    @wish = Wish.find params[:id]
+    if request.post?
+      @wish.reject current_user, params[:reason]
+      flash[:notice] = t('success')
+      redirect_to :action => 'show', :id => @wish
     end
   end
 
@@ -108,14 +155,7 @@ class WishesController < ApplicationController
       @categories = Category.cached_all
       @countries = Country.cached_all
     end
-
-    def destroy_wish
-      @wish.destroy
-      add_log t('destroyed_log', :name => @wish.name, :by => current_user.username), params[:reason]
-      if @wish.user != current_user
-        s = t('destroyed_notification_subject')
-        b = t('destroyed_notification_body', :name => @wish.name, :by => current_user.username, :reason => params[:reason])
-        deliver_message_notification @wish.user, s, b
-      end
-    end
 end
+
+
+

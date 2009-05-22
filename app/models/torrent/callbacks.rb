@@ -5,9 +5,8 @@ class Torrent
 
   before_create :init_new_record
   before_save :trim_description
-  after_create :create_fulltext, :log_created
+  after_create :create_fulltext
   after_update :update_fulltext
-  after_destroy :log_destroyed
 
   private
 
@@ -27,13 +26,5 @@ class Torrent
 
     def update_fulltext
       self.torrent_fulltext.update_attribute :body, "#{self.name} #{self.description}" if @update_fulltext
-    end
-
-    def log_created
-      logger.debug ':-) torrent created'
-    end
-
-    def log_destroyed
-      logger.debug ':-) torrent destroyed'
     end
 end

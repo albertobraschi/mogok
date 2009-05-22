@@ -15,6 +15,15 @@ class ErrorLog < ActiveRecord::Base
     super :message => message, :location => location
   end
 
+  def self.log_error(e)
+    message =  "Error: #{e.class}\n"
+    message << "Message: #{e.clean_message}"
+    
+    location = e.backtrace[0, 15].join("\n")
+
+    create message, location
+  end
+
   private
 
     def trim_attributes

@@ -7,10 +7,10 @@
   <div class="wish_header"><%= wish_link @wish %></div>
 
   <%= render :partial => 'misc/flash', :locals => {:flash => flash} %>
-  
-  <div class="links">
-    <%= link_to '[ add bounty ]', {:action => 'new'} %>
-  </div>
+
+  <% if @wish.open? %>
+    <div class="links"><%= link_to '[ add bounty ]', {:action => 'new'} %></div>
+  <% end %>
 
   <table class="browse">
     <tr>
@@ -52,7 +52,7 @@
             <%= b.revoked? ? 'revoked' : 'active' %>
           </td>
           <td>
-            <%  if b.user == current_user && !b.revoked? %>
+            <% if b.user == current_user && !b.revoked? && b.wish.open? %>
               <%= link_to '[ revoke ]', wish_bounties_path(:action => 'revoke', :wish_id => @wish, :id => b) %>
             <% else %>
               &nbsp;&nbsp; - &nbsp;&nbsp;

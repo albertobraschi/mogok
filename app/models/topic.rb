@@ -1,6 +1,6 @@
 
 class Topic < ActiveRecord::Base
-  strip_attributes! # strip_attributes
+  strip_attributes! # strip_attributes plugin
 
   has_one :topic_post, :class_name => 'Post', :conditions => {:is_topic_post => true}
   has_many :posts, :dependent => :destroy

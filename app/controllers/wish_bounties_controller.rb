@@ -11,6 +11,7 @@ class WishBountiesController < ApplicationController
   def new
     logger.debug ':-) wish_bounties_controller.new'
     @wish = Wish.find params[:wish_id]
+    access_denied unless @wish.open?
     if request.post?
       unless cancelled?
         bounty_amount = parse_bounty_amount
@@ -34,11 +35,11 @@ class WishBountiesController < ApplicationController
   def revoke
     logger.debug ':-) wish_bounties_controller.destroy'
     @wish_bounty = WishBounty.find params[:id]
-    access_denied if @wish_bounty.revoked?
+    access_denied if @wish_bounty.revoked? || !@wish_bounty.wish.open?
     if request.post?
       unless cancelled?
         @wish_bounty.revoke
-        flash[:notice] = 'Request bounty successfully revoked.'
+        flash[:notice] = t('success')
       end
       redirect_to wish_bounties_path(:action => 'index', :wish_id => @wish_bounty.wish)
     end

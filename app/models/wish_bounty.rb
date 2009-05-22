@@ -10,9 +10,18 @@ class WishBounty < ActiveRecord::Base
   validates_presence_of :amount
 
   def revoke
-    raise 'wish_bounty already revoked' if revoked?
-    raise 'wish_bountys wish is already filled' if self.wish.filled?
-    revoke_bounty_routine
+    WishBounty.transaction do
+      self.user.lock!
+      self.user.uploaded += self.amount
+      self.user.save
+
+      self.wish.lock!
+      self.wish.total_bounty -= self.amount
+      self.wish.save
+
+      self.revoked = true
+      save
+    end
   end
 
   private
@@ -28,21 +37,6 @@ class WishBounty < ActiveRecord::Base
       self.wish.save
 
       self.bounty_number = self.wish.bounties_count
-    end
-
-    def revoke_bounty_routine
-      WishBounty.transaction do
-        self.user.lock!
-        self.user.uploaded += self.amount
-        self.user.save
-
-        self.wish.lock!
-        self.wish.total_bounty -= self.amount
-        self.wish.save
-
-        self.revoked = true
-        save
-      end
     end
 
     def destroy_bounty_routine

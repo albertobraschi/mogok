@@ -3,7 +3,7 @@ class Client < ActiveRecord::Base
   attr_accessor :banned_version
   attr_reader :version
 
-  index [:code] # cache_money
+  index [:code] # cache_money plugin
 
   validates_presence_of :code, :name
   

@@ -10,10 +10,10 @@ class ApplicationController < ActionController::Base
 
     def after_logged_in_required # callback from app_authorization
       current_user.register_access
-      set_user_alerts
+      staff_alerts
     end
 
-    def set_user_alerts
+    def staff_alerts
       if current_user.admin?
         def current_user.error_log?
           ErrorLog.has?
@@ -22,17 +22,15 @@ class ApplicationController < ActionController::Base
         def current_user.open_report?
           Report.has_open?
         end
+
+        def current_user.pending_wish?
+          Wish.has_pending?
+        end
       end
     end
 
     def t(key, args = {})
       super "controller.#{params[:controller]}.#{params[:action]}.#{key}", args # I18n convenience
-    end
-
-    def add_log(text, reason = nil, admin = false)
-      text << " (#{reason})" unless reason.blank?
-      text << '.'
-      Log.create text, admin
     end
 
     def cancelled?

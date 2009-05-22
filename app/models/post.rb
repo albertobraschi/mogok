@@ -1,6 +1,6 @@
 
 class Post < ActiveRecord::Base
-  strip_attributes! # strip_attributes
+  strip_attributes! # strip_attributes plugin
 
   belongs_to :topic
   belongs_to :forum

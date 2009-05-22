@@ -31,7 +31,7 @@
         By
       </td>
       <td class="header">
-        Filled
+        Status
       </td>
       <td class="header">
         Filler
@@ -57,7 +57,7 @@
             <%= user_link w.user, true %>
           </td>
           <td class="no_wrap">
-            <%= w.filled? ? 'yes' : 'no' %>
+            <%= w.status %>
           </td>
           <td>
             <%= w.filled? ? user_link(w.filler, true) : '-' %>

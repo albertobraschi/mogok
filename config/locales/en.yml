@@ -75,30 +75,19 @@ en:
 
     torrents:
       edit:
-        success: Torrent successfully edited.
-        log: Torrent "{{name}}" was edited by {{by}}
+        success: Torrent successfully edited.        
       remove:
-        destroyed_flash: Torrent successfully deleted from system.
-        destroyed_log: Torrent "{{name}}" was removed by {{by}}
-        destroyed_notification_subject: torrent removed
-        destroyed_notification_body: Your torrent "{{name}}" was removed by {{by}} ({{reason}}).
-        inactivated_flash: Torrent successfully inactivated.
-        inactivated_log: Torrent "{{name}}" inactivated by {{by}}
+        destroyed: Torrent successfully deleted from system.
+        inactivated: Torrent successfully inactivated.
         inactivated_title: Torrent Inactivated
         inactivated_message: Your torrent will stay inactive until a moderator removes it.
-        inactivated_notification_subject: torrent inactivated
-        inactivated_notification_body: Your torrent "{{name}}" was inactivated by {{by}} ({{reason}}).
       activate:
         success: Torrent was successfully activated.
-        log: Torrent "{{name}}" was activated by {{by}}
-        notification_subject: torrent activated
-        notification_body: Your torrent "{{name}}" was activated by {{by}}.
       report:
         success: Torrent successfully reported.
         reason_required: Reason is required.
       upload:
-        success: Your personal announce url was added to the torrent, please re-download it.
-        log: Torrent "{{name}}" was uploaded by {{by}}
+        success: Your personal announce url was added to the torrent, please re-download it.        
 
     tracker:
       scrape:
@@ -124,38 +113,20 @@ en:
       edit:
         success: Profile successfully updated.
       destroy:
-        success: User successfully destroyed.
-        log: User {{username}} removed by {{by}}
+        success: User successfully destroyed.        
       reset_passkey:
         success: Passkey successfully reset.
-        log: User {{username}} PASSKEY was reset by {{by}}
-        notification_subject: passkey reset
-        notification_body: Your passkey was reset for security reasons, please re-download your active torrents.
       report:
         success: User successfully reported.
         reason_required: Reason is required.
 
-    wishes:
-      new:
-        success: Request successfully created.
-        log: Request "{{name}}" was edited by {{by}}
-      edit:
-        success: Request successfully edited.
-        log: Request "{{name}}" was edited by {{by}}
-      remove:
-        destroyed_flash: Request successfully deleted from system.
-        destroyed_log: Request "{{name}}" was removed by {{by}}
-        destroyed_notification_subject: request removed
-        destroyed_notification_body: Your request "{{name}}" was removed by {{by}} ({{reason}}).
-      report:
-        success: Request successfully reported.
-        reason_required: Reason is required.
-
     wish_bounties:
       new:
-        success: Request bounty successfully added.
+        success: Request bounty successfully added. You will be notified when the request is filled.
         invalid_bounty_amount: Invalid bounty amount.
         insuficient_upload_credit: Your upload credit is insufficient.
+      revoke:
+        success: Request bounty successfully revoked.
 
     wish_comments:
       new:
@@ -168,7 +139,29 @@ en:
         success: Comment successfully reported.
         reason_required: Reason is required.
 
+    wishes:
+      new:
+        success: Request successfully created.
+      edit:
+        success: Request successfully edited.
+      destroy:
+        success: Request successfully removed.
+      fill:
+        success: Request successfully filled. A message will be sent to you after a moderator examines it.
+        report: Request waiting approval.
+        info_hash_invalid: Invalid torrent info hash.
+        not_torrent_uploader: Only the torrent uploader can use it to fill a request.
+        torrent_taken: Torrent already filled another request.
+        same_user: You cannot fill your own request.
+      report:
+        success: Request successfully reported.
+        reason_required: Reason is required.
+      approve:
+        success: Request filling successfully approved.
+      reject:
+        success: Request filling successfully rejected.
 
+        
   helper:
     application_helper:
       user_link:
@@ -200,11 +193,49 @@ en:
           invalid: A valid username is required.
           inactive: User is not active.
           system: System do not accept messages.
+          
+    torrent:
+      log_upload:
+        log: Torrent "{{name}}" was uploaded by {{by}}.
+      log_edition:
+        log: Torrent "{{name}}" was edited by {{by}} ({{reason}}).
+      log_inactivation:
+        log: Torrent "{{name}}" inactivated by {{by}}
+      log_activation:
+        log: Torrent "{{name}}" was activated by {{by}}
+      log_destruction:
+        log: Torrent "{{name}}" was removed by {{by}}
+      notify_inactivation:
+        subject: torrent inactivated
+        body: Your torrent "{{name}}" was inactivated by {{by}} ({{reason}}).
+      notify_activation:
+        subject: torrent activated
+        body: Your torrent "{{name}}" was activated by {{by}}.
+      notify_destruction:
+        subject: torrent removed
+        body: Your torrent "{{name}}" was removed by {{by}} ({{reason}}).
+      errors:
+        torrent_file:
+          required: Torrent file required.
+          type: Must be a file of type torrent.
+          size: Torrent file size cannot exceed {{max_size}} KB, increase the pieces size.
+          invalid: Invalid torrent file.
+        info_hash:
+          taken:  Torrent file already uploaded.
+        year:
+          invalid: Invalid year.
+        tags:
+          max: Tags limit is {{max}}.
 
     user:
       apply_ratio_watch:
         ratio_watch_notification_subject: you are under ratio watch
         ratio_watch_notification_body: Your ratio is in violation of the site rules, you have until {{watch_until}} to fix it.
+      log_destruction:
+        log: User {{username}} removed by {{by}}.
+      notify_passkey_resetting:
+        subject: passkey reset
+        body: Your passkey was reset for security reasons, please re-download your active torrents.
       errors:
         username:
           required: Username required.
@@ -226,22 +257,34 @@ en:
           invalid_size: Length cannot exceed 100.
         invite_code:
           invalid: Invalid invite code.
-          
-    torrent:
-      errors:
-        torrent_file:
-          required: Torrent file required.
-          type: Must be a file of type torrent.
-          size: Torrent file size cannot exceed {{max_size}} KB, increase the pieces size.
-          invalid: Invalid torrent file.
-        info_hash:
-          taken:  Torrent file already uploaded.
-        year:
-          invalid: Invalid year.
-        tags:
-          max: Tags limit is {{max}}.
 
     wish:
+      status:
+        filled: Filled
+        pending: Pending
+        open: Open
+      log_creation:
+        log: Request "{{name}}" was created by {{by}}.
+      log_approval:
+        log: Request "{{name}}" was filled by {{by}}.
+      log_destruction:
+        log: Request "{{name}}" was removed by {{by}} ({{reason}}).
+      notify_approval:
+        filler_subject: request filling approved
+        filler_body: Your filling for request "{{name}}" was approved.
+        filler_body_with_amount: Your filling for request "{{name}}" was approved. The bounty amount of {{amount}} was added to your upload credit.
+        requester_subject: your request was filled
+        requester_body: Your request "{{name}}" was filled by {{by}}.
+        bounter_subject: request filled
+        bounter_body: Request "{{name}}" was filled by {{by}}.
+      notify_rejection:
+        subject: request filling rejected
+        body: Your filling for request "{{name}}" was rejected by {{by}} ({{reason}}).
+      notify_destruction:
+        subject: request removed
+        body: Your request "{{name}}" was removed by {{by}} ({{reason}}).
+      report_filling:
+        report: Request filled.
       errors:
         bounty_amount:
           invalid: Invalid bounty amount.

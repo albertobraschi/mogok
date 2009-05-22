@@ -1,6 +1,6 @@
 
 class Forum < ActiveRecord::Base
-  strip_attributes! # strip_attributes
+  strip_attributes! # strip_attributes plugin
   
   has_many :topics, :dependent => :destroy
 

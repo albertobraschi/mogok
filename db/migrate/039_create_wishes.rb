@@ -14,6 +14,8 @@ class CreateWishes < ActiveRecord::Migration
       t.column :filled, :boolean, :null => false, :default => false
       t.column :filler_id, :integer
       t.column :filled_at, :datetime
+      t.column :torrent_id, :integer
+      t.column :pending, :boolean, :null => false, :default => false
       t.column :total_bounty, 'BIGINT(20)', :null => false, :default => 0
       t.column :bounties_count, :integer, :null => false, :default => 0
       t.column :comments_count, :integer, :null => false, :default => 0

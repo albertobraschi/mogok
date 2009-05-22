@@ -1,4 +1,6 @@
 
+# WARNING: reload the tasks after changing this file
+
 cleanup_peers:
   class_name: BgTasks::CleanupPeers
   interval_minutes: 60

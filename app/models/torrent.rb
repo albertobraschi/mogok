@@ -1,10 +1,10 @@
 
 class Torrent < ActiveRecord::Base
-  concerns :callbacks, :finders, :parsing, :tracker, :validation
+  concerns :callbacks, :finders, :logging, :notification, :parsing, :tracker, :validation
 
-  strip_attributes! # strip_attributes
+  strip_attributes! # strip_attributes plugin
   
-  index [:info_hash_hex] # cache_money
+  index [:info_hash_hex] # cache_money plugin
 
   has_many :mapped_files, :dependent => :destroy
   has_many :peers, :dependent => :destroy
@@ -44,15 +44,37 @@ class Torrent < ActiveRecord::Base
     self.inactivated
   end
 
-  def inactivate
+  def parse_and_save(uploader, torrent_data, force_private = false)
+    if set_meta_info(torrent_data, force_private)
+      self.user = uploader
+      if save
+        log_upload
+        return true
+      end
+    end
+    false
+  end
+
+  def activate(activator)
+    update_attribute :active, true
+    log_activation(activator)
+    notify_activation(activator) if self.user != activator
+    logger.debug ':-) torrent activated'
+  end
+
+  def inactivate(inactivator, reason)
     self.inactivated = true # flag used by cache sweeper
-    update_attribute :active, false
+    update_attribute(:active, false)
+    log_inactivation(inactivator, reason)
+    notify_inactivation(inactivator, reason) if self.user != inactivator
     logger.debug ':-) torrent inactivated'
   end
 
-  def activate
-    update_attribute :active, true
-    logger.debug ':-) torrent activated'
+  def destroy_with_notification(destroyer, reason)
+    destroy
+    log_destruction(destroyer, reason)
+    notify_destruction(destroyer, reason) if self.user != destroyer
+    logger.debug ':-) torrent destroyed'
   end
 
   def add_comment(params, user)
@@ -70,9 +92,13 @@ class Torrent < ActiveRecord::Base
     user.id == self.user_id || user.admin_mod?
   end
 
-  def edit(params)
+  def edit(params, editor, reason)
     set_attributes params
-    save
+    if save
+      log_edition(editor, reason)
+      return true
+    end
+    false
   end
 
   private
