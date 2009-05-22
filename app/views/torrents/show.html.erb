@@ -26,11 +26,13 @@
                 <li>|</li>
                 <li><%= link_to 'remove', {:action => 'remove', :id => @torrent} %></li>
                 <li>|</li>
+
                 <% if current_user.admin_mod? %>
                   <% unless @torrent.active? %>
-                  <li><%= link_to 'activate', {:action => 'activate', :id => @torrent}, {:class => 'mod', :confirm => 'Are you sure?'} %></li>
+                    <li><%= link_to 'activate', {:action => 'activate', :id => @torrent}, {:class => 'mod', :confirm => 'Are you sure?'} %></li>
                     <li>|</li>
                   <% end %>
+                  
                   <li><%= link_to @torrent.comments_locked? ? 'unlock' : 'lock', {:action => 'switch_lock_comments', :id => @torrent}, {:class => 'mod'} %></li>
                   <li>|</li>
                 <% end %>

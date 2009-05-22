@@ -18,20 +18,20 @@
         <td class="no_wrap">
           <ul class="user_menu">
             <li><%= link_to 'inbox', messages_path(:action => 'folder', :id => Message::INBOX), {:class => ('new_message' if current_user.has_new_message?)} %></li>
-            <li>|</li>
-            <li><%= link_to 'bookmarks', bookmarks_path %></li>
-            <li>|</li>
-            <li><%= link_to 'uploads', uploads_path %></li>
             <% if current_user.has_ticket?(:inviter) %>
               <li>|</li>
-              <li><%= link_to 'invite', {:controller => 'invitations'} %></li>
+              <li><%= link_to 'invitations', {:controller => 'invitations'} %></li>
             <% end %>
+            <li>|</li>
+            <li><%= link_to 'bookmarks', my_bookmarks_path %></li>
+            <li>|</li>
+            <li><%= link_to 'requests', my_wishes_path %></li>
+            <li>|</li>
+            <li><%= link_to 'uploads', my_uploads_path %></li>
             <% if current_user.mod? %>
               <li>|</li>
               <li><%= link_to 'reports', {:controller => 'reports'}, {:class => current_user.try(:open_report?) ? 'report_alert' : nil} %></li>
             <% end %>
-            <li>|</li>
-            <li><%= link_to 'profile', users_path(:action => 'edit', :id => current_user) %></li>
             <% if current_user.admin? && !session[:adm_menu] %>
               <li>|</li>
               <li><%= link_to 'adm', {:controller => 'adm', :action => 'switch_menu'} %></li>

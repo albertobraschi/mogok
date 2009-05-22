@@ -124,20 +124,25 @@ class UsersController < ApplicationController
     end
   end
 
-  def bookmarks
+  def my_bookmarks
     logger.debug ':-) users_controller.bookmarks'
     @torrents = current_user.paginate_bookmarks params, :per_page => 20
     @torrents.each {|t| t.bookmarked = true} if @torrents
   end
 
-  def uploads
+  def my_uploads
     logger.debug ':-) users_controller.uploads'
     params[:order_by], params[:desc]= 'created_at', '1' if params[:order_by].blank?
     @torrents = current_user.paginate_uploads params, :per_page => APP_CONFIG[:page_size][:user_history]
     set_bookmarked @torrents
-    unless @torrents.blank?
-      @torrents.desc_by_default = APP_CONFIG[:desc_by_default][:torrents]
-    end
+    @torrents.desc_by_default = APP_CONFIG[:desc_by_default][:torrents] unless @torrents.blank?
+  end
+
+  def my_wishes
+    logger.debug ':-) users_controller.wishes'
+    params[:order_by], params[:desc]= 'created_at', '1' if params[:order_by].blank?
+    @wishes = current_user.paginate_wishes params, :per_page => APP_CONFIG[:page_size][:wishes]
+    @wishes.desc_by_default = APP_CONFIG[:desc_by_default][:wishes] unless @wishes.blank?
   end
 
   def stuck

@@ -29,10 +29,10 @@ class CreateData < ActiveRecord::Migration
   end
 
   def self.create_roles
-    # roles 1 (owner), 2 (admin), 3 (mod) and 4 (user) are created in the create_default_data migration
-    self.create_role 'power_user', 'Power user','user_power_user', 'inviter requester'
-    self.create_role 'uploader', 'Uploader','user_uploader', 'inviter inactivity_exempt requester'
-    self.create_role 'vip', 'VIP','user_vip', 'inviter inactivity_exempt requester'
+    # roles 1 (owner), 2 (admin), 3 (mod), 4 (user) and 5 (defective) are created in the create_default_data migration
+    self.create_role 'power_user', 'Power user', 'user_power_user', 'inviter inactivity_exempt wisher'
+    self.create_role 'uploader'  , 'Uploader'  , 'user_uploader'  , 'inviter inactivity_exempt wisher'
+    self.create_role 'vip'       , 'VIP'       , 'user_vip'       , 'inviter inactivity_exempt wisher'
   end
 
   def self.create_genders

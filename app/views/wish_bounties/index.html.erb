@@ -52,7 +52,7 @@
             <%= b.revoked? ? 'revoked' : 'active' %>
           </td>
           <td>
-            <% if b.user == current_user && !b.revoked? && b.wish.open? %>
+            <% if b.user == current_user && @wish.open? && !b.revoked? %>
               <%= link_to '[ revoke ]', wish_bounties_path(:action => 'revoke', :wish_id => @wish, :id => b) %>
             <% else %>
               &nbsp;&nbsp; - &nbsp;&nbsp;

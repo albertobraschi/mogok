@@ -12,7 +12,7 @@ class Report < ActiveRecord::Base
   end
 
   def self.create(target, target_path, reporter, reason)
-    super :label => make_label(target),
+    super :target_label => make_target_label(target),
           :target_path => target_path,
           :user => reporter,
           :reason => reason
@@ -28,7 +28,7 @@ class Report < ActiveRecord::Base
       self.reason = self.reason[0, 200]
     end
 
-    def self.make_label(obj)
+    def self.make_target_label(obj)
       "#{obj.class.name.underscore} [#{obj.id}]"
     end
 end

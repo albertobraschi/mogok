@@ -6,7 +6,7 @@ class CreateReports < ActiveRecord::Migration
       t.column :created_at, :datetime, :null => false
       t.column :user_id, :integer, :null => false
       t.column :reason, :text, :null => false
-      t.column :label, :string, :null => false
+      t.column :target_label, :string, :null => false
       t.column :target_path, :string, :null => false
       t.column :handler_id, :integer
     end

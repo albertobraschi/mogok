@@ -49,6 +49,7 @@ page_size:
   forum_posts: 20
   forum_search_results: 40
   stats_history: 40
+  wishes: 50
   wish_bounties: 20
 
 # browse table columns showed by default in a decrescent way when header is clicked the fist time

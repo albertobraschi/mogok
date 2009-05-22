@@ -9,15 +9,16 @@ class WishesController < ApplicationController
     params[:keywords] = ApplicationHelper.process_search_keywords params[:keywords], 3
     params[:order_by], params[:desc]= 'created_at', '1' if params[:order_by].blank?
 
-    @wishes = Wish.search params, :per_page => APP_CONFIG[:page_size][:torrents]
+    @wishes = Wish.search params, :per_page => APP_CONFIG[:page_size][:wishes]
     @wishes.desc_by_default = APP_CONFIG[:desc_by_default][:wishes] unless @wishes.blank?
+    
     @category = Category.find params[:category_id] unless params[:category_id].blank?
     set_collections
   end
 
   def new
     logger.debug ':-) wishes_controller.new'
-    ticket_required :requester
+    ticket_required :wisher
     @wish = Wish.new params[:wish]
     if request.post?
       @wish.user = current_user      
@@ -128,8 +129,7 @@ class WishesController < ApplicationController
     if request.post?
       unless cancelled?
         unless params[:reason].blank?
-          target_path = wishes_path :action => 'show', :id => @wish
-          Report.create @wish, target_path, current_user, params[:reason]
+          Report.create @wish, wishes_path(:action => 'show', :id => @wish), current_user, params[:reason]
           flash[:notice] = t('success')
           redirect_to :action => 'show', :id => @wish
         else

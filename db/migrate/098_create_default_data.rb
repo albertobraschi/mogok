@@ -8,9 +8,9 @@ class CreateDefaultData < ActiveRecord::Migration
 
     # user roles required by the application
     self.create_role 1, Role::SYSTEM       , 'System'       ,'user_system'   , 'staff'
-    self.create_role 2, Role::OWNER        , 'Owner'        ,'user_owner'    , 'staff inviter requester'
-    self.create_role 3, Role::ADMINISTRATOR, 'Administrator','user_admin'    , 'staff inviter requester'
-    self.create_role 4, Role::MODERATOR    , 'Moderator'    ,'user_mod'      , 'staff inviter requester'
+    self.create_role 2, Role::OWNER        , 'Owner'        ,'user_owner'    , 'staff inviter wisher'
+    self.create_role 3, Role::ADMINISTRATOR, 'Administrator','user_admin'    , 'staff inviter wisher'
+    self.create_role 4, Role::MODERATOR    , 'Moderator'    ,'user_mod'      , 'staff inviter wisher'
     self.create_role 5, Role::USER         , 'User'         ,'user_user'     , 'requester'
     self.create_role 5, Role::DEFECTIVE    , 'Defective'    ,'user_defective'
 

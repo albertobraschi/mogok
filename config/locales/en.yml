@@ -148,7 +148,7 @@ en:
         success: Request successfully removed.
       fill:
         success: Request successfully filled. A message will be sent to you after a moderator examines it.
-        report: Request waiting approval.
+        report: wish pending
         info_hash_invalid: Invalid torrent info hash.
         not_torrent_uploader: Only the torrent uploader can use it to fill a request.
         torrent_taken: Torrent already filled another request.
@@ -273,8 +273,8 @@ en:
         filler_subject: request filling approved
         filler_body: Your filling for request "{{name}}" was approved.
         filler_body_with_amount: Your filling for request "{{name}}" was approved. The bounty amount of {{amount}} was added to your upload credit.
-        requester_subject: your request was filled
-        requester_body: Your request "{{name}}" was filled by {{by}}.
+        wisher_subject: your request was filled
+        wisher_body: Your request "{{name}}" was filled by {{by}}.
         bounter_subject: request filled
         bounter_body: Request "{{name}}" was filled by {{by}}.
       notify_rejection:

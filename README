@@ -80,7 +80,7 @@ users with lower ranking.
   - inviter: grants the right to send invitations
   - staff: grants right to see and edit staff info
   - inactivity_exempt: will not be inactivated or removed if absent
-  - requester: allow user to request torrents
+  - wisher: allow user to request torrents
 
 - Ratio policy
   The application will apply ratio enforcement rules and promote users based on their ratio and

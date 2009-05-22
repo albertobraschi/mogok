@@ -19,8 +19,9 @@ ActionController::Routing::Routes.draw do |map|
   end
 
   # user  
-  map.bookmarks 'bookmarks', :controller => 'users', :action => 'bookmarks'
-  map.uploads 'uploads', :controller => 'users', :action => 'uploads'
+  map.my_bookmarks 'my_bookmarks', :controller => 'users', :action => 'my_bookmarks'
+  map.my_uploads 'my_uploads', :controller => 'users', :action => 'my_uploads'
+  map.my_wishes 'my_requests', :controller => 'users', :action => 'my_wishes'
   map.stuck 'stuck', :controller => 'users', :action => 'stuck'
   map.users 'users/:action/:id', :controller => 'users'
   

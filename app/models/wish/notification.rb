@@ -20,8 +20,8 @@ class Wish
 
       # notify user who created the wish
       deliver_notification(self.user,
-                           'notify_approval.requester_subject',
-                           'notify_approval.requester_body',
+                           'notify_approval.wisher_subject',
+                           'notify_approval.wisher_body',
                            :name => self.name, :by => self.filler.username)
 
       # notify users who have bounties for the wish

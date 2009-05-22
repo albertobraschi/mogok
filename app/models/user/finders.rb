@@ -11,6 +11,13 @@ class User
                                                        :include => :tags
   end
 
+  def paginate_wishes(params, args)
+    Wish.paginate_by_user_id self,
+                             :order => self.class.order_by(params[:order_by], params[:desc]),
+                             :page => self.class.current_page(params[:page]),
+                             :per_page => args[:per_page]
+  end
+
   def paginate_bookmarks(params, args)
     Torrent.paginate :conditions => paginate_bookmarks_conditions,
                      :order => 'name',

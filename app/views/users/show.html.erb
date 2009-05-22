@@ -20,8 +20,8 @@
           </div>
           <div class="float_right">
             <ul class="menu">
-              <% if current_user.admin? && @user.editable_by?(current_user) %>
-                <li><%= link_to 'edit', {:action => 'edit', :id => @user} %></li>
+              <% if @user.editable_by?(current_user) %>
+                <li><%= link_to 'edit profile', {:action => 'edit', :id => @user} %></li>
                 <li>|</li>
               <% end %>
 
@@ -136,7 +136,7 @@
             Passkey
           </td>
           <td>
-            <%= "#{@user.passkey[0, 4]}**************#{@user.passkey[@user.passkey.size - 5, 4]}" %>
+            <%= "#{@user.passkey[0, 4]} ... #{@user.passkey[@user.passkey.size - 5, 4]}" %>
           </td>
         </tr>
         <tr>  

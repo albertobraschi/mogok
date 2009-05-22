@@ -70,10 +70,7 @@ class CommentsController < ApplicationController
     def redirect_to_torrent(torrent_id = nil, page = nil)
       torrent_id ||= @comment.torrent_id
       page ||= params[:page]
-      redirect_to torrents_path(:action => 'show',
-                                :id => torrent_id,
-                                :page => page,
-                                :anchor => 'comments')
+      redirect_to torrents_path(:action => 'show', :id => torrent_id, :page => page, :anchor => 'comments')
     end
 end
 
