@@ -1,6 +1,5 @@
 # *** restart the application after changing this file ***
 
-
 # GENERAL
 
 # application name (appears in the browse window)
@@ -24,7 +23,7 @@ torrents:
   upload_enabled: true
 
   # period that a torrent remains labeled as new after it was uploaded
-  new_period_minutes: 10
+  new_period_minutes: 60
 
   # if set will be put in the beginning of the torrent file name(e.g [mogok]Test.torrent)
   file_prefix: mogok
@@ -34,52 +33,53 @@ torrents:
 
 # size of pages when browsing data (aka pagination)
 page_size:
+  announce_logs: 50
+  forum_posts: 20
+  forum_search_results: 40
+  forum_topics: 40
+  logs: 50
+  messages: 20
+  peers: 50
+  stats_history: 20
   torrents: 100
-  torrent_peers: 20
-  torrent_snatches: 20
   torrent_comments: 20
+  torrent_peers: 20
+  torrent_rewards: 40
+  torrent_snatches: 20
   users: 40
   user_activity: 20
   user_history: 20
-  messages: 20
-  logs: 50
-  announce_logs: 50
-  peers: 50
-  forum_topics: 40
-  forum_posts: 20
-  forum_search_results: 40
-  stats_history: 40
-  wishes: 50
-  wish_bounties: 20
-  rewards: 20
+  wishes: 40
+  wish_bounties: 40
 
 # browse table columns showed by default in a decrescent way when header is clicked the fist time
 desc_by_default:
-  users:
-    - uploaded
-    - downloaded
-    - ratio
+  announce_logs:
+    - created_at
+    - up_offset
+    - down_offset
   torrents:
     - created_at
     - comments_count
     - snatches_count
     - seeders_count
     - leechers_count
-  announce_logs:
-    - created_at
-    - up_offset
-    - down_offset
+  users:
+    - uploaded
+    - downloaded
+    - ratio
   wishes:
+    - created_at
     - total_bounty
 
 
 # ADMINISTRATION
 
 adm:
-  # enable passenger restart in production
+  # enable the passenger restart link also in production mode (env page)
   passenger_restart_production: false
 
-  # display sensitive environment information in production in the env page
+  # display sensitive environment information in production mode (env page)
   display_env_info_production: false
 
 
@@ -102,6 +102,8 @@ tracker:
 
   # if announces from the bittorrent clients are to be logged
   log_announces: true
+
+
 
 
 

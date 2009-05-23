@@ -1,15 +1,8 @@
-
-# WARNING: reload the tasks after changing this file
-
-cleanup_peers:
-  class_name: BgTasks::CleanupPeers
-  interval_minutes: 60
-  params:
-    peer_max_inactivity_minutes: 90
+# *** reload the tasks after changing this file ***
 
 cleanup:
   class_name: BgTasks::Cleanup
-  interval_minutes: 150
+  interval_minutes: 4
   params:
     user_max_inactivity_days: 150
     log_max_age_days: 30
@@ -20,10 +13,24 @@ cleanup:
     invitation_max_age_days: 3
     task_log_max_age_days: 1
 
+cleanup_peers:
+  class_name: BgTasks::CleanupPeers
+  interval_minutes: 60
+  params:
+    peer_max_inactivity_minutes: 90
+
 refresh_stats:
   class_name: BgTasks::RefreshStats
-  interval_minutes: 360
+  interval_minutes: 400
 
+# Example
+#   user_x_power_user:
+#     lower: user
+#     higher: power_user
+#     min_uploaded: 50
+#     min_ratio: 0.5
+# This rule means that if a user with role 'user' uploaded more than 50GB and has
+# a ratio greater than 0.5, its ratio will be changed to 'power_user'.
 promote_demote:
   class_name: BgTasks::PromoteDemote
   interval_minutes: 60
@@ -39,6 +46,21 @@ promote_demote:
       min_uploaded: 100
       min_ratio: 0.5
 
+# Example
+#   level_one: (the rule name is irrelevant)
+#     min_downloaded: 10
+#     max_downloaded: 20
+#     min_ratio: 0.1
+#     period: 15
+# The rule is applied in two ways:
+#   - if a user not under ratio watch downloaded between 10GB and 20GB and has a
+#     ratio lower than 0.1, its role will be set to 'defective' and its ratio watch
+#     end date will be set to 15 days from now.
+#   - if a user is under ratio watch (its role is 'defective' and ratio_watch_until
+#     is not empty) and the ratio watch period is over, then its ratio will be checked.
+#     If it is under the rules (all rules) then its role will be set back to 'user', if
+#     not the user will be inactivated (if user uploaded at least one torrent) or removed
+#     from system.
 ratio_watch:
   class_name: BgTasks::RatioWatch
   interval_minutes: 60
@@ -67,3 +89,5 @@ ratio_watch:
       min_downloaded: 100
       min_ratio: 0.7
       period: 60
+
+
