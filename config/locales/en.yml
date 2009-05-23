@@ -278,7 +278,7 @@ en:
       notify_approval:
         filler_subject: request filling approved
         filler_body: Your filling for request "{{name}}" was approved.
-        filler_body_with_amount: Your filling for request "{{name}}" was approved. The bounty amount of {{amount}} was added to your upload credit.
+        filler_body_with_amount: Your filling for request "{{name}}" was approved. The request bounty was added to your upload credit.
         wisher_subject: your request was filled
         wisher_body: Your request "{{name}}" was filled by {{by}}.
         bounter_subject: request filled

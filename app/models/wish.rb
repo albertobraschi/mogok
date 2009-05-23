@@ -1,6 +1,6 @@
 
 class Wish < ActiveRecord::Base
-  concerns :callbacks, :finders, :logging, :moderation, :notification, :validation
+  concerns :callbacks, :finders, :logging, :notification, :validation
 
   strip_attributes! # strip_attributes plugin
 

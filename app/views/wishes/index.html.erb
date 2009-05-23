@@ -3,19 +3,15 @@
 
 <div class="main">
   <h2>Requests</h2>
-  
-  <%= render :partial => 'misc/flash', :locals => {:flash => flash} %>
-
-  <%= render :partial => 'index_search_box' %>
 
   <% if current_user.has_ticket?(:wisher) %>
     <div class="links"><%= link_to '[ new request ]', {:action => 'new'} %></div>
   <% end %>
-  
-  <% if !@wishes.blank? && @wishes.length > 15 %>
-    <%= will_paginate @wishes %>
-  <% end %>
 
+  <%= render :partial => 'misc/flash', :locals => {:flash => flash} %>
+
+  <%= render :partial => 'index_search_box' %>
+  
   <table class="browse wide">
     <tr>
       <td class="header">
