@@ -61,19 +61,22 @@ class Wish < ActiveRecord::Base
       self.filler.lock!
       self.filler.uploaded += self.total_bounty
       self.filler.save
+
+      log_approval
+      notify_approval
     end
-    log_approval
-    notify_approval
   end
 
   def reject(rejecter, reason)
-    notify_rejection rejecter, reason
+    Wish.transaction do
+      notify_rejection rejecter, reason
 
-    self.pending = false
-    self.torrent_id = nil
-    self.filler_id = nil
-    self.filled_at = nil
-    save
+      self.pending = false
+      self.torrent_id = nil
+      self.filler_id = nil
+      self.filled_at = nil
+      save
+    end
   end
 
   def destroy_with_notification(destroyer, reason)

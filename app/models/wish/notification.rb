@@ -15,7 +15,7 @@ class Wish
       # notify user who filled the wish
       deliver_notification(self.filler,
                            'notify_approval.filler_subject',
-                           self.total_bount > 0 ? 'notify_approval.filler_body_with_amount' : 'notify_approval.filler_body',
+                           self.total_bounty > 0 ? 'notify_approval.filler_body_with_amount' : 'notify_approval.filler_body',
                            :name => self.name)
 
       # notify user who created the wish

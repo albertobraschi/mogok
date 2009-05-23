@@ -120,20 +120,20 @@
           </div>
         </td>
       </tr>
+      <tr>
+        <td class="label">
+          Created
+        </td>
+        <td>
+          <%= textual_time_interval(@torrent.created_at, 'ago') %>
+        </td>
+      </tr>
       <tr>  
         <td class="label">
           Created by
         </td>
         <td>
           <%= @torrent.user ? user_link(@torrent.user, true) : 'unknown' %>
-        </td>
-      </tr>
-      <tr>  
-        <td class="label">
-          Created
-        </td>
-        <td>
-          <%= textual_time_interval(@torrent.created_at, 'ago') %>
         </td>
       </tr>
       <tr>

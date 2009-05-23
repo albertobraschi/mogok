@@ -105,18 +105,18 @@
       </tr>
       <tr>  
         <td class="label">
-          Created by
-        </td>
-        <td>
-          <%= @wish.user ? user_link(@wish.user) : 'unknown' %>
-        </td>
-      </tr>
-      <tr>  
-        <td class="label">
           Created
         </td>
         <td>
           <%= textual_time_interval(@wish.created_at, 'ago') %>
+        </td>
+      </tr>
+      <tr>
+        <td class="label">
+          Created by
+        </td>
+        <td>
+          <%= @wish.user ? user_link(@wish.user) : 'unknown' %>
         </td>
       </tr>
       <tr>
@@ -130,18 +130,18 @@
       <% if @wish.filled? || (@wish.pending && current_user.admin_mod?) %>
         <tr>
           <td class="label">
-            Filled by
-          </td>
-          <td>
-            <%= @wish.filler ? user_link(@wish.filler) : 'unknown' %>
-          </td>
-        </tr>
-        <tr>
-          <td class="label">
             Filled
           </td>
           <td>
             <%= textual_time_interval(@wish.filled_at, 'ago') %>
+          </td>
+        </tr>
+        <tr>
+          <td class="label">
+            Filled by
+          </td>
+          <td>
+            <%= @wish.filler ? user_link(@wish.filler) : 'unknown' %>
           </td>
         </tr>
         <tr>

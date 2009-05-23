@@ -54,7 +54,6 @@ class WishBountiesController < ApplicationController
         rescue
           return nil
         end
-
         if params[:bounty_unit] == 'MB'
           a = a.megabytes
         elsif params[:bounty_unit] == 'GB'

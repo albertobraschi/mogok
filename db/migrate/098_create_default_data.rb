@@ -11,7 +11,7 @@ class CreateDefaultData < ActiveRecord::Migration
     self.create_role 2, Role::OWNER        , 'Owner'        ,'user_owner'    , 'staff inviter wisher'
     self.create_role 3, Role::ADMINISTRATOR, 'Administrator','user_admin'    , 'staff inviter wisher'
     self.create_role 4, Role::MODERATOR    , 'Moderator'    ,'user_mod'      , 'staff inviter wisher'
-    self.create_role 5, Role::USER         , 'User'         ,'user_user'     , 'requester'
+    self.create_role 5, Role::USER         , 'User'         ,'user_user'     , 'wisher'
     self.create_role 5, Role::DEFECTIVE    , 'Defective'    ,'user_defective'
 
     # style and country
