@@ -25,6 +25,12 @@ class Torrent
                                   :per_page => args[:per_page]
   end
 
+  def paginate_rewards(params, args)
+    Reward.paginate_by_torrent_id self,
+                                  :order => 'created_at',
+                                  :page => self.class.current_page(params[:page]),
+                                  :per_page => args[:per_page]
+  end
 
   def self.search(params, searcher, args)
     paginate :conditions => search_conditions(params, searcher),

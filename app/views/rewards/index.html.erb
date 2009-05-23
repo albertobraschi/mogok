@@ -1,0 +1,59 @@
+
+<% page_name 'Torrent Rewards' %>
+
+<div class="main">
+  <h2>Torrent Rewards</h2>
+
+  <div class="torrent_header"><%= torrent_link @torrent %></div>
+
+  <%= render :partial => 'misc/flash', :locals => {:flash => flash} %>
+
+  <% if @torrent.user != current_user %>
+    <div class="links"><%= link_to '[ add reward ]', {:action => 'new'} %></div>
+  <% end %>
+  
+  <table class="browse">
+    <tr>
+      <td class="header">
+        &nbsp;&nbsp; # &nbsp;&nbsp;
+      </td>
+      <td class="header">
+        Added
+      </td>
+      <td class="header">
+        &nbsp; By &nbsp;
+      </td>
+      <td class="header">
+        Amount
+      </td>
+    </tr>
+    <% unless @rewards.blank? %>
+      <% @rewards.each do |r| %>
+        <tr>
+          <td>
+            <%= r.reward_number %>
+          </td>
+          <td>
+            <%= I18n.l r.created_at, :format => :date %>
+          </td>
+          <td>
+            <%= user_link r.user, true %>
+          </td>
+          <td>
+            <%= textual_data_amount r.amount %>
+          </td>
+        </tr>
+      <% end %>
+    <% else %>
+      <tr>
+        <td colspan="4">
+          This torrent has no rewards.
+        </td>
+      </tr>
+    <% end %>
+  </table>
+
+  <%= will_paginate @rewards %>
+</div>
+
+

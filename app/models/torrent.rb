@@ -11,6 +11,7 @@ class Torrent < ActiveRecord::Base
   has_many :bookmarks, :dependent => :destroy
   has_many :snatches, :dependent => :destroy
   has_many :comments, :dependent => :destroy
+  has_many :rewards, :dependent => :destroy
   has_and_belongs_to_many :tags, :order => :name
   has_one :raw_info, :dependent => :destroy
   has_one :torrent_fulltext, :dependent => :destroy
@@ -77,15 +78,17 @@ class Torrent < ActiveRecord::Base
     logger.debug ':-) torrent destroyed'
   end
 
-  def add_comment(params, user)
+  def add_comment(params, commenter)
     Torrent.transaction do
       increment! :comments_count
-      c = Comment.new :user => user,
-                      :torrent => self,
-                      :body => params[:body]
+      c = Comment.new :user => commenter, :torrent => self, :body => params[:body]
       c.comment_number = self.comments_count
       c.save
     end
+  end
+
+  def add_reward(amount, rewarder)
+    Reward.create :torrent => self, :user => rewarder, :amount => amount
   end
 
   def editable_by?(user)

@@ -1,10 +1,10 @@
 
-<% page_name 'New Request Bounty' %>
+<% page_name 'New Torrent Reward' %>
 
 <div class="main">
-  <h2>New Request Bounty</h2>
+  <h2>New Torrent Reward</h2>
 
-  <div class="wish_header"><%= wish_link @wish %></div>
+  <div class="torrent_header"><%= torrent_link @torrent %></div>
 
   <%= render :partial => 'misc/flash', :locals => {:flash => flash} %>
 
@@ -13,17 +13,17 @@
       <table>
         <tr>
           <td class="grey bold">
-            After confirmation, the amount below will be charged from your upload credit. Revoke it to be refunded.
+            After confirmation, the amount below will be transferred to the torrent uploader.
           <td>
         </tr>
         <tr>
           <td class="center">
             <ul>
               <li>
-                <%= text_field_tag :bounty_amount, params[:bounty_amount], :size => 8, :maxlength => 10, :focus => true %>
+                <%= text_field_tag :reward_amount, params[:reward_amount], :size => 8, :maxlength => 10, :focus => true %>
               </li>
               <li>
-                <%= select_tag 'bounty_unit', options_from_collection_for_select(['MB', 'GB'], 'to_s', 'to_s', params[:bounty_unit]) %>
+                <%= select_tag 'reward_unit', options_from_collection_for_select(['MB', 'GB'], 'to_s', 'to_s', params[:reward_unit]) %>
               </li>
             </ul>
           </td>

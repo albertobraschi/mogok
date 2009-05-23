@@ -22,6 +22,8 @@ class CreateTorrents < ActiveRecord::Migration
       t.column :active, :boolean, :null => false, :default => true
       t.column :comments_locked, :boolean, :null => false, :default => false
       t.column :announce_key, :string, :limit => 10, :null => false
+      t.column :total_reward, 'BIGINT(20)', :null => false, :default => 0
+      t.column :rewards_count, :integer, :null => false, :default => 0
       # meta info
       t.column :creation_date, :datetime
       t.column :created_by, :string, :limit => 50

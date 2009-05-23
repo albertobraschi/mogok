@@ -3,7 +3,7 @@ class CreateWishBounties < ActiveRecord::Migration
 
   def self.up
     create_table :wish_bounties do |t|
-      t.column :user_id, :integer
+      t.column :user_id, :integer, :null => false
       t.column :wish_id, :integer, :null => false
       t.column :amount, 'BIGINT(20)', :null => false
       t.column :created_at, :datetime, :null => false

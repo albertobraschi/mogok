@@ -39,7 +39,11 @@
               <% else %>
                 <li><%= link_to 'report', {:action => 'report', :id => @torrent} %></li>
                 <li>|</li>
-              <% end %>              
+              <% end %>
+
+              <li><%= link_to 'rewards', rewards_path(:torrent_id => @torrent) %></li>
+              <li>|</li>
+              
               <li><%= bookmark_link_text @torrent, 'bookmark_spinner' %></li>
             </ul>
           </div>
@@ -158,6 +162,16 @@
           </td>
         </tr>
       </tr>
+      <% if @torrent.total_reward > 0 %>
+        <tr>
+          <td class="label">
+            Reward
+          </td>
+          <td>
+            <%= textual_data_amount @torrent.total_reward %>
+          </td>
+        </tr>
+      <% end %>
       <tr>  
         <td class="label">
           Snatched

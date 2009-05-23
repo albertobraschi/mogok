@@ -55,6 +55,12 @@ en:
         success: Post successfully reported.
         reason_required: Reason is required.
 
+    rewards:
+      new:
+        success: Reward successfully added.
+        invalid_reward_amount: Invalid amount.
+        insuficient_upload_credit: Your upload credit is insufficient.
+
     signup:
       index:
         closed: Signup is currently closed.
@@ -123,7 +129,7 @@ en:
     wish_bounties:
       new:
         success: Request bounty successfully added. You will be notified when the request is filled.
-        invalid_bounty_amount: Invalid bounty amount.
+        invalid_bounty_amount: Invalid amount.
         insuficient_upload_credit: Your upload credit is insufficient.
       revoke:
         success: Request bounty successfully revoked.

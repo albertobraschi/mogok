@@ -31,6 +31,7 @@ ActionController::Routing::Routes.draw do |map|
   # torrents  
   map.comments 'torrents/:torrent_id/comments/:action/:id', :controller => 'comments'
   map.upload 'upload', :controller => 'torrents', :action => 'upload'
+  map.rewards 'torrents/:torrent_id/rewards/:action/:id', :controller => 'rewards'
   map.torrents 'torrents/:action/:id', :controller => 'torrents'
 
   # wishes (appears as 'requests' for the user)  

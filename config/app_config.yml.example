@@ -51,6 +51,7 @@ page_size:
   stats_history: 40
   wishes: 50
   wish_bounties: 20
+  rewards: 20
 
 # browse table columns showed by default in a decrescent way when header is clicked the fist time
 desc_by_default:
