@@ -14,13 +14,16 @@ class Peer
     find :first, :conditions => {:torrent_id => t, :user_id => u, :ip => ip, :port => port}
   end
 
-  def self.find_for_announce_resp(torrent, announcer, args)
+  def self.find_for_announce_resp(torrent, announcer, numwant)
     cols = ['id', 'torrent_id', 'user_id', 'port', 'started_at', 'last_action_at']
-
     find :all,
          :conditions => ['torrent_id = ? AND user_id != ?', torrent.id, announcer.id],
          :order => cols.rand, # simple way to randomize retrieved peers
-         :limit => args[:limit]
+         :limit => numwant
+  end
+
+  def self.delete_inactives(threshold)
+    destroy_all ['last_action_at < ?', threshold]
   end
 
   private

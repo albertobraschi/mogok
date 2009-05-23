@@ -18,13 +18,17 @@ class User
     logger.debug ':-) passkey reset'
   end
 
-  def update_counters(up_offset, down_offset)
-    User.transaction do
-      lock!
-      self.uploaded += up_offset
-      self.downloaded += down_offset
-      self.ratio = calculate_ratio
-      save
+  def increment_counters(up_offset, down_offset)
+    return if up_offset < 0 || down_offset < 0
+
+    if up_offset > 0 || down_offset > 0
+      User.transaction do
+        lock!
+        self.uploaded += up_offset
+        self.downloaded += down_offset
+        self.ratio = calculate_ratio
+        save
+      end
     end
   end
 

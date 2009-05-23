@@ -13,9 +13,9 @@ class AnnounceLog < ActiveRecord::Base
     h[:port] = announce_req.port
     h[:up_offset] = announce_req.up_offset
     h[:down_offset] = announce_req.down_offset
-    h[:created_at] = announce_req.current_action
+    h[:created_at] = announce_req.current_action_at
     if announce_req.last_action_at
-      h[:time_interval] = announce_req.current_action.to_i - announce_req.last_action_at.to_i
+      h[:time_interval] = announce_req.current_action_at.to_i - announce_req.last_action_at.to_i
     end
     h[:client_code] = announce_req.client.code
     h[:client_name] = announce_req.client.name

@@ -4,14 +4,28 @@ class Peer
   # callbacks concern
 
   before_create :init_new_record
-  before_save :set_compact_ip
   after_create :increment_torrent_counters
-  after_destroy :decrement_torrent_counters
+  after_destroy :decrement_torrent_counters, :debug_destroyed
+
+  def self.make_compact_ip(ip, port)
+    ipaddr = IPAddr.new ip
+    if ipaddr.ipv4?
+      compact_ip = ipaddr.hton
+      p = port
+      compact_port = ''
+      until p == 0
+        compact_port << (p & 0xFF).chr
+        p >>= 8
+      end
+      compact_ip << compact_port.reverse
+    end
+  end
 
   private
   
     def init_new_record
       self.started_at = Time.now
+      self.compact_ip = self.class.make_compact_ip self.ip, self.port
     end
 
     def increment_torrent_counters
@@ -32,19 +46,7 @@ class Peer
       end
     end
 
-    def set_compact_ip
-      unless self.compact_ip
-        ipaddr = IPAddr.new ip
-        if ipaddr.ipv4?
-          compact_ip = ipaddr.hton
-          p = self.port
-          compact_port = ''
-          until p == 0
-            compact_port << (p & 0xFF).chr
-            p >>= 8
-          end
-          self.compact_ip = compact_ip << compact_port.reverse
-        end
-      end
+    def debug_destroyed
+      logger.debug ':-) peer destroyed'
     end
 end

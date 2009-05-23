@@ -15,7 +15,7 @@ module Bittorrent
 
     # application info
     attr_accessor :torrent, :user, :client, :seeder
-    attr_accessor :current_action, :last_action_at
+    attr_accessor :current_action_at, :last_action_at
     attr_accessor :up_offset, :down_offset
 
     def started?
@@ -32,6 +32,15 @@ module Bittorrent
 
     def set_numwant(n)
       self.numwant = n if self.numwant > n || self.numwant == 0
+    end
+
+    def set_offsets(previous_uploaded, previous_downloaded)
+      if self.uploaded > previous_uploaded
+        self.up_offset = self.uploaded - previous_uploaded # amount uploaded since last announce
+      end
+      if self.downloaded > previous_downloaded
+        self.down_offset = self.downloaded - previous_downloaded
+      end
     end
 
     def initialize(params)
