@@ -38,7 +38,7 @@ class CommentsController < ApplicationController
           flash[:comment_notice] = t('success')
           redirect_to_torrent
         else
-          flash[:error] = t('empty')
+          flash.now[:error] = t('empty')
         end
       else
         redirect_to_torrent

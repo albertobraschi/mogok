@@ -21,7 +21,7 @@ class InvitationsController < ApplicationController
         email = params[:email] = HtmlHelper.sanitize(params[:email])
         if User.valid_email? email
           if User.find_by_email(email) || Invitation.find_by_email(email)
-            flash[:error] = t('email_in_use')
+            flash.now[:error] = t('email_in_use')
           else
             code = User.make_invite_code
             begin
@@ -36,7 +36,7 @@ class InvitationsController < ApplicationController
             redirect_to :action => 'index'
           end
         else
-          flash[:error] = t('invalid_email')
+          flash.now[:error] = t('invalid_email')
         end
       else
         redirect_to :action => 'index'

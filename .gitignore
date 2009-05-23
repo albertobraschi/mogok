@@ -23,6 +23,6 @@ vendor/plugins/*
 !vendor/plugins/will_paginate-2.3.8
 !vendor/plugins/xss_terminate
 log/*.log
-public/stylesheets
+public/stylesheets/*
 !public/stylesheets/default.css
  

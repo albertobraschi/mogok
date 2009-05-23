@@ -38,7 +38,7 @@ class PostsController < ApplicationController
           flash[:notice] = t('success')
           redirect_to_topic
         else
-          flash[:error] = t('empty')
+          flash.now[:error] = t('empty')
         end
       else
         redirect_to_topic

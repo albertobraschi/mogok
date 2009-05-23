@@ -154,7 +154,7 @@ en:
         success: Request successfully removed.
       fill:
         success: Request successfully filled. A message will be sent to you after a moderator examines it.
-        report: wish pending
+        report: pending
         info_hash_invalid: Invalid torrent info hash.
         not_torrent_uploader: Only the torrent uploader can use it to fill a request.
         torrent_taken: Torrent already filled another request.

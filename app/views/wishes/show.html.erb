@@ -9,7 +9,7 @@
 
     <%= render :partial => 'misc/flash', :locals => {:flash => flash} %>
 
-    <table class="details margin_bottom">
+    <table class="details wish_details margin_bottom">
       <tr>
         <td class="label">
           Status
@@ -116,7 +116,7 @@
           Created by
         </td>
         <td>
-          <%= @wish.user ? user_link(@wish.user) : 'unknown' %>
+          <%= @wish.user ? user_link(@wish.user, true) : 'unknown' %>
         </td>
       </tr>
       <tr>

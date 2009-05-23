@@ -6,7 +6,7 @@
     <h2>Profile Edition</h2>
 
     <% form_for :user, :action => 'edit', :id => @user do |f| %>
-      <table class="details">
+      <table class="details user_details">
         <% if current_user.admin? %>
           <tr>
             <td class="label">

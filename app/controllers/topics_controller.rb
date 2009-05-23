@@ -20,7 +20,7 @@ class TopicsController < ApplicationController
           flash[:notice] = t('success')
           redirect_to :action => 'show', :id => t
         else
-          flash[:error] = t('empty')
+          flash.now[:error] = t('empty')
         end
       else
         redirect_to forums_path(:action => 'show', :id => @forum)
@@ -41,7 +41,7 @@ class TopicsController < ApplicationController
           flash[:notice] = t('success')
           redirect_to :action => 'show', :id => @topic
         else
-          flash[:error] = t('empty')
+          flash.now[:error] = t('empty')
         end
       else
         redirect_to :action => 'show', :id => @topic

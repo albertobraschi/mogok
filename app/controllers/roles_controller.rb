@@ -31,11 +31,8 @@ class RolesController < ApplicationController
     if request.post?
       r = Role.find params[:id]
       unless User.scoped_by_role_id(r.id).find(:first)
-        unless r.default?
-          r.destroy
-        else
-          flash[:error] = 'role is required by the application'
-        end
+        access_denied if r.default?
+        r.destroy
       else
         flash[:error] = 'role is in use'
       end

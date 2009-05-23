@@ -38,7 +38,7 @@ class WishCommentsController < ApplicationController
           flash[:comment_notice] = t('success')
           redirect_to_wish
         else
-          flash[:error] = t('empty')
+          flash.now[:error] = t('empty')
         end
       else
         redirect_to_wish
