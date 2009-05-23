@@ -33,21 +33,21 @@
                 <li>|</li>
               <% end %>
 
-              <% if @wish.open? || current_user.admin_mod? %>
-                <% if @wish.user == current_user || current_user.admin_mod? %>
-                  <li><%= link_to 'edit', {:action => 'edit', :id => @wish} %></li>
-                  <li>|</li>
-                  <li><%= link_to 'remove', {:action => 'destroy', :id => @wish} %></li>
-                  <li>|</li>
+              <% if (@wish.open? && @wish.user == current_user) || current_user.admin_mod? %>
+                <li><%= link_to 'edit', {:action => 'edit', :id => @wish} %></li>
+                <li>|</li>
+                <li><%= link_to 'remove', {:action => 'destroy', :id => @wish} %></li>
+                <li>|</li>
+              <% end %>
 
-                  <% if current_user.admin_mod? %>
-                    <li><%= link_to @wish.comments_locked? ? 'unlock' : 'lock', {:action => 'switch_lock_comments', :id => @wish}, {:class => 'mod'} %></li>
-                    <li>|</li>
-                  <% end %>
-                <% else %>
+              <% if current_user.admin_mod? %>
+                <li><%= link_to @wish.comments_locked? ? 'unlock' : 'lock', {:action => 'switch_lock_comments', :id => @wish}, {:class => 'mod'} %></li>
+                <li>|</li>
+              <% end %>
+              
+              <% if @wish.user != current_user %>
                   <li><%= link_to 'report', {:action => 'report', :id => @wish} %></li>
                   <li>|</li>
-                <% end %>
               <% end %>
 
               <li><%= link_to 'bounties', wish_bounties_path(:wish_id => @wish) %></li>

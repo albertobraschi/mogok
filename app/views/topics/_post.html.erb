@@ -25,7 +25,7 @@
 
         <div class="float_right">
           <ul class="menu">
-            <% if post.is_topic_post? %>              
+            <% if post.is_topic_post? %>
 
               <% if current_user.admin_mod? %>
                 <li><%= link_to 'remove', topics_path(:forum_id => topic.forum, :action => 'destroy',  :id => topic), {:class => 'mod'} %></li>

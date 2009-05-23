@@ -21,22 +21,24 @@
 
           <div class="float_right">
             <ul class="menu">
-              <% if current_user.admin_mod? || @torrent.user == current_user %>
+              <% if @torrent.user == current_user || current_user.admin_mod? %>
                 <li><%= link_to 'edit', {:action => 'edit', :id => @torrent} %></li>
                 <li>|</li>
                 <li><%= link_to 'remove', {:action => 'remove', :id => @torrent} %></li>
                 <li>|</li>
+              <% end %>
 
-                <% if current_user.admin_mod? %>
-                  <% unless @torrent.active? %>
-                    <li><%= link_to 'activate', {:action => 'activate', :id => @torrent}, {:class => 'mod', :confirm => 'Are you sure?'} %></li>
-                    <li>|</li>
-                  <% end %>
-                  
-                  <li><%= link_to @torrent.comments_locked? ? 'unlock' : 'lock', {:action => 'switch_lock_comments', :id => @torrent}, {:class => 'mod'} %></li>
+              <% if current_user.admin_mod? %>
+                <% unless @torrent.active? %>
+                  <li><%= link_to 'activate', {:action => 'activate', :id => @torrent}, {:class => 'mod', :confirm => 'Are you sure?'} %></li>
                   <li>|</li>
                 <% end %>
-              <% else %>
+
+                <li><%= link_to @torrent.comments_locked? ? 'unlock' : 'lock', {:action => 'switch_lock_comments', :id => @torrent}, {:class => 'mod'} %></li>
+                <li>|</li>
+              <% end %>
+
+              <% unless @torrent.user == current_user %>
                 <li><%= link_to 'report', {:action => 'report', :id => @torrent} %></li>
                 <li>|</li>
               <% end %>
