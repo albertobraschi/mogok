@@ -4,7 +4,7 @@ require 'yaml'
 APP_CONFIG = open(File.join(RAILS_ROOT, 'config/app_config.yml')) {|f| YAML.load(f) }
 APP_CONFIG.keys.each {|k| APP_CONFIG[k].symbolize_keys! if APP_CONFIG[k].is_a? Hash } # symbolize the inner hashs
 APP_CONFIG.symbolize_keys!
-APP_CONFIG.freeze
+APP_CONFIG.freeze if Rails.env.production?
 
 # default locale
 I18n.default_locale = APP_CONFIG[:default_locale]

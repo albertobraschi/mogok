@@ -5,8 +5,6 @@ class LoginController < ApplicationController
 
   layout 'public'
 
-  MAX_LOGIN_ATTEMPTS, BLOCK_TIME_HOURS = 5, 4
-
   def login
     logger.debug ':-) login_controller.login'
     login_attempt = LoginAttempt.fetch(request.remote_ip)
@@ -29,7 +27,7 @@ class LoginController < ApplicationController
           end
         else
           logger.debug ':-o user not authenticated'
-          login_attempt.increment_or_block(MAX_LOGIN_ATTEMPTS, BLOCK_TIME_HOURS)
+          login_attempt.increment_or_block(APP_CONFIG[:login][:max_attempts], APP_CONFIG[:login][:block_hours])
           note_failed_login login_attempt
         end
       end
@@ -56,9 +54,9 @@ class LoginController < ApplicationController
 
     def note_failed_login(login_attempt)
       if login_attempt.blocked?
-        flash.now[:error] = t('blocked', :hours => BLOCK_TIME_HOURS)
+        flash.now[:error] = t('blocked', :hours => APP_CONFIG[:login][:block_hours])
       else
-        flash.now[:error] = t('invalid_login', :remaining => MAX_LOGIN_ATTEMPTS - login_attempt.attempts_count)
+        flash.now[:error] = t('invalid_login', :remaining => APP_CONFIG[:login][:max_attempts] - login_attempt.attempts_count)
       end
     end
 

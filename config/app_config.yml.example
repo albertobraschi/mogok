@@ -8,6 +8,12 @@ app_name: Mogok
 # default locale
 default_locale: en
 
+login:
+  # login max attempts before blocking
+  max_attempts: 5
+  # how many hours the user's IP will remain blocked if limit exceeded
+  block_hours: 4
+
 users:
   # default avatar image.
   default_avatar: no_avatar.jpg

@@ -20,7 +20,7 @@ Feature: Login/Logout
     And I fill in password with WRONG_PASS
     And I press Login
     Then I should see username
-    And I should see password
+    And I should see password    
 
   Scenario: Logging out
     Given I am logged in as JOE_THE_USER with role USER

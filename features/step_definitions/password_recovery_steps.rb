@@ -21,6 +21,6 @@ end
 
 Then /^a password recovery record for user (.*) should be created$/ do |username|
   user = fetch_user username
-  PasswordRecovery.find_by_user_id(user.id).should_not == nil
+  PasswordRecovery.find_by_user_id(user).should_not == nil
 end
 

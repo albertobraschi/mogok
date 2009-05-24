@@ -241,8 +241,9 @@ operations, see below).
   Currently is cookie based (the Rails default).
 
 - Testing
-  The most critical features, like login, signup, tracker services, have Cucumber features
-tests, check the directory features/.
+  The most critical functionalities, like login, signup, tracker services, have Cucumber features
+tests, check the directory 'features/'. Such tests rely on messages in the 'en.yml' file and on html
+element names in the views, so changing them may break some of the tests.
   IMPORTANT: tests involving torrent files may be problematic on Windows (files may get corrupted).
   - to run the tests ('test' database must be created first):
     mogok$ rake features

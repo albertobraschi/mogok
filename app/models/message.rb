@@ -41,9 +41,11 @@ class Message < ActiveRecord::Base
   private
 
     def self.prepare_for_reply(m, old_message)
-      m.subject = "#{ 'Re: ' unless old_message.subject.starts_with?('Re:') }#{old_message.subject}"
+      prefix = I18n.t('model.message.prepare_to_reply.prefix')
+      wrote = I18n.t('model.message.prepare_to_reply.wrote')
+      m.subject = "#{prefix unless old_message.subject.starts_with?(prefix)} #{old_message.subject}"
       m.body = "\n\n\n----
-                \n#{old_message.sender.username} #{I18n.t('model.message.prepare_to_reply.wrote')}:
+                \n#{old_message.sender.username} #{wrote}
                 \n\n#{old_message.body}"
       m.replying_to = old_message.sender.username
     end
@@ -57,9 +59,11 @@ class Message < ActiveRecord::Base
     end
 
     def self.prepare_for_forward(m, old_message)
-      m.subject = "#{ 'Fwd: ' unless old_message.subject.starts_with?('Fwd:') }#{old_message.subject}"
+      prefix = I18n.t('model.message.prepare_to_forward.prefix')
+      wrote = I18n.t('model.message.prepare_to_forward.wrote')
+      m.subject = "#{ prefix unless old_message.subject.starts_with?(prefix)} #{old_message.subject}"
       m.body = "\n\n\n----
-               \n#{old_message.sender.username} #{I18n.t('model.message.prepare_to_forward.wrote')}:
+               \n#{old_message.sender.username} #{wrote}:
                \n\n#{old_message.body}"
     end
 end

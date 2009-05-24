@@ -24,6 +24,10 @@ When /^I select (.*) from (.*)$/ do |value, field|
   select value, :from => field
 end
 
+When /^I check (.*)$/ do |field|
+  check(field)
+end
+
 When /^I press (.*)$/ do |button|
   click_button button
 end
@@ -46,3 +50,5 @@ end
 Then /^the response should not contain (.*)$/ do |text|
   response.body.should_not =~ /#{text}/m
 end
+
+

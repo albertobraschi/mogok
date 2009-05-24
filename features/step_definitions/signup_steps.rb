@@ -32,14 +32,11 @@ end
 # THEN
 
 Then /^invitation with code (.*) should be removed$/ do |invite_code|
-  invitation = Invitation.find_by_code invite_code
-  invitation.should == nil
+  Invitation.find_by_code(invite_code).should == nil
 end
 
 Then /^user (.*) should be the inviter of (.*)$/ do |inviter_username, username|
-  inviter = fetch_user inviter_username
-  u = fetch_user username
-  inviter.id.should == u.inviter.id
+  fetch_user(inviter_username).should == fetch_user(username).inviter
 end
 
 

@@ -16,14 +16,16 @@ class WishBountiesController < ApplicationController
       unless cancelled?
         bounty_amount = parse_bounty_amount
         if bounty_amount
-          if current_user.uploaded > bounty_amount
+          if current_user.uploaded >= bounty_amount
             @wish.add_bounty bounty_amount, current_user
             flash[:notice] = t('success')
             redirect_to wish_bounties_path(:wish_id => @wish, :page => 'last')
           else
-            flash.now[:error] = t('insuficient_upload_credit')
+            logger.debug ':-o insufficient upload credit'
+            flash.now[:error] = t('insufficient_upload_credit')
           end
         else
+          logger.debug ':-o bounty amount parse error'
           flash.now[:error] = t('invalid_bounty_amount')
         end
       else

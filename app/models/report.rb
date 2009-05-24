@@ -22,13 +22,13 @@ class Report < ActiveRecord::Base
     !find(:first, :conditions => {:handler_id => nil}).blank?
   end
 
+  def self.make_target_label(obj)
+    "#{obj.class.name.underscore} [#{obj.id}]"
+  end
+
   private
 
     def trim_reason
       self.reason = self.reason[0, 200]
-    end
-
-    def self.make_target_label(obj)
-      "#{obj.class.name.underscore} [#{obj.id}]"
     end
 end

@@ -11,25 +11,8 @@ Given /^I have a torrent with name (.*) and owned by user (.*)$/ do |name, owner
   c = fetch_category 'MUSIC', 'AUDIO'
   owner = fetch_user owner
   torrent_file_data = File.new(File.join(TEST_DATA_DIR, 'VALID.TORRENT'), 'rb').read
-  t = Torrent.new(:category_id => c.id, :name => name, :user_id => owner.id)  
-  t.set_meta_info torrent_file_data, true
-  t.save
-end
-
-Given /^I have a type with name (.*)$/ do |name|
-  fetch_type name
-end
-
-Given /^I have a category with name (.*) and with type (.*)$/ do |name, type_name|
-  fetch_category name, type_name
-end
-
-Given /^I have a format with name (.*) and with type (.*)$/ do |name, type_name|
-  fetch_format name, type_name
-end
-
-Given /^I have a tag with name (.*) and with category (.*)$/ do |name, category_name|
-  fetch_tag name, category_name
+  t = Torrent.new(:category => c, :name => name, :user => owner)  
+  t.parse_and_save owner, torrent_file_data, true
 end
 
 Given /^the counters for torrent (.*) indicate (\d+) seeders and (\d+) leechers$/ do |name, seeders, leechers|
@@ -53,26 +36,23 @@ When /^I go to the torrent upload page$/ do
 end
 
 When /^I go to the torrent details page for torrent (.*)$/ do |torrent_name|
-  torrent = Torrent.find_by_name torrent_name
-  visit "torrents/show/#{torrent.id}"
+  t = Torrent.find_by_name torrent_name
+  visit "torrents/show/#{t.id}"
 end
 
 
 # THEN
 
 Then /^the leechers counter for torrent (.*) should be increased by one$/ do |torrent_name|
-  t = Torrent.find_by_name torrent_name
-  t.leechers_count.should == @leechers_count + 1
+  Torrent.find_by_name(torrent_name).leechers_count.should == @leechers_count + 1
 end
 
 Then /^the leechers counter for torrent (.*) should be decreased by one$/ do |torrent_name|
-  t = Torrent.find_by_name torrent_name
-  t.leechers_count.should == @leechers_count - 1
+  Torrent.find_by_name(torrent_name).leechers_count.should == @leechers_count - 1
 end
 
 Then /^the seeders counter for torrent (.*) should be increased by one$/ do |torrent_name|
-  t = Torrent.find_by_name torrent_name
-  t.seeders_count.should == @seeders_count + 1
+  Torrent.find_by_name(torrent_name).seeders_count.should == @seeders_count + 1
 end
 
 Then /^a snatch for torrent (.*) and user (.*) should be created$/ do |torrent_name, username|
@@ -82,7 +62,7 @@ Then /^a snatch for torrent (.*) and user (.*) should be created$/ do |torrent_n
   snatch.should_not == nil
 end
 
-Then /^the downloaded torrent and the test torrent info hashs should have equal$/ do
+Then /^the downloaded torrent and the test torrent info hashs should be equal$/ do
   test = Torrent.new
   test_torrent_data = File.new(File.join(TEST_DATA_DIR, 'VALID.TORRENT'), 'rb').read
   test.set_meta_info(test_torrent_data, true)
@@ -94,16 +74,13 @@ Then /^the downloaded torrent and the test torrent info hashs should have equal$
 end
 
 Then /^the torrent (.*) should have (\d+) mapped files$/ do |name, mapped_files|
-  t = Torrent.find_by_name(name)
-  t.mapped_files.size.should == mapped_files.to_i
+  Torrent.find_by_name(name).mapped_files.size.should == mapped_files.to_i
 end
 
 Then /^the torrent (.*) should have (\d+) as piece length$/ do |name, piece_length|
-  t = Torrent.find_by_name(name)
-  t.piece_length.should == piece_length.to_i
+  Torrent.find_by_name(name).piece_length.should == piece_length.to_i
 end
 
 Then /^the torrent (.*) should have (\d+) tags$/ do |name, tags|
-  t = Torrent.find_by_name(name)
-  t.tags.length.should == tags.to_i
+  Torrent.find_by_name(name).tags.length.should == tags.to_i
 end

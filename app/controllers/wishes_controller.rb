@@ -89,8 +89,6 @@ class WishesController < ApplicationController
             flash.now[:error] = t('torrent_taken')
           when t.user != current_user
             flash.now[:error] = t('not_torrent_uploader')
-          when @wish.user == t.user
-            flash.now[:error] = t('same_user')
           else
             @wish.fill t
             Report.create @wish, wishes_path(:action => 'show', :id => @wish), current_user, t('report')

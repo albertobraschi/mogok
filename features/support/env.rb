@@ -20,7 +20,7 @@ Webrat.configure do |config|
   config.mode = :rails
 end
 
-# force default locale as tests use interface messages
+# force default locale to 'en' as tests use interface messages
 I18n.default_locale = 'en'
 
 # customizations

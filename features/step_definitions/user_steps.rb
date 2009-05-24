@@ -20,9 +20,32 @@ Given /^the user with username (.*) has the email (.*)$/ do |username, email|
   u.save
 end
 
+Given /^user with username (.*) has (\d+) as uploaded$/ do |username, uploaded|
+  u = fetch_user username
+  u.uploaded = uploaded
+  u.save
+end
+
+Given /^user with username (.*) should have uploaded equal to (\d+)$/ do |username, uploaded|
+  u = fetch_user username
+  u.uploaded.should == uploaded.to_i
+end
+
+Given /^user with username (.*) has a ticket with name (.*)$/ do |username, ticket|
+  u = fetch_user username
+  if u.tickets
+    u.tickets += " #{ticket}"
+  else
+    u.tickets = ticket
+  end
+  u.save
+end
+
 
 # THEN
 
 Then /^a user with username (.*) should be created$/ do |username|
   User.find_by_username(username).should_not == nil
 end
+
+

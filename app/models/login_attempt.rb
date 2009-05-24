@@ -20,6 +20,6 @@ class LoginAttempt < ActiveRecord::Base
   end
 
   def self.fetch(ip)
-    find_by_ip(ip) || create(:ip => ip, :attempts_count => 0)
+    find_by_ip(ip) || new(:ip => ip, :attempts_count => 0)
   end
 end

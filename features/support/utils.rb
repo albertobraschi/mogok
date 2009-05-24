@@ -1,5 +1,6 @@
 
 def fetch_role(name)
+  name.downcase!
   r = Role.find_by_name(name)
   unless r
     r = Role.new :description => name, :css_class => "user_#{name}"
