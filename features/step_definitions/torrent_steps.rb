@@ -7,10 +7,10 @@ Given /^I have a torrent with name "(.*)" and owned by user "(.*)"$/ do |name, o
       t.destroy # force remotion of torrent objects from cache as the test framework bypass cache_money synchronization
     end
   end
-  fetch_type 'AUDIO'
-  c = fetch_category 'MUSIC', 'AUDIO'
+  fetch_type 'audio'
+  c = fetch_category 'music', 'audio'
   owner = fetch_user owner
-  torrent_file_data = File.new(File.join(TEST_DATA_DIR, 'VALID.TORRENT'), 'rb').read
+  torrent_file_data = File.new(File.join(TEST_DATA_DIR, 'valid.torrent'), 'rb').read
   t = Torrent.new(:category => c, :name => name, :user => owner)  
   t.parse_and_save owner, torrent_file_data, true
 end

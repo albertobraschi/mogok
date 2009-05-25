@@ -6,9 +6,9 @@ class AdmController < ApplicationController
   def env
     logger.debug ':-) adm_controller.env'
     if defined?(PhusionPassenger)
-      @show_passenger_restart_link = !Rails.env.production || APP_CONFIG[:adm][:passenger_restart_production]
+      @show_passenger_restart_link = !Rails.env.production? || APP_CONFIG[:adm][:passenger_restart_production]
     end
-    @show_sensitive = !Rails.env.production? || APP_CONFIG[:adm][:display_env_info_production]
+    @show_sensitive = !Rails.env.production? || APP_CONFIG[:adm][:display_all_env_info_production]
     @env = env_properties
   end
 
@@ -76,13 +76,13 @@ class AdmController < ApplicationController
       if CACHE_ENABLED
         unless CACHE.servers.blank?
           a = []
-          CACHE.servers.each do |s|
-            h = {}
-            h[:host] = s.host
-            h[:port] = s.port
-            h[:status] = s.status
-            h[:stats] = CACHE.stats["#{s.host}:#{s.port}"].symbolize_keys!
-            a << h
+          CACHE.servers.each do |server|
+            s = {}
+            s[:host] = server.host
+            s[:port] = server.port
+            s[:status] = server.status
+            s[:stats] = CACHE.stats["#{server.host}:#{server.port}"].symbolize_keys!
+            a << s
           end
           h[:memcached_servers] = a
         end

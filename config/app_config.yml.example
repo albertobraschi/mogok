@@ -86,7 +86,7 @@ adm:
   passenger_restart_production: false
 
   # display sensitive environment information in production mode (env page)
-  display_env_info_production: false
+  display_all_env_info_production: false
 
 
 # TRACKER
