@@ -48,6 +48,9 @@ ActionController::Routing::Routes.draw do |map|
   map.topics 'forums/:forum_id/topics/:action/:id', :controller => 'topics'
   map.forums 'forums/:action/:id', :controller => 'forums'
 
+  # invitations
+  map.invitations 'invitations', :controller => 'invitations'
+
   # logs
   map.logs 'logs', :controller => 'logs'
 

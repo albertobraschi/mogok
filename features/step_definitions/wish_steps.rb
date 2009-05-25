@@ -47,43 +47,43 @@ Then /^a wish_bounty with amount (\d+) should be created for wish "(.*)"$/ do |a
   WishBounty.find_by_wish_id_and_amount(w, amount.to_i).should_not be_nil
 end
 
-Then /^wish with name "(.*)" should have total bounty equal to (\d+)$/ do |name, total_bounty|
+Then /^wish "(.*)" should have total bounty equal to (\d+)$/ do |name, total_bounty|
   Wish.find_by_name(name).total_bounty.should == total_bounty.to_i
 end
 
-Then /^wish with name "(.*)" should be set to filled$/ do |name|
+Then /^wish "(.*)" should be set to filled$/ do |name|
   Wish.find_by_name(name).filled.should be_true
 end
 
-Then /^wish with name "(.*)" should be set to pending$/ do |name|
+Then /^wish "(.*)" should be set to pending$/ do |name|
   Wish.find_by_name(name).pending.should be_true
 end
 
-Then /^wish with name "(.*)" should be set to not pending$/ do |name|
+Then /^wish "(.*)" should be set to not pending$/ do |name|
   Wish.find_by_name(name).pending.should == false
 end
 
-Then /^wish with name "(.*)" should have filler set to "(.*)"$/ do |name, filler|
+Then /^wish "(.*)" should have filler set to "(.*)"$/ do |name, filler|
   Wish.find_by_name(name).filler.should == fetch_user(filler)
 end
 
-Then /^wish with name "(.*)" should have torrent set to "(.*)"$/ do |name, torrent_name|
+Then /^wish "(.*)" should have torrent set to "(.*)"$/ do |name, torrent_name|
   Wish.find_by_name(name).torrent.should == Torrent.find_by_name(torrent_name)
   
 end
 
-Then /^filler for wish with name "(.*)" should be empty$/ do |name|
+Then /^filler for wish "(.*)" should be empty$/ do |name|
   Wish.find_by_name(name).filler.should be_nil
 end
 
-Then /^torrent for wish with name "(.*)" should be empty$/ do |name|
+Then /^torrent for wish "(.*)" should be empty$/ do |name|
   Wish.find_by_name(name).torrent.should be_nil
 end
 
-Then /^a moderation report for wish "(.*)" should be created$/ do |wish_name|
-  wish = Wish.find_by_name(wish_name)
-  label = Report.make_target_label(wish)
-  Report.find_by_target_label(label).should_not be_nil
+Then /^a moderation report for wish "(.*)" with reason "(.*)" should be created$/ do |wish_name, reason|
+  w = Wish.find_by_name(wish_name)
+  label = Report.make_target_label(w)
+  Report.find_by_target_label_and_reason(label, reason).should_not be_nil
 end
 
 

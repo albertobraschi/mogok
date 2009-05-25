@@ -22,7 +22,7 @@ end
 
 # THEN
 
-Then /^a new message with subject "(.*)" should be received by "(.*)"$/ do |subject, receiver|
+Then /^a message with subject "(.*)" should be received by "(.*)"$/ do |subject, receiver|
   receiver = fetch_user receiver
   m = Message.find_by_receiver_id_and_subject(receiver, subject)
   m.should_not be_nil
@@ -31,7 +31,7 @@ Then /^a new message with subject "(.*)" should be received by "(.*)"$/ do |subj
   receiver.has_new_message?.should be_true
 end
 
-Then /^a new message with body containing "(.*)" and subject "(.*)" should be received by "(.*)"$/ do |body, subject, receiver|
+Then /^a message with body containing "(.*)" and subject "(.*)" should be received by "(.*)"$/ do |body, subject, receiver|
   receiver = fetch_user receiver
   m = Message.find_by_receiver_id_and_subject(receiver, subject)
   m.should_not be_nil
@@ -41,7 +41,7 @@ Then /^a new message with body containing "(.*)" and subject "(.*)" should be re
   receiver.has_new_message?.should be_true
 end
 
-Then /^a new system message with subject "(.*)" should be received by "(.*)"$/ do |subject, receiver|
+Then /^a system message with subject "(.*)" should be received by "(.*)"$/ do |subject, receiver|
   receiver = fetch_user receiver
   m = Message.find_by_receiver_id_and_subject(receiver, subject)
   m.should_not be_nil
@@ -51,7 +51,7 @@ Then /^a new system message with subject "(.*)" should be received by "(.*)"$/ d
   receiver.has_new_message?.should be_true
 end
 
-Then /^a new system message with body containing "(.*)" and subject "(.*)" should be received by "(.*)"$/ do |body, subject, receiver|
+Then /^a system message with body containing "(.*)" and subject "(.*)" should be received by "(.*)"$/ do |body, subject, receiver|
   receiver = fetch_user receiver
   m = Message.find_by_receiver_id_and_subject(receiver, subject)
   m.should_not be_nil

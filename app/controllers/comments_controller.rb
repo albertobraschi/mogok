@@ -12,8 +12,8 @@ class CommentsController < ApplicationController
     logger.debug ':-) comments_controller.new'
     t = Torrent.find params[:torrent_id]
     access_denied if t.comments_locked? && !current_user.admin_mod?
-    unless params[:body].blank?
-      t.add_comment params, current_user
+    unless params[:comment_body].blank?
+      t.add_comment params[:comment_body], current_user
       flash[:comment_notice] = t('success')
     else
       flash[:comment_error] = t('empty')
@@ -32,8 +32,8 @@ class CommentsController < ApplicationController
     access_denied unless @comment.editable_by? current_user
     if request.post?
       unless cancelled?
-        unless params[:body].blank?
-          @comment.edit params, current_user
+        unless params[:comment_body].blank?
+          @comment.edit params[:comment_body], current_user
           logger.debug ':-) comment saved'
           flash[:comment_notice] = t('success')
           redirect_to_torrent

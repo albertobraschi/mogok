@@ -78,10 +78,10 @@ class Torrent < ActiveRecord::Base
     logger.debug ':-) torrent destroyed'
   end
 
-  def add_comment(params, commenter)
+  def add_comment(body, commenter)
     Torrent.transaction do
       increment! :comments_count
-      c = Comment.new :user => commenter, :torrent => self, :body => params[:body]
+      c = Comment.new :user => commenter, :torrent => self, :body => body
       c.comment_number = self.comments_count
       c.save
     end

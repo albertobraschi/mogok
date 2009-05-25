@@ -20,7 +20,7 @@
             <li><%= link_to 'inbox', messages_path(:action => 'folder', :id => Message::INBOX), {:class => ('new_message' if current_user.has_new_message?)} %></li>
             <% if current_user.has_ticket?(:inviter) %>
               <li>|</li>
-              <li><%= link_to 'invitations', {:controller => 'invitations'} %></li>
+              <li><%= link_to 'invitations', invitations_path %></li>
             <% end %>
             <li>|</li>
             <li><%= link_to 'bookmarks', my_bookmarks_path %></li>

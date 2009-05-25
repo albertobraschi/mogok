@@ -83,6 +83,7 @@ class TorrentsController < ApplicationController
               flash[:notice] = t('inactivated')
               redirect_to :action => 'show', :id => @torrent
             else
+              Report.create @torrent, torrents_path(:action => 'show', :id => @torrent), current_user, t('inactivated_report')
               @args = {:title => t('inactivated_title'), :message => t('inactivated_message')}
               render :template => 'misc/message'
             end

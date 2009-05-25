@@ -86,10 +86,11 @@ en:
       remove:
         destroyed: Torrent successfully deleted from system.
         inactivated: Torrent successfully inactivated.
+        inactivated_report: inactivated
         inactivated_title: Torrent Inactivated
         inactivated_message: Your torrent will stay inactive until a moderator removes it.
       activate:
-        success: Torrent was successfully activated.
+        success: Torrent successfully activated.
       report:
         success: Torrent successfully reported.
         reason_required: Reason is required.

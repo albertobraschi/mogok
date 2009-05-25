@@ -13,8 +13,8 @@
       <table>
         <tr>
           <td>
-            <% render :layout => 'misc/editor', :locals => {:target => 'body', :align => 'center'} do %>
-              <%= text_area_tag :body, @comment.body, {:rows => 8, :cols => 70, :focus => true} %>
+            <% render :layout => 'misc/editor', :locals => {:target => 'comment_body', :align => 'center'} do %>
+              <%= text_area_tag :comment_body, @comment.body, {:rows => 8, :cols => 70, :focus => true} %>
             <% end %>
           </td>
         </tr>

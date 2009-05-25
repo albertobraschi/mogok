@@ -35,7 +35,7 @@ Feature: Sign Up
     And I should see "Logout"
     And invitation with code "BEA53C766E9287EC" should be removed
     And a user with username "joe-the-user" should be created
-    And user with username "joe-the-user" should have email equal to "joe-the-user@mail.com"
+    And user "joe-the-user" should have email equal to "joe-the-user@mail.com"
     And user "joe-the-inviter" should be the inviter of "joe-the-user"
 
   Scenario: Signup with invite code when signup does not require it
@@ -54,6 +54,6 @@ Feature: Sign Up
     And I should see "Logout"
     And invitation with code "CID53C766E9287ED" should be removed
     And a user with username "joe-the-user" should be created
-    And user with username "joe-the-user" should have email equal to "joe-the-user@mail.com"
+    And user "joe-the-user" should have email equal to "joe-the-user@mail.com"
     And user "joe-the-inviter" should be the inviter of "joe-the-user"
 

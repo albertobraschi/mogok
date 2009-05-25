@@ -15,6 +15,12 @@ Given /^I have a torrent with name "(.*)" and owned by user "(.*)"$/ do |name, o
   t.parse_and_save owner, torrent_file_data, true
 end
 
+Given /^torrent "(.*)" is inactive$/ do |name|
+  t = Torrent.find_by_name(name)
+  t.active = false
+  t.save
+end
+
 
 # THEN
 
@@ -24,17 +30,43 @@ Then /^the downloaded torrent file should have same info hash as torrent "(.*)"$
   downloaded_torrent.info_hash.should == Torrent.find_by_name(torrent_name).info_hash
 end
 
-Then /^the torrent "(.*)" should have (\d+) mapped files$/ do |name, mapped_files|
+Then /^torrent "(.*)" should have (\d+) mapped files$/ do |name, mapped_files|
   Torrent.find_by_name(name).mapped_files.size.should == mapped_files.to_i
 end
 
-Then /^the torrent "(.*)" should have (\d+) as piece length$/ do |name, piece_length|
+Then /^torrent "(.*)" should have (\d+) as piece length$/ do |name, piece_length|
   Torrent.find_by_name(name).piece_length.should == piece_length.to_i
 end
 
-Then /^the torrent "(.*)" should have (\d+) tags$/ do |name, tags|
+Then /^torrent "(.*)" should have (\d+) tags$/ do |name, tags|
   Torrent.find_by_name(name).tags.length.should == tags.to_i
 end
+
+Then /^torrent "(.*)" should have total reward equal to (\d+)$/ do |name, total_reward|
+  Torrent.find_by_name(name).total_reward.should == total_reward.to_i
+end
+
+Then /^a moderation report for torrent "(.*)" with reason "(.*)" should be created$/ do |torrent_name, reason|
+  t = Torrent.find_by_name(torrent_name)
+  label = Report.make_target_label(t)
+  Report.find_by_target_label_and_reason(label, reason).should_not be_nil
+end
+
+Then /^torrent "(.*)" should be inactive$/ do |name|
+  Torrent.find_by_name(name).active?.should be_false
+end
+
+Then /^torrent "(.*)" should be active$/ do |name|
+  Torrent.find_by_name(name).active?.should be_true
+end
+
+Then /^torrent "(.*)" should be removed$/ do |name|
+  Torrent.find_by_name(name).should be_nil
+end
+
+
+
+
 
 
 

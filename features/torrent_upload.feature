@@ -26,9 +26,9 @@ Feature: Torrent Upload
     And I should see "blues"
     And I should see "pop"
     And I should see "54B1A5052B5B7D3BA4760F3BFC1135306A30FFD1"
-    And the torrent "Joe The Users Torrent" should have 3 mapped files
-    And the torrent "Joe The Users Torrent" should have 65536 as piece length
-    And the torrent "Joe The Users Torrent" should have 2 tags
+    And torrent "Joe The Users Torrent" should have 3 mapped files
+    And torrent "Joe The Users Torrent" should have 65536 as piece length
+    And torrent "Joe The Users Torrent" should have 2 tags
 
   Scenario: An invalid torrent file is uploaded
     When I go to the torrent upload page

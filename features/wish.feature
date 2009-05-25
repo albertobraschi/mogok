@@ -8,7 +8,7 @@ Feature: Wish
     Given I am logged in as "joe-the-user" with role "user"
 
   Scenario: Creating a wish
-    Given user with username "joe-the-user" has a ticket with name "wisher"
+    Given user "joe-the-user" has a ticket with name "wisher"
     And I have a type with name "audio"
     And I have a category with name "music" and with type "audio"
     And I have a format with name "ogg" and with type "audio"

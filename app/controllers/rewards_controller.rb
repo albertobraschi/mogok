@@ -16,12 +16,12 @@ class RewardsController < ApplicationController
       unless cancelled?
         reward_amount = parse_reward_amount
         if reward_amount
-          if current_user.uploaded > reward_amount
+          if current_user.uploaded >= reward_amount
             @torrent.add_reward reward_amount, current_user
             flash[:notice] = t('success')
             redirect_to rewards_path(:torrent_id => @torrent, :page => 'last')
           else
-            flash.now[:error] = t('insuficient_upload_credit')
+            flash.now[:error] = t('insufficient_upload_credit')
           end
         else
           flash.now[:error] = t('invalid_reward_amount')

@@ -16,10 +16,10 @@ Feature: Wish Filling
     And I fill in "info_hash" with "54B1A5052B5B7D3BA4760F3BFC1135306A30FFD1"
     And I press "Confirm"
     Then I should see "Request successfully filled."
-    And wish with name "Joe The Wishers Wish" should be set to pending
-    And wish with name "Joe The Wishers Wish" should have filler set to "joe-the-user"
-    And wish with name "Joe The Wishers Wish" should have torrent set to "Joe The Users Torrent"
-    And a moderation report for wish "Joe The Wishers Wish" should be created
+    And wish "Joe The Wishers Wish" should be set to pending
+    And wish "Joe The Wishers Wish" should have filler set to "joe-the-user"
+    And wish "Joe The Wishers Wish" should have torrent set to "Joe The Users Torrent"
+    And a moderation report for wish "Joe The Wishers Wish" with reason "pending" should be created
 
   Scenario: Trying to fill your own wish
     Given I have a wish with name "Joe The Users Wish" and owned by user "joe-the-user"
