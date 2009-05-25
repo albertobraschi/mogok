@@ -50,6 +50,9 @@ module NavigationHelpers
       when /^the user details page for user "(.*)"$/i
         users_path(:action => 'show', :id => User.find_by_username($1))
 
+      when /^the forum page for forum "(.*)"$/i
+        forums_path(:action => 'show', :id => Forum.find_by_name($1))
+
       else
         raise "Can't find mapping from \"#{page_name}\" to a path.\n"
     end

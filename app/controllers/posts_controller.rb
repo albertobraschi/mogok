@@ -12,8 +12,8 @@ class PostsController < ApplicationController
     logger.debug ':-) posts_controller.new'
     @topic = Topic.find params[:topic_id]
     access_denied if @topic.posts_locked? && !current_user.admin_mod?
-    unless params[:body].blank?
-      @topic.add_post params[:body], current_user
+    unless params[:post_body].blank?
+      @topic.add_post params[:post_body], current_user
       flash[:notice] = t('success')      
     else
       flash[:error] = t('empty')      
@@ -32,8 +32,8 @@ class PostsController < ApplicationController
     access_denied unless @post.editable_by? current_user
     if request.post?
       unless cancelled?
-        unless params[:body].blank?
-          @post.edit params, current_user
+        unless params[:post_body].blank?
+          @post.edit params[:post_body], current_user
           logger.debug ':-) post saved'
           flash[:notice] = t('success')
           redirect_to_topic

@@ -2,7 +2,7 @@
 Feature: Login Attempt
   In order to protect the system against brute force login attacks
   As a system developer
-  I want to be able to block an IP after the login attempts limit is exceeded
+  I want to be able ask the application to block an IP after the login attempts limit is exceeded
 
   Background:
     Given I have a user with username "joe-the-user" and with role "user"

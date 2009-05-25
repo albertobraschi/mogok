@@ -7,7 +7,7 @@ Feature: Password Recovery
   Background:
     Given I have a user with username "joe-the-user" and with role "user"
 
-  Scenario: Requesting a recovery code    
+  Scenario: User requests a recovery code
     Given user "joe-the-user" has the email "joe@mail.com"
     When I go to the password recovery page
     And I fill in "email" with "joe@mail.com"
@@ -17,7 +17,7 @@ Feature: Password Recovery
     And I should see "password"
     And a password recovery record for user "joe-the-user" should be created
 
-  Scenario: Using the recovery code to change the password
+  Scenario: User uses the recovery code to change its password
     Given I have a password recovery with code "WRT5HJ7K8N287EC" requested by user "joe-the-user"
     And I have a login attempt for IP "127.0.0.1" with count equal to 1
     When I go to the change password page with recovery code "WRT5HJ7K8N287EC"

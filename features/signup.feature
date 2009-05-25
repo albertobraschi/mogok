@@ -4,7 +4,7 @@ Feature: Sign Up
   As an unregistered user
   I want to be able to sign up
 
-  Scenario: Signup does not require invitation
+  Scenario: User signs up without the need of an invitation
     Given that signup is open
     And that signup does not require an invite code
     And I have a role with name "user"
@@ -19,7 +19,7 @@ Feature: Sign Up
     And I should see "joe-the-user"
     And I should see "Logout"
 
-  Scenario: Signup by invitation only
+  Scenario: User signs up having to provide an invitation
     Given that signup is open
     And that signup requires an invite code
     And I have a user with username "joe-the-inviter" and with role "admin"
@@ -38,7 +38,7 @@ Feature: Sign Up
     And user "joe-the-user" should have email equal to "joe-the-user@mail.com"
     And user "joe-the-inviter" should be the inviter of "joe-the-user"
 
-  Scenario: Signup with invite code when signup does not require it
+  Scenario: User signs up with an invitation although it is not required
     Given that signup is open
     And that signup does not require an invite code
     And I have a user with username "joe-the-inviter" and with role "admin"

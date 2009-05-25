@@ -1,6 +1,6 @@
 
 Feature: Torrent Report
-  In order to keep report bad torrents
+  In order to report bad torrents
   As a registered user
   I want to be able to file moderation reports for them
 

@@ -7,7 +7,7 @@ Feature: Tracker Scrape
   Background:
     Given I have a user with username "joe-the-scraper" and with role "user"
 
-  Scenario: Scrape
+  Scenario: A users sends a scrape request
     Given I have a user with username "joe-the-owner" and with role "user"
     And I have a torrent with name "Joe The Owners Torrent" and owned by user "joe-the-owner"
     And the counters for torrent "Joe The Owners Torrent" indicate 7 seeders and 5 leechers

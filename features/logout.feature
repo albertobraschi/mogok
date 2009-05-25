@@ -8,13 +8,13 @@ Feature: Logout
     Given I am logged in as "joe-the-user" with role "user"
     And I am on the homepage
 
-  Scenario: Logging out
+  Scenario: User logs out
     When I follow "Logout"
     Then I should see "username"
     And I should see "password"
     And I should see "Please login"
 
-  Scenario: Going to homepage after logging out
+  Scenario: User tries to go to the homepage after logging out
     When I follow "Logout"
     And I go to the homepage
     Then I should see "username"

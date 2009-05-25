@@ -9,7 +9,7 @@ Feature: Torrent Upload
     And I have a type with name "audio"
     And I have a category with name "music" and with type "audio"
 
-  Scenario: Upload succeeds
+  Scenario: A user uploads a torrent
     Given I have a format with name "ogg" and with type "audio"
     And I have a tag with name "blues" and with category "music"
     And I have a tag with name "pop" and with category "music"
@@ -30,7 +30,7 @@ Feature: Torrent Upload
     And torrent "Joe The Users Torrent" should have 65536 as piece length
     And torrent "Joe The Users Torrent" should have 2 tags
 
-  Scenario: An invalid torrent file is uploaded
+  Scenario: A user tries to upload an invalid torrent file
     When I go to the torrent upload page
     And I fill file field "torrent_file" with "invalid.torrent"
     And I select "music" from "torrent_category_id"
@@ -38,7 +38,7 @@ Feature: Torrent Upload
     And I press "Upload"
     Then I should see "Invalid torrent file."
 
-  Scenario: A file of another type is uploaded
+  Scenario: A user tries to upload a file of another type
     When I go to the torrent upload page
     And I fill file field "torrent_file" with "test.txt"
     And I select "music" from "torrent_category_id"

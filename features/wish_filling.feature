@@ -7,7 +7,7 @@ Feature: Wish Filling
   Background:
     Given I am logged in as "joe-the-user" with role "user"
 
-  Scenario: Filling a wish
+  Scenario: A user fills a wish
     Given I have a user with username "joe-the-wisher" and with role "user"
     And I have a wish with name "Joe The Wishers Wish" and owned by user "joe-the-wisher"
     And I have a torrent with name "Joe The Users Torrent" and owned by user "joe-the-user"
@@ -21,12 +21,12 @@ Feature: Wish Filling
     And wish "Joe The Wishers Wish" should have torrent set to "Joe The Users Torrent"
     And a moderation report for wish "Joe The Wishers Wish" with reason "pending" should be created
 
-  Scenario: Trying to fill your own wish
+  Scenario: A user tries to fill its own wish
     Given I have a wish with name "Joe The Users Wish" and owned by user "joe-the-user"
     When I go to the wish filling page for wish "Joe The Users Wish"
     Then I should see "Access Denied"
 
-  Scenario: Filling a wish with an invalid torrent info hash
+  Scenario: A user tries to fill a wish with an invalid torrent info hash
     Given I have a user with username "joe-the-wisher" and with role "user"
     And I have a wish with name "Joe The Wishers Wish" and owned by user "joe-the-wisher"
     When I go to the wish details page for wish "Joe The Wishers Wish"
@@ -35,7 +35,7 @@ Feature: Wish Filling
     And I press "Confirm"
     Then I should see "Invalid torrent info hash."
 
-  Scenario: Filling a wish with another users torrent
+  Scenario: A user tries to fill a wish with another users torrent
     Given I have a user with username "joe-the-wisher" and with role "user"
     And I have a user with username "joe-the-owner" and with role "user"
     And I have a wish with name "Joe The Wishers Wish" and owned by user "joe-the-wisher"
@@ -46,7 +46,7 @@ Feature: Wish Filling
     And I press "Confirm"
     Then I should see "Only the torrent uploader can use it to fill a request."
 
-  Scenario: Filling two wishes with the same torrent
+  Scenario: A user tries to fill two wishes with the same torrent
     Given I have a user with username "joe-the-wisher" and with role "user"
     And I have a wish with name "Joe The Wishers Wish" and owned by user "joe-the-wisher"
     And I have a wish with name "Another Joe The Wishers Wish" and owned by user "joe-the-wisher"

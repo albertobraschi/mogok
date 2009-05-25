@@ -7,7 +7,7 @@ Feature: Wish Moderation
   Background:
     Given I am logged in as "joe-the-mod" with role "mod"
 
-  Scenario: Rejecting a wish filling
+  Scenario: A wish filling is rejected
     Given I have a user with username "joe-the-wisher" and with role "user"
     And I have a user with username "joe-the-filler" and with role "user"
     And I have a wish with name "Joe The Wishers Wish" and owned by user "joe-the-wisher"
@@ -23,7 +23,7 @@ Feature: Wish Moderation
     And torrent for wish "Joe The Wishers Wish" should be empty
     And a system message with subject "request filling rejected" should be received by "joe-the-filler"
         
-  Scenario: Approving a wish filling with bounty transfer
+  Scenario: A wish filling with bounty transfer is approved
     Given I have a user with username "joe-the-wisher" and with role "user"
     And I have a user with username "joe-the-filler" and with role "user"
     And user "joe-the-filler" has 0 as uploaded

@@ -1,6 +1,6 @@
 
 Feature: Wish Report
-  In order to keep report bad wishes
+  In order to report bad wishes
   As a registered user
   I want to be able to file moderation reports for them
 

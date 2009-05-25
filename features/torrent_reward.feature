@@ -7,7 +7,7 @@ Feature: Torrent download
   Background:
     Given I am logged in as "joe-the-user" with role "user"
 
-  Scenario: Adding a reward to a torrent
+  Scenario: A user adds a reward to a torrent
     Given I have a user with username "joe-the-owner" and with role "user"
     And user "joe-the-user" has 10485760 as uploaded
     And user "joe-the-owner" has 0 as uploaded
@@ -24,7 +24,7 @@ Feature: Torrent download
     And user "joe-the-user" should have uploaded equal to 0
     And torrent "Joe The Owners Torrent" should have total reward equal to 10485760
 
-  Scenario: Adding a reward to a torrent having insufficient upload credit
+  Scenario: A user tries to add a reward to a torrent having insufficient upload credit
     Given I have a user with username "joe-the-owner" and with role "user"    
     And I have a torrent with name "Joe The Owners Torrent" and owned by user "joe-the-owner"
     And user "joe-the-user" has 0 as uploaded

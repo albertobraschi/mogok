@@ -7,7 +7,7 @@ Feature: Torrent Download
   Background:
     Given I am logged in as "joe-the-user" with role "user"
 
-  Scenario: Downloading a torrent file    
+  Scenario: A user downloads a torrent file
     Given I have a torrent with name "Joe The Users Torrent" and owned by user "joe-the-user"
     When I go to the torrent details page for torrent "Joe The Users Torrent"
     And I follow "Joe The Users Torrent.torrent"

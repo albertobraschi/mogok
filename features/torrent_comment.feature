@@ -7,7 +7,7 @@ Feature: Torrent comment
   Background:
     Given I am logged in as "joe-the-user" with role "user"
 
-  Scenario: A user adds a comment
+  Scenario: A user adds a comment to a torrent
     Given I have a torrent with name "Joe The Users Torrent" and owned by user "joe-the-user"
     When I go to the torrent details page for torrent "Joe The Users Torrent"
     And I fill in "comment_body" with "Comment body."
@@ -16,7 +16,7 @@ Feature: Torrent comment
     And I should see "Comment successfully added."
     And a comment by user "joe-the-user" with body equal to "Comment body." should be created for torrent "Joe The Users Torrent"
 
-  Scenario: A user edits its own comment
+  Scenario: A user edits its own torrent comment
     Given I have a user with username "joe-the-owner" and with role "user"
     And I have a torrent with name "Joe The Owners Torrent" and owned by user "joe-the-owner"
     And I have a comment by user "joe-the-user" for torrent "Joe The Owners Torrent" with body equal to "Comment body."

@@ -9,7 +9,7 @@ Feature: Invitations
     And I am logged in as "joe-the-user" with role "user"
     And user "joe-the-user" has a ticket with name "inviter"
 
-  Scenario: Sending an invitation
+  Scenario: User sends an invitation
     When I go to the invitations page
     And I follow "[ invite ]"
     And I fill in "email" with "some-friend@mail.com"
@@ -18,7 +18,7 @@ Feature: Invitations
     And an invitation record with email "some-friend@mail.com" and owned by "joe-the-user" should be created
     And I should see the code for invitation with email "some-friend@mail.com" and owned by "joe-the-user"
 
-  Scenario: Cancelling an invitation
+  Scenario: User cancels an invitation
     Given I have an invitation with email "some-friend@mail.com" and created by "joe-the-user"
     When I go to the invitations page
     And I follow "[ cancel ]"

@@ -1,10 +1,10 @@
 
 Feature: Torrent Activation
-  In order to activate inactive torrents
+  In order to reactivate inactive torrents
   As a moderator
-  I want to be able to activate them
+  I want to be able to do so
 
-  Scenario: A moderator activates an inactive torrent
+  Scenario: A moderator reactivates an inactive torrent
     Given I am logged in as "joe-the-mod" with role "mod"
     And I have a user with username "joe-the-owner" and with role "user"
     And I have a torrent with name "Joe The Owners Torrent" and owned by user "joe-the-owner"
