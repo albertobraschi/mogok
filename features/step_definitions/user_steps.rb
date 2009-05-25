@@ -6,21 +6,8 @@ Given /^I have a user with username "(.*)" and with role "(.*)"$/ do |username, 
   fetch_user username, role
 end
 
-Given /^I have a system user$/ do
-  role = fetch_role Role::SYSTEM
-  style = fetch_style 'default'
-
-  u = User.new(:id => 1,
-               :username => 'system',
-               :password => 'system',
-               :style => style,
-               :email => 'system@mail.com',
-               :save_sent => false,
-               :display_downloads => false,
-               :display_last_request_at => false)
-  u.role = role
-  u.reset_passkey
-  u.save(false)
+Given /^I have the system user$/ do
+  fetch_system_user
 end
 
 Given /^the user with username "(.*)" has the email "(.*)"$/ do |username, email|

@@ -27,10 +27,13 @@ class Wish
       # notify users who have bounties for the wish
       unless self.wish_bounties.blank?
         self.wish_bounties.each do |wb|
-          deliver_notification(wb.user,
-                               'notify_approval.bounter_subject',
-                               'notify_approval.bounter_body',
-                               :name => self.name, :by => self.filler.username)
+          next if wb.revoked?
+          if wb.user != self.user && wb.user != self.filler
+            deliver_notification(wb.user,
+                                 'notify_approval.bounter_subject',
+                                 'notify_approval.bounter_body',
+                                 :name => self.name, :by => self.filler.username)
+          end
         end
       end
     end

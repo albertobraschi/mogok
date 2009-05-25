@@ -328,7 +328,6 @@ class CreateData < ActiveRecord::Migration
                    :downloaded => downloaded,
                    :ratio => calculate_ratio(uploaded, downloaded))
       u.role = role # attribute role_id must be assigned separately
-      u.reset_passkey
       u.save(false)
     end
 

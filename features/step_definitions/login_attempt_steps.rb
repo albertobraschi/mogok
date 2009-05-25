@@ -37,7 +37,7 @@ Then /^the login attempt for IP "(.*)" should be blocked$/ do |ip|
 end
 
 Then /^the login attempt for IP "(.*)" should not be blocked$/ do |ip|
-  fetch_login_attempt(ip, false).blocked?.should_not be_false
+  fetch_login_attempt(ip, false).blocked?.should be_false
 end
 
 Then /^a login attempt for IP "(.*)" should not exist$/ do |ip|

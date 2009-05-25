@@ -12,10 +12,10 @@ Feature: Messenger
     When I go to the new message page
     And I fill in "to" with "joe-the-receiver"
     And I fill in "message_subject" with "hello"
-    And I fill in "message_body" with "hello-message-body"
+    And I fill in "message_body" with "Hello msg."
     And I press "Send"
     Then I should see "Message successfully sent."
-    And a new message should be received by "joe-the-receiver" with subject "hello" and body containing "hello-message-body"
+    And a new message with body containing "Hello msg." and subject "hello" should be received by "joe-the-receiver"
 
   Scenario: Browsing a messenger folder
     Given I have a user with username "joe-the-sender" and with role "user"
@@ -43,7 +43,7 @@ Feature: Messenger
     And I follow "hello"
     And I follow "[ reply ]"
     And I press "Send"
-    Then a new message should be received by "joe-the-sender" with subject "Re: hello" and body containing "joe-the-sender wrote:"
+    Then a new message with body containing "joe-the-sender wrote:" and subject "Re: hello" should be received by "joe-the-sender"
 
   Scenario: Forwarding a message
     Given I have a user with username "joe-the-sender" and with role "user"
@@ -53,7 +53,7 @@ Feature: Messenger
     And I follow "[ forward ]"
     And I fill in "to" with "joe-the-sender"
     And I press "Send"
-    Then a new message should be received by "joe-the-sender" with subject "Fwd: hello" and body containing "joe-the-sender wrote:"
+    Then a new message with body containing "joe-the-sender wrote:" and subject "Fwd: hello" should be received by "joe-the-sender"
 
   Scenario: Moving a message when reading
     Given I have a user with username "joe-the-sender" and with role "user"

@@ -12,7 +12,7 @@ class User
     def init_new_record
       self.role = Role.find_by_name(Role::USER) unless self.role
       self.reset_passkey
-      self.style = Style.find(:first)
+      self.style = Style.find(:first) unless self.style
     end
 
     def trim_info

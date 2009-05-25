@@ -6,14 +6,14 @@ include Bittorrent::Tracker
 Given /^the torrent "(.*)" has one seeding peer by user "(.*)" at IP "(.*)" and port (\d+)$/ do |torrent_name, username, ip, port|
   t = Torrent.find_by_name torrent_name
   u = fetch_user username
-  fetch_peer t.id, u.id, ip, port, true
+  fetch_peer t, u, ip, port, true
   t.update_attribute :seeders_count, 1
 end
 
 Given /^the torrent "(.*)" has one leeching peer by user "(.*)" at IP "(.*)" and port (\d+)$/ do |torrent_name, username, ip, port|
   t = Torrent.find_by_name torrent_name
   u = fetch_user username
-  fetch_peer t.id, u.id, ip, port, false
+  fetch_peer t, u, ip, port, false
 end
 
 Given /^the counters for torrent "(.*)" indicate (\d+) seeders and (\d+) leechers$/ do |name, seeders, leechers|

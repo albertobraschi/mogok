@@ -22,7 +22,16 @@ end
 
 # THEN
 
-Then /^a new message should be received by "(.*)" with subject "(.*)" and body containing "(.*)"$/ do |receiver, subject, body|
+Then /^a new message with subject "(.*)" should be received by "(.*)"$/ do |subject, receiver|
+  receiver = fetch_user receiver
+  m = Message.find_by_receiver_id_and_subject(receiver, subject)
+  m.should_not be_nil
+  m.unread.should be_true
+  m.folder.should == Message::INBOX
+  receiver.has_new_message?.should be_true
+end
+
+Then /^a new message with body containing "(.*)" and subject "(.*)" should be received by "(.*)"$/ do |body, subject, receiver|
   receiver = fetch_user receiver
   m = Message.find_by_receiver_id_and_subject(receiver, subject)
   m.should_not be_nil
@@ -32,11 +41,22 @@ Then /^a new message should be received by "(.*)" with subject "(.*)" and body c
   receiver.has_new_message?.should be_true
 end
 
-Then /^a new system message should be received by "(.*)" with subject "(.*)" and body "(.*)"$/ do |receiver, subject, body|
+Then /^a new system message with subject "(.*)" should be received by "(.*)"$/ do |subject, receiver|
   receiver = fetch_user receiver
-  m = Message.find_by_receiver_id_and_subject_and_body(receiver, subject, body)
+  m = Message.find_by_receiver_id_and_subject(receiver, subject)
   m.should_not be_nil
   m.sender.should == User.system_user
+  m.unread.should be_true
+  m.folder.should == Message::INBOX
+  receiver.has_new_message?.should be_true
+end
+
+Then /^a new system message with body containing "(.*)" and subject "(.*)" should be received by "(.*)"$/ do |body, subject, receiver|
+  receiver = fetch_user receiver
+  m = Message.find_by_receiver_id_and_subject(receiver, subject)
+  m.should_not be_nil
+  m.sender.should == User.system_user
+  m.body.should include(body)
   m.unread.should be_true
   m.folder.should == Message::INBOX
   receiver.has_new_message?.should be_true
@@ -52,10 +72,6 @@ Then /^the folder for message sent by "(.*)" with subject "(.*)" should be equal
   Message.find_by_sender_id_and_subject(sender, subject).folder.should == folder
 end
 
-Then /^a message should be sent to "(.*)" with subject "(.*)"$/ do |receiver, subject|
-  receiver = fetch_user receiver
-  Message.find_by_receiver_id_and_subject(receiver, subject).should_not be_nil
-end
 
 
 

@@ -54,7 +54,6 @@ class CreateDefaultData < ActiveRecord::Migration
                    :display_downloads => false,
                    :display_last_request_at => false)
       u.role = role # attribute role_id must be assigned separately
-      u.reset_passkey
       u.save(false)
     end
 end

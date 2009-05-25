@@ -1,6 +1,5 @@
 
 def fetch_role(name)
-  name.downcase!
   r = Role.find_by_name(name)
   unless r
     r = Role.new :description => name, :css_class => "user_#{name}"
@@ -53,13 +52,13 @@ def fetch_login_attempt(ip, create = true)
   a
 end
 
-def fetch_peer(torrent_id, user_id, ip, port, seeder)
+def fetch_peer(torrent, user, ip, port, seeder)
   p = Peer.find :first,
-                :conditions => {:torrent_id => torrent_id, :user_id => user_id, :ip => ip, :port => port}
+                :conditions => {:torrent_id => torrent, :user_id => user, :ip => ip, :port => port}
   unless p
     p = Peer.new
-    p.torrent_id = torrent_id
-    p.user_id = user_id
+    p.torrent = torrent
+    p.user = user
     p.ip = ip
     p.port = port
     p.seeder = seeder
@@ -75,18 +74,34 @@ def fetch_user(username, role = nil, email = nil)
   u = User.find_by_username username
   unless u
     raise "role required when trying to create user [#{username}]" unless role
+    u = build_user(username, role, email)
+    u.save
+  end
+  u
+end
+
+def fetch_system_user
+  system_role = fetch_role Role::SYSTEM
+  u = build_user('system', system_role)
+  u.id = 1
+  u.save
+  u
+end
+
+private
+
+  def build_user(username, role, email = nil)
     u = User.new
     u.username = username
     u.password = username
     u.password_confirmation = username
     u.role = role
     u.created_at = Time.now
-    u.reset_passkey
-    u.avatar = 'none'
-    u.email = email || "#{username}@testmailz.com"
+    u.email = email || "#{username}@mail.com"
     u.style = fetch_style('default')
-    u.reset_passkey
-    u.save
+    u
   end
-  u
-end
+
+
+
+
