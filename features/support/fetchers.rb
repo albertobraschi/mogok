@@ -44,17 +44,12 @@ def fetch_tag(name, category_name = nil)
   end
 end
 
-def fetch_login_attempt(ip, create = true)
-  a = LoginAttempt.find_by_ip(ip)
-  if a.nil? && create
-    a = LoginAttempt.create(:ip => ip, :attempts_count => 0)
-  end
-  a
+def fetch_login_attempt(ip, attempts_count = 0)
+  LoginAttempt.find_by_ip(ip) || LoginAttempt.create(:ip => ip, :attempts_count => attempts_count)
 end
 
 def fetch_peer(torrent, user, ip, port, seeder)
-  p = Peer.find :first,
-                :conditions => {:torrent_id => torrent, :user_id => user, :ip => ip, :port => port}
+  p = Peer.find :first, :conditions => {:torrent_id => torrent, :user_id => user, :ip => ip, :port => port}
   unless p
     p = Peer.new
     p.torrent = torrent
@@ -88,7 +83,7 @@ def fetch_system_user
   u
 end
 
-private
+# helpers
 
   def build_user(username, role, email = nil)
     u = User.new

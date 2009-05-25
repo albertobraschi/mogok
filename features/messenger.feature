@@ -64,7 +64,7 @@ Feature: Messenger
     And I press "Move to:"
     Then I should see "Message successfully moved."
     And I should see "Folder is Empty"
-    And the folder for message sent by "joe-the-sender" with subject "hello" should be equal to "trash"
+    And the folder for message sent by "joe-the-sender" to "joe-the-user" with subject "hello" should be equal to "trash"
 
   Scenario: Moving a message when browsing a folder
     Given I have a user with username "joe-the-sender" and with role "user"
@@ -75,7 +75,7 @@ Feature: Messenger
     And I press "Move to:"
     Then I should see "Message(s) successfully moved."
     And I should see "Folder is Empty"
-    And the folder for message sent by "joe-the-sender" with subject "hello" should be equal to "trash"
+    And the folder for message sent by "joe-the-sender" to "joe-the-user" with subject "hello" should be equal to "trash"
 
 
 

@@ -16,25 +16,25 @@ Feature: Torrent Upload
     When I go to the torrent upload page
     And I select "music" from "torrent_category_id"
     And I fill file field "torrent_file" with "valid.torrent"
-    And I fill in "torrent_name" with "joe-the-users-torrent"
+    And I fill in "torrent_name" with "Joe The Users Torrent"
     And I select "ogg" from "format_id"
     And I fill in "tags_str" with "blues, pop"
     And I press "Upload"
-    Then I should see "joe-the-users-torrent"
+    Then I should see "Joe The Users Torrent"
     And I should see "music"
     And I should see "ogg"
     And I should see "blues"
     And I should see "pop"
     And I should see "54B1A5052B5B7D3BA4760F3BFC1135306A30FFD1"
-    And the torrent "joe-the-users-torrent" should have 3 mapped files
-    And the torrent "joe-the-users-torrent" should have 65536 as piece length
-    And the torrent "joe-the-users-torrent" should have 2 tags
+    And the torrent "Joe The Users Torrent" should have 3 mapped files
+    And the torrent "Joe The Users Torrent" should have 65536 as piece length
+    And the torrent "Joe The Users Torrent" should have 2 tags
 
   Scenario: An invalid torrent file is uploaded
     When I go to the torrent upload page
     And I fill file field "torrent_file" with "invalid.torrent"
     And I select "music" from "torrent_category_id"
-    And I fill in "torrent_name" with "joe-the-users-torrent"
+    And I fill in "torrent_name" with "Joe The Users Torrent"
     And I press "Upload"
     Then I should see "Invalid torrent file."
 
@@ -42,7 +42,7 @@ Feature: Torrent Upload
     When I go to the torrent upload page
     And I fill file field "torrent_file" with "test.txt"
     And I select "music" from "torrent_category_id"
-    And I fill in "torrent_name" with "joe-the-users-torrent"
+    And I fill in "torrent_name" with "Joe The Users Torrent"
     And I press "Upload"
     Then I should see "Must be a file of type torrent."
 

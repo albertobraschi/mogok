@@ -14,7 +14,7 @@ Feature: Wish
     And I have a format with name "ogg" and with type "audio"
     When I go to the new wish page
     And I select "music" from "wish_category_id"
-    And I fill in "wish_name" with "joe-the-users-wish"
+    And I fill in "wish_name" with "Joe The Users Wish"
     And I select "ogg" from "format_id"
     And I press "Create"
-    Then a wish with name "joe-the-users-wish" should be created
+    Then a wish with name "Joe The Users Wish" should be created

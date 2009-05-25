@@ -1,16 +1,16 @@
 
 # GIVEN
 
-Given /^I have a wish with name "(.*)" and owned by user "(.*)"$/ do |name, owner|
+Given /^I have a wish with name "(.*)" and owned by user "(.*)"$/ do |name, username|
   fetch_type 'audio'
   c = fetch_category 'music', 'audio'
-  owner = fetch_user owner
+  owner = fetch_user username
   Wish.create :category => c, :name => name, :user => owner
 end
 
-Given /^I have a wish bounty for wish "(.*)" with amount of (\d+) created by "(.*)"$/ do |wish_name, amount, creator|
+Given /^I have a wish bounty for wish "(.*)" with amount of (\d+) created by "(.*)"$/ do |wish_name, amount, username|
   w = Wish.find_by_name wish_name
-  u = fetch_user creator
+  u = fetch_user username
   WishBounty.create :user => u, :wish => w, :amount => amount
 end
 

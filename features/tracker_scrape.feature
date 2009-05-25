@@ -9,10 +9,10 @@ Feature: Tracker Scrape
 
   Scenario: Scrape
     Given I have a user with username "joe-the-owner" and with role "user"
-    And I have a torrent with name "joe-the-owners-torrent" and owned by user "joe-the-owner"
-    And the counters for torrent "joe-the-owners-torrent" indicate 7 seeders and 5 leechers
-    And the torrent "joe-the-owners-torrent" has been snatched 9 times
-    When user "joe-the-scraper" sends a scrape request for torrent "joe-the-owners-torrent"
+    And I have a torrent with name "Joe The Owners Torrent" and owned by user "joe-the-owner"
+    And the counters for torrent "Joe The Owners Torrent" indicate 7 seeders and 5 leechers
+    And the torrent "Joe The Owners Torrent" has been snatched 9 times
+    When user "joe-the-scraper" sends a scrape request for torrent "Joe The Owners Torrent"
     Then I should not see "Inexpected server error."
     And I should see "8:completei7e10:incompletei5e10:downloadedi9e"
 

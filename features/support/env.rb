@@ -49,7 +49,7 @@ I18n.default_locale = 'en'
 
 puts "> CACHE_ENABLED = #{CACHE_ENABLED}"
 puts "> I18n.default_locale = #{I18n.default_locale}"
-
+puts "> Test data directory = #{TEST_DATA_DIR}"
 
 
 

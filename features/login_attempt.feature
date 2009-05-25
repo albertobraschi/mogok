@@ -11,7 +11,7 @@ Feature: Login Attempt
   Scenario: Login attempt is created
     Given I have no login attempts for IP "127.0.0.1"
     When I fill in "username" with "joe-the-user"
-    And I fill in "password" with "wrong-pass"
+    And I fill in "password" with "nononono"
     And I press "Login"
     Then the login attempt for IP "127.0.0.1" should have count equal to 1
 
@@ -19,7 +19,7 @@ Feature: Login Attempt
     Given max login attempts is equal to 5
     And I have a login attempt for IP "127.0.0.1" with count equal to 1
     When I fill in "username" with "joe-the-user"
-    And I fill in "password" with "wrong-pass"
+    And I fill in "password" with "nononono"
     And I press "Login"
     Then I should see "username"
     And I should see "password"
@@ -31,7 +31,7 @@ Feature: Login Attempt
     Given the block time for exceeded login attempts is 4 hours
     And I have a login attempt for IP "127.0.0.1" with one remaining attempt
     And I fill in "username" with "joe-the-user"
-    And I fill in "password" with "wrong-pass"
+    And I fill in "password" with "nononono"
     And I press "Login"
     Then I should see "username"
     And I should see "password"
@@ -39,7 +39,7 @@ Feature: Login Attempt
     And the login attempt for IP "127.0.0.1" should have count equal to 0
     And the login attempt for IP "127.0.0.1" should be blocked
 
-  Scenario: Login attempt is deleted
+  Scenario: Login attempt is cleared after successful login
     Given I have a login attempt for IP "127.0.0.1" with count equal to 1
     When I go to the login page
     And I fill in "username" with "joe-the-user"

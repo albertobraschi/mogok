@@ -67,9 +67,10 @@ Then /^the message sent by "(.*)" with subject "(.*)" should be set as read$/ do
   Message.find_by_sender_id_and_subject(sender, subject).unread?.should be_false
 end
 
-Then /^the folder for message sent by "(.*)" with subject "(.*)" should be equal to "(.*)"$/ do |sender, subject, folder|
+Then /^the folder for message sent by "(.*)" to "(.*)" with subject "(.*)" should be equal to "(.*)"$/ do |sender, receiver, subject, folder|
   sender = fetch_user sender
-  Message.find_by_sender_id_and_subject(sender, subject).folder.should == folder
+  receiver = fetch_user receiver
+  Message.find_by_sender_id_and_receiver_id_and_subject(sender, receiver, subject).folder.should == folder
 end
 
 
