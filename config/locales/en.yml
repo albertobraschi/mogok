@@ -158,7 +158,7 @@ en:
         report: pending
         info_hash_invalid: Invalid torrent info hash.
         not_torrent_uploader: Only the torrent uploader can use it to fill a request.
-        torrent_taken: Torrent already filled another request.
+        torrent_taken: Torrent already used to fill another request.
       report:
         success: Request successfully reported.
         reason_required: Reason is required.

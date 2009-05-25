@@ -28,7 +28,7 @@ class Message
       if self.receiver
         if !self.receiver.active?
           add_error :receiver_id, 'inactive'
-        elsif self.receiver.system_user?
+        elsif self.receiver.system?
           add_error :receiver_id, 'system'
         end
       end

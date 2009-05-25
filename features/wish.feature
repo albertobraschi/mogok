@@ -4,15 +4,17 @@ Feature: Wish
   As a registered user
   I want to be able to create new wishes
 
+  Background:
+    Given I am logged in as "joe-the-user" with role "user"
+
   Scenario: Creating a wish
-    Given I am logged in as JOE_THE_USER with role USER
-    And user with username JOE_THE_USER has a ticket with name wisher
-    And I have a type with name AUDIO
-    And I have a category with name MUSIC and with type AUDIO
-    And I have a format with name MP3 and with type AUDIO
+    Given user with username "joe-the-user" has a ticket with name "wisher"
+    And I have a type with name "audio"
+    And I have a category with name "music" and with type "audio"
+    And I have a format with name "ogg" and with type "audio"
     When I go to the new wish page
-    And I select MUSIC from wish_category_id
-    And I fill in wish_name with JOE_THE_USERS_WISH
-    And I select MP3 from format_id
-    And I press Create
-    Then a wish with name JOE_THE_USERS_WISH should be created
+    And I select "music" from "wish_category_id"
+    And I fill in "wish_name" with "joe-the-users-wish"
+    And I select "ogg" from "format_id"
+    And I press "Create"
+    Then a wish with name "joe-the-users-wish" should be created

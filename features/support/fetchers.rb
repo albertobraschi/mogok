@@ -10,8 +10,8 @@ def fetch_role(name)
   r
 end
 
-def fetch_style
-  Style.find(:first) || Style.create(:name => 'none', :stylesheet => 'none.css')
+def fetch_style(name)
+  Style.find_by_name(name) || Style.create(:name => name, :stylesheet => "#{name}.css")
 end
 
 def fetch_type(name)
@@ -45,6 +45,14 @@ def fetch_tag(name, category_name = nil)
   end
 end
 
+def fetch_login_attempt(ip, create = true)
+  a = LoginAttempt.find_by_ip(ip)
+  if a.nil? && create
+    a = LoginAttempt.create(:ip => ip, :attempts_count => 0)
+  end
+  a
+end
+
 def fetch_peer(torrent_id, user_id, ip, port, seeder)
   p = Peer.find :first,
                 :conditions => {:torrent_id => torrent_id, :user_id => user_id, :ip => ip, :port => port}
@@ -66,7 +74,7 @@ end
 def fetch_user(username, role = nil, email = nil)
   u = User.find_by_username username
   unless u
-    raise 'role required' unless role
+    raise "role required when trying to create user [#{username}]" unless role
     u = User.new
     u.username = username
     u.password = username
@@ -76,7 +84,7 @@ def fetch_user(username, role = nil, email = nil)
     u.reset_passkey
     u.avatar = 'none'
     u.email = email || "#{username}@testmailz.com"
-    u.style = fetch_style
+    u.style = fetch_style('default')
     u.reset_passkey
     u.save
   end

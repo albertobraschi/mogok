@@ -1,54 +1,50 @@
 
-Feature: Torrent upload
+Feature: Torrent Upload
   In order to have my torrents in the system
   As a registered user
   I want to be able to upload them
 
+  Background:
+    Given I am logged in as "joe-the-user" with role "user"
+    And I have a type with name "audio"
+    And I have a category with name "music" and with type "audio"
+
   Scenario: Upload succeeds
-    Given I am logged in as JOE_THE_USER with role USER
-    And I have a type with name AUDIO
-    And I have a category with name MUSIC and with type AUDIO
-    And I have a format with name MP3 and with type AUDIO
-    And I have a tag with name BLUES and with category MUSIC
-    And I have a tag with name POP and with category MUSIC
+    Given I have a format with name "ogg" and with type "audio"
+    And I have a tag with name "blues" and with category "music"
+    And I have a tag with name "pop" and with category "music"
     When I go to the torrent upload page
-    And I select MUSIC from torrent_category_id
-    And I specify file field torrent_file as VALID.TORRENT
-    And I fill in torrent_name with JOE_THE_USERS_TORRENT
-    And I select MP3 from format_id
-    And I fill in tags_str with BLUES, POP
-    And I press Upload
-    Then I should see JOE_THE_USERS_TORRENT
-    And I should see MUSIC
-    And I should see MP3
-    And I should see BLUES
-    And I should see POP
-    And I should see 54B1A5052B5B7D3BA4760F3BFC1135306A30FFD1
-    And the torrent JOE_THE_USERS_TORRENT should have 3 mapped files
-    And the torrent JOE_THE_USERS_TORRENT should have 65536 as piece length
-    And the torrent JOE_THE_USERS_TORRENT should have 2 tags
+    And I select "music" from "torrent_category_id"
+    And I fill file field "torrent_file" with "valid.torrent"
+    And I fill in "torrent_name" with "joe-the-users-torrent"
+    And I select "ogg" from "format_id"
+    And I fill in "tags_str" with "blues, pop"
+    And I press "Upload"
+    Then I should see "joe-the-users-torrent"
+    And I should see "music"
+    And I should see "ogg"
+    And I should see "blues"
+    And I should see "pop"
+    And I should see "54B1A5052B5B7D3BA4760F3BFC1135306A30FFD1"
+    And the torrent "joe-the-users-torrent" should have 3 mapped files
+    And the torrent "joe-the-users-torrent" should have 65536 as piece length
+    And the torrent "joe-the-users-torrent" should have 2 tags
 
   Scenario: An invalid torrent file is uploaded
-    Given I am logged in as JOE_THE_USER with role USER
-    And I have a type with name AUDIO
-    And I have a category with name MUSIC and with type AUDIO
     When I go to the torrent upload page
-    And I specify file field torrent_file as INVALID.TORRENT
-    And I select MUSIC from torrent_category_id
-    And I fill in torrent_name with JOE_THE_USERS_TORRENT
-    And I press Upload
-    Then I should see Invalid torrent file.
+    And I fill file field "torrent_file" with "invalid.torrent"
+    And I select "music" from "torrent_category_id"
+    And I fill in "torrent_name" with "joe-the-users-torrent"
+    And I press "Upload"
+    Then I should see "Invalid torrent file."
 
   Scenario: A file of another type is uploaded
-    Given I am logged in as JOE_THE_USER with role USER
-    And I have a type with name AUDIO
-    And I have a category with name MUSIC and with type AUDIO
     When I go to the torrent upload page
-    And I specify file field torrent_file as TEST.TXT
-    And I select MUSIC from torrent_category_id
-    And I fill in torrent_name with JOE_THE_USERS_TORRENT
-    And I press Upload
-    Then I should see Must be a file of type torrent.
+    And I fill file field "torrent_file" with "test.txt"
+    And I select "music" from "torrent_category_id"
+    And I fill in "torrent_name" with "joe-the-users-torrent"
+    And I press "Upload"
+    Then I should see "Must be a file of type torrent."
 
 
 

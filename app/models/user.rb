@@ -44,10 +44,6 @@ class User < ActiveRecord::Base
     write_attribute :email, (value ? value.downcase : nil)
   end
 
-  def save_sent?
-    self.save_sent && !system_user?
-  end
-
   def inactivate
     update_attribute :active, false
   end
@@ -63,9 +59,9 @@ class User < ActiveRecord::Base
   end
 
   def editable_by?(updater)
-    if updater != self && !updater.system_user?
+    if updater != self && !updater.system?
       if updater.owner?
-        return false if system_user? || owner? # owner: all but system and owners
+        return false if system? || owner? # owner: all but system and owners
       elsif updater.admin?
         return false if admin? # admin: all but admins and above
       else
@@ -153,7 +149,7 @@ class User < ActiveRecord::Base
 
     def role_update_allowed?(params, updater)
       new_role = Role.find params[:role_id]
-      if updater.system_user? || updater.owner?
+      if updater.system? || updater.owner?
         return false if new_role.system?
       elsif updater.admin?
         return false if new_role.reserved?

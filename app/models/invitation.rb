@@ -4,7 +4,7 @@ class Invitation < ActiveRecord::Base
   
   validates_uniqueness_of :code
 
-  def self.create(code, user, email)
-    super :code => code, :user => user, :email => email
+  def self.create(code, inviter, email)
+    super :code => code, :user => inviter, :email => email
   end
 end

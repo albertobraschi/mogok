@@ -1,54 +1,22 @@
 
 # GIVEN
-Given /^I go to the home page$/ do
-  visit root_path
-end
 
+Given /I am logged in as "(.*)" with role "(.*)"/ do |username, role|
+  Given "I have a user with username \"#{username}\" and with role \"#{role}\""
+  And "I am on the login page"
+  When "I fill in \"username\" with \"#{username}\""
+  And "I fill in \"password\" with \"#{username}\""
+  And "I press \"Login\""
+  Then "I should see \"#{username}\""
+  And "I should see \"Logout\""
+end
 
 # WHEN
 
-When /^I fill in (.*) with (.*)$/ do |field, value|
-  fill_in field, :with => value
-end
-
-When /^I follow the link (.*)$/ do |link|
-  click_link link
-end
-
-When /^I specify file field (.*) as (.*)$/ do |field, file_name|
+When /^I fill file field "(.*)" with "(.*)"$/ do |field, file_name|
   # NOTE: test framework may corrupt binary files on Windows
   attach_file field, File.join(TEST_DATA_DIR, file_name)
 end
 
-When /^I select (.*) from (.*)$/ do |value, field|
-  select value, :from => field
-end
-
-When /^I check (.*)$/ do |field|
-  check(field)
-end
-
-When /^I press (.*)$/ do |button|
-  click_button button
-end
-
-
-# THEN
-
-Then /^I should see (.*)$/ do |text|
-  response.body.should =~ /#{text}/m
-end
-
-Then /^I should not see (.*)$/ do |text|
-  response.body.should_not =~ /#{text}/m
-end
-
-Then /^the response should contain (.*)$/ do |text|
-  response.body.should =~ /#{text}/m
-end
-
-Then /^the response should not contain (.*)$/ do |text|
-  response.body.should_not =~ /#{text}/m
-end
 
 

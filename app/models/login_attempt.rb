@@ -2,7 +2,7 @@
 class LoginAttempt < ActiveRecord::Base
 
   def blocked?
-    self.blocked_until && self.blocked_until > Time.now
+    !self.blocked_until.nil? && self.blocked_until > Time.now
   end
 
   def increment_or_block(max_attempts, block_time_hours)

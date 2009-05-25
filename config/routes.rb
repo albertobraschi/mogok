@@ -4,11 +4,15 @@ ActionController::Routing::Routes.draw do |map|
   # app root
   map.root :controller => 'content'
   
-  # account
+  # login
   map.login 'login', :controller => 'login', :action => 'login'
   map.logout 'logout', :controller => 'login', :action => 'logout'
-  map.signup 'signup', :controller => 'signup'
+
+  # signup
   map.signup_with_invite 'signup/:invite_code', :controller => 'signup'
+  map.signup 'signup', :controller => 'signup'
+
+  # password recovery
   map.password_recovery 'password_recovery', :controller => 'password_recovery'
   map.change_password 'change_password/:recovery_code', :controller => 'password_recovery', :action => 'change_password'
   

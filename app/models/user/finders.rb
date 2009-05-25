@@ -3,6 +3,10 @@ class User
 
   # finders concern
 
+  def self.system_user
+    find 1
+  end
+
   def paginate_uploads(params, args)
     Torrent.scoped_by_active(true).paginate_by_user_id self,
                                                        :order => self.class.order_by(params[:order_by], params[:desc]),
@@ -65,10 +69,6 @@ class User
                              :per_page => args[:per_page]
   end
 
-  def self.system_user
-    find 1
-  end
-
   def self.search(params, searcher, args)
     params[:username] = nil if params[:username] && params[:username].size < 3
 
@@ -124,7 +124,7 @@ class User
 
     def self.search_conditions(params, searcher)
       s, h = '', {}
-      unless searcher.system_user?
+      unless searcher.system?
         s << 'id != 1 ' # hide system user
         previous = true
       end
