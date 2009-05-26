@@ -8,7 +8,7 @@ Feature: Wish Bounty
     Given I am logged in as "joe-the-user" with role "user"
 
   Scenario: A user adds a bounty to a wish
-    Given user "joe-the-user" has 10485760 as uploaded
+    Given user "joe-the-user" has uploaded equal to 10485760
     And I have a wish with name "Joe The Users Wish" and owned by user "joe-the-user"
     When I go to the wish details page for wish "Joe The Users Wish"
     And I follow "bounties"
@@ -23,7 +23,7 @@ Feature: Wish Bounty
     And user "joe-the-user" should have uploaded equal to 0
 
   Scenario: A user tries to add a bounty to a wish having insufficient upload credit
-    Given user "joe-the-user" has 0 as uploaded
+    Given user "joe-the-user" has uploaded equal to 0
     And I have a wish with name "Joe The Users Wish" and owned by user "joe-the-user"
     When I go to the wish details page for wish "Joe The Users Wish"
     And I follow "bounties"

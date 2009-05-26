@@ -21,6 +21,19 @@ Given /^torrent "(.*)" is inactive$/ do |name|
   t.save
 end
 
+Given /^torrent "(.*)" has snatches_count equal to (\d+)$/ do |name, snatches_count|
+  t = Torrent.find_by_name name
+  t.snatches_count = snatches_count
+  t.save
+end
+
+Given /^the counters for torrent "(.*)" indicate (\d+) seeders and (\d+) leechers$/ do |name, seeders, leechers|
+  t = Torrent.find_by_name name
+  t.seeders_count = seeders
+  t.leechers_count = leechers
+  t.save
+end
+
 
 # THEN
 
@@ -30,20 +43,28 @@ Then /^the downloaded torrent file should have same info hash as torrent "(.*)"$
   downloaded_torrent.info_hash.should == Torrent.find_by_name(torrent_name).info_hash
 end
 
-Then /^torrent "(.*)" should have (\d+) mapped files$/ do |name, mapped_files|
-  Torrent.find_by_name(name).mapped_files.size.should == mapped_files.to_i
+Then /^torrent "(.*)" should have (\d+) mapped files$/ do |name, mapped_files_number|
+  Torrent.find_by_name(name).mapped_files.size.should == mapped_files_number.to_i
 end
 
 Then /^torrent "(.*)" should have (\d+) as piece length$/ do |name, piece_length|
   Torrent.find_by_name(name).piece_length.should == piece_length.to_i
 end
 
-Then /^torrent "(.*)" should have (\d+) tags$/ do |name, tags|
-  Torrent.find_by_name(name).tags.length.should == tags.to_i
+Then /^torrent "(.*)" should have (\d+) tags$/ do |name, tags_number|
+  Torrent.find_by_name(name).tags.length.should == tags_number.to_i
 end
 
 Then /^torrent "(.*)" should have total reward equal to (\d+)$/ do |name, total_reward|
   Torrent.find_by_name(name).total_reward.should == total_reward.to_i
+end
+
+Then /^torrent "(.*)" should have seeders equal to (\d+)$/ do |name, seeders|
+  Torrent.find_by_name(name).seeders_count.should == seeders.to_i
+end
+
+Then /^torrent "(.*)" should have leechers equal to (\d+)$/ do |name, leechers|
+  Torrent.find_by_name(name).leechers_count.should == leechers.to_i
 end
 
 Then /^a moderation report for torrent "(.*)" with reason "(.*)" should be created$/ do |torrent_name, reason|

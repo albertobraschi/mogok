@@ -10,15 +10,21 @@ Given /^I have the system user$/ do
   fetch_system_user
 end
 
-Given /^user "(.*)" has the email "(.*)"$/ do |username, email|
+Given /^user "(.*)" has email equal to "(.*)"$/ do |username, email|
   u = fetch_user username
   u.email = email
   u.save
 end
 
-Given /^user "(.*)" has (\d+) as uploaded$/ do |username, uploaded|
+Given /^user "(.*)" has uploaded equal to (\d+)$/ do |username, uploaded|
   u = fetch_user username
   u.uploaded = uploaded
+  u.save
+end
+
+Given /^user "(.*)" has downloaded equal to (\d+)$/ do |username, downloaded|
+  u = fetch_user username
+  u.downloaded = downloaded
   u.save
 end
 
@@ -40,13 +46,15 @@ Then /^a user with username "(.*)" should be created$/ do |username|
 end
 
 Then /^user "(.*)" should have uploaded equal to (\d+)$/ do |username, uploaded|
-  u = fetch_user username
-  u.uploaded.should == uploaded.to_i
+  User.find_by_username(username).uploaded.should == uploaded.to_i
+end
+
+Then /^user "(.*)" should have downloaded equal to (\d+)$/ do |username, downloaded|
+  User.find_by_username(username).downloaded.should == downloaded.to_i
 end
 
 Then /^user "(.*)" should have email equal to "(.*)"$/ do |username, email|
-  u = fetch_user username
-  u.email.should == email
+  User.find_by_username(username).email.should == email
 end
 
 Then /^a moderation report for user "(.*)" with reason "(.*)" should be created$/ do |username, reason|

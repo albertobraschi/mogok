@@ -57,6 +57,7 @@ def fetch_peer(torrent, user, ip, port, seeder)
     p.ip = ip
     p.port = port
     p.seeder = seeder
+    p.leftt = seeder ? 0 : torrent.size
     p.started_at = Time.now
     p.last_action_at = Time.now
     p.peer_conn = PeerConn.create(:ip => ip, :port => port)

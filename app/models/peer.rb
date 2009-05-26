@@ -64,6 +64,20 @@ class Peer < ActiveRecord::Base
       self.peer_conn.save
     end
   end
+  
+  def self.make_compact_ip(ip, port)
+    ipaddr = IPAddr.new ip
+    if ipaddr.ipv4?
+      compact_ip = ipaddr.hton
+      p = port
+      compact_port = ''
+      until p == 0
+        compact_port << (p & 0xFF).chr
+        p >>= 8
+      end
+      compact_ip << compact_port.reverse
+    end
+  end
 end
 
 

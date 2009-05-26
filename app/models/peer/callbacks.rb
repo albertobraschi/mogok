@@ -7,20 +7,6 @@ class Peer
   after_create :increment_torrent_counters
   after_destroy :decrement_torrent_counters, :debug_destroyed
 
-  def self.make_compact_ip(ip, port)
-    ipaddr = IPAddr.new ip
-    if ipaddr.ipv4?
-      compact_ip = ipaddr.hton
-      p = port
-      compact_port = ''
-      until p == 0
-        compact_port << (p & 0xFF).chr
-        p >>= 8
-      end
-      compact_ip << compact_port.reverse
-    end
-  end
-
   private
   
     def init_new_record

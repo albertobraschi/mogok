@@ -6,48 +6,54 @@ Feature: Tracker Announce
 
   Background:
     Given I have a user with username "joe-the-announcer" and with role "user"
+    And user "joe-the-announcer" has uploaded equal to 0
+    And user "joe-the-announcer" has downloaded equal to 0
+    And I have a user with username "joe-the-owner" and with role "user"
+    And I have a torrent with name "Joe The Owners Torrent" and owned by user "joe-the-owner"
 
   Scenario: A user sends an announce request with event started
-    Given I have a user with username "joe-the-seeder" and with role "user"
-    And I have a torrent with name "Joe The Seeders Torrent" and owned by user "joe-the-seeder"
-    And the torrent "Joe The Seeders Torrent" has one seeding peer by user "joe-the-seeder" at IP "123.4.5.6" and port 33333
-    When user "joe-the-announcer" sends an announce with event "started" for torrent "Joe The Seeders Torrent"
-    Then I should not see "Inexpected server error."
+    Given I have one seeding peer for torrent "Joe The Owners Torrent" by user "joe-the-owner" at IP "123.4.5.6" and port 33333
+    And the counters for torrent "Joe The Owners Torrent" indicate 1 seeders and 0 leechers
+    When user "joe-the-announcer" sends an announce with event "started" for torrent "Joe The Owners Torrent" using port 11111
+    Then a new leeching peer for torrent "Joe The Owners Torrent" by user "joe-the-announcer" at IP "127.0.0.1" and port 11111 should be created
+    And I should not see "Inexpected server error."
     And I should see "8:completei1e10:incompletei1e"
-    And I should see "2:ip9:123.4.5.64:porti33333e"
-    And a new peer should be created
-    And the leechers counter for torrent "Joe The Seeders Torrent" should be increased by one
+    And I should see "2:ip9:123.4.5.64:porti33333e"    
+    And torrent "Joe The Owners Torrent" should have seeders equal to 1
+    And torrent "Joe The Owners Torrent" should have leechers equal to 1
 
-  Scenario: A user sends an announce request with no event
-    Given I have a user with username "joe-the-owner" and with role "user"
-    And I have a torrent with name "Joe The Owners Torrent" and owned by user "joe-the-owner"
-    And the torrent "Joe The Owners Torrent" has one leeching peer by user "joe-the-announcer" at IP "127.0.0.1" and port 33333
-    When user "joe-the-announcer" sends a no event announce for torrent "Joe The Owners Torrent" with 12345 uploaded and 54321 downloaded
+  Scenario: A user sends an announce request with event started and left equal to zero
+    When user "joe-the-announcer" sends an announce with zero left and event started for torrent "Joe The Owners Torrent" using port 11111
+    Then a new seeding peer for torrent "Joe The Owners Torrent" by user "joe-the-announcer" at IP "127.0.0.1" and port 11111 should be created
+    And I should not see "Inexpected server error."
+    And torrent "Joe The Owners Torrent" should have seeders equal to 1
+    And torrent "Joe The Owners Torrent" should have leechers equal to 0
+
+  Scenario: A user sends an announce request with no event and transferred data
+    Given I have one leeching peer for torrent "Joe The Owners Torrent" by user "joe-the-announcer" at IP "127.0.0.1" and port 11111
+    When user "joe-the-announcer" sends an announce with no event for torrent "Joe The Owners Torrent" with 12345 uploaded and 54321 downloaded using port 11111
     Then I should not see "Inexpected server error."
-    And the uploaded and downloaded counters for user "joe-the-announcer" should be increased in 12345 and 54321
+    And user "joe-the-announcer" should have uploaded equal to 12345
+    And user "joe-the-announcer" should have downloaded equal to 54321
 
-  Scenario: A user sends an announce request with event started
-    Given I have a user with username "joe-the-owner" and with role "user"
-    And I have a torrent with name "Joe The Owners Torrent" and owned by user "joe-the-owner"
+  Scenario: A user sends an announce request with event stopped
+    Given I have one leeching peer for torrent "Joe The Owners Torrent" by user "joe-the-announcer" at IP "127.0.0.1" and port 11111
     And the counters for torrent "Joe The Owners Torrent" indicate 0 seeders and 1 leechers
-    And the torrent "Joe The Owners Torrent" has one leeching peer by user "joe-the-announcer" at IP "127.0.0.1" and port 33333
-    When user "joe-the-announcer" sends an announce with event "stopped" for torrent "Joe The Owners Torrent"
-    Then I should not see "Inexpected server error."
-    And one peer should be deleted
-    And the leechers counter for torrent "Joe The Owners Torrent" should be decreased by one
+    When user "joe-the-announcer" sends an announce with event "stopped" for torrent "Joe The Owners Torrent" using port 11111
+    Then the peer for torrent "Joe The Owners Torrent" by user "joe-the-announcer" at IP "127.0.0.1" and port 11111 should be removed
+    And I should not see "Inexpected server error."
+    And torrent "Joe The Owners Torrent" should have seeders equal to 0
+    And torrent "Joe The Owners Torrent" should have leechers equal to 0
 
   Scenario: A user sends an announce request with event completed
-    Given I have a user with username "joe-the-owner" and with role "user"
-    And I have a torrent with name "Joe The Owners Torrent" and owned by user "joe-the-owner"
+    Given I have one leeching peer for torrent "Joe The Owners Torrent" by user "joe-the-announcer" at IP "127.0.0.1" and port 11111
     And the counters for torrent "Joe The Owners Torrent" indicate 0 seeders and 1 leechers
-    And the torrent "Joe The Owners Torrent" has one leeching peer by user "joe-the-announcer" at IP "127.0.0.1" and port 33333
-    When user "joe-the-announcer" sends an announce with event "completed" for torrent "Joe The Owners Torrent"
-    Then I should not see "Inexpected server error."
-    And the peer for torrent "Joe The Owners Torrent" and user "joe-the-announcer" should be set to seeder
+    When user "joe-the-announcer" sends an announce with event "completed" for torrent "Joe The Owners Torrent" using port 11111
+    Then the peer for torrent "Joe The Owners Torrent" and user "joe-the-announcer" at IP "127.0.0.1" and port 11111 should be set to seeder
+    And I should not see "Inexpected server error."
     And a snatch for torrent "Joe The Owners Torrent" and user "joe-the-announcer" should be created
-    And the leechers counter for torrent "Joe The Owners Torrent" should be decreased by one
-    And the seeders counter for torrent "Joe The Owners Torrent" should be increased by one
-
+    And torrent "Joe The Owners Torrent" should have seeders equal to 1
+    And torrent "Joe The Owners Torrent" should have leechers equal to 0
 
 
 

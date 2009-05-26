@@ -1,8 +1,8 @@
 
 Feature: Forums
-  In order to discuss some ideas
+  In order to discuss ideas
   As a registered user
-  I want to be able to post things in the forums
+  I want to be able to publish content in the forums
 
   Background:
     Given I am logged in as "joe-the-user" with role "user"

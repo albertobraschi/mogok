@@ -26,7 +26,7 @@ Feature: Wish Moderation
   Scenario: A wish filling with bounty transfer is approved
     Given I have a user with username "joe-the-wisher" and with role "user"
     And I have a user with username "joe-the-filler" and with role "user"
-    And user "joe-the-filler" has 0 as uploaded
+    And user "joe-the-filler" has uploaded equal to 0
     And I have a user with username "joe-the-bounter" and with role "user"
     And I have a wish with name "Joe The Wishers Wish" and owned by user "joe-the-wisher"
     And I have a torrent with name "Joe The Fillers Torrent" and owned by user "joe-the-filler"

@@ -8,7 +8,7 @@ Feature: Password Recovery
     Given I have a user with username "joe-the-user" and with role "user"
 
   Scenario: User requests a recovery code
-    Given user "joe-the-user" has the email "joe@mail.com"
+    Given user "joe-the-user" has email equal to "joe@mail.com"
     When I go to the password recovery page
     And I fill in "email" with "joe@mail.com"
     And I press "Confirm"
