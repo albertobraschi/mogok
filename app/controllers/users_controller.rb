@@ -1,6 +1,5 @@
 
 class UsersController < ApplicationController
-  include MessageNotification
   before_filter :logged_in_required
   before_filter :admin_required, :only => [:new, :destroy]
     

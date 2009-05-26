@@ -1,11 +1,34 @@
 
 class BgTask < ActiveRecord::Base
-
-  attr_protected :name, :class_name
+  concerns :cleanup, :cleanup_peers, :promote_demote, :ratio_watch, :refresh_stats
+  
+  attr_protected :name
 
   has_many :bg_task_params, :dependent => :destroy
 
-  validates_presence_of :name, :class_name
+  validates_presence_of :name
+
+  def exec(logger = nil, force = false)
+    begin_at = Time.now
+
+    schedule(logger) unless force
+
+    if force || exec_now?
+      begin
+
+        self.class.send(self.name, params_hash) # invoke class method with the task's name
+        
+        status = 'OK'
+        logger.debug ":-) task #{self.name} successfully executed" if logger
+      rescue => e
+        status = 'FAILED'
+        self.class.log_task_error e, self.name
+        logger.error ":-( task #{self.name} error: #{e.message}" if logger
+        raise e if force
+      end
+      log_exec(status, begin_at, Time.now) unless force
+    end
+  end
 
   def exec_now?
     @exec_now
@@ -18,7 +41,7 @@ class BgTask < ActiveRecord::Base
   def schedule(logger = nil)
     @exec_now = self.next_exec_at && self.next_exec_at < Time.now
     
-    if exec_now? || self.next_exec_at.blank?
+    if @exec_now || self.next_exec_at.blank?
       if self.interval_minutes
         self.next_exec_at = Time.now + self.interval_minutes.minutes
         logger.debug ":-) TASK #{self.name} scheduled to #{I18n.l self.next_exec_at, :format => :db}" if logger
@@ -29,6 +52,16 @@ class BgTask < ActiveRecord::Base
 
   def add_param(name, value)
     self.bg_task_params << BgTaskParam.new(:name => name, :value => YAML.dump(value))
+  end
+
+  def self.all
+    find :all, :order => 'name'
+  end
+
+  def self.log_task_error(e, task_name)
+    message = "Task: #{task_name}\n Error: #{e.class}\n Message: #{e.clean_message}"
+    location = e.backtrace[0, 15].join("\n")
+    ErrorLog.create message, location
   end
 
   def log_exec(status = nil, begin_at = nil, end_at = nil)
@@ -43,8 +76,8 @@ class BgTask < ActiveRecord::Base
                      :status => status
   end
 
-  def self.all
-    find :all, :order => 'name'
+  def self.app_log(text, admin = false)
+    Log.create text, admin
   end
 
   private

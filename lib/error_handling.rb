@@ -3,14 +3,17 @@ module ErrorHandling
   
   protected
 
+    # Direct all exception to the handle_error method.
     def self.included(base)
       base.send :rescue_from, Exception, :with => :handle_error
     end
-  
+
+    # This method will catch exceptions thrown by the application, log them
+    # if necessary and render the appropriate error page for the user.
     def handle_error(e)
       logger.debug ':-o error_handling.handle_error'
 
-      layout = 'public' unless current_user # also set current user if necessary
+      layout = 'public' unless current_user # also sets current user if necessary
 
       if e.is_a? ActionController::InvalidAuthenticityToken
         log_error e

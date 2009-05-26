@@ -8,7 +8,7 @@ class BgTasksController < ApplicationController
     logger.debug ':-) bg_tasks_controller.index'
     @bg_tasks = fetch_tasks
     @cron_jobs = list_cron_jobs
-    @task_logs = BgTaskLog.all :limit => 10
+    @task_logs = BgTaskLog.all :limit => 20
   end
 
   def exec
@@ -16,7 +16,7 @@ class BgTasksController < ApplicationController
     if request.post?
       begin
         t = BgTask.find params[:id]
-        exec_task t, logger, true
+        t.exec logger, true
         flash[:notice] = "Task #{t.name} successfully executed."
       rescue => e
         log_error e

@@ -1,6 +1,6 @@
 
 class TorrentsController < ApplicationController
-  include TrackerHelper, MessageNotification
+  include TrackerHelper
   before_filter :logged_in_required
   before_filter :admin_mod_required, :only => [:switch_lock_comments, :activate]
   cache_sweeper :torrents_sweeper, :only => [:upload, :remove]

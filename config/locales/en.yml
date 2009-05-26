@@ -237,14 +237,14 @@ en:
           max: Tags limit is {{max}}.
 
     user:
-      apply_ratio_watch:
-        ratio_watch_notification_subject: you are under ratio watch
-        ratio_watch_notification_body: Your ratio is in violation of the site rules, you have until {{watch_until}} to fix it.
       log_destruction:
         log: User {{username}} removed by {{by}}.
       notify_passkey_resetting:
         subject: passkey reset
         body: Your passkey was reset for security reasons, please re-download your active torrents.
+      notify_ratio_watch:
+        subject: you are under ratio watch
+        body: Your ratio is in violation of the site rules, you have until {{watch_until}} to fix it.
       errors:
         username:
           required: Username required.

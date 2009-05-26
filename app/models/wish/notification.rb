@@ -24,7 +24,7 @@ class Wish
                            'notify_approval.wisher_body',
                            :name => self.name, :by => self.filler.username)
 
-      # notify users who have bounties for the wish
+      # notify users who have not revoked bounties for the wish
       unless self.wish_bounties.blank?
         self.wish_bounties.each do |wb|
           next if wb.revoked?
