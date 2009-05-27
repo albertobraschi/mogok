@@ -5,6 +5,10 @@ Given /^that signup is open$/ do
   AppParam.create :name => 'signup_open', :value => 'true'
 end
 
+Given /^that signup is closed$/ do
+  AppParam.create :name => 'signup_open', :value => 'false'
+end
+
 Given /^that signup requires an invite code$/ do
   AppParam.create :name => 'signup_by_invitation_only', :value => 'true'
 end

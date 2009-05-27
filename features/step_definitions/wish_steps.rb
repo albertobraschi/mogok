@@ -35,6 +35,12 @@ Given /^wish "(.*)" was filled and approved with torrent "(.*)"$/ do |name, torr
   w.save
 end
 
+Given /^I have a comment by user "(.*)" for wish "(.*)" with body equal to "(.*)"$/ do |username, wish_name, body|
+  w = Wish.find_by_name(wish_name)
+  commenter = fetch_user username
+  w.add_comment(body, commenter)
+end
+
 
 # THEN
 
@@ -85,6 +91,13 @@ Then /^a moderation report for wish "(.*)" with reason "(.*)" should be created$
   label = Report.make_target_label(w)
   Report.find_by_target_label_and_reason(label, reason).should_not be_nil
 end
+
+Then /^a comment by user "(.*)" with body equal to "(.*)" should be created for wish "(.*)"$/ do |username, body, wish_name|
+  w = Wish.find_by_name(wish_name)
+  commenter = fetch_user username
+  WishComment.find_by_user_id_and_body_and_wish_id(commenter, body, w).should_not be_nil
+end
+
 
 
 

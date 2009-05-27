@@ -57,3 +57,12 @@ Feature: Sign Up
     And user "joe-the-user" should have email equal to "joe-the-user@mail.com"
     And user "joe-the-inviter" should be the inviter of "joe-the-user"
 
+  Scenario: User tries to sign up when signup is closed
+    Given that signup is closed
+    When I go to the signup page without invite code
+    And I should see "Signup is currently closed."
+    And I should see "username"
+    And I should see "password"
+
+
+

@@ -21,8 +21,7 @@ Then /^a topic in forum "(.*)" with title "(.*)" and owned by user "(.*)" should
 end
 
 Then /^the topic post for topic "(.*)" should have body equal to "(.*)"$/ do |topic_title, body|
-  t = Topic.find_by_title(topic_title)
-  t.topic_post.body.should == body
+  Topic.find_by_title(topic_title).topic_post.body.should == body
 end
 
 
