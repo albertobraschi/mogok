@@ -248,8 +248,10 @@ operations, see below).
 tests, check the directory 'features/'. Such tests rely on messages in the 'en.yml' file and on the
 content of the default english views, so changing them may break some of the tests.
   IMPORTANT: tests involving torrent files may be problematic on Windows (files may get corrupted).
-  - to run the tests ('test' database must be created first):
-    mogok$ rake features
+  - to run the features tests ('test' database must be created first):
+    mogok$ rake features (run all)
+    mogok$ cucumber features/signup.feature (run only the signup feature)
+    mogok$ cucumber features --name "Some scenario" (run only scenarios matching the given name)
 
 - Caching
   The application uses memcached as the cache store. Caching is disabled by default in development

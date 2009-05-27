@@ -17,7 +17,8 @@ module BgTasks
         load_tasks
       end
 
-      # Read the bg_tasks configuration file and create records in the database for each task.
+      # Load the bg_tasks configuration file and create records in the database
+      # for each task and its parameters.
       def load_tasks
         config = open(File.join(RAILS_ROOT, 'config/bg_tasks.yml')) {|f| YAML.load(f) }
         config.symbolize_keys!
