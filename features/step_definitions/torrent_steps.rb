@@ -76,7 +76,9 @@ end
 Then /^a moderation report for torrent "(.*)" with reason "(.*)" should be created$/ do |torrent_name, reason|
   t = Torrent.find_by_name(torrent_name)
   label = Report.make_target_label(t)
-  Report.find_by_target_label_and_reason(label, reason).should_not be_nil
+  r = Report.find_by_target_label_and_reason(label, reason)
+  r.should_not be_nil
+  r.target_path.should == torrents_path(:action => 'show', :id => t)
 end
 
 Then /^torrent "(.*)" should be inactive$/ do |name|

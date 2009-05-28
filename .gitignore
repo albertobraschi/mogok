@@ -25,4 +25,9 @@ vendor/plugins/*
 log/*.log
 public/stylesheets/*
 !public/stylesheets/default.css
+
+spec
+lib/tasks/rspec.rake
+script/autospec
+script/spec_server
  

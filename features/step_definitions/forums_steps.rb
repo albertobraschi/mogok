@@ -34,6 +34,8 @@ end
 Then /^a moderation report for topic "(.*)" with reason "(.*)" should be created$/ do |topic_title, reason|
   t = Topic.find_by_title(topic_title)
   label = Report.make_target_label(t)
-  Report.find_by_target_label_and_reason(label, reason).should_not be_nil
+  r = Report.find_by_target_label_and_reason(label, reason)
+  r.should_not be_nil
+  r.target_path.should == topics_path(:action => 'show', :forum_id => t.forum, :id => t)
 end
 

@@ -60,6 +60,8 @@ end
 Then /^a moderation report for user "(.*)" with reason "(.*)" should be created$/ do |username, reason|
   u = fetch_user username
   label = Report.make_target_label(u)
-  Report.find_by_target_label_and_reason(label, reason).should_not be_nil
+  r = Report.find_by_target_label_and_reason(label, reason)
+  r.should_not be_nil
+  r.target_path.should == users_path(:action => 'show', :id => u)
 end
 

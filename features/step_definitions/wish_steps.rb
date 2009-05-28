@@ -93,7 +93,9 @@ end
 Then /^a moderation report for wish "(.*)" with reason "(.*)" should be created$/ do |wish_name, reason|
   w = Wish.find_by_name(wish_name)
   label = Report.make_target_label(w)
-  Report.find_by_target_label_and_reason(label, reason).should_not be_nil
+  r = Report.find_by_target_label_and_reason(label, reason)
+  r.should_not be_nil
+  r.target_path.should == wishes_path(:action => 'show', :id => w)
 end
 
 Then /^a comment by user "(.*)" with body equal to "(.*)" should be created for wish "(.*)"$/ do |username, body, wish_name|
