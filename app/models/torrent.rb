@@ -21,9 +21,10 @@ class Torrent < ActiveRecord::Base
   belongs_to :country
   
   attr_accessor :announce_url
-  attr_accessor :tags_str
-  attr_accessor :bookmarked
+  attr_accessor :tags_str  
   attr_accessor :inactivated
+
+  attr_accessor :bookmarked # flag used to indicate if the torrent is bookmarked
 
   def tags_str=(s)
     self.tags = Tag.parse_tags s
@@ -35,6 +36,17 @@ class Torrent < ActiveRecord::Base
 
   def set_bookmarked(u)
     self.bookmarked = true if self.bookmarks.find_by_user_id u
+  end
+
+  def bookmark_unbookmark(u)
+    b = self.bookmarks.find_by_user_id u
+    if b
+      b.destroy
+      self.bookmarked = false
+    else
+      b = Bookmark.create :torrent => self, :user => u
+      self.bookmarked = true
+    end
   end
   
   def tags_str

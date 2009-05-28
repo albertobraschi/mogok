@@ -78,6 +78,10 @@ Then /^wish "(.*)" should have torrent set to "(.*)"$/ do |name, torrent_name|
   
 end
 
+Then /^wish "(.*)" should be deleted$/ do |name|
+  Wish.find_by_name(name).should be_nil
+end
+
 Then /^filler for wish "(.*)" should be empty$/ do |name|
   Wish.find_by_name(name).filler.should be_nil
 end

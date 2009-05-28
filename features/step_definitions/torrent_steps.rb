@@ -87,7 +87,7 @@ Then /^torrent "(.*)" should be active$/ do |name|
   Torrent.find_by_name(name).active?.should be_true
 end
 
-Then /^torrent "(.*)" should be removed$/ do |name|
+Then /^torrent "(.*)" should be deleted$/ do |name|
   Torrent.find_by_name(name).should be_nil
 end
 

@@ -126,7 +126,7 @@ class TorrentsController < ApplicationController
   def bookmark
     logger.debug ':-) torrents_controller.bookmark'
     @torrent = Torrent.find params[:id]
-    Bookmark.toggle_bookmarked @torrent, current_user
+    @torrent.bookmark_unbookmark current_user
   end
 
   def switch_lock_comments
@@ -197,16 +197,6 @@ class TorrentsController < ApplicationController
       @types = Type.cached_all
       @categories = Category.cached_all
       @countries = Country.cached_all
-    end
-
-    def set_bookmarked(torrents)
-      unless torrents.blank?
-        unless current_user.bookmarks.blank?
-          torrents.each do |t|
-            current_user.bookmarks.each {|b| t.bookmarked = true if t.id == b.torrent_id }
-          end
-        end
-      end
     end
 
     def torrent_file_error(error_key, args = {})

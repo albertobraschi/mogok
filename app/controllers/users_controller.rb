@@ -133,7 +133,7 @@ class UsersController < ApplicationController
     logger.debug ':-) users_controller.uploads'
     params[:order_by], params[:desc]= 'created_at', '1' if params[:order_by].blank?
     @torrents = current_user.paginate_uploads params, :per_page => APP_CONFIG[:page_size][:user_history]
-    set_bookmarked @torrents
+    set_bookmarked_flags @torrents
     @torrents.desc_by_default = APP_CONFIG[:desc_by_default][:torrents] unless @torrents.blank?
   end
 
@@ -147,7 +147,7 @@ class UsersController < ApplicationController
   def stuck
     logger.debug ':-) users_controller.stuck'
     @torrents = current_user.paginate_stuck params, :per_page => 20
-    set_bookmarked @torrents
+    set_bookmarked_flags @torrents
   end
   
   def show_activity
@@ -184,12 +184,11 @@ class UsersController < ApplicationController
       @styles = Style.cached_all
     end
 
-    def set_bookmarked(torrents)
-      unless torrents.blank?
-        unless current_user.bookmarks.blank?
-          torrents.each do |t|
-            current_user.bookmarks.each {|b| t.bookmarked = true if t.id == b.torrent_id }
-          end
+    def set_bookmarked_flags(torrents)
+      return if torrents.blank?
+      unless current_user.bookmarks.blank?
+        torrents.each do |t|
+          t.bookmarked = true if current_user.bookmarks.detect {|b| b.torrent_id == t.id }
         end
       end
     end

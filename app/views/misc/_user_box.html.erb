@@ -23,11 +23,11 @@
               <li><%= link_to 'invitations', invitations_path %></li>
             <% end %>
             <li>|</li>
+            <li><%= link_to 'uploads', my_uploads_path %></li>
+            <li>|</li>
             <li><%= link_to 'bookmarks', my_bookmarks_path %></li>
             <li>|</li>
-            <li><%= link_to 'requests', my_wishes_path %></li>
-            <li>|</li>
-            <li><%= link_to 'uploads', my_uploads_path %></li>
+            <li><%= link_to 'requests', my_wishes_path %></li>            
             <% if current_user.mod? %>
               <li>|</li>
               <li><%= link_to 'reports', {:controller => 'reports'}, {:class => current_user.try(:open_report?) ? 'report_alert' : nil} %></li>

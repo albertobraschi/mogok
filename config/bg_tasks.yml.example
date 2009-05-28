@@ -30,23 +30,23 @@ refresh_stats:
 #     min_uploaded: 50
 #     min_ratio: 0.5
 # This rule is applied in two ways:
-#   - if a user with role 'user' uploaded more than 50GB and has a ratio greater
+#   - if a user with role 'user' uploaded more than 50GB AND has a ratio greater
 #     than 0.5 then its ratio will be changed to 'power_user'.
-#   - if a user with role 'power_user' uploaded less than 50GB or its ratio in less
+#   - if a user with role 'power_user' uploaded less than 50GB OR its ratio in less
 #     than 0.5 than its role will be set to 'user'.
 promote_demote:
   class_name: BgTasks::PromoteDemote
   interval_minutes: 60
   params:
-    user_x_power_user:
-      lower: user
-      higher: power_user
-      min_uploaded: 50
-      min_ratio: 0.5
     power_user_x_uploader:
       lower: power_user
       higher: uploader
       min_uploaded: 100
+      min_ratio: 0.5
+    user_x_power_user:
+      lower: user
+      higher: power_user
+      min_uploaded: 50
       min_ratio: 0.5
 
 # Example

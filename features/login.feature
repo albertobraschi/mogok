@@ -17,7 +17,7 @@ Feature: Login
 
   Scenario: Logging in with wrong password
     When I fill in "username" with "joe-the-user"
-    And I fill in "password" with "nonononono"
+    And I fill in "password" with "nononono"
     And I press "Login"
     Then I should see "username"
     And I should see "password"

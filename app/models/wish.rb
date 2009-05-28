@@ -81,7 +81,7 @@ class Wish < ActiveRecord::Base
 
   def destroy_with_notification(destroyer, reason)
     Wish.transaction do
-      notify_destruction if destroyer != self.user
+      notify_destruction(destroyer, reason) if destroyer != self.user
       log_destruction destroyer, reason
       destroy
     end
