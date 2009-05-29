@@ -9,7 +9,7 @@ class CreateComments < ActiveRecord::Migration
       t.column :created_at, :datetime, :null => false
       t.column :comment_number, :integer, :null => false
       t.column :edited_at, :datetime
-      t.column :edited_by , :string, :limit => 15 
+      t.column :edited_by , :string
     end
 
     add_index :comments, :created_at

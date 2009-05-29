@@ -2,9 +2,10 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe Report do
   before(:each) do
-    u = fetch_user('joe-the-reporter')
-    t = fetch_torrent('Joe The Owners Torrent', 'joe-the-owner')
-    @report = Report.create(t, u, 'Whatever reason.', "torrents/show/#{t.id}")
+    @reporter = fetch_user 'joe-the-reporter'
+    @moderator = fetch_user 'joe-the-mod', fetch_role('mod')
+    @torrent = fetch_torrent('Joe The Owners Torrent', 'joe-the-owner')
+    @report = Report.create @torrent, @reporter, 'Whatever reason.', "torrents/show/#{@torrent.id}"
   end
 
   it 'should create a new instance given valid parameters' do
@@ -12,24 +13,21 @@ describe Report do
     @report.should_not be_new_record
   end
 
-  it 'should have an open report after new report is created' do
+  it 'should have open reports after new report is created' do
     Report.has_open?.should be_true
   end
 
   it 'should generate a proper target label' do
-    t = fetch_torrent('Joe The Owners Torrent', 'joe-the-owner')
-    Report.make_target_label(t).should == "torrent [#{t.id}]"
+    Report.make_target_label(@torrent).should == "torrent [#{@torrent.id}]"
   end
 
   it 'should be assigned to a user after assignment' do
-    u = fetch_user('joe-the-mod')
-    @report.assign_to u
-    @report.handler_id.should == u.id
+    @report.assign_to @moderator
+    @report.handler_id.should == @moderator.id
   end
 
   it 'should be not be assigned after unassignment' do
-    u = fetch_user('joe-the-mod')
-    @report.assign_to u
+    @report.assign_to @moderator
     @report.unassign
     @report.handler_id.should be_nil
   end
