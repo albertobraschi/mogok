@@ -20,36 +20,45 @@ Webrat.configure do |config|
   config.mode = :rails
 end
 
+# support files dir
+support_files_dir = File.expand_path(File.join(File.dirname(__FILE__), '../../spec/support'))
+
+# factory girl
+require 'factory_girl'
+factories_dir = File.join(support_files_dir, 'factories')
+Dir.glob(File.join(factories_dir, '*.rb')).each {|f| require f }
+
 # force default locale to 'en' as tests use interface messages
 I18n.default_locale = 'en'
 
-# customizations
+# test data directory
+TEST_DATA_DIR = File.join(support_files_dir, 'test_data')
 
-  # where to put test data, like torrent files
-  TEST_DATA_DIR = File.join(RAILS_ROOT, 'features/support/test_data')
+# fetchers
+require File.join(support_files_dir, 'fetchers.rb')
 
-  # if true, all rails logs go to the console (messy but useful in some cases)
-  LOG_TO_STDOUT = false
+# stdout logging
+LOG_TO_STDOUT = false # set to true to log to the console (messy but useful in some cases)
+if LOG_TO_STDOUT
+  ActiveRecord::Base::logger = Logger.new(STDOUT)
+  class ApplicationController
+    if LOG_TO_STDOUT
+      def handle_error(e)
+        puts e.message
+        e.backtrace.each {|i| puts i }
+      end
 
-  if LOG_TO_STDOUT
-    ActiveRecord::Base::logger = Logger.new(STDOUT)
-    class ApplicationController
-      if LOG_TO_STDOUT
-        def handle_error(e)
-          puts e.message
-          e.backtrace.each {|i| puts i }
-        end
-
-        def logger
-          Logger.new(STDOUT)
-        end
+      def logger
+        Logger.new(STDOUT)
       end
     end
   end
+end
 
-puts "> CACHE_ENABLED = #{CACHE_ENABLED}"
+puts "> CACHE_ENABLED       = #{CACHE_ENABLED}"
 puts "> I18n.default_locale = #{I18n.default_locale}"
+puts "> Support directory   = #{support_files_dir}"
 puts "> Test data directory = #{TEST_DATA_DIR}"
-
+puts "> Factories directory = #{factories_dir}"
 
 

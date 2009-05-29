@@ -7,6 +7,7 @@ class Category < ActiveRecord::Base
   has_many :torrents
 
   validates_presence_of :type_id, :name
+  validates_uniqueness_of :name, :case_sensitive => false, :message => 'duplicated name'
 
   CACHED_ALL_KEY = 'categories.all'
 

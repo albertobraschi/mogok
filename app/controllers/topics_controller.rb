@@ -69,8 +69,7 @@ class TopicsController < ApplicationController
     if request.post?
       unless cancelled?
         unless params[:reason].blank?
-          target_path = topics_path(:forum_id => @topic.forum_id, :action => 'show', :id => @topic)
-          Report.create @topic, target_path, current_user, params[:reason]
+          @topic.report current_user, params[:reason], topics_path(:forum_id => @topic.forum_id, :action => 'show', :id => @topic)
           flash[:notice] = t('success')
           redirect_to topics_path(:action => 'show', :id => @topic)
         else

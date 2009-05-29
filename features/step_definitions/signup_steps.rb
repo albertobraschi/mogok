@@ -2,24 +2,19 @@
 # GIVEN
 
 Given /^that signup is open$/ do
-  AppParam.create :name => 'signup_open', :value => 'true'
+  Factory(:app_param, :name => 'signup_open', :value => 'true')
 end
 
 Given /^that signup is closed$/ do
-  AppParam.create :name => 'signup_open', :value => 'false'
+  Factory(:app_param, :name => 'signup_open', :value => 'false')
 end
 
 Given /^that signup requires an invite code$/ do
-  AppParam.create :name => 'signup_by_invitation_only', :value => 'true'
+  Factory(:app_param, :name => 'signup_by_invitation_only', :value => 'true')
 end
 
 Given /^that signup does not require an invite code$/ do
-  AppParam.create :name => 'signup_by_invitation_only', :value => 'false'
-end
-
-Given /^I have an invitation with code "(.*)" and email "(.*)" created by user "(.*)"$/ do |code, email, username|
-  inviter = fetch_user username
-  Invitation.create code, inviter, email
+  Factory(:app_param, :name => 'signup_by_invitation_only', :value => 'false')
 end
 
 

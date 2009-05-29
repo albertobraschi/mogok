@@ -87,6 +87,10 @@ class Wish < ActiveRecord::Base
     end
   end
 
+  def report(reporter, reason, path)
+    Report.create(self, reporter, reason, path)
+  end
+
   def editable_by?(user)
     unless user.admin_mod?
       open? && user.id == self.user_id

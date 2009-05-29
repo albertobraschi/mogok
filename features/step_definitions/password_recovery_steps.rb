@@ -1,22 +1,14 @@
 
 # GIVEN
 
-Given /^I have a password recovery with code "(.*)" requested by user "(.*)"$/ do |recovery_code, username|
-  user = fetch_user username
-  PasswordRecovery.create user, recovery_code
-end
-
-# WHEN
-
-When /^I follow the password recovery link for code (.*)$/ do |recovery_code|
-  get change_password_url(:recovery_code => recovery_code)
+Given /^I have a password recovery with code "(.*)" requested by user "(.*)"$/ do |code, username|
+  Factory(:password_recovery, :user => fetch_user(username), :code => code)
 end
 
 
 # THEN
 
 Then /^a password recovery record for user "(.*)" should be created$/ do |username|
-  user = fetch_user username
-  PasswordRecovery.find_by_user_id(user).should_not be_nil
+  PasswordRecovery.find_by_user_id(fetch_user(username)).should_not be_nil
 end
 

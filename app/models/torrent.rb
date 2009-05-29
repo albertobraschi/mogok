@@ -57,9 +57,8 @@ class Torrent < ActiveRecord::Base
     self.inactivated
   end
 
-  def parse_and_save(uploader, torrent_data, force_private = false)
+  def parse_and_save(torrent_data, force_private = false)
     if set_meta_info(torrent_data, force_private)
-      self.user = uploader
       if save
         log_upload
         return true
@@ -88,6 +87,10 @@ class Torrent < ActiveRecord::Base
     log_destruction(destroyer, reason)
     notify_destruction(destroyer, reason) if self.user != destroyer
     logger.debug ':-) torrent destroyed'
+  end
+
+  def report(reporter, reason, path)
+    Report.create(self, reporter, reason, path)
   end
 
   def add_comment(body, commenter)

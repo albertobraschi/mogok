@@ -2,40 +2,54 @@
 # GIVEN
 
 Given /^I have a torrent with name "(.*)" and owned by user "(.*)"$/ do |name, owner|
-  if CACHE_ENABLED
-    while t = Torrent.find_by_info_hash_hex('54B1A5052B5B7D3BA4760F3BFC1135306A30FFD1')
-      t.destroy # force remotion of torrent objects from cache as the test framework bypass cache_money synchronization
-    end
-  end
-  fetch_type 'audio'
-  c = fetch_category 'music', 'audio'
-  owner = fetch_user owner
-  torrent_file_data = File.new(File.join(TEST_DATA_DIR, 'valid.torrent'), 'rb').read
-  t = Torrent.new(:category => c, :name => name, :user => owner)  
-  t.parse_and_save owner, torrent_file_data, true
+  fetch_torrent name, owner
 end
 
+Given /^I uploaded a torrent with name "(.*)"$/ do |name|
+  Given "I have a category with name \"music\" and with type \"audio\""
+  When "I go to the torrent upload page"
+  And "I select \"music\" from \"torrent_category_id\""
+  And "I fill file field \"torrent_file\" with \"valid.torrent\""
+  And "I fill in \"torrent_name\" with \"#{name}\""
+  And "I press \"Upload\""
+end
+
+#  if CACHE_ENABLED
+#    while t = Torrent.find_by_info_hash_hex('54B1A5052B5B7D3BA4760F3BFC1135306A30FFD1')
+#      t.destroy # force remotion of torrent objects from cache as the test framework bypass cache_money synchronization
+#    end
+#  end
+#  fetch_type 'audio'
+#  c = fetch_category 'music', 'audio'
+#  owner = fetch_user owner
+#  torrent_file_data = File.new(File.join(TEST_DATA_DIR, 'valid.torrent'), 'rb').read
+#  t = Torrent.new(:category => c, :name => name, :user => owner)
+#  t.user = owner
+#  t.parse_and_save torrent_file_data, true
+
+
+
 Given /^torrent "(.*)" is inactive$/ do |name|
-  t = Torrent.find_by_name(name)
+  t = fetch_torrent(name)
   t.active = false
   t.save
 end
 
 Given /^torrent "(.*)" has snatches_count equal to (\d+)$/ do |name, snatches_count|
-  t = Torrent.find_by_name name
+  t = fetch_torrent(name)
   t.snatches_count = snatches_count
   t.save
 end
 
 Given /^the counters for torrent "(.*)" indicate (\d+) seeders and (\d+) leechers$/ do |name, seeders, leechers|
-  t = Torrent.find_by_name name
+  t = fetch_torrent(name)
   t.seeders_count = seeders
   t.leechers_count = leechers
   t.save
 end
 
 Given /^I have a comment by user "(.*)" for torrent "(.*)" with body equal to "(.*)"$/ do |username, torrent_name, body|
-  torrent = Torrent.find_by_name(torrent_name)
+  torrent = fetch_torrent(torrent_name)
   commenter = fetch_user username
   torrent.add_comment(body, commenter)
 end

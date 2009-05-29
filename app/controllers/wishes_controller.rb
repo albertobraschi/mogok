@@ -90,7 +90,7 @@ class WishesController < ApplicationController
             flash.now[:error] = t('not_torrent_uploader')
           else
             @wish.fill t
-            Report.create @wish, wishes_path(:action => 'show', :id => @wish), current_user, t('report')
+            @wish.report current_user, t('report'), wishes_path(:action => 'show', :id => @wish)
             flash[:notice] = t('success')
             redirect_to :action => 'show', :id => @wish
         end
@@ -126,7 +126,7 @@ class WishesController < ApplicationController
     if request.post?
       unless cancelled?
         unless params[:reason].blank?
-          Report.create @wish, wishes_path(:action => 'show', :id => @wish), current_user, params[:reason]
+          @wish.report current_user, params[:reason], wishes_path(:action => 'show', :id => @wish)
           flash[:notice] = t('success')
           redirect_to :action => 'show', :id => @wish
         else

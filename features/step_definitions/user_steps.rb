@@ -2,8 +2,7 @@
 # GIVEN
 
 Given /^I have a user with username "(.*)" and with role "(.*)"$/ do |username, role_name|
-  role = fetch_role role_name
-  fetch_user username, role
+  fetch_user username, fetch_role(role_name)
 end
 
 Given /^I have the system user$/ do

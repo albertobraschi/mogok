@@ -52,8 +52,7 @@ class WishCommentsController < ApplicationController
     if request.post?
       unless cancelled?
         unless params[:reason].blank?
-          target_path = wish_comments_path(:wish_id => @wish_comment.wish_id, :action => 'show', :id => @wish_comment)
-          Report.create @wish_comment, target_path, current_user, params[:reason]
+          @wish_comment.report current_user, params[:reason], wish_comments_path(:wish_id => @wish_comment.wish_id, :action => 'show', :id => @wish_comment)
           flash[:comment_notice] = t('success')
           redirect_to_wish
         else

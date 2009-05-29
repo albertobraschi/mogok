@@ -52,8 +52,7 @@ class CommentsController < ApplicationController
     if request.post?
       unless cancelled?
         unless params[:reason].blank?
-          target_path = comments_path(:torrent_id => @comment.torrent_id, :action => 'show', :id => @comment)
-          Report.create @comment, target_path, current_user, params[:reason]
+          @comment.report current_user, params[:reason], comments_path(:torrent_id => @comment.torrent_id, :action => 'show', :id => @comment)
           flash[:comment_notice] = t('success')
           redirect_to_torrent
         else

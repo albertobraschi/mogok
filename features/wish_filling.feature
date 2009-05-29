@@ -13,7 +13,7 @@ Feature: Wish Filling
     And I have a torrent with name "Joe The Users Torrent" and owned by user "joe-the-user"
     When I go to the wish details page for wish "Joe The Wishers Wish"
     And I follow "fill this request"
-    And I fill in "info_hash" with "54B1A5052B5B7D3BA4760F3BFC1135306A30FFD1"
+    And I fill info_hash field with info hash hex for torrent "Joe The Users Torrent"
     And I press "Confirm"
     Then I should see "Request successfully filled."
     And wish "Joe The Wishers Wish" should be set to pending
@@ -42,7 +42,7 @@ Feature: Wish Filling
     And I have a torrent with name "Joe The Owners Torrent" and owned by user "joe-the-owner"
     When I go to the wish details page for wish "Joe The Wishers Wish"
     And I follow "fill this request"
-    And I fill in "info_hash" with "54B1A5052B5B7D3BA4760F3BFC1135306A30FFD1"
+    And I fill info_hash field with info hash hex for torrent "Joe The Owners Torrent"
     And I press "Confirm"
     Then I should see "Only the torrent uploader can use it to fill a request."
 
@@ -54,7 +54,7 @@ Feature: Wish Filling
     And wish "Joe The Wishers Wish" was filled and approved with torrent "Joe The Users Torrent"    
     When I go to the wish details page for wish "Another Joe The Wishers Wish"
     And I follow "fill this request"
-    And I fill in "info_hash" with "54B1A5052B5B7D3BA4760F3BFC1135306A30FFD1"
+    And I fill info_hash field with info hash hex for torrent "Joe The Users Torrent"
     And I press "Confirm"
     Then I should see "Torrent already used to fill another request."
 

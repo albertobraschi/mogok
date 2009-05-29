@@ -111,7 +111,7 @@ class UsersController < ApplicationController
     if request.post?
       unless cancelled?
         unless params[:reason].blank?
-          Report.create @user, users_path(:action => 'show', :id => @user), current_user, params[:reason]
+          @user.report current_user, params[:reason], users_path(:action => 'show', :id => @user)
           flash[:notice] = t('success')
           redirect_to :action => 'show', :id => @user
         else

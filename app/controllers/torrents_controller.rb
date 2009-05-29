@@ -83,7 +83,7 @@ class TorrentsController < ApplicationController
               flash[:notice] = t('inactivated')
               redirect_to :action => 'show', :id => @torrent
             else
-              Report.create @torrent, torrents_path(:action => 'show', :id => @torrent), current_user, t('inactivated_report')
+              @torrent.report current_user, t('inactivated_report'), torrents_path(:action => 'show', :id => @torrent)
               @args = {:title => t('inactivated_title'), :message => t('inactivated_message')}
               render :template => 'misc/message'
             end
@@ -110,7 +110,7 @@ class TorrentsController < ApplicationController
       if request.post?
         unless cancelled?
           unless params[:reason].blank?
-            Report.create @torrent, torrents_path(:action => 'show', :id => @torrent), current_user, params[:reason]
+            @torrent.report current_user, params[:reason], torrents_path(:action => 'show', :id => @torrent)
             flash[:notice] = t('success')
             redirect_to :action => 'show', :id => @torrent
           else
@@ -143,7 +143,8 @@ class TorrentsController < ApplicationController
     if request.post?
       begin
         file_data = get_file_data params[:torrent_file]
-        if @torrent.parse_and_save(current_user, file_data, true)
+        @torrent.user = current_user
+        if @torrent.parse_and_save(file_data, true)
           flash[:alert] = t('success')
           redirect_to :action => 'show', :id => @torrent
         end

@@ -8,6 +8,10 @@ class Post < ActiveRecord::Base
 
   before_save :trim_body
 
+  def report(reporter, reason, path)
+    Report.create(self, reporter, reason, path)
+  end
+
   def editable_by?(user)
     user.id == self.user_id || user.admin_mod?
   end

@@ -6,11 +6,11 @@ Given /^I have no login attempts for IP "(.*)"$/ do |ip|
 end
 
 Given /^I have a login attempt for IP "(.*)" with count equal to (\d+)$/ do |ip, count|
-  fetch_login_attempt ip, count
+  Factory(:login_attempt, :ip => ip, :attempts_count => count)
 end
 
 Given /^I have a login attempt for IP "(.*)" with one remaining attempt$/ do |ip|
-  fetch_login_attempt ip, APP_CONFIG[:login][:max_attempts] - 1
+  Factory(:login_attempt, :ip => ip, :attempts_count => APP_CONFIG[:login][:max_attempts] - 1)
 end
 
 Given /max login attempts is equal to (\d+)/ do |max_attempts|

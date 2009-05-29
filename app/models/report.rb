@@ -7,11 +7,19 @@ class Report < ActiveRecord::Base
 
   before_save :trim_reason
 
+  def assign_to(user)
+    update_attribute :handler_id, user.id
+  end
+
+  def unassign
+    update_attribute :handler_id, nil
+  end
+
   def self.all
     find :all, :order => 'created_at DESC'
   end
 
-  def self.create(target, target_path, reporter, reason)
+  def self.create(target, reporter, reason, target_path)
     super :target_label => make_target_label(target),
           :target_path => target_path,
           :user => reporter,

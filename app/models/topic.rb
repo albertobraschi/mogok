@@ -13,20 +13,6 @@ class Topic < ActiveRecord::Base
   after_create :create_fulltext
   after_update :update_fulltext
 
-  def editable_by?(user)
-    user.id == self.user_id || user.admin_mod?
-  end
-
-  def edit(params, editor)
-    self.title = params[:title]
-    self.topic_post.body = params[:body]
-    self.topic_post.edited_at = Time.now
-    self.topic_post.edited_by = editor.username
-    Topic.transaction do
-      self.topic_post.save
-      save
-    end
-  end
 
   def add_post(body, user)
     Topic.transaction do
@@ -49,11 +35,30 @@ class Topic < ActiveRecord::Base
     end
   end
 
+  def report(reporter, reason, path)
+    Report.create(self, reporter, reason, path)
+  end
+
   def paginate_posts(params, args)
     Post.paginate_by_topic_id self,
                               :order => 'created_at',
                               :page => self.class.current_page(params[:page]),
                               :per_page => args[:per_page]
+  end
+
+  def editable_by?(user)
+    user.id == self.user_id || user.admin_mod?
+  end
+
+  def edit(params, editor)
+    self.title = params[:title]
+    self.topic_post.body = params[:body]
+    self.topic_post.edited_at = Time.now
+    self.topic_post.edited_by = editor.username
+    Topic.transaction do
+      self.topic_post.save
+      save
+    end
   end
 
   private

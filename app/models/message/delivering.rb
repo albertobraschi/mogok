@@ -6,7 +6,7 @@ class Message
   def deliver(replied_id = nil)
     if valid?
       delete_replied(replied_id) if replied_id && self.sender.delete_on_reply
-      save
+      save!
       save_sent if self.sender.save_sent?
       self.owner.toggle! :has_new_message unless self.owner.has_new_message?
       return true
@@ -36,6 +36,6 @@ class Message
       clone = self.clone
       clone.owner = self.sender
       clone.folder = SENT
-      clone.save
+      clone.save!
     end
 end

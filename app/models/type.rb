@@ -6,6 +6,7 @@ class Type < ActiveRecord::Base
   has_many :categories, :dependent => :destroy, :order => :name
     
   validates_presence_of :name
+  validates_uniqueness_of :name, :case_sensitive => false, :message => 'duplicated name'
 
   CACHED_ALL_KEY = 'types.all'
 

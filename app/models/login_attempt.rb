@@ -1,6 +1,9 @@
 
 class LoginAttempt < ActiveRecord::Base
 
+  validates_presence_of :ip, :message => 'ip required'
+  validates_uniqueness_of :ip, :message => 'duplicated ip'
+
   def blocked?
     !self.blocked_until.nil? && self.blocked_until > Time.now
   end

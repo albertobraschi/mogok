@@ -2,43 +2,32 @@
 # GIVEN
 
 Given /^I have a wish with name "(.*)" and owned by user "(.*)"$/ do |name, username|
-  fetch_type 'audio'
-  c = fetch_category 'music', 'audio'
-  owner = fetch_user username
-  Wish.create :category => c, :name => name, :user => owner
+  fetch_wish name, username
 end
 
-Given /^I have a wish bounty for wish "(.*)" with amount of (\d+) created by "(.*)"$/ do |wish_name, amount, username|
-  w = Wish.find_by_name wish_name
-  u = fetch_user username
-  WishBounty.create :user => u, :wish => w, :amount => amount
+Given /^I have a wish bounty for wish "(.*)" with amount of (\d+) created by "(.*)"$/ do |wish_name, amount, username|  
+  fetch_wish(wish_name).add_bounty amount, fetch_user(username)
 end
 
 Given /^wish "(.*)" was filled with torrent "(.*)"$/ do |name, torrent_name|
-  w = Wish.find_by_name name
-  t = Torrent.find_by_name torrent_name
-  w.pending = true
-  w.torrent = t
-  w.filler = t.user
-  w.filled_at = Time.now
-  w.save
+  fetch_wish(name).fill fetch_torrent(torrent_name)
 end
 
 Given /^wish "(.*)" was filled and approved with torrent "(.*)"$/ do |name, torrent_name|
-  w = Wish.find_by_name name
-  t = Torrent.find_by_name torrent_name
-  w.pending = false
-  w.filled = true
-  w.torrent = t
-  w.filler = t.user
-  w.filled_at = Time.now
-  w.save
+  w = fetch_wish name
+  w.fill fetch_torrent(torrent_name)
+  w.approve
 end
 
 Given /^I have a comment by user "(.*)" for wish "(.*)" with body equal to "(.*)"$/ do |username, wish_name, body|
-  w = Wish.find_by_name(wish_name)
-  commenter = fetch_user username
-  w.add_comment(body, commenter)
+  fetch_wish(wish_name).add_comment body, fetch_user(username)
+end
+
+
+# WHEN
+
+When /^I fill info_hash field with info hash hex for torrent "(.*)"$/ do |torrent_name|
+  fill_in('info_hash', :with => fetch_torrent(torrent_name).info_hash_hex)
 end
 
 
@@ -74,7 +63,7 @@ Then /^wish "(.*)" should have filler set to "(.*)"$/ do |name, filler|
 end
 
 Then /^wish "(.*)" should have torrent set to "(.*)"$/ do |name, torrent_name|
-  Wish.find_by_name(name).torrent.should == Torrent.find_by_name(torrent_name)
+  Wish.find_by_name(name).torrent.should == fetch_torrent(torrent_name)
   
 end
 
@@ -100,8 +89,7 @@ end
 
 Then /^a comment by user "(.*)" with body equal to "(.*)" should be created for wish "(.*)"$/ do |username, body, wish_name|
   w = Wish.find_by_name(wish_name)
-  commenter = fetch_user username
-  WishComment.find_by_user_id_and_body_and_wish_id(commenter, body, w).should_not be_nil
+  WishComment.find_by_user_id_and_body_and_wish_id(fetch_user(username), body, w).should_not be_nil
 end
 
 

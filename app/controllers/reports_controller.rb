@@ -11,7 +11,7 @@ class ReportsController < ApplicationController
   def grab
     logger.debug ':-) reports_controller.grab'
     if request.post?
-      Report.find(params[:id]).update_attribute :handler_id, current_user.id
+      Report.find(params[:id]).assign_to current_user
     end
     redirect_to :action => 'index'
   end
@@ -19,7 +19,7 @@ class ReportsController < ApplicationController
   def release
     logger.debug ':-) reports_controller.release'
     if request.post?
-      Report.find(params[:id]).update_attribute :handler_id, nil
+      Report.find(params[:id]).unassign
     end
     redirect_to :action => 'index'
   end

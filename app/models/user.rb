@@ -58,6 +58,10 @@ class User < ActiveRecord::Base
     logger.debug ':-) user destroyed'
   end
 
+  def report(reporter, reason, path)
+    Report.create(self, reporter, reason, path)
+  end
+
   def editable_by?(updater)
     if updater != self && !updater.system?
       if updater.owner?

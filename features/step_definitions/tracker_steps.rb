@@ -4,22 +4,18 @@ include Bittorrent::Tracker
 # GIVEN
 
 Given /^I have one seeding peer for torrent "(.*)" by user "(.*)" at IP "(.*)" and port (\d+)$/ do |torrent_name, username, ip, port|
-  t = Torrent.find_by_name torrent_name
-  u = fetch_user username
-  fetch_peer t, u, ip, port, true
+  fetch_peer fetch_torrent(torrent_name), fetch_user(username), ip, port, true
 end
 
 Given /^I have one leeching peer for torrent "(.*)" by user "(.*)" at IP "(.*)" and port (\d+)$/ do |torrent_name, username, ip, port|
-  t = Torrent.find_by_name torrent_name
-  u = fetch_user username
-  fetch_peer t, u, ip, port, false
+  fetch_peer fetch_torrent(torrent_name), fetch_user(username), ip, port, false
 end
 
 
 # WHEN
 
 When /^user "(.*)" sends a scrape request for torrent "(.*)"$/ do |username, torrent_name|
-  t = Torrent.find_by_name torrent_name
+  t = fetch_torrent torrent_name
   u = fetch_user username
   scrape_url = tracker_url(:action => 'scrape', :passkey => make_announce_passkey(t, u))
   get scrape_url, {:info_hash => t.info_hash}

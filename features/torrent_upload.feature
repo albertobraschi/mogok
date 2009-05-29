@@ -6,7 +6,6 @@ Feature: Torrent Upload
 
   Background:
     Given I am logged in as "joe-the-user" with role "user"
-    And I have a type with name "audio"
     And I have a category with name "music" and with type "audio"
 
   Scenario: A user uploads a torrent
