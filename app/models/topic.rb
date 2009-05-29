@@ -50,9 +50,9 @@ class Topic < ActiveRecord::Base
     user.id == self.user_id || user.admin_mod?
   end
 
-  def edit(params, editor)
-    self.title = params[:title]
-    self.topic_post.body = params[:body]
+  def edit(title, body, editor)
+    self.title = title
+    self.topic_post.body = body
     self.topic_post.edited_at = Time.now
     self.topic_post.edited_by = editor.username
     Topic.transaction do

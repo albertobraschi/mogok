@@ -10,16 +10,17 @@ class Tag < ActiveRecord::Base
   end
 
   # parse a string like 'tag1, tag2' and return the tags
-  # provide category_id to get only tags of a specified category
-  def self.parse_tags(tags_str, category_id = nil)
+  # provide category to get only tags of a specified category
+  def self.parse_tags(tags_str, category = nil)
+    category = category.id if category && category.is_a?(Category)
     tags = []
     unless tags_str.blank?      
       a = tags_str.split(',')
       a.each {|s| s.strip!}
       a.uniq!
       a.each do |s|
-        if category_id
-          tag = Tag.scoped_by_category_id(category_id).find_by_name s
+        if category
+          tag = Tag.scoped_by_category_id(category).find_by_name s
         else
           tag = Tag.find_by_name s
         end

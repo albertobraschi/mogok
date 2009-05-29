@@ -37,7 +37,7 @@ class TopicsController < ApplicationController
     else
       unless cancelled?
         unless params[:title].blank? || params[:body].blank?
-          @topic.edit params, current_user
+          @topic.edit params[:title], params[:body], current_user
           flash[:notice] = t('success')
           redirect_to :action => 'show', :id => @topic
         else

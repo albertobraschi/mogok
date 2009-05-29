@@ -24,8 +24,8 @@ describe Comment do
   end
 
   it 'should be reportable' do
-    @comment.report @user, 'Whatever reason.', "comments/show/#{@comment.id}"
-    Report.find_by_user_id_and_target_path(@user, "comments/show/#{@comment.id}").should_not be_nil
+    @comment.report @user, 'Whatever reason.', "comments_path/show/#{@comment.id}"
+    Report.find_by_user_id_and_target_path(@user, "comments_path/show/#{@comment.id}").should_not be_nil
   end
 end
 

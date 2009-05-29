@@ -25,8 +25,8 @@ describe Post do
   end
 
   it 'should be reportable' do
-    @post.report @user, 'Whatever reason.', "posts/show/#{@post.id}"
-    Report.find_by_user_id_and_target_path(@user, "posts/show/#{@post.id}").should_not be_nil
+    @post.report @user, 'Whatever reason.', "posts_path/show/#{@post.id}"
+    Report.find_by_user_id_and_target_path(@user, "posts_path/show/#{@post.id}").should_not be_nil
   end
 end
 
