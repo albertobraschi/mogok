@@ -374,6 +374,7 @@ to 'lib/mysql.rb' if the application can't find your mysql gem.
       sudo gem1.8 install cucumber
       sudo apt-get install libxml2 libxml2-dev libxslt1.1 libxslt1-dev libxml-ruby libxslt-ruby
       sudo gem1.8 install webrat
+      sudo gem1.8 install thoughtbot-factory_girl
 
     > gems required for caching
       sudo gem1.8 install memcache-client
