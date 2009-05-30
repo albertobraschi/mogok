@@ -15,6 +15,7 @@ class Torrent < ActiveRecord::Base
   has_and_belongs_to_many :tags, :order => :name
   has_one :raw_info, :dependent => :destroy
   has_one :torrent_fulltext, :dependent => :destroy
+  has_one :wish, :dependent => :destroy
   belongs_to :user
   belongs_to :category
   belongs_to :format

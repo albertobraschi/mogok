@@ -248,8 +248,10 @@ operations, see below).
 and RSpec for unit testing. The implemented tests main focus are the features used by the regular
 users, which means that admistrative features are not extensively covered. To run the tests you must
 create the 'test' database instance (check deployment below).
+  IMPORTANT: caching is disabled by default during tests as the tests frameworks bypasses cache_money
+synchronization, you can enable it by changing the flag in environment.rb.
   > Cucumber Features
-    Live in the directory 'features'. Note that those tests rely on messages in the 'en.yml' file
+    Are in the directory 'features'. Note that those tests rely on messages in the 'en.yml' file
     and on the content of the default english views, so changing them may break some of the tests.
     IMPORTANT: tests involving torrent files may be problematic on Windows (files may get corrupted).
     - running
@@ -257,7 +259,7 @@ create the 'test' database instance (check deployment below).
       mogok$ cucumber features/signup.feature (run only the signup feature)
       mogok$ cucumber features --name "Some scenario" (run only scenarios matching the given name)
   > RSpec Tests
-    Live in the directory 'spec' and focus on the business logic implemented in the models
+    Are in the directory 'spec' and focus on the business logic implemented in the models
     - running
       mogok$ rake spec (run all)
       mogok$ spec spec/models/forum_spec.rb spec (run only spec tests for model 'forum')

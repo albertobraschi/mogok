@@ -22,6 +22,10 @@ def fetch_style(name = nil)
   Style.find_by_name(name) || Factory(:style, :name => name)
 end
 
+def fetch_country(name)
+  Country.find_by_name(name) || Factory(:country, :name => name)
+end
+
 def fetch_role(name = nil)
   name ||= Role::USER
   Role.find_by_name(name) || Factory(:role, :name => name)
@@ -54,13 +58,13 @@ def fetch_torrent(name, owner_username = nil)
   t
 end
 
-def fetch_wish(name, owner_username = nil)
-  t = Wish.find_by_name(name)
-  unless t
-    raise 'fetch_wish: owner username required' unless owner_username
-    t = Factory(:wish, :name => name, :user => fetch_user(owner_username), :category => fetch_category('music', 'audio'))
+def fetch_wish(name, wisher_username = nil)
+  w = Wish.find_by_name(name)
+  unless w
+    raise 'fetch_wish: wisher username required' unless wisher_username
+    w = Factory(:wish, :name => name, :user => fetch_user(wisher_username), :category => fetch_category('music', 'audio'))
   end
-  t
+  w
 end
 
 def fetch_peer(t, u, ip, port, seeder)
@@ -80,19 +84,5 @@ def fetch_forum(name)
 end
 
 
-#
-#
-#def fetch_torrent_from_file(name, file_name, owner_username = nil)
-#  t = Torrent.find_by_name(name)
-#  unless t
-#    if CACHE_ENABLED
-#      while t = Torrent.find_by_info_hash_hex('54B1A5052B5B7D3BA4760F3BFC1135306A30FFD1')
-#        t.destroy # force remotion of torrent objects from cache as the test framework bypasses cache_money synchronization
-#      end
-#    end
-#    torrent_file_data = File.new(File.join(TEST_DATA_DIR, 'valid.torrent'), 'rb').read
-#    t = Factory.build(:torrent, :name => name, :user => fetch_user(owner_username), :category => fetch_category('music', 'audio'))
-#    t.parse_and_save(torrent_file_data, true)
-#  end
-#  t
-#end
+
+

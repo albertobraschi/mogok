@@ -5,7 +5,7 @@ class Country < ActiveRecord::Base
   has_many :users, :dependent => :nullify
   has_many :torrents, :dependent => :nullify
 
-  validates_presence_of :name, :image
+  validates_presence_of :name
 
   CACHED_ALL_KEY = 'countries.all'
 

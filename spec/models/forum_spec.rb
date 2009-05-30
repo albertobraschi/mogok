@@ -9,9 +9,16 @@ describe Forum do
     @forum = fetch_forum 'Some Forum'
   end
 
+  it 'should be editable only by an admin' do
+    @forum.editable_by?(@admin).should be_true
+    @forum.editable_by?(@moderator).should be_false
+    @forum.editable_by?(@user).should be_false
+  end
+
   it 'should be edited given the valid parameters' do
     @forum.update_attributes(:name => 'Edited Name', :description => 'Edited description.', :position => '666')
-
+    @forum.reload
+    
     @forum.name.should == 'Edited Name'
     @forum.description.should == 'Edited description.'
     @forum.position.should == 666
@@ -21,8 +28,8 @@ describe Forum do
     topics_count = @forum.topics_count
 
     @forum.add_topic('Topic Title', 'Topic body.', @poster)
+    @forum.reload
 
-    @forum.topics_count.should == topics_count + 1
     t = Topic.find_by_forum_id_and_title_and_user_id(@forum, 'Topic Title', @poster)
     t.should_not be_nil
     t.topic_post.body.should == 'Topic body.'
@@ -30,12 +37,9 @@ describe Forum do
     t.topic_post.post_number.should == 1
     t.topic_post.is_topic_post.should be_true
     t.topic_post.user.should == @poster
-  end
-
-  it 'should be editable only by an admin' do
-    @forum.editable_by?(@admin).should be_true
-    @forum.editable_by?(@moderator).should be_false
-    @forum.editable_by?(@user).should be_false
+    
+    @forum.topics_count.should == topics_count + 1
+    @forum.search({}, :per_page => 10).should include(t)
   end
 end
 

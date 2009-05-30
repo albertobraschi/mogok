@@ -44,6 +44,7 @@ class Wish < ActiveRecord::Base
   end
 
   def fill(t)
+    raise 'wish not open' unless open?
     self.pending = true
     self.torrent = t
     self.filler = self.torrent.user
