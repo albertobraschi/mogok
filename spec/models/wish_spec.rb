@@ -11,8 +11,7 @@ describe Wish do
     @torrent = fetch_torrent('Joe The Owners Torrent', 'joe-the-owner')
     @wisher = fetch_user 'joe-the-wisher'
     
-    @wish = fetch_wish('Joe The Wishers Wish', 'joe-the-wisher')
-    @wish.reload
+    @wish = fetch_wish('Joe The Wishers Wish', 'joe-the-wisher')    
   end
 
   it 'should be editable by creator or admin_mod if open or only by an admin_mod otherwise' do
@@ -40,7 +39,8 @@ describe Wish do
                :description => 'Edited description.',
                :year => 6666,
                :country_id => new_country.id }
-    
+             
+    @wish.reload # required by some obscure reason...
     @wish.edit params
     @wish.reload
     
@@ -144,24 +144,22 @@ describe Wish do
   end
 
   it 'should have its filling rejected and notify filler' do
-    w = @wish
-    
-    w.fill @torrent
-    w.reload
+    @wish.fill @torrent
+    @wish.reload
 
-    w.reject @moderator, 'whatever reason'
-    w.reload
+    @wish.reject @moderator, 'whatever reason'
+    @wish.reload
 
-    w.should_not be_pending
-    w.should_not be_filled
-    w.torrent.should be_nil
-    w.filler.should be_nil
-    w.filled_at.should be_nil
+    @wish.should_not be_pending
+    @wish.should_not be_filled
+    @wish.torrent.should be_nil
+    @wish.filler.should be_nil
+    @wish.filled_at.should be_nil
 
     # filler notified?
     m = Message.find_by_receiver_id_and_subject @torrent.user, I18n.t('model.wish.notify_rejection.subject')
     m.should_not be_nil
-    m.body.should == I18n.t('model.wish.notify_rejection.body', :name => w.name, :by => @moderator.username, :reason => 'whatever reason')
+    m.body.should == I18n.t('model.wish.notify_rejection.body', :name => @wish.name, :by => @moderator.username, :reason => 'whatever reason')
   end
 
   it 'should notify its destruction when destroyed by a moderator' do
