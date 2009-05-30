@@ -121,8 +121,12 @@ class User < ActiveRecord::Base
             return false
           end
         end
-        if self.role_id != params[:role_id].to_i && role_update_allowed?(params, updater)
+        if self.role_id != params[:role_id].to_i
           self.role_id = params[:role_id]
+          unless role_update_allowed?(params, updater)
+            errors.add :role_id, 'forbidden assignment' # happens of with html form tampering, no need to i18n
+            return false
+          end
         end
         self.tickets = params[:tickets]
         self.active = params[:active] if self.id != 1
@@ -154,9 +158,9 @@ class User < ActiveRecord::Base
     def role_update_allowed?(params, updater)
       new_role = Role.find params[:role_id]
       if updater.system? || updater.owner?
-        return false if new_role.system?
+        return false if new_role.system? # system and owners can assign any role unless 'system'
       elsif updater.admin?
-        return false if new_role.reserved?
+        return false if new_role.reserved? # admins can assign only non-reserved roles
       else
         return false
       end

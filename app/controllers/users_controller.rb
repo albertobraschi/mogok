@@ -17,7 +17,7 @@ class UsersController < ApplicationController
   def show
     logger.debug ':-) users_controller.show'
     @user = User.find params[:id]
-    if @user.ratio_watch? && @user == current_user && flash.empty?
+    if @user.under_ratio_watch? && @user == current_user && flash.empty?
       flash.now[:ratio_watch] = t('ratio_watch', :until => l(@user.ratio_watch_until, :format => :date))
     end
   end  

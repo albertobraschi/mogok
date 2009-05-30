@@ -253,12 +253,13 @@ en:
           invalid_format: Username has invalid characters.
         password:
           required: Password required.
-          incorrect:  Password incorrect.
+          incorrect: Password incorrect.
           invalid_size: Length must be between 5 and 40.
         password_confirmation:
           invalid_confirmation: Incorrect password confirmation.
         current_password:
           required: Password required.
+          incorrect: Password incorrect.
         email:
           required: Email required.
           taken: Email already in use.

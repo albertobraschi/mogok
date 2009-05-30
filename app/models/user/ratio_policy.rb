@@ -3,7 +3,7 @@ class User
 
   # ratio policy concern
 
-  def ratio_watch?
+  def under_ratio_watch?
     defective? && self.ratio_watch_until
   end
 
