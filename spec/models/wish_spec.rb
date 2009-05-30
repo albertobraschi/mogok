@@ -5,16 +5,16 @@ describe Wish do
     fetch_system_user
     @moderator = fetch_user 'joe-the-mod', fetch_role('mod')
     @user = fetch_user 'joe-the-user'
+    @wisher = fetch_user 'joe-the-wisher'
     @commenter = fetch_user 'joe-the-commenter'
     @bounter = fetch_user 'joe-the-bounter'
     @another_bounter = fetch_user 'joe-the-bounter_two'
-    @torrent = fetch_torrent('Joe The Owners Torrent', 'joe-the-owner')
-    @wisher = fetch_user 'joe-the-wisher'
+    @torrent = fetch_torrent('Joe The Owners Torrent', 'joe-the-owner')    
     
     @wish = fetch_wish('Joe The Wishers Wish', 'joe-the-wisher')    
   end
 
-  it 'should be editable by creator or admin_mod if open or only by an admin_mod otherwise' do
+  it 'should be editable by creator or admin_mod if open or only by admin_mod otherwise' do
     @wish.open?.should be_true
     @wish.editable_by?(@wisher).should be_true
     @wish.editable_by?(@user).should be_false

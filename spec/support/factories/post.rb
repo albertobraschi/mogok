@@ -2,5 +2,9 @@
 Factory.define :post do |p|
   p.body 'Whatever body.'
   p.post_number { Post.count + 1 }
-  p.topic_id 0 # or factory girl will complain when topic factory create the topic_post
+end
+
+Factory.define :topic_post, :parent => :post, :default_strategy => :build do |p|
+  p.is_topic_post true
+  p.post_number 1
 end

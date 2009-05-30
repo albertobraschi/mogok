@@ -7,9 +7,8 @@ describe Topic do
     @poster = fetch_user 'joe-the-poster'
     @forum = fetch_forum 'Some Forum'
     @topic = Factory(:topic, :user => @poster, :forum => @forum)
-    @topic.topic_post.save
   end
-
+  
 
   it 'should be editable only by creator or an admin_mod' do
     @topic.editable_by?(@poster).should be_true
@@ -18,11 +17,11 @@ describe Topic do
   end
 
   it 'should be edited given the valid parameters' do
-    @topic.edit('Edited Title', 'Edited topic body.', @moderator)
+    @topic.edit('Edited Title', 'Edited topic post body.', @moderator)
     @topic.reload
     
     @topic.title.should == 'Edited Title'
-    @topic.topic_post.body.should == 'Edited topic body.'
+    @topic.topic_post.body.should == 'Edited topic post body.'
     @topic.topic_post.edited_at.should be_instance_of(Time)
     @topic.topic_post.edited_by.should == @moderator.username
   end
