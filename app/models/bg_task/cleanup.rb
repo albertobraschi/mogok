@@ -4,30 +4,21 @@ class BgTask
   # cleanup concern
 
   def self.cleanup(params)
-    Log.delete_all ['created_at < ?', params[:log_max_age_days].days.ago]
-    AnnounceLog.delete_all ['created_at < ?', params[:announce_log_max_age_days].days.ago]
-    ErrorLog.delete_all ['created_at < ?', params[:error_log_max_age_days].days.ago]
-    BgTaskLog.delete_all ['created_at < ?', params[:task_log_max_age_days].days.ago]
+    Log.delete_olds params[:log_max_age_days].days.ago
+    AnnounceLog.delete_olds params[:announce_log_max_age_days].days.ago
+    ErrorLog.delete_olds params[:error_log_max_age_days].days.ago
+    BgTaskLog.delete_olds params[:task_log_max_age_days].days.ago
 
-    Message.delete_all ['folder = ?', Message::TRASH]
-    Message.delete_all ['created_at < ?', params[:message_max_age_months].months.ago]
+    Message.clear_trash
+    Message.delete_olds params[:message_max_age_months].months.ago
 
     PeerConn.delete_peerless
 
-    PasswordRecovery.delete_all ['created_at < ?', params[:password_recovery_max_age_days].days.ago]
-    Invitation.delete_all ['created_at < ?', params[:invitation_max_age_days].days.ago]
-    LoginAttempt.delete_all ['blocked_until < ?', Time.now]
-    SignupBlock.delete_all ['blocked_until < ?', Time.now]
+    PasswordRecovery.delete_olds params[:password_recovery_max_age_days].days.ago
+    Invitation.delete_olds params[:invitation_max_age_days].days.ago
+    LoginAttempt.delete_all_for_expired_blocked_until
+    SignupBlock.delete_all_for_expired_blocked_until
     
-    User.find_absents(params[:user_max_inactivity_days].days.ago).each do |u|
-      next if u.has_ticket?(:staff) || u.has_ticket?(:inactivity_exempt)
-      if u.torrents.count > 0
-        u.inactivate # inactivate if user has at least one torrent
-        app_log "User #{u.username} inactivated by system (unused account)."
-      else
-        u.destroy
-        app_log "User #{u.username} removed by system (unused account)."
-      end
-    end
+    User.destroy_or_inactivate_by_absense(params[:user_max_inactivity_days].days.ago)
   end
 end

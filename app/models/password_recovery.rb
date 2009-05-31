@@ -11,4 +11,8 @@ class PasswordRecovery < ActiveRecord::Base
   def self.create(user, code)
     super :user => user, :code => code
   end
+
+  def self.delete_olds(threshold)
+    delete_all ['created_at < ?', threshold]
+  end
 end

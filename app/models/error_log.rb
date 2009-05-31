@@ -24,6 +24,10 @@ class ErrorLog < ActiveRecord::Base
     create message, location
   end
 
+  def self.delete_olds(threshold)
+    delete_all ['created_at < ?', threshold]
+  end
+  
   private
 
     def trim_attributes

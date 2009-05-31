@@ -95,10 +95,6 @@ class User
     a
   end
 
-  def self.find_absents(threshold)
-    find :all, :conditions => ['last_request_at < ? AND active = TRUE', threshold]
-  end
-
   private
 
     def paginate_bookmarks_conditions

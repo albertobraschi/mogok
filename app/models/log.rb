@@ -12,6 +12,10 @@ class Log < ActiveRecord::Base
     super :body => body, :admin => admin
   end
 
+  def self.delete_olds(threshold)
+    delete_all ['created_at < ?', threshold]
+  end
+
   private
 
     def self.search_conditions(params, searcher)

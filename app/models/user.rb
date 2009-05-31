@@ -2,7 +2,7 @@
 
 class User < ActiveRecord::Base
   concerns :authentication, :authorization, :callbacks, :finders, :logging, :notification
-  concerns :pass_recovery, :ratio_policy, :signup, :tracker, :validation
+  concerns :pass_recovery, :ratio_policy, :signup, :tasks, :tracker, :validation
 
   strip_attributes! # strip_attributes plugin
   

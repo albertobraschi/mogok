@@ -30,6 +30,10 @@ class AnnounceLog < ActiveRecord::Base
              :per_page => args[:per_page]
   end
 
+  def self.delete_olds(threshold)
+    delete_all ['created_at < ?', threshold]
+  end
+
   private
 
     def self.search_conditions(params)
