@@ -29,15 +29,15 @@ Feature: Forums
     And a post in topic "Joe The Users Topic" with body "Post body." and owned by user "joe-the-user" should be created
 
   Scenario: A user reports a topic
-    Given I have a user with username "joe-the-owner" and with role "user"
-    And I have a topic in forum "Whatever Forum" with title "Joe The Owners Topic" and body "Topic post body." and owned by user "joe-the-owner"
+    Given I have a user with username "joe-the-poster" and with role "user"
+    And I have a topic in forum "Whatever Forum" with title "Joe The Posters Topic" and body "Topic post body." and owned by user "joe-the-poster"
     When I go to the forum page for forum "Whatever Forum"
-    And I follow "Joe The Owners Topic"
+    And I follow "Joe The Posters Topic"
     And I follow "report"
     And I fill in "reason" with "Whatever Reason"
     And I press "Send"
     Then I should see "Topic successfully reported."
-    And a moderation report for topic "Joe The Owners Topic" with reason "Whatever Reason" should be created
+    And a moderation report for topic "Joe The Posters Topic" with reason "Whatever Reason" should be created
 
 
 

@@ -17,13 +17,13 @@ Feature: Torrent Removal
 
   Scenario: A moderator inactivates another users torrent
     Given I am logged in as "joe-the-mod" with role "mod"
-    And I have a user with username "joe-the-owner" and with role "user"
-    And I have a torrent with name "Joe The Owners Torrent" and owned by user "joe-the-owner"
-    When I go to the torrent details page for torrent "Joe The Owners Torrent"
+    And I have a user with username "joe-the-uploader" and with role "user"
+    And I have a torrent with name "Joe The Uploaders Torrent" and owned by user "joe-the-uploader"
+    When I go to the torrent details page for torrent "Joe The Uploaders Torrent"
     And I follow "remove"
     And I fill in "reason" with "Whatever Reason"
     And I press "Remove"
     Then I should see "Torrent successfully inactivated."
     And I should see "activate"
-    And torrent "Joe The Owners Torrent" should be inactive
-    And a system message with subject "torrent inactivated" should be received by "joe-the-owner"
+    And torrent "Joe The Uploaders Torrent" should be inactive
+    And a system message with subject "torrent inactivated" should be received by "joe-the-uploader"

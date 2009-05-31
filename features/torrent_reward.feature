@@ -8,11 +8,11 @@ Feature: Torrent download
     Given I am logged in as "joe-the-user" with role "user"
 
   Scenario: A user adds a reward to a torrent
-    Given I have a user with username "joe-the-owner" and with role "user"
+    Given I have a user with username "joe-the-uploader" and with role "user"
     And user "joe-the-user" has uploaded equal to 10485760
-    And user "joe-the-owner" has uploaded equal to 0
-    And I have a torrent with name "Joe The Owners Torrent" and owned by user "joe-the-owner"
-    When I go to the torrent details page for torrent "Joe The Owners Torrent"
+    And user "joe-the-uploader" has uploaded equal to 0
+    And I have a torrent with name "Joe The Uploaders Torrent" and owned by user "joe-the-uploader"
+    When I go to the torrent details page for torrent "Joe The Uploaders Torrent"
     And I follow "rewards"
     And I follow "[ add reward ]"
     And I fill in "reward_amount" with "10"
@@ -20,15 +20,15 @@ Feature: Torrent download
     And I press "Confirm"
     Then I should see "Reward successfully added."
     And I should see "10.00 MB"
-    And user "joe-the-owner" should have uploaded equal to 10485760
+    And user "joe-the-uploader" should have uploaded equal to 10485760
     And user "joe-the-user" should have uploaded equal to 0
-    And torrent "Joe The Owners Torrent" should have total reward equal to 10485760
+    And torrent "Joe The Uploaders Torrent" should have total reward equal to 10485760
 
   Scenario: A user tries to add a reward to a torrent having insufficient upload credit
-    Given I have a user with username "joe-the-owner" and with role "user"    
-    And I have a torrent with name "Joe The Owners Torrent" and owned by user "joe-the-owner"
+    Given I have a user with username "joe-the-uploader" and with role "user"
+    And I have a torrent with name "Joe The Uploaders Torrent" and owned by user "joe-the-uploader"
     And user "joe-the-user" has uploaded equal to 0
-    When I go to the torrent details page for torrent "Joe The Owners Torrent"
+    When I go to the torrent details page for torrent "Joe The Uploaders Torrent"
     And I follow "rewards"
     And I follow "[ add reward ]"
     And I fill in "reward_amount" with "10"

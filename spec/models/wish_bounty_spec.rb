@@ -55,7 +55,7 @@ describe WishBounty do
     @wish.bounties_count.should == bounties_count + 1
   end
 
-  it 'should add bounty amount to wish total bounty on creation' do
+  it 'should add amount to wish total bounty on creation' do
     total_bounty = @wish.total_bounty
 
     Factory(:wish_bounty, :user => @bounter, :wish => @wish, :amount => 12345)

@@ -5,7 +5,7 @@ describe Comment do
     @commenter = fetch_user 'joe-the-commenter'
     @moderator = fetch_user 'joe-the-mod', fetch_role('mod')
     @user = fetch_user 'joe-the-user'
-    @torrent = fetch_torrent('Joe The Owners Torrent', 'joe-the-owner')
+    @torrent = fetch_torrent('Joe The Uploaders Torrent', 'joe-the-uploader')
     @comment = Factory(:comment, :user => @commenter, :torrent => @torrent)
   end
 

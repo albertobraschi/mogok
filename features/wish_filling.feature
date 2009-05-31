@@ -37,12 +37,12 @@ Feature: Wish Filling
 
   Scenario: A user tries to fill a wish with another users torrent
     Given I have a user with username "joe-the-wisher" and with role "user"
-    And I have a user with username "joe-the-owner" and with role "user"
+    And I have a user with username "joe-the-uploader" and with role "user"
     And I have a wish with name "Joe The Wishers Wish" and owned by user "joe-the-wisher"
-    And I have a torrent with name "Joe The Owners Torrent" and owned by user "joe-the-owner"
+    And I have a torrent with name "Joe The Uploaders Torrent" and owned by user "joe-the-uploader"
     When I go to the wish details page for wish "Joe The Wishers Wish"
     And I follow "fill this request"
-    And I fill info_hash field with info hash hex for torrent "Joe The Owners Torrent"
+    And I fill info_hash field with info hash hex for torrent "Joe The Uploaders Torrent"
     And I press "Confirm"
     Then I should see "Only the torrent uploader can use it to fill a request."
 

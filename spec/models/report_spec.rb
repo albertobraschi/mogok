@@ -4,7 +4,7 @@ describe Report do
   before(:each) do
     @reporter = fetch_user 'joe-the-reporter'
     @moderator = fetch_user 'joe-the-mod', fetch_role('mod')
-    @torrent = fetch_torrent('Joe The Owners Torrent', 'joe-the-owner')
+    @torrent = fetch_torrent('Joe The Uploaders Torrent', 'joe-the-uploader')
     @report = Report.create @torrent, @reporter, 'Whatever reason.', "torrents/show/#{@torrent.id}"
   end
 

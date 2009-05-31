@@ -10,7 +10,7 @@ describe Wish do
     @commenter = fetch_user 'joe-the-commenter'
     @bounter = fetch_user 'joe-the-bounter'
     @another_bounter = fetch_user 'joe-the-bounter_two'
-    @torrent = fetch_torrent('Joe The Owners Torrent', 'joe-the-owner')    
+    @torrent = fetch_torrent('Joe The Uploaders Torrent', 'joe-the-uploader')
     
     @wish = fetch_wish('Joe The Wishers Wish', 'joe-the-wisher')    
   end

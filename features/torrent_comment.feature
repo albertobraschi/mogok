@@ -17,10 +17,10 @@ Feature: Torrent comment
     And a comment by user "joe-the-user" with body equal to "Comment body." should be created for torrent "Joe The Users Torrent"
 
   Scenario: A user edits its own torrent comment
-    Given I have a user with username "joe-the-owner" and with role "user"
-    And I have a torrent with name "Joe The Owners Torrent" and owned by user "joe-the-owner"
-    And I have a comment by user "joe-the-user" for torrent "Joe The Owners Torrent" with body equal to "Comment body."
-    When I go to the torrent details page for torrent "Joe The Owners Torrent"
+    Given I have a user with username "joe-the-uploader" and with role "user"
+    And I have a torrent with name "Joe The Uploaders Torrent" and owned by user "joe-the-uploader"
+    And I have a comment by user "joe-the-user" for torrent "Joe The Uploaders Torrent" with body equal to "Comment body."
+    When I go to the torrent details page for torrent "Joe The Uploaders Torrent"
     And I follow "edit"
     And I fill in "comment_body" with "Edited comment body."
     And I press "Edit"

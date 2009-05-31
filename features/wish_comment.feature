@@ -17,10 +17,10 @@ Feature: Wish comment
     And a comment by user "joe-the-user" with body equal to "Comment body." should be created for wish "Joe The Users Wish"
 
   Scenario: A user edits its own wish comment
-    Given I have a user with username "joe-the-owner" and with role "user"
-    And I have a wish with name "Joe The Owners Wish" and owned by user "joe-the-owner"
-    And I have a comment by user "joe-the-user" for wish "Joe The Owners Wish" with body equal to "Comment body."
-    When I go to the wish details page for wish "Joe The Owners Wish"
+    Given I have a user with username "joe-the-wisher" and with role "user"
+    And I have a wish with name "Joe The Wishers Wish" and owned by user "joe-the-wisher"
+    And I have a comment by user "joe-the-user" for wish "Joe The Wishers Wish" with body equal to "Comment body."
+    When I go to the wish details page for wish "Joe The Wishers Wish"
     And I follow "edit"
     And I fill in "comment_body" with "Edited comment body."
     And I press "Edit"
