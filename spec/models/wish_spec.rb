@@ -3,6 +3,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 describe Wish do
   before(:each) do
     fetch_system_user
+    
     @moderator = fetch_user 'joe-the-mod', fetch_role('mod')
     @user = fetch_user 'joe-the-user'
     @wisher = fetch_user 'joe-the-wisher'

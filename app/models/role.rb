@@ -7,19 +7,19 @@ class Role < ActiveRecord::Base
   validates_presence_of :name, :css_class, :description
   validates_uniqueness_of :name, :case_sensitive => false
 
+  DEFECTIVE     = 'defective'
   SYSTEM        = 'system'
   OWNER         = 'owner'
   ADMINISTRATOR = 'admin'
   MODERATOR     = 'mod'
-  USER          = 'user'
-  DEFECTIVE     = 'defective'
+  USER          = 'user'  
 
   def self.all_for_search
     find(:all).delete_if {|r| r.system? }
   end
 
   def self.all_for_user_edition(editor)
-    if editor.owner?
+    if editor.owner? # note that system is also owner
       find(:all).delete_if {|r| r.system? }
     elsif editor.admin?
       find(:all).delete_if {|r| r.reserved? }
