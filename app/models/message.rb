@@ -12,7 +12,7 @@ class Message < ActiveRecord::Base
 
   attr_accessor :replying_to # holds username of user being replied
 
-  def set_read
+  def set_as_read
     toggle! :unread if unread?
   end
 
@@ -26,8 +26,6 @@ class Message < ActiveRecord::Base
     unless args[:to].blank?
       m.owner = m.receiver = User.find_by_username(args[:to])
       m.sender = sender
-      m.unread = true
-      m.folder = INBOX
     end
     if !args[:message_id].blank? # if replying or forwarding
       old_message = find args[:message_id]
@@ -40,6 +38,14 @@ class Message < ActiveRecord::Base
 
   private
 
+    def delete_replied(replied_id)
+      unless replied_id.blank?
+        m = self.class.find replied_id
+        m.ensure_ownership self.sender
+        m.update_attribute :folder, TRASH
+      end
+    end
+
     def self.prepare_for_reply(m, old_message)
       prefix = I18n.t('model.message.prepare_to_reply.prefix')
       wrote = I18n.t('model.message.prepare_to_reply.wrote')
@@ -48,14 +54,6 @@ class Message < ActiveRecord::Base
                 \n#{old_message.sender.username} #{wrote}
                 \n\n#{old_message.body}"
       m.replying_to = old_message.sender.username
-    end
-
-    def delete_replied(replied_id)
-      unless replied_id.blank?
-        m = find replied_id
-        m.ensure_ownership self.sender
-        m.update_attribute :folder, TRASH
-      end
     end
 
     def self.prepare_for_forward(m, old_message)

@@ -4,6 +4,8 @@ class Message
   # delivering concern
 
   def deliver(replied_id = nil)
+    self.unread = true
+    self.folder = INBOX
     if valid?
       delete_replied(replied_id) if replied_id && self.sender.delete_on_reply
       save!

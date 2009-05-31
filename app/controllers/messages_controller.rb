@@ -24,7 +24,7 @@ class MessagesController < ApplicationController
     logger.debug ':-) messages_controller.show'
     @message = Message.find params[:id]
     @message.ensure_ownership current_user
-    @message.set_read
+    @message.set_as_read
   end
     
   def new
