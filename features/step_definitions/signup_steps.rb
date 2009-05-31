@@ -2,19 +2,19 @@
 # GIVEN
 
 Given /^that signup is open$/ do
-  Factory(:app_param, :name => 'signup_open', :value => 'true')
+  make_app_param 'signup_open', 'true'
 end
 
 Given /^that signup is closed$/ do
-  Factory(:app_param, :name => 'signup_open', :value => 'false')
+  make_app_param 'signup_open', 'false'
 end
 
 Given /^that signup requires an invite code$/ do
-  Factory(:app_param, :name => 'signup_by_invitation_only', :value => 'true')
+  make_app_param 'signup_by_invitation_only', 'true'
 end
 
 Given /^that signup does not require an invite code$/ do
-  Factory(:app_param, :name => 'signup_by_invitation_only', :value => 'false')
+  make_app_param 'signup_by_invitation_only', 'false'
 end
 
 
@@ -25,7 +25,7 @@ Then /^invitation with code "(.*)" should be removed$/ do |invite_code|
 end
 
 Then /^user "(.*)" should be the inviter of "(.*)"$/ do |inviter, invitee|
-  fetch_user(invitee).inviter.should == fetch_user(inviter)
+  find_user(invitee).inviter.should == find_user(inviter)
 end
 
 

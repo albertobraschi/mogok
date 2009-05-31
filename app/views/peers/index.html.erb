@@ -52,7 +52,7 @@
     <% end %>
   </div>
 
-  <% if !@peers.blank? && @peers.length > 15 %>
+  <% if !@peers.blank? && @peers.size > 15 %>
     <%= will_paginate @peers %>
   <% end %>
 

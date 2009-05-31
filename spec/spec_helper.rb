@@ -9,16 +9,19 @@ require 'spec/rails'
 # support files dir
 support_files_dir = File.expand_path(File.join(File.dirname(__FILE__), 'support'))
 
-# factory girl
-require 'factory_girl'
-factories_dir = File.join(support_files_dir, 'factories')
-Dir.glob(File.join(factories_dir, '*.rb')).each {|f| require f }
+# machinist
+require 'machinist'
+blueprints_dir = File.join(support_files_dir, 'blueprints')
+Dir.glob(File.join(blueprints_dir, '*.rb')).each {|f| require f }
 
 # force default locale
 I18n.default_locale = 'en'
 
-# fetchers
-require File.join(support_files_dir, 'fetchers.rb')
+# fetchers, makers and finders
+['fetchers.rb', 'makers.rb', 'finders.rb'].each {|f| require File.join(support_files_dir, f)}
+
+# support variables
+require File.join(support_files_dir, 'support_variables.rb')
 
 # test data directory
 TEST_DATA_DIR = File.join(support_files_dir, 'test_data')
@@ -65,11 +68,11 @@ Spec::Runner.configure do |config|
   # For more information take a look at Spec::Runner::Configuration and Spec::Runner
 end
 
-puts "> CACHE_ENABLED       = #{CACHE_ENABLED}"
-puts "> I18n.default_locale = #{I18n.default_locale}"
-puts "> Support directory   = #{support_files_dir}"
-puts "> Test data directory = #{TEST_DATA_DIR}"
-puts "> Factories directory = #{factories_dir}"
+puts "> CACHE_ENABLED        = #{CACHE_ENABLED}"
+puts "> I18n.default_locale  = #{I18n.default_locale}"
+puts "> Support directory    = #{support_files_dir}"
+puts "> Test data directory  = #{TEST_DATA_DIR}"
+puts "> Blueprints directory = #{blueprints_dir}"
 
 
 

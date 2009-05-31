@@ -1,11 +1,15 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe Report do
+  include SupportVariables
+
   before(:each) do
-    @reporter = fetch_user 'joe-the-reporter'
-    @moderator = fetch_user 'joe-the-mod', fetch_role('mod')
-    @torrent = fetch_torrent('Joe The Uploaders Torrent', 'joe-the-uploader')
-    @report = Report.create @torrent, @reporter, 'Whatever reason.', "torrents/show/#{@torrent.id}"
+    reload_support_variables
+    
+    @reporter = make_user('joe-the-reporter', @role_user)
+    @uploader  = make_user('joe-the-uploader', @role_user)
+    @torrent = make_torrent(@uploader)
+    @report = make_report(@reporter)
   end
 
   it 'should create a new instance given valid parameters' do
@@ -22,12 +26,12 @@ describe Report do
   end
 
   it 'should be assigned to a user after assignment' do
-    @report.assign_to @moderator
-    @report.handler_id.should == @moderator.id
+    @report.assign_to @mod
+    @report.handler_id.should == @mod.id
   end
 
   it 'should be not be assigned after unassignment' do
-    @report.assign_to @moderator
+    @report.assign_to @mod
     @report.unassign
     @report.handler_id.should be_nil
   end

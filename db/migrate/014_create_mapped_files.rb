@@ -6,7 +6,7 @@ class CreateMappedFiles < ActiveRecord::Migration
       t.column :torrent_id, :integer, :null => false
       t.column :name, :string, :null => false
       t.column :path, :string
-      t.column :length, 'BIGINT(20)', :null => false      
+      t.column :size, 'BIGINT(20)', :null => false
     end
   end
 

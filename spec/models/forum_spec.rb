@@ -1,17 +1,18 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe Forum do
+  include SupportVariables
+
   before(:each) do
-    @admin = fetch_user 'joe-the-admin', fetch_role('admin')
-    @moderator = fetch_user 'joe-the-mod', fetch_role('mod')
-    @user = fetch_user 'joe-the-user'
-    @poster = fetch_user 'joe-the-poster'
-    @forum = fetch_forum 'Some Forum'
+    reload_support_variables
+
+    @poster = make_user('joe-the-poster', @role_user)
+    @forum = make_forum
   end
 
   it 'should be editable only by an admin' do
     @forum.editable_by?(@admin).should be_true
-    @forum.editable_by?(@moderator).should be_false
+    @forum.editable_by?(@mod).should be_false
     @forum.editable_by?(@user).should be_false
   end
 

@@ -1,29 +1,17 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe User do
+  include SupportVariables
+
   before(:each) do
-    fetch_system_user
+    reload_support_variables
 
-    @role_defective  = fetch_role Role::DEFECTIVE
-    @role_user       = fetch_role Role::USER
-    @role_mod        = fetch_role Role::MODERATOR
-    @role_admin      = fetch_role Role::ADMINISTRATOR
-    @role_owner      = fetch_role Role::OWNER
-    @role_system     = fetch_role Role::SYSTEM
-    @role_power_user = fetch_role 'power_user'
-
-    @user           = fetch_user 'joe-the-user'
-    @user_two       = fetch_user 'joe-the-user_two'
-    @user_three     = fetch_user 'joe-the-user_three'
-    @power_user     = fetch_user 'joe-the-power_user', @role_power_user
-    @power_user_two = fetch_user 'joe-the-power_user_2', @role_power_user
-    @mod            = fetch_user 'joe-the-mod', @role_mod
-    @mod_two        = fetch_user 'joe-the-mod_two', @role_mod
-    @admin          = fetch_user 'joe-the-admin', @role_admin
-    @admin_two      = fetch_user 'joe-the-admin_two', @role_admin
-    @owner          = fetch_user 'joe-the-owner', @role_owner
-    @owner_two      = fetch_user 'joe-the-owner_two', @role_owner
-    @system         = fetch_system_user
+    @user_two       = make_user('joe-the-user_two', @role_user)
+    @user_three     = make_user('joe-the-user_three', @role_user)
+    @power_user_two = make_user('joe-the-power_user_2', @role_power_user)
+    @mod_two        = make_user('joe-the-mod_two', @role_mod)
+    @admin_two      = make_user('joe-the-admin_two', @role_admin)
+    @owner_two      = make_user('joe-the-owner_two', @role_owner)
   end
 
   # main class
@@ -179,12 +167,11 @@ describe User do
     end
 
     it 'should be put on ratio watch and notify itself' do
-      fetch_role(Role::DEFECTIVE)
       @user.start_ratio_watch(30.days.from_now)
       @user.reload
 
       @user.should be_under_ratio_watch
-      @user.role.should == fetch_role(Role::DEFECTIVE)
+      @user.role.should == @role_defective
       @user.ratio_watch_until.should be_instance_of(Time)
 
       m = Message.find_by_receiver_id_and_subject @user, I18n.t('model.user.notify_ratio_watch.subject')
@@ -193,7 +180,6 @@ describe User do
     end
 
     it 'should be put out of ratio watch' do
-      fetch_role(Role::DEFECTIVE)
       @user.start_ratio_watch(30.days.from_now)
       @user.reload
 
@@ -201,7 +187,7 @@ describe User do
       @user.reload
 
       @user.should_not be_under_ratio_watch
-      @user.role.should == fetch_role(Role::USER)
+      @user.role.should == @role_user
       @user.ratio_watch_until.should be_nil
     end
   
@@ -237,7 +223,7 @@ describe User do
       @user_two.increment_counters(100, 400) # ratio 0.25
       @user_two.role = @role_defective
       @user_two.ratio_watch_until = 1.day.ago
-      fetch_torrent('User Twos Torrent', @user_two.username) # user should be inactivated if has a torrent
+      make_torrent(@user_two) # so it won't be removed, only inactivated
       @user_two.save
 
       @user_three.increment_counters(100, 400) # ratio 0.25
@@ -279,8 +265,8 @@ describe User do
   # signup concern
 
     it 'should save new record with invitation code' do
-      new_user = Factory.build(:user, :username => 'joe-the-new-user', :role => fetch_role, :style => fetch_style)
-      invitation = Factory(:invitation, :user => @user, :email => 'joe-the-new-user@mail.com')
+      new_user = make_user('joe-the-new-user', @role_user, false)
+      invitation = make_invitation(@user, 'joe-the-new-user@mail.com')
 
       new_user.save_new_with_invite(invitation.code, true)
       new_user.reload

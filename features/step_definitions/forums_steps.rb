@@ -2,19 +2,19 @@
 # GIVEN
 
 Given /^I have a forum with name "(.*)"$/ do |name|
-  fetch_forum name
+  make_forum name
 end
         
 Given /^I have a topic in forum "(.*)" with title "(.*)" and body "(.*)" and owned by user "(.*)"$/ do |forum_name, title, body, username|
-  fetch_forum(forum_name).add_topic(title, body, fetch_user(username))
+  find_forum(forum_name).add_topic(title, body, find_user(username))
 end
 
 
 # THEN
 
 Then /^a topic in forum "(.*)" with title "(.*)" and owned by user "(.*)" should be created$/ do |forum_name, title, username|
-  f = Forum.find_by_name(forum_name)
-  Topic.find_by_forum_id_and_title_and_user_id(f, title, fetch_user(username)).should_not be_nil
+  f = find_forum(forum_name)
+  Topic.find_by_forum_id_and_title_and_user_id(f, title, find_user(username)).should_not be_nil
 end
 
 Then /^the topic post for topic "(.*)" should have body equal to "(.*)"$/ do |topic_title, body|
@@ -24,7 +24,7 @@ end
 
 Then /^a post in topic "(.*)" with body "(.*)" and owned by user "(.*)" should be created$/ do |topic_title, body, username|
   t = Topic.find_by_title(topic_title)
-  Post.find_by_topic_id_and_body_and_user_id(t, body, fetch_user(username)).should_not be_nil
+  Post.find_by_topic_id_and_body_and_user_id(t, body, find_user(username)).should_not be_nil
 end
 
 Then /^a moderation report for topic "(.*)" with reason "(.*)" should be created$/ do |topic_title, reason|

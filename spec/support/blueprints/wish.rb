@@ -1,0 +1,3 @@
+
+Wish.blueprint do
+end

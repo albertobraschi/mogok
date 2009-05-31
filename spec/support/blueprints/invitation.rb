@@ -1,0 +1,3 @@
+
+Invitation.blueprint do
+end

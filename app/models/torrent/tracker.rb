@@ -3,7 +3,6 @@ class Torrent
 
   # tracker concern
 
-
   def add_snatch(user)
     unless Snatch.find_by_user_id_and_torrent_id(user, self)
       Torrent.transaction do

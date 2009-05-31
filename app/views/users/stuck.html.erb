@@ -8,7 +8,7 @@
     Torrents you've uploaded or snatched that are in need of seeders.
   </div>
     
-  <% if !@torrents.blank? && @torrents.length > 15 %>
+  <% if !@torrents.blank? && @torrents.size > 15 %>
     <%= will_paginate @torrents %>
   <% end %>
     

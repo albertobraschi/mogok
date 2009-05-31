@@ -23,6 +23,6 @@ class Torrent
   private
 
     def validate_tags
-      add_error(:tags, 'max', :max => MAX_TAGS) if self.tags.length > MAX_TAGS
+      add_error(:tags, 'max', :max => MAX_TAGS) if self.tags.size > MAX_TAGS
     end
 end

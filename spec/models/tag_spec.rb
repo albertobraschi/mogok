@@ -1,12 +1,17 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe Tag do
+  include SupportVariables
+
   before(:each) do
-    @category_music = fetch_category 'music', 'audio'
-    @category_audio_book = fetch_category 'audio_book', 'audio'
-    @tag_pop = fetch_tag 'pop', 'music'
-    @tag_rock = fetch_tag 'rock', 'music'
-    @tag_fiction = fetch_tag 'fiction', 'audio_book'
+    reload_support_variables
+    
+    @category_music = fetch_category('music', 'audio')
+    @tag_pop        = fetch_tag('pop', 'music')
+    @tag_rock       = fetch_tag('rock', 'music')
+
+    @category_audio_book = fetch_category('audio_book', 'audio')    
+    @tag_fiction         = fetch_tag('fiction', 'audio_book')
   end
 
   it 'should parse a string containing tags separated by commas' do

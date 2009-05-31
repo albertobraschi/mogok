@@ -225,7 +225,7 @@ class TorrentsController < ApplicationController
         if f.respond_to?(:original_filename) && !f.original_filename.downcase.ends_with?('.torrent')
           torrent_file_error 'type'
         end
-        if f.length > APP_CONFIG[:torrents][:file_max_size_kb].kilobytes
+        if f.size > APP_CONFIG[:torrents][:file_max_size_kb].kilobytes
           torrent_file_error 'size', :max_size => APP_CONFIG[:torrents][:file_max_size_kb]
         end
       end

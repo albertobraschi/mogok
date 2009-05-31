@@ -1,27 +1,31 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe Comment do
+  include SupportVariables
+
   before(:each) do
-    @commenter = fetch_user 'joe-the-commenter'
-    @moderator = fetch_user 'joe-the-mod', fetch_role('mod')
-    @user = fetch_user 'joe-the-user'
-    @torrent = fetch_torrent('Joe The Uploaders Torrent', 'joe-the-uploader')
-    @comment = Factory(:comment, :user => @commenter, :torrent => @torrent)
+    reload_support_variables
+
+    @uploader  = make_user('joe-the-uploader', @role_user)
+    @commenter = make_user('joe-the-commenter', @role_user)
+    @torrent = make_torrent(@uploader)
+    @comment = make_comment(@torrent, @commenter)
   end
 
   it 'should be editable only by creator or an admin_mod' do
     @comment.editable_by?(@commenter).should be_true
-    @comment.editable_by?(@moderator).should be_true
+    @comment.editable_by?(@mod).should be_true
+    @comment.editable_by?(@admin).should be_true
     @comment.editable_by?(@user).should be_false
   end
 
   it 'should be edited given the valid parameters' do
-    @comment.edit('Edited body.', @moderator)
+    @comment.edit('Edited body.', @mod)
     @comment.reload
     
     @comment.body.should == 'Edited body.'
     @comment.edited_at.should be_instance_of(Time)
-    @comment.edited_by.should == @moderator.username
+    @comment.edited_by.should == @mod.username
   end
 
   it 'should be reportable' do

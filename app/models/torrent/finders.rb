@@ -83,7 +83,7 @@ class Torrent
         else
           tags = Tag.parse_tags params[:tags_str], params[:category_id].to_i
           unless tags.blank?
-            if tags.length > 3
+            if tags.size > 3
               tags = tags[0, 3] # three tags maximum
             end
             params[:tags_str] = tags.join ', ' # show user which tags were used in search

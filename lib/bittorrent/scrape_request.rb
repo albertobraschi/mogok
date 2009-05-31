@@ -15,8 +15,8 @@ module Bittorrent
     end
 
     def max_torrents=(n)
-      if self.info_hashs && self.info_hashs.length > n
-        self.info_hashs.length.slice! 0, n
+      if self.info_hashs && self.info_hashs.size > n
+        self.info_hashs.slice! 0, n
       end
     end
 

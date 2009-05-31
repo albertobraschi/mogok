@@ -43,7 +43,7 @@ class Torrent
       self.piece_length = info[PIECE_LENGTH]
       self.mapped_files = []
       if info[FILES].blank? # single file mode
-        self.mapped_files << MappedFile.new(:name => info[NAME], :length => info[LENGTH])
+        self.mapped_files << MappedFile.new(:name => info[NAME], :size => info[LENGTH])
         self.size = info[LENGTH]
         self.files_count = 1
       else
@@ -58,7 +58,7 @@ class Torrent
               file_path << path << '/'
             end
           end
-          self.mapped_files << MappedFile.new(:name => file_name, :length => file[LENGTH], :path => file_path)
+          self.mapped_files << MappedFile.new(:name => file_name, :size => file[LENGTH], :path => file_path)
           size += file[LENGTH]
         end
         self.size = size

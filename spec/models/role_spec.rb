@@ -1,17 +1,10 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe Role do
-  before(:each) do
-    @role_defective = fetch_role Role::DEFECTIVE
-    @role_user      = fetch_role Role::USER
-    @role_mod       = fetch_role Role::MODERATOR
-    @role_admin     = fetch_role Role::ADMINISTRATOR
-    @role_owner     = fetch_role Role::OWNER
-    @role_system    = fetch_role Role::SYSTEM
+  include SupportVariables
 
-    @admin     = fetch_user 'joe-the-admin', @role_admin
-    @owner     = fetch_user 'joe-the-owner', @role_owner
-    @system    = fetch_system_user
+  before(:each) do
+    reload_support_variables
   end
 
   it 'should authorize by ticket' do

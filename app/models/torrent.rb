@@ -68,19 +68,19 @@ class Torrent < ActiveRecord::Base
     false
   end
 
-  def activate(activator)
-    update_attribute :active, true
-    log_activation(activator)
-    notify_activation(activator) if self.user != activator
-    logger.debug ':-) torrent activated'
-  end
-
   def inactivate(inactivator, reason)
     self.inactivated = true # flag used by cache sweeper
     update_attribute(:active, false)
     log_inactivation(inactivator, reason)
     notify_inactivation(inactivator, reason) if self.user != inactivator
     logger.debug ':-) torrent inactivated'
+  end
+
+  def activate(activator)
+    update_attribute :active, true
+    log_activation(activator)
+    notify_activation(activator) if self.user != activator
+    logger.debug ':-) torrent activated'
   end
 
   def destroy_with_notification(destroyer, reason)

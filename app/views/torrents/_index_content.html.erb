@@ -1,5 +1,5 @@
 
-  <% if !@torrents.blank? && @torrents.length > 15 %>
+  <% if !@torrents.blank? && @torrents.size > 15 %>
     <%= will_paginate @torrents %>
   <% end %>
 

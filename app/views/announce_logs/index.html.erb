@@ -44,7 +44,7 @@
     <% end %>
   </div>
   
-  <% if !@announce_logs.blank? && @announce_logs.length > 15 %>
+  <% if !@announce_logs.blank? && @announce_logs.size > 15 %>
     <%= will_paginate @announce_logs %>
   <% end %>
   

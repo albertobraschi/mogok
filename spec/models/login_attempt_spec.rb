@@ -1,13 +1,12 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe LoginAttempt do
+  include SupportVariables
+
   before(:each) do
-    @category_music = fetch_category 'music', 'audio'
-    @category_audio_book = fetch_category 'audio_book', 'audio'
-    @tag_pop = fetch_tag 'pop', 'music'
-    @tag_rock = fetch_tag 'rock', 'music'
+    reload_support_variables
     
-    @login_attempt = Factory(:login_attempt, :ip => '127.0.0.1')
+    @login_attempt = make_login_attempt('127.0.0.1')
   end
 
   it 'should be blocked for an IP if block until date is not expired' do

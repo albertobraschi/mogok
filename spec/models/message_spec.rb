@@ -1,11 +1,13 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe Message do
+  include SupportVariables
+
   before(:each) do
-    @system   = fetch_system_user
-    @sender   = fetch_user 'joe-the-sender'
-    @receiver = fetch_user 'joe-the-receiver'
-    @user     = fetch_user 'joe-the-user'
+    reload_support_variables
+    
+    @sender   = make_user('joe-the-sender', @role_user)
+    @receiver = make_user('joe-the-receiver', @role_user)
   end
 
   it 'should build a new message instance given valid parameters' do
@@ -20,7 +22,7 @@ describe Message do
   end
 
   it 'should build a new message instance prepared for reply given valid parameters' do
-    old_message = Factory(:message, :owner => @sender, :receiver => @sender, :sender => @receiver)
+    old_message = make_message(@sender, @sender, @receiver, 'old subject') # message to be replied
 
     m = Message.make_new({:subject => nil, :body => nil},
                          @sender,
@@ -30,7 +32,7 @@ describe Message do
   end
 
   it 'should build a new message instance prepared for forward given valid parameters' do
-    old_message = Factory(:message, :owner => @sender, :receiver => @sender, :sender => @receiver)
+    old_message = make_message(@sender, @sender, @receiver, 'old subject') # message to be forwarded
 
     m = Message.make_new({:subject => nil, :body => nil},
                          @sender,
@@ -41,7 +43,7 @@ describe Message do
   end
 
   it 'should be set as read' do
-    m = Factory(:message, :owner => @receiver, :receiver => @receiver, :sender => @sender)
+    m = make_message(@receiver, @receiver, @sender)
     m.set_as_read
     m.reload
 
@@ -49,7 +51,7 @@ describe Message do
   end
 
   it 'should be moved to another folder' do
-    m = Factory(:message, :owner => @receiver, :receiver => @receiver, :sender => @sender)
+    m = make_message(@receiver, @receiver, @sender)
     m.move_to_folder(Message::TRASH, @receiver)
     m.reload
 
@@ -59,7 +61,7 @@ describe Message do
   # callbacks concern
 
     it 'should assign a default subject on delivery when subject empty' do
-      m = Factory.build(:message, :subject => nil, :owner => @receiver, :receiver => @receiver, :sender => @sender)
+      m = make_message(@receiver, @receiver, @sender, false)
       m.deliver
       m.reload
 
@@ -69,7 +71,7 @@ describe Message do
   # delivering concern
 
     it 'should be delivered' do
-      m = Factory.build(:message, :owner => @receiver, :receiver => @receiver, :sender => @sender)
+      m = make_message(@receiver, @receiver, @sender, false)
       m.deliver
 
       delivered = Message.find_by_receiver_id_and_subject(@receiver, m.subject)
@@ -79,11 +81,11 @@ describe Message do
     end
 
     it 'should delete replied message on delivery' do
-      replied_message = Factory(:message, :owner => @sender, :receiver => @sender, :sender => @receiver)
+      replied_message = make_message(@sender, @sender, @receiver)
       @sender.delete_on_reply = true
       @sender.save
 
-      m = Factory.build(:message, :owner => @receiver, :receiver => @receiver, :sender => @sender)
+      m = make_message(@receiver, @receiver, @sender, false)
       m.deliver(replied_message.id)
 
       Message.find_by_id(replied_message).folder.should == Message::TRASH
@@ -93,7 +95,7 @@ describe Message do
       @sender.save_sent = true
       @sender.save
 
-      m = Factory.build(:message, :owner => @receiver, :receiver => @receiver, :sender => @sender)
+      m = make_message(@receiver, @receiver, @sender, false)
       m.deliver
 
       Message.find_by_owner_id_and_receiver_id_and_folder(@sender, @receiver, Message::SENT).should_not be_nil
@@ -103,7 +105,7 @@ describe Message do
       @receiver.has_new_message = false
       @receiver.save
 
-      m = Factory.build(:message, :owner => @receiver, :receiver => @receiver, :sender => @sender)
+      m = make_message(@receiver, @receiver, @sender, false)
       m.deliver
       @receiver.reload
 
@@ -124,7 +126,7 @@ describe Message do
   # ownership concern
   
     it 'should ensure ownership' do
-      m = Factory.build(:message, :owner => @receiver, :receiver => @receiver, :sender => @sender)
+      m = make_message(@receiver, @receiver, @sender, false)
       m.deliver
 
       lambda {m.ensure_ownership(@user)}.should raise_error(Message::NotOwnerError)
