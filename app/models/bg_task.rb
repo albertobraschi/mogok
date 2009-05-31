@@ -44,7 +44,7 @@ class BgTask < ActiveRecord::Base
     if @exec_now || self.next_exec_at.blank?
       if self.interval_minutes
         self.next_exec_at = Time.now + self.interval_minutes.minutes
-        logger.debug ":-) TASK #{self.name} scheduled to #{I18n.l self.next_exec_at, :format => :db}" if logger
+        logger.debug ":-) TASK #{self.name} scheduled to #{self.next_exec_at}" if logger
         save
       end
     end

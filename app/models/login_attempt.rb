@@ -26,7 +26,7 @@ class LoginAttempt < ActiveRecord::Base
     find_by_ip(ip) || new(:ip => ip, :attempts_count => 0)
   end
 
-  def self.delete_all_for_expired_blocked_until
+  def self.delete_expired
      delete_all ['blocked_until IS NOT NULL AND blocked_until < ?', Time.now]
   end
 end

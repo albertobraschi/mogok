@@ -16,8 +16,8 @@ class BgTask
 
     PasswordRecovery.delete_olds params[:password_recovery_max_age_days].days.ago
     Invitation.delete_olds params[:invitation_max_age_days].days.ago
-    LoginAttempt.delete_all_for_expired_blocked_until
-    SignupBlock.delete_all_for_expired_blocked_until
+    LoginAttempt.delete_expired
+    SignupBlock.delete_expired
     
     User.destroy_or_inactivate_by_absense(params[:user_max_inactivity_days].days.ago)
   end

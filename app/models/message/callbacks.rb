@@ -8,7 +8,7 @@ class Message
   private
 
     def set_subject
-      self.subject = self.subject.blank? ? I18n.t('model.message.before_create.no_subject') : self.subject[0, 50]
+      self.subject = self.subject.blank? ? I18n.t('model.message.before_create.default_subject') : self.subject[0, 50]
     end
 
     def trim_body

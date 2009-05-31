@@ -56,6 +56,16 @@ describe Message do
     m.folder.should == Message::TRASH
   end
 
+  # callbacks concern
+
+    it 'should assign a default subject on delivery when subject empty' do
+      m = Factory.build(:message, :subject => nil, :owner => @receiver, :receiver => @receiver, :sender => @sender)
+      m.deliver
+      m.reload
+
+      m.subject.should == I18n.t('model.message.before_create.default_subject')
+    end
+
   # delivering concern
 
     it 'should be delivered' do

@@ -190,7 +190,7 @@ en:
         
     message:
       before_create:
-        no_subject: no subject
+        default_subject: no subject
       prepare_to_reply:
         prefix: "Re:"
         wrote: "wrote:"
