@@ -1,0 +1,8 @@
+
+my_task_from_yml:
+  interval_minutes: 4
+  params:
+    param_integer: 1
+    param_array:
+      - 1
+      - 2

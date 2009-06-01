@@ -39,7 +39,7 @@ class BgTask < ActiveRecord::Base
   end
 
   def schedule(logger = nil)
-    @exec_now = self.next_exec_at && self.next_exec_at < Time.now
+    @exec_now = !self.next_exec_at.nil? && self.next_exec_at < Time.now
     
     if @exec_now || self.next_exec_at.blank?
       if self.interval_minutes

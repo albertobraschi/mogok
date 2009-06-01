@@ -96,7 +96,11 @@
       Peer.make(:torrent => t, :user => u, :ip => ip, :port => port, :seeder => seeder, :peer_conn => fetch_peer_conn(ip, port))
     end
 
+  # bg_tasks
 
+    def make_bg_task(name, interval_minutes)
+      BgTask.make(:name => name, :interval_minutes => interval_minutes)
+    end
 
 
 
