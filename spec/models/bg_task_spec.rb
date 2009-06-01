@@ -15,7 +15,7 @@ describe BgTask do
         @@executed
       end
 
-      def self.my_task(params) # this is the method that should be called when task is executed
+      def self.my_task(params) # method that should be called when task is executed
         @@executed = true
       end
     end
