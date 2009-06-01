@@ -44,21 +44,21 @@ module Bittorrent
     end
 
     def initialize(params)
-      self.passkey = params[:passkey]
-      self.event = params[:event]
-      self.info_hash = params[:info_hash]
-      self.numwant = params[:numwant].to_i
-      self.port = params[:port].to_i
-      self.uploaded = params[:uploaded].to_i
-      self.downloaded = params[:downloaded].to_i
-      self.left = params[:left].to_i
-      self.peer_id = params[:peer_id]
-      self.no_peer_id = true if params[:no_peer_id] == '1'
-      self.compact = true if params[:compact] == '1'
-      self.key = params[:key]
+      self.passkey     = params[:passkey]
+      self.event       = params[:event]
+      self.info_hash   = params[:info_hash]
+      self.numwant     = params[:numwant].to_i
+      self.port        = params[:port].to_i
+      self.uploaded    = params[:uploaded].to_i
+      self.downloaded  = params[:downloaded].to_i
+      self.left        = params[:left].to_i
+      self.peer_id     = params[:peer_id]
+      self.no_peer_id  = true if params[:no_peer_id] == '1'
+      self.compact     = true if params[:compact] == '1'
+      self.key         = params[:key]
       self.down_offset = 0
-      self.up_offset = 0
-      self.seeder = completed? || self.left == 0
+      self.up_offset   = 0
+      self.seeder      = completed? || self.left == 0
     end
 
     def valid?
@@ -70,6 +70,34 @@ module Bittorrent
         else
           true
       end
+    end
+
+    def attributes
+      h = {}
+      h[:torrent]           = self.torrent
+      h[:user]              = self.user      
+      h[:event]             = self.event
+      h[:ip]                = self.ip
+      h[:port]              = self.port
+      h[:uploaded]          = self.uploaded
+      h[:downloaded]        = self.downloaded
+      h[:left]              = self.left
+      h[:seeder]            = self.seeder
+      h[:passkey]           = self.passkey
+      h[:peer_id]           = self.peer_id
+      h[:info_hash]         = self.info_hash
+      h[:numwant]           = self.numwant
+      h[:no_peer_id]        = self.no_peer_id
+      h[:compact]           = self.compact
+      h[:key]               = self.key
+      h[:up_offset]         = self.up_offset
+      h[:down_offset]       = self.down_offset
+      h[:peer_id]           = self.peer_id
+      h[:last_action_at]    = self.last_action_at
+      h[:current_action_at] = self.current_action_at
+      h[:client]            = self.client
+      h[:time_interval]     = self.current_action_at.to_i - self.last_action_at.to_i if self.last_action_at
+      h
     end
   end
 end

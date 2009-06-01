@@ -12,7 +12,7 @@ class CreateAnnounceLogs < ActiveRecord::Migration
       t.column :up_offset, 'BIGINT(20)', :null => false, :default => 0
       t.column :down_offset, 'BIGINT(20)', :null => false, :default => 0
       t.column :created_at, :datetime, :null => false
-      t.column :time_interval, 'BIGINT(20)', :null => false, :default => 0
+      t.column :time_interval, :integer
       t.column :client_code, :string
       t.column :client_name, :string
       t.column :client_version, :string

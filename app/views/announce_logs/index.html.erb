@@ -109,7 +109,7 @@
             <%= textual_data_amount p.down_offset %>
           </td>
           <td>
-            <%= p.time_interval %>
+            <%= p.time_interval ? p.time_interval : '-' %>
           </td>
           <td>
             <%= p.ip %>

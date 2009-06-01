@@ -12,7 +12,7 @@ describe Report do
     @report = make_report(@reporter)
   end
 
-  it 'should create a new instance given valid parameters' do
+  it 'should build a new instance given valid parameters' do
     @report.should be_valid
     @report.should_not be_new_record
   end

@@ -53,30 +53,30 @@ module Bittorrent
         peer = Peer.find_peer(req.torrent, req.user, req.ip, req.port)
         
         unless peer
-          Peer.create(req) unless req.stopped?
+          Peer.create(req.attributes) unless req.stopped?
         else
+          req.last_action_at = peer.last_action_at
           req.set_offsets(peer.uploaded, peer.downloaded)
-          req.user.increment_counters(req.up_offset, req.down_offset)
+          req.user.increment_counters(req.up_offset, req.down_offset)          
           unless req.stopped?
-            req.torrent.add_snatch(req.user) if req.completed?
-            req.last_action_at = peer.last_action_at
-            peer.refresh_announce(req)
+            req.torrent.add_snatch(req.user) if req.completed?            
+            peer.refresh_announce(req.attributes)
           else
             peer.destroy
           end          
         end
-        AnnounceLog.create(req) if log_announce
+        AnnounceLog.create(req.attributes) if log_announce
         prepare_resp(req, resp) unless req.stopped?
       end
 
     private
 
       def prepare_resp(req, resp)
-        resp.complete = req.torrent.seeders_count
+        resp.complete   = req.torrent.seeders_count
         resp.incomplete = req.torrent.leechers_count
-        resp.compact = req.compact
+        resp.compact    = req.compact
         resp.no_peer_id = req.no_peer_id
-        resp.peers = Peer.find_for_announce_resp(req.torrent, req.user, req.numwant)
+        resp.peers      = Peer.find_for_announce_resp(req.torrent, req.user, req.numwant)
       end
   end
 end

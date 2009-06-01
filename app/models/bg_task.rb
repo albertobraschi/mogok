@@ -54,6 +54,10 @@ class BgTask < ActiveRecord::Base
     self.bg_task_params << BgTaskParam.new(:name => name, :value => YAML.dump(value))
   end
 
+  def log_exec(status = nil, begin_at = nil, end_at = nil)
+    self.class.log_exec self.name, status, begin_at, end_at, self.next_exec_at
+  end
+
   def self.all
     find :all, :order => 'name'
   end
@@ -62,10 +66,6 @@ class BgTask < ActiveRecord::Base
     message = "Task: #{task_name}\n Error: #{e.class}\n Message: #{e.clean_message}"
     location = e.backtrace[0, 15].join("\n")
     ErrorLog.create message, location
-  end
-
-  def log_exec(status = nil, begin_at = nil, end_at = nil)
-    self.class.log_exec self.name, status, begin_at, end_at, self.next_exec_at
   end
 
   def self.log_exec(task, status = nil, begin_at = nil, end_at = nil, next_at = nil)

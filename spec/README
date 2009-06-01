@@ -1,22 +1,22 @@
 Spec directory structure:
 
-> spec/
-  > models/                 - contain the models specs
-  > support/                - contain files used by the model specs
-    > blueprints/           - contain the 'machinist' gem blueprints
-    > test_data/            - contain test files used by the tests
-      + invalid.torrent     - a malformed torrent file that will cause a parse error
-      + test.txt            - an empty text file
-      + valid.torrent       - a valid parseable torrent file
-    + fetchers.rb           - methods that retrieve or create records using the 'machinist' gem
-    + makers.rb             - methods that create records using the 'machinist' gem
-    + finders.rb            - methods that retrieve records
-    + support_variables.rb  - a module with instance variables that can be included in the model specs
-  + spec_helper.rb          - the rspec configuration file, also configure the support files
+> spec  
+  > models                 - contain the models specs
+  > support                - contain files used by the model specs
+    > blueprints             - contain the 'machinist' gem blueprints (factories)
+    > test_data              - contain test files used by the tests
+      + invalid.torrent         + a malformed torrent file that will cause a parse error
+      + test.txt                + an empty text file
+      + valid.torrent           + a valid parseable torrent file
+    + fetchers.rb             + methods that retrieve or create records using the 'machinist' gem
+    + makers.rb               + methods that create records using the 'machinist' gem
+    + finders.rb              + methods that retrieve records
+    + support_variables.rb    + a module with instance variables that can be included in the model specs
+  + spec_helper.rb         + the rspec configuration file, also setup the support files
 
-Note that when a spec wants to create a record it calls a method in 'fetchers.rb' or in 'makers.rb',
+Note that when a spec needs to create a record it calls a method in 'fetchers.rb' or in 'makers.rb',
 which uses the 'machinist' gem infrastructure to create the record. So if you want to use another
-factory framework just change the methods in these file, with no need to change the spec ones.
+factory strategy just change the methods in these file, with no need to change the spec ones.
 
-Also note that the support files described above are also used by the cucumber features tests,
-located in the directory 'features/'.
+Also note that the support files described above are used by the cucumber features tests, located
+in the directory 'features/'.

@@ -22,36 +22,36 @@ class Peer < ActiveRecord::Base
     end
   end
 
-  def self.create(announce_req)
-    p = Peer.new
-    p.set_attributes announce_req
+  def self.create(attributes)
+    p = new
+    p.set_attributes attributes
     p.set_connectivity
     p.save!
     logger.debug ':-) peer created'
     p
   end
 
-  def refresh_announce(announce_req)
-    set_attributes announce_req
+  def refresh_announce(attributes)
+    set_attributes attributes
     set_connectivity
     save!
     logger.debug ':-) peer updated'
   end
 
-  def set_attributes(announce_req)
-    self.torrent = announce_req.torrent
-    self.user = announce_req.user
-    self.ip = announce_req.ip
-    self.port = announce_req.port
-    self.uploaded = announce_req.uploaded
-    self.downloaded = announce_req.downloaded
-    self.leftt = announce_req.left
-    self.seeder = announce_req.seeder
-    self.peer_id = announce_req.peer_id
-    self.last_action_at = announce_req.current_action_at
-    self.client_code = announce_req.client.code
-    self.client_name = announce_req.client.name
-    self.client_version = announce_req.client.version
+  def set_attributes(h)
+    self.torrent        = h[:torrent]
+    self.user           = h[:user]
+    self.ip             = h[:ip]
+    self.port           = h[:port]
+    self.uploaded       = h[:uploaded]
+    self.downloaded     = h[:downloaded]
+    self.leftt          = h[:left]
+    self.seeder         = h[:seeder]
+    self.peer_id        = h[:peer_id]
+    self.last_action_at = h[:current_action_at]
+    self.client_code    = h[:client].code
+    self.client_name    = h[:client].name
+    self.client_version = h[:client].version
   end
 
   def set_connectivity

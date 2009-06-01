@@ -14,7 +14,7 @@ describe WishBounty do
     @wish   = make_wish(@wisher)
   end
 
-  it 'should charge bounty amount from the user who created it on creation' do
+  it 'should charge bounty amount from the bounter on creation' do
     make_wish_bounty(@wish, @bounter, 12345)
     @bounter.reload
 
