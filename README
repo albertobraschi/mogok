@@ -244,10 +244,10 @@ operations, see below).
   Currently is cookie based (the Rails default).
 
 - Testing
-  Two strategies are used to test the application features, Cucumber features for integration tests
-and RSpec for unit testing. The implemented tests main focus are the in the features used by the regular
-users, which means that admistrative features are not extensively covered. To run the tests you must
-create the 'test' database instance (check deployment below).
+  Two strategies are used to test the application functionalities: Cucumber features for integration
+tests and RSpec for unit testing. The implemented tests main focus are the in the features used by
+the regular users, which means that admistrative features are not extensively covered. To run the
+tests you must create the 'test' database instance (check deployment below).
   IMPORTANT: caching is disabled by default during tests as the tests frameworks bypass cache_money
 synchronization, you can enable it by changing the flag in environment.rb.
   > Cucumber Features
