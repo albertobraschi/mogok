@@ -6,7 +6,7 @@ Feature: Torrent Removal
 
   Scenario: A user inactivates its own torrent
     Given I am logged in as "joe-the-user" with role "user"
-    And I have a torrent with name "Joe The Users Torrent" and owned by user "joe-the-user"
+    And I have a torrent with name "Joe The Users Torrent" and created by user "joe-the-user"
     When I go to the torrent details page for torrent "Joe The Users Torrent"
     And I follow "remove"
     And I fill in "reason" with "Whatever Reason"
@@ -18,7 +18,7 @@ Feature: Torrent Removal
   Scenario: A moderator inactivates another users torrent
     Given I am logged in as "joe-the-mod" with role "mod"
     And I have a user with username "joe-the-uploader" and with role "user"
-    And I have a torrent with name "Joe The Uploaders Torrent" and owned by user "joe-the-uploader"
+    And I have a torrent with name "Joe The Uploaders Torrent" and created by user "joe-the-uploader"
     When I go to the torrent details page for torrent "Joe The Uploaders Torrent"
     And I follow "remove"
     And I fill in "reason" with "Whatever Reason"

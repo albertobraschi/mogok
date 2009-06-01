@@ -14,6 +14,7 @@ describe Message do
     m = Message.make_new({:subject => 'message subject', :body => 'Message body.'},
                          @sender,
                          {:to => @receiver.username})
+                       
     m.owner.should == @receiver
     m.receiver.should == @receiver
     m.sender.should == @sender
@@ -22,28 +23,31 @@ describe Message do
   end
 
   it 'should build a new message instance prepared for reply given valid parameters' do
-    old_message = make_message(@sender, @sender, @receiver, 'old subject') # message to be replied
+    old_message = make_message(@sender, @sender, @receiver, 'old subject', Message::INBOX) # message to be replied
 
     m = Message.make_new({:subject => nil, :body => nil},
                          @sender,
                          {:to => @receiver.username, :reply => true, :message_id => old_message.id})
+                       
     m.subject.should == "#{I18n.t('model.message.prepare_to_reply.prefix')} #{old_message.subject}"
     m.body.should include("#{@receiver.username} #{I18n.t('model.message.prepare_to_reply.wrote')}")
+    m.replying_to.should == @receiver.username
   end
 
   it 'should build a new message instance prepared for forward given valid parameters' do
-    old_message = make_message(@sender, @sender, @receiver, 'old subject') # message to be forwarded
+    old_message = make_message(@sender, @sender, @receiver, 'old subject', Message::INBOX) # message to be forwarded
 
     m = Message.make_new({:subject => nil, :body => nil},
                          @sender,
                          {:to => nil, :forward => true, :message_id => old_message.id})
+                       
     m.receiver.should == nil
     m.subject.should == "#{I18n.t('model.message.prepare_to_forward.prefix')} #{old_message.subject}"
     m.body.should include("#{@receiver.username} #{I18n.t('model.message.prepare_to_forward.wrote')}")
   end
 
   it 'should be set as read' do
-    m = make_message(@receiver, @receiver, @sender)
+    m = make_message(@receiver, @receiver, @sender, 'old subject', Message::INBOX)
     m.set_as_read
     m.reload
 
@@ -51,7 +55,7 @@ describe Message do
   end
 
   it 'should be moved to another folder' do
-    m = make_message(@receiver, @receiver, @sender)
+    m = make_message(@receiver, @receiver, @sender, 'old subject', Message::INBOX)
     m.move_to_folder(Message::TRASH, @receiver)
     m.reload
 
@@ -60,9 +64,9 @@ describe Message do
 
   # callbacks concern
 
-    it 'should assign a default subject on delivery when subject empty' do
-      m = make_message(@receiver, @receiver, @sender, false)
-      m.deliver
+    it 'should assign a default subject on creation when subject empty' do
+      m = make_message(@receiver, @receiver, @sender, nil, Message::INBOX, false)
+      m.save
       m.reload
 
       m.subject.should == I18n.t('model.message.before_create.default_subject')
@@ -70,22 +74,22 @@ describe Message do
 
   # delivering concern
 
-    it 'should be delivered' do
-      m = make_message(@receiver, @receiver, @sender, false)
+    it 'should be delivered on folder inbox and in unread status' do
+      m = make_message(@receiver, @receiver, @sender, nil, nil, false)
       m.deliver
 
-      delivered = Message.find_by_receiver_id_and_subject(@receiver, m.subject)
+      delivered = Message.find_by_receiver_id_and_sender_id(@receiver, @sender)
       delivered.should_not be_nil
       delivered.folder.should == Message::INBOX
       delivered.should be_unread
     end
 
     it 'should delete replied message on delivery' do
-      replied_message = make_message(@sender, @sender, @receiver)
+      replied_message = make_message(@sender, @sender, @receiver, 'replied subject', Message::INBOX)
       @sender.delete_on_reply = true
       @sender.save
 
-      m = make_message(@receiver, @receiver, @sender, false)
+      m = make_message(@receiver, @receiver, @sender, nil, nil, false)
       m.deliver(replied_message.id)
 
       Message.find_by_id(replied_message).folder.should == Message::TRASH
@@ -95,7 +99,7 @@ describe Message do
       @sender.save_sent = true
       @sender.save
 
-      m = make_message(@receiver, @receiver, @sender, false)
+      m = make_message(@receiver, @receiver, @sender, nil, nil, false)
       m.deliver
 
       Message.find_by_owner_id_and_receiver_id_and_folder(@sender, @receiver, Message::SENT).should_not be_nil
@@ -105,7 +109,7 @@ describe Message do
       @receiver.has_new_message = false
       @receiver.save
 
-      m = make_message(@receiver, @receiver, @sender, false)
+      m = make_message(@receiver, @receiver, @sender, nil, nil, false)
       m.deliver
       @receiver.reload
 
@@ -126,7 +130,7 @@ describe Message do
   # ownership concern
   
     it 'should ensure ownership' do
-      m = make_message(@receiver, @receiver, @sender, false)
+      m = make_message(@receiver, @receiver, @sender, nil, nil, false)
       m.deliver
 
       lambda {m.ensure_ownership(@user)}.should raise_error(Message::NotOwnerError)

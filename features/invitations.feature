@@ -15,8 +15,8 @@ Feature: Invitations
     And I fill in "email" with "some-friend@mail.com"
     And I press "Send"
     Then I should see "An invitation email was sent to some-friend@mail.com."
-    And an invitation record with email "some-friend@mail.com" and owned by "joe-the-user" should be created
-    And I should see the code for invitation with email "some-friend@mail.com" and owned by "joe-the-user"
+    And an invitation record with email "some-friend@mail.com" and created by "joe-the-user" should be created
+    And I should see the code for invitation with email "some-friend@mail.com" and created by "joe-the-user"
 
   Scenario: User cancels an invitation
     Given I have an invitation with email "some-friend@mail.com" and created by "joe-the-user"

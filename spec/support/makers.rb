@@ -4,11 +4,8 @@
   # users
 
     def make_user(username, role, save = true)
-      if save
-        User.make(:username => username, :role => (role || fetch_role), :style => fetch_style)
-      else
-        User.make_unsaved(:username => username, :role => (role || fetch_role), :style => fetch_style)
-      end
+      params = {:username => username, :role => (role || fetch_role), :style => fetch_style}
+      save ? User.make(params) : User.make_unsaved(params)
     end
 
     def make_system_user
@@ -18,13 +15,8 @@
   # torrents
 
     def make_torrent(user, name = nil, category = nil, save = true)
-      name ||= 'Torrent Name'
-      category ||= fetch_category('music', 'audio')
-      if save
-        Torrent.make(:user => user, :name => name, :category => category)
-      else
-        Torrent.make_unsaved(:user => user, :name => name, :category => category)
-      end
+      params = {:user => user, :name => (name ||= 'Torrent Name'), :category => (category || fetch_category('music', 'audio'))}
+      save ? Torrent.make(params) : Torrent.make_unsaved(params)
     end
 
     def make_comment(torrent, commenter)
@@ -58,11 +50,8 @@
   # messages
 
     def make_message(owner, receiver, sender, subject = nil, folder = nil, save = true)
-      if save
-        Message.make(:owner => owner, :receiver => receiver, :sender => sender, :subject => subject, :folder => folder)
-      else
-        Message.make_unsaved(:owner => owner, :receiver => receiver, :sender => sender, :subject => subject, :folder => folder)
-      end
+      params = {:owner => owner, :receiver => receiver, :sender => sender, :subject => subject, :folder => folder}
+      save ? Message.make(params) : Message.make_unsaved(params)
     end
 
   # login
@@ -84,8 +73,7 @@
   # wishes
 
     def make_wish(wisher, name = nil, category = nil)
-      name ||= 'Wish Name'
-      Wish.make(:user => wisher, :name => name, :category => category || fetch_category('music', 'audio'))
+      Wish.make(:user => wisher, :name => (name || 'Wish Name'), :category => (category || fetch_category('music', 'audio')))
     end
 
     def make_wish_bounty(wish, bounter, amount)

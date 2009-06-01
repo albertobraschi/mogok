@@ -5,17 +5,18 @@ Spec directory structure:
   > support/                - contain files used by the model specs
     > blueprints/           - contain the 'machinist' gem blueprints
     > test_data/            - contain test files used by the tests
-      + invalid.torrent     - a malformed torrent file will result in parse error
+      + invalid.torrent     - a malformed torrent file that will cause a parse error
       + test.txt            - an empty text file
-      + valid.torrent       - a valid and parseable torrent file
+      + valid.torrent       - a valid parseable torrent file
     + fetchers.rb           - methods that retrieve or create records using the 'machinist' gem
     + makers.rb             - methods that create records using the 'machinist' gem
-    + support_variables.rb  - a module with instance variables commonly used by the model specs
+    + finders.rb            - methods that retrieve records
+    + support_variables.rb  - a module with instance variables that can be included in the model specs
   + spec_helper.rb          - the rspec configuration file, also configure the support files
 
 Note that when a spec wants to create a record it calls a method in 'fetchers.rb' or in 'makers.rb',
 which uses the 'machinist' gem infrastructure to create the record. So if you want to use another
-factory framework just change the methods in these file, with no need to change the spec files.
+factory framework just change the methods in these file, with no need to change the spec ones.
 
 Also note that the support files described above are also used by the cucumber features tests,
 located in the directory 'features/'.

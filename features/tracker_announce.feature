@@ -9,7 +9,7 @@ Feature: Tracker Announce
     And user "joe-the-announcer" has uploaded equal to 0
     And user "joe-the-announcer" has downloaded equal to 0
     And I have a user with username "joe-the-uploader" and with role "user"
-    And I have a torrent with name "Joe The Uploaders Torrent" and owned by user "joe-the-uploader"
+    And I have a torrent with name "Joe The Uploaders Torrent" and created by user "joe-the-uploader"
 
   Scenario: A user sends an announce request with event started
     Given I have one seeding peer for torrent "Joe The Uploaders Torrent" by user "joe-the-uploader" at IP "123.4.5.6" and port 33333

@@ -15,22 +15,22 @@ Feature: Forums
     And I fill in "body" with "Topic post body."
     And I press "Create"
     Then I should see "Topic successfully created."
-    And a topic in forum "Whatever Forum" with title "Topic title." and owned by user "joe-the-user" should be created
+    And a topic in forum "Whatever Forum" with title "Topic title." and created by user "joe-the-user" should be created
     And the topic post for topic "Topic title." should have body equal to "Topic post body."
 
   Scenario: A user creates a post in a topic
-    Given I have a topic in forum "Whatever Forum" with title "Joe The Users Topic" and body "Topic post body." and owned by user "joe-the-user"
+    Given I have a topic in forum "Whatever Forum" with title "Joe The Users Topic" and body "Topic post body." and created by user "joe-the-user"
     When I go to the forum page for forum "Whatever Forum"
     And I follow "Joe The Users Topic"
     And I fill in "post_body" with "Post body."
     And I press "Submit"
     Then I should see "Post successfully added."
     And I should see "Post body."
-    And a post in topic "Joe The Users Topic" with body "Post body." and owned by user "joe-the-user" should be created
+    And a post in topic "Joe The Users Topic" with body "Post body." and created by user "joe-the-user" should be created
 
   Scenario: A user reports a topic
     Given I have a user with username "joe-the-poster" and with role "user"
-    And I have a topic in forum "Whatever Forum" with title "Joe The Posters Topic" and body "Topic post body." and owned by user "joe-the-poster"
+    And I have a topic in forum "Whatever Forum" with title "Joe The Posters Topic" and body "Topic post body." and created by user "joe-the-poster"
     When I go to the forum page for forum "Whatever Forum"
     And I follow "Joe The Posters Topic"
     And I follow "report"

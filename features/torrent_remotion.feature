@@ -7,7 +7,7 @@ Feature: Torrent Remotion
   Scenario: A moderator completely removes another users inactive torrent
     Given I am logged in as "joe-the-mod" with role "mod"
     And I have a user with username "joe-the-uploader" and with role "user"
-    And I have a torrent with name "Joe The Uploaders Torrent" and owned by user "joe-the-uploader"
+    And I have a torrent with name "Joe The Uploaders Torrent" and created by user "joe-the-uploader"
     And torrent "Joe The Uploaders Torrent" is inactive
     When I go to the torrent details page for torrent "Joe The Uploaders Torrent"
     And I follow "remove"
@@ -20,7 +20,7 @@ Feature: Torrent Remotion
   Scenario: A moderator completely removes another users active torrent
     Given I am logged in as "joe-the-mod" with role "mod"
     And I have a user with username "joe-the-uploader" and with role "user"
-    And I have a torrent with name "Joe The Uploaders Torrent" and owned by user "joe-the-uploader"
+    And I have a torrent with name "Joe The Uploaders Torrent" and created by user "joe-the-uploader"
     When I go to the torrent details page for torrent "Joe The Uploaders Torrent"
     And I follow "remove"
     And I fill in "reason" with "Whatever Reason"

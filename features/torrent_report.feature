@@ -9,7 +9,7 @@ Feature: Torrent Report
 
   Scenario: A user reports a torrent
     Given I have a user with username "joe-the-uploader" and with role "user"
-    And I have a torrent with name "Joe The Uploaders Torrent" and owned by user "joe-the-uploader"
+    And I have a torrent with name "Joe The Uploaders Torrent" and created by user "joe-the-uploader"
     When I go to the torrent details page for torrent "Joe The Uploaders Torrent"
     And I follow "report"
     And I fill in "reason" with "Whatever Reason"

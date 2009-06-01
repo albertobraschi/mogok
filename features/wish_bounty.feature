@@ -9,7 +9,7 @@ Feature: Wish Bounty
 
   Scenario: A user adds a bounty to a wish
     Given user "joe-the-user" has uploaded equal to 10485760
-    And I have a wish with name "Joe The Users Wish" and owned by user "joe-the-user"
+    And I have a wish with name "Joe The Users Wish" and created by user "joe-the-user"
     When I go to the wish details page for wish "Joe The Users Wish"
     And I follow "bounties"
     And I follow "[ add bounty ]"
@@ -24,7 +24,7 @@ Feature: Wish Bounty
 
   Scenario: A user tries to add a bounty to a wish having insufficient upload credit
     Given user "joe-the-user" has uploaded equal to 0
-    And I have a wish with name "Joe The Users Wish" and owned by user "joe-the-user"
+    And I have a wish with name "Joe The Users Wish" and created by user "joe-the-user"
     When I go to the wish details page for wish "Joe The Users Wish"
     And I follow "bounties"
     And I follow "[ add bounty ]"

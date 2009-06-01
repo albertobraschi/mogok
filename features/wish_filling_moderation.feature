@@ -10,8 +10,8 @@ Feature: Wish Moderation
   Scenario: A wish filling is rejected
     Given I have a user with username "joe-the-wisher" and with role "user"
     And I have a user with username "joe-the-filler" and with role "user"
-    And I have a wish with name "Joe The Wishers Wish" and owned by user "joe-the-wisher"
-    And I have a torrent with name "Joe The Fillers Torrent" and owned by user "joe-the-filler"
+    And I have a wish with name "Joe The Wishers Wish" and created by user "joe-the-wisher"
+    And I have a torrent with name "Joe The Fillers Torrent" and created by user "joe-the-filler"
     And wish "Joe The Wishers Wish" was filled with torrent "Joe The Fillers Torrent"
     When I go to the wish details page for wish "Joe The Wishers Wish"
     And I follow "reject"
@@ -28,8 +28,8 @@ Feature: Wish Moderation
     And I have a user with username "joe-the-filler" and with role "user"
     And user "joe-the-filler" has uploaded equal to 0
     And I have a user with username "joe-the-bounter" and with role "user"
-    And I have a wish with name "Joe The Wishers Wish" and owned by user "joe-the-wisher"
-    And I have a torrent with name "Joe The Fillers Torrent" and owned by user "joe-the-filler"
+    And I have a wish with name "Joe The Wishers Wish" and created by user "joe-the-wisher"
+    And I have a torrent with name "Joe The Fillers Torrent" and created by user "joe-the-filler"
     And I have a wish bounty for wish "Joe The Wishers Wish" with amount of 10485760 created by "joe-the-bounter"
     And wish "Joe The Wishers Wish" was filled with torrent "Joe The Fillers Torrent"    
     When I go to the wish details page for wish "Joe The Wishers Wish"
