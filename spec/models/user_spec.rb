@@ -20,7 +20,7 @@ describe User do
 
       it 'should be editable by itself or an admin if a regular user' do
         @user.should be_editable_by(@user)
-        @user.should_not be_editable_by(@user_two)
+        @user.should_not be_editable_by(@user_two) # 'user' role behaves like any other custom role
         @user.should_not be_editable_by(@mod)
         @user.should be_editable_by(@admin)
         @user.should be_editable_by(@owner)
@@ -36,7 +36,7 @@ describe User do
         @mod.should be_editable_by(@system)
       end
 
-      it 'should be editable by itself, by an owner or by system if an admin' do
+      it 'should be editable by itself or by an owner if an admin' do
         @admin.should be_editable_by(@admin)
         @admin.should_not be_editable_by(@user)
         @admin.should_not be_editable_by(@mod)

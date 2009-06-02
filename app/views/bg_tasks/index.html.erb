@@ -6,9 +6,11 @@
 
   <%= render :partial => 'misc/flash', :locals => {:flash => flash} %>
 
-  <div class="links">
-    <%= link_to '[ reload ]', {:action => 'reload'}, {:method => :post, :class => 'admin', :confirm => 'Warning: current settings will be lost.'} %>
-  </div>
+  <% if current_user.owner? %>
+    <div class="links">
+      <%= link_to '[ reload ]', {:action => 'reload'}, {:method => :post, :class => 'owner', :confirm => 'Warning: current settings will be lost.'} %>
+    </div>
+  <% end %>
 
   <table class="browse">
     <tr>
@@ -73,6 +75,12 @@
     
   <h2>cron</h2>
 
+  <% if current_user.owner? && APP_CONFIG[:adm][:crontab_update_enabled] %>
+    <div class="links">
+      <%= link_to '[ update ]', {:action => 'update_crontab'}, {:method => :post, :class => 'owner'} %>
+    </div>
+  <% end %>
+
   <table class="browse">
     <tr>
       <td class="header">
@@ -82,7 +90,7 @@
     <tr>
       <% if @cron_jobs %>
         <td class="left">
-          <%= HtmlHelper.to_html @cron_jobs %>
+          <%= HtmlHelper.to_html(@cron_jobs).gsub('<br><br><br>', '<br>').gsub(/\A(<br>)+/, '') %>
         </td>
       <% else %>
         <td class="center">
@@ -91,7 +99,6 @@
       <% end %>
     </tr>
   </table>
-
 
   <br>
 

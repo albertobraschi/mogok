@@ -3,8 +3,9 @@ This project aims to provide the basic functionalities required by a private bit
 tracker and community. It is built with the Ruby language and the Ruby on Rails framework.
 
 - Screenshots
-  - http://bayimg.com/image/aaphgaabe.jpg
-  - http://bayimg.com/image/aaphhaabe.jpg
+  - http://bayimg.com/image/oaamaaacg.jpg
+  - http://bayimg.com/image/oaamcaacg.jpg
+  - http://bayimg.com/image/oaamhaacg.jpg
 
 - Demo Video: http://www.youtube.com/watch?v=ep_dUaTb1GU (watch in HD)
 
@@ -153,53 +154,54 @@ implemented if necessary. Currently the application won't send an activation ema
 
 - Background Tasks
   These are tasks that run periodically to keep the site tidy. They clean stale data, update things, etc.
-  This feature has the following components:
-    > BgTasks module: a dispatcher that invoke the tasks and methods to load the tasks (lib/bg_tasks/)
-    > BgTask model: contain all the business logic of the tasks (app/models/ and app/models/bg_task/)
-    > BgTaskParam model: holds the task params in yaml format
-    > scripts: invoke the dispatcher, see below how to run them (scripts/)
-    > configuration file: define the tasks and their behavior (onfig/bg_tasks.yml)
+  - feature components:
+    + BgTasks module: a dispatcher to invoke tasks and utility methods to load the tasks (lib/bg_tasks/)
+    + BgTask model: contain all the business logic of the tasks (app/models/ and app/models/bg_task/)
+    + BgTaskParam model: holds the task params in yaml format
+    + configuration file: define the tasks and their behavior (config/bg_tasks.yml)
   - to add a new task create an entry in bg_tasks.yml, add a new bg_tasks concern file (just follow the
     pattern in files bg_task.rb and in the concern files in app/models/bg_task/) and reload the tasks
   - tasks also can be executed individually in the tasks page (that won't alter the schedule)
   - there is a log page where the tasks report their execution status
-  - the tasks' default interval of execution in the file bg_tasks.yml is optional
   - if next_exec_at is empty the task won't be executed, just scheduled
   - if interval is empty the task will be ignored
-  - tasks are supposed to run as a cron job, but there is a mock for testing
-  > Implemented tasks (see app/models/bg_tasks/)
-    - cleanup
-      delete or inactivate records in various tables
-    - cleanup_peers
-      delete inactive peers based in a inactivity limit period
-    - refresh_stats
-      gather stats about users, torrents, peers and so on
-    - promote_demote
-      assign roles to users based on their ratio and uploaded data amount
-    - ratio_watch
+  - Implemented tasks (see app/models/bg_tasks/)
+    + cleanup
+      delete or inactivate records in various tables.
+    + cleanup_peers
+      delete inactive peers based in a inactivity limit period.
+    + refresh_stats
+      gather stats about users, torrents, peers and so on.
+    + promote_demote
+      assign roles to users based on their ratio and uploaded data amount.
+    + ratio_watch
       require users to maintain a minimum ratio based on how much data they've downloaded. when
       users violate the ratio requirements their roles are set to 'defective' and a date is defined as a
       limit for them to improve their ratio. after this date the system will check if the defectives'
       ratio is ok and set their roles back to 'user' or invalidate/remove them.
-  > Running the mock
-    - also works in Windows
-    - will run in 'development' mode by default
-    - run with the commands:
-      mogok$ ruby1.8 script/bg_tasks_mock.rb
-      mogok$ ruby1.8 script/bg_tasks_mock.rb production
-  > Running as a cron job
-    - edit your cron jobs using the command
-      $ crontab -e
-    - use the cron job below (with your app path) to run the bg_tasks every hour at minute 5
-      5 * * * * RAILS_ENV=production /home/user/apps/mogok/script/runner /home/user/apps/mogok/script/bg_tasks.rb
-    - or replace the '5' for '*' to run every minute if you are testing
-    - IMPORTANT: the file APP_ROOT/script/runner must be an executable (chmod +x runner)
-    - in the tasks page you can see the current cron jobs in your system (note that in some systems
-      cron jobs are separated by user)
-    - other useful cron commands
-      $ crontab -l (list cron jobs)
-      $ crontab -r (remove all)
-    - you can check if the tasks are running properly in the tasks logs page
+  - tasks are supposed to run as a cron job, but there is a mock for testing
+    + running the mock
+      - also works in Windows
+      - will run in 'development' mode by default
+      - run with the commands:
+        mogok$ ruby1.8 script/bg_tasks_mock.rb
+        mogok$ ruby1.8 script/bg_tasks_mock.rb production
+    + running as a cron job
+      - the app has a link to include cron jobs in your system automatically using the 'whenever' gem
+      - to include the cron jobs, configure the scheduling in the file 'config/schedule.rb' (it is already
+        configured to run every hour) and click 'update (cron)' in the bg_tasks page, you should see the new
+        cron jobs in the cron jobs table (note that if the app is deployed in more than one machine you'll
+        have set the cron tabs manually in the specific one).
+      - IMPORTANT: the file APP_ROOT/script/runner must be an executable (chmod +x runner)
+      - to edit cron jobs directly in your system use the commands below:
+        - using the 'whenever' gem:
+          mogok$ whenever --update-crontab Mogok (same command called by the application as mentioned above)
+        - using the crontab tool:
+          $ crontab -l (list cron jobs)
+          $ crontab -e (edit cron jobs)
+          $ crontab -r (remove all)
+          - cron job example using the 'bg_tasks.rb' script (runs every hour at minute 5):
+            5 * * * * RAILS_ENV=production /home/user/apps/mogok/script/runner /home/user/apps/mogok/script/bg_tasks.rb
 
 
 # SOME TECHNICAL THINGS
@@ -250,7 +252,7 @@ the regular users, which means that admistrative features are not extensively co
 tests you must create the 'test' database instance (check deployment below).
   IMPORTANT: caching is disabled by default during tests as the tests frameworks bypass cache_money
 synchronization, you can enable it by changing the flag in environment.rb.
-  > Cucumber Features
+  + Cucumber Features
     Are in the directory 'features'. Note that those tests rely on messages in the 'en.yml' file
     and on the content of the default english views, so changing them may break some of the tests.
     IMPORTANT: tests involving torrent files may be problematic on Windows (files may get corrupted).
@@ -258,7 +260,7 @@ synchronization, you can enable it by changing the flag in environment.rb.
       mogok$ rake features (run all)
       mogok$ cucumber features/signup.feature (run only the signup feature)
       mogok$ cucumber features --name "Some scenario" (run only scenarios matching the given name)
-  > RSpec Tests
+  + RSpec Tests
     Are in the directory 'spec' and focus on the business logic implemented in the models
     - running
       mogok$ rake spec (run all)
@@ -269,30 +271,30 @@ synchronization, you can enable it by changing the flag in environment.rb.
 and test modes, but you can enable it changing the flags in the file config/environment.rb in order
 to ensure that the cache is interacting well with the application or to get a better logging of
 the cache activities when on development mode.
-  Currently the application uses three caching strategies:
-  > cache_money (http://github.com/nkallen/cache-money/tree/master)
-    - very easy to use, it caches records every time a query for a specific record, like User.find(1)
-      or user.role, is made
-    - the way it is being used, list queries, like User.find(:all) or user.messages won't be cached
-    - note that cache_money is very recent and there are some reports of problems when using it with Passenger
-    - to quit using it just remove the 'index' calls from the models (search for 'cache_money') and
-      delete its initialization code in the file 'config/initializers/caching.rb'
-  > custom cache
-    - caches lists of records that are frequently used, mainly domain values like categories and formats
-    - the implementation is inside some of the models and use the methods in 'lib/caching_methods.rb'
-    - are reset by sweepers (app/sweepers)
-  > fragment caching
-    - used to cache portions of pages, currently the torrent browse page (the most performance critical
-      page in the application) and the application menu.
-    - the torrent browse page will be cached only when browsed with the default options, which means no
-      search parameters and ordered by 'created_at DESC'. if a user searches for something or order
-      the table by another column the application will retrieve the information from the database and
-      won't cache it. also won't be cached for admins and mods as they can see things that users can't.
-    - the torrent page cache will be reset (expired) if a torrent is uploaded/removed/inactivated or
-      by expiration of the period configured in the app_config file (expiration time should not be too
-      long because informations like seeders/leechers are updated all the time)
-    - the fragment expiration time is made possible by the mogok_timed_fragment_cache plugin which is
-      a rewriting of the timed_fragment_cache plugin
+  - currently the application uses three caching strategies:
+    + cache_money (http://github.com/nkallen/cache-money/tree/master)
+      - very easy to use, it caches records every time a query for a specific record, like User.find(1)
+        or user.role, is made
+      - the way it is being used, list queries, like User.find(:all) or user.messages won't be cached
+      - note that cache_money is very recent and there are some reports of problems when using it with Passenger
+      - to quit using it just remove the 'index' calls from the models (search for 'cache_money') and
+        delete its initialization code in the file 'config/initializers/caching.rb'
+    + custom cache
+      - caches lists of records that are frequently used, mainly domain values like categories and formats
+      - the implementation is inside some of the models and use the methods in 'lib/caching_methods.rb'
+      - are reset by sweepers (app/sweepers)
+    + fragment caching
+      - used to cache portions of pages, currently the torrent browse page (the most performance critical
+        page in the application) and the application menu.
+      - the torrent browse page will be cached only when browsed with the default options, which means no
+        search parameters and ordered by 'created_at DESC'. if a user searches for something or order
+        the table by another column the application will retrieve the information from the database and
+        won't cache it. also won't be cached for admins and mods as they can see things that users can't.
+      - the torrent page cache will be reset (expired) if a torrent is uploaded/removed/inactivated or
+        by expiration of the period configured in the app_config file (expiration time should not be too
+        long because informations like seeders/leechers are updated all the time)
+      - the fragment expiration time is made possible by the mogok_timed_fragment_cache plugin which is
+        a rewriting of the timed_fragment_cache plugin
 
 - Tracker request
   A tracker request is treated just like any regular Rails request. Under very heavy load this could be
@@ -323,6 +325,7 @@ configurations when necessary.
   - config/bg_tasks.yml
   - config/database.yml
   - config/memcached.yml
+  - config/schedule.rb
   - config/initializers/action_mailer.rb
   - config/initializers/session_store.rb (change the secret)
   - config/initializers/site_keys.rb (holds the restful_authentication key, change it)
@@ -391,6 +394,9 @@ to 'lib/mysql.rb' if the application can't find your mysql gem.
       sudo gem1.8 install memcache-client
       sudo gem1.8 install nkallen-cache-money
       sudo gem1.8 install SystemTimer
+
+    > gems required for automatic crontab update (ignore if you are setting it manually)
+      sudo gem1.8 install javan-whenever
 
     > mongrel (useful to run in development mode, run using 'ruby script/server' or 'script/server')
       sudo gem1.8 install mongrel

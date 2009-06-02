@@ -83,10 +83,13 @@ desc_by_default:
 
 adm:
   # enable the passenger restart link also in production mode (env page)
-  passenger_restart_production: false
+  passenger_restart_production: true
 
   # display sensitive environment information in production mode (env page)
-  display_all_env_info_production: false
+  display_all_env_info_production: true
+
+  # display 'whenever' gem crontab update link in the bg_tasks page
+  crontab_update_enabled:  true
 
 
 # TRACKER

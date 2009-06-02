@@ -3,6 +3,7 @@ class BgTasksController < ApplicationController
   include BgTasks::Utils
   before_filter :logged_in_required
   before_filter :admin_required
+  before_filter :owner_required, :only => [:reload, :update_crontab]
   
   def index
     logger.debug ':-) bg_tasks_controller.index'
@@ -49,6 +50,15 @@ class BgTasksController < ApplicationController
     logger.debug ':-) bg_tasks_controller.reload'
     if request.post?
       reload_tasks
+    end
+    redirect_to :action => 'index'
+  end
+
+  def update_crontab
+    logger.debug ':-) adm_controller.update_crontab'
+    access_denied unless APP_CONFIG[:adm][:crontab_update_enabled]
+    if request.post?
+      %x{whenever --update-crontab #{APP_CONFIG[:app_name]}}
     end
     redirect_to :action => 'index'
   end

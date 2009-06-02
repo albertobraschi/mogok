@@ -28,7 +28,7 @@
   end
 
   Given /^user "(.*)" has a ticket with name "(.*)"$/ do |username, ticket|
-    find_user(username).add_ticket ticket
+    find_user(username).add_ticket! ticket
   end
 
 # then

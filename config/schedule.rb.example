@@ -1,0 +1,4 @@
+
+every 1.hour, :at => 5 do
+  runner 'BgTasks::Dispatcher.exec'
+end
