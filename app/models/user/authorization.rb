@@ -29,7 +29,15 @@ class User
 
   def has_ticket?(ticket)
     self.role.has_ticket?(ticket) || (self.tickets && self.tickets.split(' ').include?(ticket.to_s))
-  end  
+  end
+
+  def add_ticket!(ticket)
+    update_attribute :tickets, self.tickets.blank? ? ticket.to_s : "#{self.tickets} #{ticket}"
+  end
+
+  def remove_ticket!(ticket)
+    update_attribute :tickets, self.tickets.gsub(ticket.to_s, '').split
+  end
 end
 
 

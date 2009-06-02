@@ -143,9 +143,28 @@ describe User do
       @user.has_ticket?(:ticket_three).should be_true
     end
 
+    it 'should add a ticket' do
+      @user.add_ticket!(:ticket_one)
+      @user.reload
+
+      @user.has_ticket?(:ticket_one).should be_true
+    end
+
+    it 'should remove a ticket' do
+      @user.add_ticket!(:ticket_one)
+      @user.add_ticket!(:ticket_two)
+      @user.reload
+
+      @user.remove_ticket!(:ticket_one)
+      @user.reload
+
+      @user.has_ticket?(:ticket_one).should be_false
+      @user.has_ticket?(:ticket_two).should be_true
+    end
+
   # password recovering concern
 
-    it 'should change its password given the valid parameters' do
+    it 'should change the password given the valid parameters' do
       @user.change_password(nil, nil).should be_false
       @user.change_password('', '').should be_false
       @user.change_password('new_pass', 'nonono').should be_false

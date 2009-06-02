@@ -2,10 +2,10 @@ Spec directory structure:
 
 > spec  
   > models                  > contain the models specs
-  > support                 > contain files used by the model specs
+  > support                 > contain files used by the test classes
     > blueprints              > contain the 'machinist' gem blueprints (factories)
-    > test_data               > contain test files used by the tests
-      + bg_tasks.yml            + background task configuration
+    > test_data               > contain test files used by the test classes
+      + bg_tasks.yml            + background tasks configuration
       + invalid.torrent         + a malformed torrent file that will cause a parse error
       + test.txt                + an empty text file
       + valid.torrent           + a valid parseable torrent file

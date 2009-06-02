@@ -28,13 +28,7 @@
   end
 
   Given /^user "(.*)" has a ticket with name "(.*)"$/ do |username, ticket|
-    u = find_user username
-    if u.tickets
-      u.tickets += " #{ticket}"
-    else
-      u.tickets = ticket
-    end
-    u.save
+    find_user(username).add_ticket ticket
   end
 
 # then
