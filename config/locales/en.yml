@@ -209,11 +209,11 @@ en:
       log_edition:
         log: Torrent "{{name}}" was edited by {{by}} ({{reason}}).
       log_inactivation:
-        log: Torrent "{{name}}" inactivated by {{by}}
+        log: Torrent "{{name}}" inactivated by {{by}}.
       log_activation:
-        log: Torrent "{{name}}" was activated by {{by}}
+        log: Torrent "{{name}}" was activated by {{by}}.
       log_destruction:
-        log: Torrent "{{name}}" was removed by {{by}}
+        log: Torrent "{{name}}" was removed by {{by}}.
       notify_inactivation:
         subject: torrent inactivated
         body: Your torrent "{{name}}" was inactivated by {{by}} ({{reason}}).

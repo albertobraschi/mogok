@@ -121,7 +121,7 @@ class User < ActiveRecord::Base
             return false
           end
         end
-        if self.role_id != params[:role_id].to_i
+        if !system? && self.role_id != params[:role_id].to_i
           self.role_id = params[:role_id]
           unless role_update_allowed?(params, updater)
             errors.add :role_id, 'forbidden assignment' # happens of with html form tampering, no need to i18n

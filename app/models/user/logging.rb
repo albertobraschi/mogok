@@ -10,6 +10,6 @@ class User
     end
 
     def log_destruction(destroyer)
-      add_log('log_destruction.log', :name => self.name, :by => destroyer.username)
+      add_log('log_destruction.log', :username => self.username, :by => destroyer.username)
     end
 end

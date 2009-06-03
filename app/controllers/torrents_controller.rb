@@ -137,10 +137,10 @@ class TorrentsController < ApplicationController
   end
 
   def upload
-    logger.debug ':-) torrents_controller.upload'
-    access_denied if !APP_CONFIG[:torrents][:upload_enabled] && !current_user.admin?
+    logger.debug ':-) torrents_controller.upload'    
     @torrent = Torrent.new params[:torrent]
     if request.post?
+      access_denied if !APP_CONFIG[:torrents][:upload_enabled] && !current_user.admin?
       begin
         file_data = get_file_data params[:torrent_file]
         @torrent.user = current_user

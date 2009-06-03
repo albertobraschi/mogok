@@ -256,7 +256,7 @@ div.spinner_left {
   padding: 0px 0px 0px 6px;
 }
 
-div.spinner_right {  
+div.spinner_right {
   float: right;
   padding: 0px 6px 0px 0px;
 }
@@ -1062,7 +1062,7 @@ div.forums div.forum_reply_box {
   margin-right: auto;
   background-color: #DCD5C5;
   border: 1px solid #3B3B3B;
-  padding: 2px 6px 2px 2px;    
+  padding: 2px 6px 2px 2px;
 }
 div.forums div.forum_reply_box table td {
   background-color: #DCD5C5;
@@ -1230,7 +1230,7 @@ a.user_user:hover {
 a.user_defective {
   color: #000000;
 }
-a.user_user:hover {
+a.user_defective:hover {
   color: #717171;
 }
 
@@ -1239,7 +1239,7 @@ a.user_power_user {
   font-weight: bold;
 }
 a.user_power_user:hover {
-  color: #8C008A;
+  color: #DA00D7;
 }
 
 a.user_uploader {
@@ -1255,5 +1255,5 @@ a.user_vip {
   font-weight: bold;
 }
 a.user_vip:hover {
-  color: #723CF7;
+  color: #A796D2;
 }

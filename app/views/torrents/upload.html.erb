@@ -7,9 +7,15 @@
   <div class="inner">
     <h2>Upload</h2>
 
-    <div class="center grey bold">
-      The announce URL in your torrent, if present, will be replaced by your personal one.
-    </div>
+    <% if APP_CONFIG[:torrents][:upload_enabled] || current_user.admin? %>
+      <div class="center grey bold">
+        The announce URL in your torrent, if present, will be replaced by your personal one.
+      </div>
+    <% else %>
+      <div class="center grey bold">
+        Uploading new torrents is current unavailable.
+      </div>
+    <% end %>
 
     <br>
       
@@ -91,7 +97,7 @@
         </tr>
         <tr>
           <td colspan="2" class="center">
-            <%= submit_tag 'Upload', :class => 'submit' %>
+            <%= submit_tag 'Upload', :class => 'submit', :disabled => !APP_CONFIG[:torrents][:upload_enabled] && !current_user.admin? %>
           </td>
         </tr>
       </table>

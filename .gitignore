@@ -26,5 +26,6 @@ vendor/plugins/*
 log/*.log
 public/stylesheets/*
 !public/stylesheets/default.css
-
+Capfile
+config/deploy.rb
  

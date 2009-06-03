@@ -94,7 +94,7 @@ class User
     User.find(:all, :conditions => conditions).each do |u|
       u.role = higher_role
       u.save
-      Log.create "User #{u.username} was promoted to #{lower_role.description}."
+      Log.create "User #{u.username} was promoted to #{higher_role.description}."
       logger.debug ":-) user #{u.username} promoted from #{lower_role.name} to #{higher_role.name}"
     end
 
