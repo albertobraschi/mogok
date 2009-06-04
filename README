@@ -95,6 +95,11 @@ users with lower ranking.
 upload credit, check the background tasks item below for more on that. Cheat detection scripts
 are not implemented though.
 
+- Bonus
+  You can specify bonus rules for users who upload data in certain conditions. Currently the
+application will give a 50% bonus for the data uploaded when seeding a torrent, check app_config.yml
+and lib/bittorrent/tracker.rb.
+
 - Mail
   The application can send emails for events like password recovery and invitation. It comes
 with a test configuration that uses a regular Gmail account (just add a valid username and password

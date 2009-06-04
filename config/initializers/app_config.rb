@@ -1,9 +1,16 @@
 require 'yaml'
 
+# extension to allow recursive key symbolization
+class Hash
+  def recursive_symbolize_keys!
+    symbolize_keys!
+    values.select {|v| v.is_a?(Hash) }.each {|h| h.recursive_symbolize_keys! }
+  end
+end
+
 # application config (used throughout the app)
 APP_CONFIG = open(File.join(RAILS_ROOT, 'config/app_config.yml')) {|f| YAML.load(f) }
-APP_CONFIG.keys.each {|k| APP_CONFIG[k].symbolize_keys! if APP_CONFIG[k].is_a? Hash } # symbolize the inner hashs
-APP_CONFIG.symbolize_keys!
+APP_CONFIG.recursive_symbolize_keys!
 APP_CONFIG.freeze if Rails.env.production?
 
 # default locale

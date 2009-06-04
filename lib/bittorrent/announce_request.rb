@@ -34,6 +34,10 @@ module Bittorrent
       self.numwant = n if self.numwant > n || self.numwant == 0
     end
 
+    def seeder?
+      self.seeder
+    end
+
     def set_offsets(previous_uploaded, previous_downloaded)
       if self.uploaded > previous_uploaded
         self.up_offset = self.uploaded - previous_uploaded # amount uploaded since last announce

@@ -46,7 +46,7 @@ module Bittorrent
         end
       end
 
-      def exec_announce(req, resp, log_announce = true)
+      def exec_announce(req, resp, config = {})
         logger.debug ":-) tracker.exec_announce: event = [#{req.event}]"
         req.current_action_at = Time.now
 
@@ -56,8 +56,8 @@ module Bittorrent
           Peer.create(req.attributes) unless req.stopped?
         else
           req.last_action_at = peer.last_action_at
-          req.set_offsets(peer.uploaded, peer.downloaded)
-          req.user.increment_counters(req.up_offset, req.down_offset)          
+          req.set_offsets(peer.uploaded, peer.downloaded)          
+          increment_user_counters(req, config[:bonus_rules])
           unless req.stopped?
             req.torrent.add_snatch(req.user) if req.completed?            
             peer.refresh_announce(req.attributes)
@@ -65,11 +65,18 @@ module Bittorrent
             peer.destroy
           end          
         end
-        AnnounceLog.create(req.attributes) if log_announce
+        AnnounceLog.create(req.attributes) if config[:log_announces]
         prepare_resp(req, resp) unless req.stopped?
       end
 
     private
+
+      def increment_user_counters(req, bonus_rules)
+        if req.up_offset > 0 && req.seeder? && bonus_rules[:seeding]
+          req.up_offset = req.up_offset + (req.up_offset * bonus_rules[:seeding]).to_i # bonus
+        end
+        req.user.increment_counters(req.up_offset, req.down_offset)
+      end
 
       def prepare_resp(req, resp)
         resp.complete   = req.torrent.seeders_count

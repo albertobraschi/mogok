@@ -11,10 +11,6 @@
         <li><%= link_to 'domain', {:controller => 'adm', :action => 'switch_domain_menu' } %></li>
         <li>|</li>
       <% end %>
-      <% unless APP_CONFIG[:torrents][:upload_enabled] %>
-        <li><%= link_to 'upload', {:controller => 'torrents', :action => 'upload'} %></li>
-        <li>|</li>
-      <% end %>
       <li><%= link_to 'announces', {:controller => 'announce_logs' } %></li>
       <li>|</li>
       <li><%= link_to 'peers', {:controller => 'peers' } %></li>

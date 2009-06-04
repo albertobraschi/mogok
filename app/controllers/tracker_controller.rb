@@ -43,7 +43,7 @@ class TrackerController < ApplicationController
 
       ensure_announce_req_valid req
 
-      exec_announce req, resp, APP_CONFIG[:tracker][:log_announces]
+      exec_announce req, resp, APP_CONFIG[:tracker]
 
       prepare_announce_resp resp
     rescue TrackerFailure => e
@@ -56,6 +56,10 @@ class TrackerController < ApplicationController
   end
 
   private
+
+    def failure(error_key)
+      raise TrackerFailure.new(error_key)
+    end
 
     def prepare_announce_req(req)
       set_torrent req
@@ -106,10 +110,6 @@ class TrackerController < ApplicationController
         logger.debug ':-o user not found or inactive'
       end
       logger.debug ':-) valid announce passkey'
-    end
-
-    def failure(error_key)
-      raise TrackerFailure.new(error_key)
     end
 end
 

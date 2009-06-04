@@ -112,7 +112,9 @@ tracker:
   # if announces from the bittorrent clients are to be logged
   log_announces: true
 
-
+  # bonus are given for uploading data in certain conditions, like seeding
+  bonus_rules:
+    seeding: 0.5
 
 
 
