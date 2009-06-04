@@ -24,14 +24,14 @@ module BgTasks
         config.symbolize_keys!
 
         unless config.blank?
-          config.each_pair do |task_name, task_properties|
+          config.each do |task_name, task_properties|
             task_properties.symbolize_keys!
             
             t = BgTask.new
             t.name = task_name.to_s
             t.interval_minutes = task_properties[:interval_minutes]            
             unless task_properties[:params].blank?
-              task_properties[:params].each_pair do |param_name, param_value|
+              task_properties[:params].each do |param_name, param_value|
                 t.add_param param_name, param_value
               end
             end

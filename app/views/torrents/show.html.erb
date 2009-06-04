@@ -181,7 +181,7 @@
         <td>
           <div class="float_left">
             <ul class="compact">
-              <li><%= "#{@torrent.snatches_count} time#{'s' if @torrent.snatches_count != 1}" %></li>
+              <li><%= pluralize @torrent.snatches_count, 'time' %></li>
               <% if @torrent.snatches_count > 0 %>
                 <li>
                   <%=  link_to_remote '[ view | hide ]',

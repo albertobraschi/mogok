@@ -24,14 +24,14 @@ describe BgTask do
   it 'should be created given a valid yml configuration entry' do
     config = open(File.join(TEST_DATA_DIR, 'bg_tasks.yml')) {|f| YAML.load(f) }
     
-    config.each_pair do |task_name, task_properties|
+    config.each do |task_name, task_properties|
       task_properties.symbolize_keys!
 
       t = BgTask.new
       t.name = task_name
       t.interval_minutes = task_properties[:interval_minutes]
 
-      task_properties[:params].each_pair do |param_name, param_value|
+      task_properties[:params].each do |param_name, param_value|
         t.add_param param_name, param_value
       end
       t.save

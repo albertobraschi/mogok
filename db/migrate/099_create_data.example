@@ -96,6 +96,17 @@ class CreateData < ActiveRecord::Migration
         c = Category.create(:name => 'Theory', :type_id => t.id, :position => 7, :image => 'categories/theory.png')
         Tag.create(:name => 'popular', :category_id => c.id)
         Tag.create(:name => 'classical', :category_id => c.id)
+    # type[software]
+      t = Type.create(:name => 'software')
+      # formats
+        Format.create(:name => 'EXE', :type_id => t.id)
+        Format.create(:name => 'ZIP', :type_id => t.id)
+        Format.create(:name => 'RAR', :type_id => t.id)
+      # category[Software]
+        c = Category.create(:name => 'Software', :type_id => t.id, :position => 6, :image => 'categories/software.png')
+        Tag.create(:name => 'windows', :category_id => c.id)
+        Tag.create(:name => 'linux', :category_id => c.id)
+        Tag.create(:name => 'mac', :category_id => c.id)
   end
 
   def self.create_bittorrent_clients

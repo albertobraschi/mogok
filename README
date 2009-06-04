@@ -54,6 +54,11 @@ when a category is selected).
       category[Theory]
         tags[popular, classical]
 
+    type[software]
+      formats[EXE, ZIP, RAR]
+      category[Software]
+        tags[windows, linux, mac]
+
   # A community with more generic content:
 
     type[music]

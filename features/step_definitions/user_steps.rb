@@ -37,6 +37,10 @@
     find_user(username).should_not be_nil
   end
 
+  Then /^user "(.*)" should be deleted$/ do |username|
+    find_user(username).should be_nil
+  end
+
   Then /^user "(.*)" should have uploaded equal to (\d+)$/ do |username, uploaded|
     find_user(username).uploaded.should == uploaded.to_i
   end
