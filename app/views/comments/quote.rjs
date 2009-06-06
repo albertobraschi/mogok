@@ -1,4 +1,4 @@
 
-page << "$('body').value = $('body').value + \"[quote=#{params[:username]}]#{HtmlHelper.escape_javascript @comment.body}[/quote]\";"
-page << "$('body').focus();"
+page << "$('comment_body').value = $('comment_body').value + \"[quote=#{params[:username]}]#{escape_javascript @comment.body}[/quote]\";"
+page << "$('comment_body').focus();"
 

@@ -53,12 +53,12 @@ class TorrentsController < ApplicationController
           if @torrent.edit(params[:torrent], current_user, params[:reason])
             logger.debug ':-) torrent edited'            
             flash[:notice] = t('success')
-            redirect_to :action => 'show', :id => @torrent
+            redirect_to_torrent
           else
             logger.debug ':-o torrent not edited'
           end
         else
-          redirect_to :action => 'show', :id => @torrent
+          redirect_to_torrent
         end
       end
       set_collections
@@ -81,7 +81,7 @@ class TorrentsController < ApplicationController
             @torrent.inactivate(current_user, params[:reason])
             if current_user.admin_mod?
               flash[:notice] = t('inactivated')
-              redirect_to :action => 'show', :id => @torrent
+              redirect_to_torrent
             else
               @torrent.report current_user, t('inactivated_report'), torrents_path(:action => 'show', :id => @torrent)
               @args = {:title => t('inactivated_title'), :message => t('inactivated_message')}
@@ -89,7 +89,7 @@ class TorrentsController < ApplicationController
             end
           end
         else
-          redirect_to :action => 'show', :id => @torrent
+          redirect_to_torrent
         end
       end
     end
@@ -100,7 +100,7 @@ class TorrentsController < ApplicationController
     t = Torrent.find params[:id]
     t.activate current_user
     flash[:notice] = t('success')
-    redirect_to :action => 'show', :id => t
+    redirect_to_torrent t
   end
 
   def report
@@ -112,12 +112,12 @@ class TorrentsController < ApplicationController
           unless params[:reason].blank?
             @torrent.report current_user, params[:reason], torrents_path(:action => 'show', :id => @torrent)
             flash[:notice] = t('success')
-            redirect_to :action => 'show', :id => @torrent
+            redirect_to_torrent
           else
             flash.now[:error] = t('reason_required')
           end
         else
-          redirect_to :action => 'show', :id => @torrent
+          redirect_to_torrent
         end
       end
     end
@@ -133,7 +133,7 @@ class TorrentsController < ApplicationController
     logger.debug ':-) torrents_controller.switch_lock_comments'
     t = Torrent.find params[:id]
     t.toggle! :comments_locked
-    redirect_to :action => 'show', :id => t
+    redirect_to_torrent t
   end
 
   def upload
@@ -146,7 +146,7 @@ class TorrentsController < ApplicationController
         @torrent.user = current_user
         if @torrent.parse_and_save(file_data, true)
           flash[:alert] = t('success')
-          redirect_to :action => 'show', :id => @torrent
+          redirect_to_torrent
         end
       rescue TorrentFileError => e
         logger.debug ":-o torrent file error: #{e.message}"
@@ -180,9 +180,35 @@ class TorrentsController < ApplicationController
     logger.debug ':-) torrents_controller.show_snatches'
     t = Torrent.find_by_id params[:id]
     @snatches = t.paginate_snatches params, :per_page => APP_CONFIG[:page_size][:torrent_snatches] if t
-  end  
+  end
+
+  def reseed_request
+    logger.debug ':-) torrents_controller.reseed_request'
+    @torrent = Torrent.find_by_id params[:id]
+    access_denied unless @torrent.eligible_for_reseed_request?
+    if torrent_available?
+      if request.post?
+        unless cancelled?
+          cost = APP_CONFIG[:torrents][:reseed_request_cost_mb].megabytes
+          if current_user.uploaded >= cost
+            @torrent.request_reseed current_user, cost, APP_CONFIG[:torrents][:reseed_request_notifications]
+            flash[:notice] = t('success')
+            redirect_to_torrent
+          else
+            flash.now[:error] = t('insufficient_upload_credit')
+          end
+        else
+          redirect_to_torrent
+        end        
+      end
+    end
+  end
     
   private
+
+    def redirect_to_torrent(t = nil)
+      redirect_to :action => 'show', :id => t || @torrent
+    end
 
     def torrent_available?(t = nil)
       t ||= @torrent

@@ -39,7 +39,7 @@ class Torrent
              :per_page => args[:per_page],
              :include => :tags
   end
-
+  
   private
 
     def self.search_conditions(params, searcher)

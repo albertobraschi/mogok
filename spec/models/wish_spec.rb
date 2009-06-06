@@ -82,6 +82,7 @@ describe Wish do
   # bounties
 
     it 'should add a bounty to itself given the valid parameters' do
+      @bounter.credit! 12345
       @wish.add_bounty(12345, @bounter)
       @wish.reload
 
@@ -120,8 +121,10 @@ describe Wish do
     it 'should have its filling approved, credit its bounty to filler and notify users' do
       filler_upload_credit = @torrent.user.uploaded
 
+      @bounter.credit!(12345)
       @wish.add_bounty(12345, @bounter)
       @wish.reload
+      @bounter_two.credit!(54321)
       @wish.add_bounty(54321, @bounter_two)
       @wish.reload
 
@@ -141,31 +144,32 @@ describe Wish do
       @torrent.user.uploaded.should == filler_upload_credit + @wish.total_bounty
 
       # filler notified?
-      m = Message.find_by_receiver_id_and_subject @torrent.user, I18n.t('model.wish.notify_approval.filler_subject')
+      m = Message.find_by_receiver_id_and_subject @torrent.user, 'request filling approved'
       m.should_not be_nil
-      m.body.should == I18n.t('model.wish.notify_approval.filler_body_with_amount', :name => @wish.name)
+      m.body.should == "Your filling for request [b][wish=#{@wish.id}]#{@wish.name}[/wish][/b] was approved. The request bounty was added to your upload credit."
 
       # wisher notified?
-      m = Message.find_by_receiver_id_and_subject @wisher, I18n.t('model.wish.notify_approval.wisher_subject')
+      m = Message.find_by_receiver_id_and_subject @wisher, 'your request was filled'
       m.should_not be_nil
-      m.body.should == I18n.t('model.wish.notify_approval.wisher_body', :name => @wish.name, :by => @torrent.user.username)
+      m.body.should == "Your request [b][wish=#{@wish.id}]#{@wish.name}[/wish][/b] was filled."
 
       # bounter notified?
-      m = Message.find_by_receiver_id_and_subject @bounter, I18n.t('model.wish.notify_approval.bounter_subject')
+      m = Message.find_by_receiver_id_and_subject @bounter, 'request filled'
       m.should_not be_nil
-      m.body.should == I18n.t('model.wish.notify_approval.bounter_body', :name => @wish.name, :by => @torrent.user.username)
+      m.body.should == "Request [b][wish=#{@wish.id}]#{@wish.name}[/wish][/b] was filled."
 
       # bounter two notified?
-      m = Message.find_by_receiver_id_and_subject @bounter_two, I18n.t('model.wish.notify_approval.bounter_subject')
+      m = Message.find_by_receiver_id_and_subject @bounter_two, 'request filled'
       m.should_not be_nil
-      m.body.should == I18n.t('model.wish.notify_approval.bounter_body', :name => @wish.name, :by => @torrent.user.username)
+      m.body.should == "Request [b][wish=#{@wish.id}]#{@wish.name}[/wish][/b] was filled."
     end
 
     it 'should have its filling rejected and notify filler' do
       @wish.fill @torrent
       @wish.reload
 
-      @wish.reject @mod, 'whatever reason'
+      reason = 'whatever reason'
+      @wish.reject @mod, reason
       @wish.reload
 
       @wish.should_not be_pending
@@ -175,9 +179,9 @@ describe Wish do
       @wish.filled_at.should be_nil
 
       # filler notified?
-      m = Message.find_by_receiver_id_and_subject @torrent.user, I18n.t('model.wish.notify_rejection.subject')
+      m = Message.find_by_receiver_id_and_subject @torrent.user, 'request filling rejected'
       m.should_not be_nil
-      m.body.should == I18n.t('model.wish.notify_rejection.body', :name => @wish.name, :by => @mod.username, :reason => 'whatever reason')
+      m.body.should == "Your filling for request [b][wish=#{@wish.id}]#{@wish.name}[/wish][/b] was rejected by [b][user=#{@mod.id}]#{@mod.username}[/user][/b] (#{reason})."
     end
 
   # remotion
@@ -186,15 +190,16 @@ describe Wish do
       @wish.fill @torrent
       @wish.reload
 
-      @wish.destroy_with_notification @mod, 'whatever reason'
+      reason = 'whatever reason'
+      @wish.destroy_with_notification @mod, reason
 
       # wish deleted?
       Wish.find_by_id(@wish.id).should be_nil
 
       # wisher notified?
-      m = Message.find_by_receiver_id_and_subject @wisher, I18n.t('model.wish.notify_destruction.subject')
+      m = Message.find_by_receiver_id_and_subject @wisher, 'request removed'
       m.should_not be_nil
-      m.body.should == I18n.t('model.wish.notify_destruction.body', :name => @wish.name, :by => @mod.username, :reason => 'whatever reason')
+      m.body.should == "Your request [b]#{@wish.name}[/b] was removed by [b][user=#{@mod.id}]#{@mod.username}[/user][/b] (#{reason})."
     end
 end
 

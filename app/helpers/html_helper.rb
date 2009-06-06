@@ -28,17 +28,17 @@ module HtmlHelper
                 [ /\[em\]sad\[\/em\]/i, image_tag('emoticons/sad.gif', :class => 'emoticon', :alt => ':-(') ],
                 [ /\[em\]cry\[\/em\]/i, image_tag('emoticons/cry.gif', :class => 'emoticon', :alt => ':,-(') ] ]
 
-  
-  def self.to_html(s)
+  def to_html(s)
     if s
       s = s.dup
       parse_line_breaks s, false
       parse_bbcode s, false
       parse_emoticons s, false
+      parse_app_links s, false
     end
   end
   
-  def self.parse_line_breaks(s, dup = true)
+  def parse_line_breaks(s, dup = true)
     if s
       s = s.dup if dup
       s.gsub! "\r\n", '<br>'
@@ -47,7 +47,7 @@ module HtmlHelper
     end
   end
 
-  def self.parse_bbcode(s, dup = true)
+  def parse_bbcode(s, dup = true)
     if s
       s = s.dup if dup
       BB_TAGS.each {|e| s.gsub! e[0], e[1] }
@@ -55,15 +55,28 @@ module HtmlHelper
     end
   end
   
-  def self.parse_emoticons(s, dup = true)
+  def parse_emoticons(s, dup = true)
     if s
       s = s.dup if dup
       EMOTICONS.each {|e| s.gsub! e[0], e[1] }
       s
     end
   end
-  
-  def self.escape_javascript(s)
+
+  def parse_app_links(s, dup = true)
+    if s
+      s = s.dup if dup
+
+      m = [ [ /\[torrent=(\d+)\](.+?)\[\/torrent\]/i, lambda { "<a href=\"#{torrents_path(:action => 'show', :id => $1)}\">#{$2}</a>" } ],
+            [ /\[user=(\d+)\](.+?)\[\/user\]/i , lambda { "<a href=\"#{users_path(:action => 'show', :id => $1)}\">#{$2}</a>" } ],
+            [ /\[wish=(\d+)\](.+?)\[\/wish\]/i, lambda { "<a href=\"#{wishes_path(:action => 'show', :id => $1)}\">#{$2}</a>" } ] ]
+      
+      m.each {|i| s.gsub!(i[0], i[1].call) if s =~ i[0] }
+      s
+    end
+  end
+
+  def escape_javascript(s)
     if s
       s = s.dup
       s.gsub!(/\r\n|\n|\r/, "\\n")

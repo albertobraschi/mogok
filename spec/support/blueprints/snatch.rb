@@ -1,0 +1,3 @@
+
+Snatch.blueprint do
+end

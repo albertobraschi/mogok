@@ -43,6 +43,11 @@
                 <li>|</li>
               <% end %>
 
+              <% if @torrent.eligible_for_reseed_request? %>
+                <li><%= link_to 'reseed request', {:action => 'reseed_request', :id => @torrent} %></li>
+                <li>|</li>
+              <% end %>
+
               <li><%= link_to 'rewards', rewards_path(:torrent_id => @torrent) %></li>
               <li>|</li>
               
@@ -118,7 +123,7 @@
         </td>
         <td>
           <div class="user_content">
-            <%= HtmlHelper.to_html @torrent.description %>
+            <%= to_html @torrent.description %>
           </div>
         </td>
       </tr>

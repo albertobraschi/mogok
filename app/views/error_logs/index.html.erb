@@ -31,10 +31,10 @@
               <%= I18n.l l.created_at, :format => :db %>
             </td>
             <td>
-              <%= HtmlHelper.to_html l.message %>
+              <%= to_html l.message %>
             </td>
             <td>
-              <%= HtmlHelper.to_html strip_tags(l.location) %>
+              <%= to_html strip_tags(l.location) %>
             </td>
             <td class="no_wrap">
               <%= link_to '[ delete ]', {:action => 'destroy', :id => l}, {:method => :post, :class => 'admin'} %>

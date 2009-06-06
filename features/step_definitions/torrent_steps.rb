@@ -34,9 +34,15 @@
   end
 
   Given /^I have a comment by user "(.*)" for torrent "(.*)" with body equal to "(.*)"$/ do |username, torrent_name, body|
-    torrent = find_torrent(torrent_name)
-    commenter = find_user username
-    torrent.add_comment(body, commenter)
+    find_torrent(torrent_name).add_comment body, find_user(username)
+  end
+
+  Given /^torrent "(.*)" was snatched by user "(.*)"$/ do |name, username|
+    find_torrent(name).add_snatch find_user(username)
+  end
+
+  Given /^the reseed request cost is (\d+) MB$/ do |cost|
+    APP_CONFIG[:torrents][:reseed_request_cost_mb] = cost.to_i
   end
 
 # then

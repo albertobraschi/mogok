@@ -102,20 +102,20 @@ describe User do
 
       it 'should require current password if user editing itself and user not admin' do
         @user.edit({}, @user, nil).should be_false
-        @user.errors[:current_password].should == I18n.t('model.user.errors.current_password.required')
+        @user.errors[:current_password].should == 'Password required.'
 
         @user_two.edit({}, @user_two, 'nonono').should be_false
-        @user_two.errors[:current_password].should == I18n.t('model.user.errors.current_password.incorrect')
+        @user_two.errors[:current_password].should == 'Password incorrect.'
       end
 
       it 'should check if email available when editing' do
         @user.edit({:email => @user_two.email}, @user, nil).should be_false
-        @user.errors[:email].should == I18n.t('model.user.errors.email.taken')
+        @user.errors[:email].should == 'Email already in use.'
       end
 
       it 'should check if username available when admin edits an user' do
         @user.edit({:username => @user_two.username}, @admin, nil).should be_false
-        @user.errors[:username].should == I18n.t('model.user.errors.username.taken')
+        @user.errors[:username].should == 'Username already in use.'
       end
 
     # reporting
@@ -193,9 +193,9 @@ describe User do
       @user.role.should == @role_defective
       @user.ratio_watch_until.should be_instance_of(Time)
 
-      m = Message.find_by_receiver_id_and_subject @user, I18n.t('model.user.notify_ratio_watch.subject')
+      m = Message.find_by_receiver_id_and_subject @user, 'you are under ratio watch'
       m.should_not be_nil
-      m.body.should == I18n.t('model.user.notify_ratio_watch.body', :watch_until => I18n.l(@user.ratio_watch_until, :format => :date))
+      m.body.should == "Your ratio is in violation of the site rules, you have until #{I18n.l(@user.ratio_watch_until, :format => :date)} to fix it."
     end
 
     it 'should be put out of ratio watch' do
@@ -318,9 +318,9 @@ describe User do
 
       @user.passkey.should_not == old_passkey
 
-      m = Message.find_by_receiver_id_and_subject @user, I18n.t('model.user.notify_passkey_resetting.subject')
+      m = Message.find_by_receiver_id_and_subject @user, 'passkey reset'
       m.should_not be_nil
-      m.body.should == I18n.t('model.user.notify_passkey_resetting.body')
+      m.body.should == 'Your passkey was reset for security reasons, please re-download your active torrents.'
     end
 end
 

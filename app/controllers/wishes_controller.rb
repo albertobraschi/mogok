@@ -23,7 +23,7 @@ class WishesController < ApplicationController
       @wish.user = current_user      
       if @wish.save
         flash[:notice] = t('success')
-        redirect_to :action => 'show', :id => @wish
+        redirect_to_wish
       end
       @category = @wish.category
     end
@@ -47,12 +47,12 @@ class WishesController < ApplicationController
         if @wish.edit(params[:wish])
           logger.debug ':-) wish edited'
           flash[:notice] = t('success')
-          redirect_to :action => 'show', :id => @wish
+          redirect_to_wish
         else
           logger.debug ':-o wish not edited'
         end
       else
-        redirect_to :action => 'show', :id => @wish
+        redirect_to_wish
       end      
     end
     set_collections
@@ -69,7 +69,7 @@ class WishesController < ApplicationController
         flash[:notice] = t('success')
         redirect_to :action => 'index'
       else
-        redirect_to :action => 'show', :id => @wish
+        redirect_to_wish
       end
     end
   end
@@ -92,10 +92,10 @@ class WishesController < ApplicationController
             @wish.fill t
             @wish.report current_user, t('report'), wishes_path(:action => 'show', :id => @wish)
             flash[:notice] = t('success')
-            redirect_to :action => 'show', :id => @wish
+            redirect_to_wish
         end
       else
-        redirect_to :action => 'show', :id => @wish
+        redirect_to_wish
       end
     end
   end
@@ -106,7 +106,7 @@ class WishesController < ApplicationController
     if request.post?
       @wish.approve
       flash[:notice] = t('success')
-      redirect_to :action => 'show', :id => @wish
+      redirect_to_wish
     end
   end
 
@@ -116,7 +116,7 @@ class WishesController < ApplicationController
     if request.post?
       @wish.reject current_user, params[:reason]
       flash[:notice] = t('success')
-      redirect_to :action => 'show', :id => @wish
+      redirect_to_wish
     end
   end
 
@@ -128,12 +128,12 @@ class WishesController < ApplicationController
         unless params[:reason].blank?
           @wish.report current_user, params[:reason], wishes_path(:action => 'show', :id => @wish)
           flash[:notice] = t('success')
-          redirect_to :action => 'show', :id => @wish
+          redirect_to_wish
         else
           flash.now[:error] = t('reason_required')
         end
       else
-        redirect_to :action => 'show', :id => @wish
+        redirect_to_wish
       end
     end
   end
@@ -142,10 +142,14 @@ class WishesController < ApplicationController
     logger.debug ':-) wishes_controller.switch_lock_comments'
     w = Wish.find params[:id]
     w.toggle! :comments_locked
-    redirect_to :action => 'show', :id => w
+    redirect_to_wish w
   end
 
   private
+  
+    def redirect_to_wish(w = nil)
+      redirect_to :action => 'show', :id => w || @wish
+    end
 
     def set_collections
       @types = Type.cached_all

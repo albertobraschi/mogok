@@ -90,14 +90,15 @@ describe Torrent do
     # inactivation, activation and remotion
 
       it 'should be inactivated and notify' do
-        @torrent.inactivate(@mod, 'whatever reason')
+        reason = 'whatever reason'
+        @torrent.inactivate(@mod, reason)
         @torrent.reload
         
         @torrent.should_not be_active
         
-        m = Message.find_by_receiver_id_and_subject @torrent.user, I18n.t('model.torrent.notify_inactivation.subject')
+        m = Message.find_by_receiver_id_and_subject @torrent.user, 'torrent inactivated'
         m.should_not be_nil
-        m.body.should == I18n.t('model.torrent.notify_inactivation.body', :name => @torrent.name, :by => @mod.username, :reason => 'whatever reason')
+        m.body.should == "Your torrent [b]#{@torrent.name}[/b] was temporarily inactivated by [b][user=#{@mod.id}]#{@mod.username}[/user][/b] (#{reason})."
       end
 
       it 'should be activated and notify' do
@@ -108,19 +109,20 @@ describe Torrent do
 
         @torrent.should be_active
 
-        m = Message.find_by_receiver_id_and_subject @torrent.user, I18n.t('model.torrent.notify_activation.subject')
+        m = Message.find_by_receiver_id_and_subject @torrent.user, 'torrent activated'
         m.should_not be_nil
-        m.body.should == I18n.t('model.torrent.notify_activation.body', :name => @torrent.name, :by => @mod.username)
+        m.body.should == "Your torrent [b][torrent=#{@torrent.id}]#{@torrent.name}[/torrent][/b] was activated by [b][user=#{@mod.id}]#{@mod.username}[/user][/b]."
       end
 
       it 'should be destroyed and notify' do
-        @torrent.destroy_with_notification(@mod, 'whatever reason')
+        reason = 'whatever reason'
+        @torrent.destroy_with_notification(@mod, reason)
 
         Torrent.find_by_id(@torrent.id).should be_nil
 
-        m = Message.find_by_receiver_id_and_subject @torrent.user, I18n.t('model.torrent.notify_destruction.subject')
+        m = Message.find_by_receiver_id_and_subject @torrent.user, 'torrent removed'
         m.should_not be_nil
-        m.body.should == I18n.t('model.torrent.notify_destruction.body', :name => @torrent.name, :by => @mod.username, :reason => 'whatever reason')
+        m.body.should == "Your torrent [b]#{@torrent.name}[/b] was removed by [b][user=#{@mod.id}]#{@mod.username}[/user][/b] (#{reason})."
       end
 
     # reporting
@@ -150,6 +152,7 @@ describe Torrent do
       it 'should add a reward to itself given the valid parameters' do
         rewards_count = @torrent.rewards_count
 
+        @rewarder.credit!(12345)
         @torrent.add_reward(12345, @rewarder)
         @torrent.reload
 
@@ -180,6 +183,22 @@ describe Torrent do
         @torrent.seeders_count.should == seeders_count + 1
         @torrent.leechers_count.should == leechers_count - 1
         @torrent.paginate_snatches({}, :per_page => 10).should include(s)
+    end
+
+    it 'should accept reseed requests' do
+      requester = make_user('joe-the-requester', @role_user)
+      requester.uploaded = 54321
+      requester.save
+
+      make_snatch(@torrent, @user)
+
+      @torrent.request_reseed(requester, 54321, 10)
+      requester.reload
+
+      requester.uploaded.should == 0
+      m = Message.find_by_receiver_id_and_subject @user, 'reseed requested'
+      m.should_not be_nil
+      m.body.should == "A reseed for torrent [b][torrent=#{@torrent.id}]#{@torrent.name}[/torrent][/b] was requested by [b][user=#{requester.id}]#{requester.username}[/user][/b]. Thanks for your help."
     end
 end
 

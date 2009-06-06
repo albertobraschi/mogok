@@ -1,5 +1,5 @@
 
-Feature: Wish Moderation
+Feature: Wish Filling Moderation
   In order to moderate wish fillings
   As a moderator
   I want to be able to approve or reject them
@@ -28,6 +28,7 @@ Feature: Wish Moderation
     And I have a user with username "joe-the-filler" and with role "user"
     And user "joe-the-filler" has uploaded equal to 0
     And I have a user with username "joe-the-bounter" and with role "user"
+    And user "joe-the-bounter" has uploaded equal to 10485760
     And I have a wish with name "Joe The Wishers Wish" and created by user "joe-the-wisher"
     And I have a torrent with name "Joe The Fillers Torrent" and created by user "joe-the-filler"
     And I have a wish bounty for wish "Joe The Wishers Wish" with amount of 10485760 created by "joe-the-bounter"

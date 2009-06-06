@@ -164,6 +164,11 @@ implemented if necessary. Currently the application won't send an activation ema
   Users can reward torrent uploaders by adding rewards to torrents. This will transfer upload credit from
   the rewarder to the torrent uploader.
 
+- Reseed Request
+  Users can ask for other users to reseed a dead torrent, that will cost the requester upload credit (define
+the amount in the file app_config.yml). Once the request is made, the user who created the torrent and
+some (also configurable) of those who snatched it will receive a message.
+
 - Background Tasks
   These are tasks that run periodically to keep the site tidy. They clean stale data, update things, etc.
   - feature components:

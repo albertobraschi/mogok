@@ -11,13 +11,9 @@ class Reward < ActiveRecord::Base
   private
 
     def new_reward_routine
-      self.user.lock!
-      self.user.uploaded -= self.amount
-      self.user.save
+      self.user.charge! self.amount
 
-      self.torrent.user.lock!
-      self.torrent.user.uploaded += self.amount
-      self.torrent.user.save
+      self.torrent.user.credit! self.amount
 
       self.torrent.lock!
       self.torrent.total_reward += self.amount

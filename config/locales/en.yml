@@ -95,7 +95,10 @@ en:
         success: Torrent successfully reported.
         reason_required: Reason is required.
       upload:
-        success: Your personal announce url was added to the torrent, please re-download it.        
+        success: Your personal announce url was added to the torrent, please re-download it.
+      reseed_request:
+        success: Reseed requests successfully sent.
+        insufficient_upload_credit: Your upload credit is insufficient.
 
     tracker:
       scrape:
@@ -216,13 +219,16 @@ en:
         log: Torrent "{{name}}" was removed by {{by}}.
       notify_inactivation:
         subject: torrent inactivated
-        body: Your torrent "{{name}}" was inactivated by {{by}} ({{reason}}).
+        body: Your torrent [b]{{name}}[/b] was temporarily inactivated by [b][user={{inactivator_id}}]{{inactivator}}[/user][/b] ({{reason}}).
       notify_activation:
         subject: torrent activated
-        body: Your torrent "{{name}}" was activated by {{by}}.
+        body: Your torrent [b][torrent={{id}}]{{name}}[/torrent][/b] was activated by [b][user={{activator_id}}]{{activator}}[/user][/b].
       notify_destruction:
         subject: torrent removed
-        body: Your torrent "{{name}}" was removed by {{by}} ({{reason}}).
+        body: Your torrent [b]{{name}}[/b] was removed by [b][user={{destroyer_id}}]{{destroyer}}[/user][/b] ({{reason}}).
+      request_reseed:
+        notification_subject: reseed requested
+        notification_body: A reseed for torrent [b][torrent={{id}}]{{name}}[/torrent][/b] was requested by [b][user={{requester_id}}]{{requester}}[/user][/b]. Thanks for your help.
       errors:
         torrent_file:
           required: Torrent file required.
@@ -281,18 +287,18 @@ en:
         log: Request "{{name}}" was removed by {{by}} ({{reason}}).
       notify_approval:
         filler_subject: request filling approved
-        filler_body: Your filling for request "{{name}}" was approved.
-        filler_body_with_amount: Your filling for request "{{name}}" was approved. The request bounty was added to your upload credit.
+        filler_body: Your filling for request [b][wish={{id}}]{{name}}[/wish][/b] was approved.
+        filler_body_with_amount: Your filling for request [b][wish={{id}}]{{name}}[/wish][/b] was approved. The request bounty was added to your upload credit.
         wisher_subject: your request was filled
-        wisher_body: Your request "{{name}}" was filled by {{by}}.
+        wisher_body: Your request [b][wish={{id}}]{{name}}[/wish][/b] was filled.
         bounter_subject: request filled
-        bounter_body: Request "{{name}}" was filled by {{by}}.
+        bounter_body: Request [b][wish={{id}}]{{name}}[/wish][/b] was filled.
       notify_rejection:
         subject: request filling rejected
-        body: Your filling for request "{{name}}" was rejected by {{by}} ({{reason}}).
+        body: Your filling for request [b][wish={{id}}]{{name}}[/wish][/b] was rejected by [b][user={{rejecter_id}}]{{rejecter}}[/user][/b] ({{reason}}).
       notify_destruction:
         subject: request removed
-        body: Your request "{{name}}" was removed by {{by}} ({{reason}}).
+        body: Your request [b]{{name}}[/b] was removed by [b][user={{destroyer_id}}]{{destroyer}}[/user][/b] ({{reason}}).
       report_filling:
         report: Request filled.
       errors:

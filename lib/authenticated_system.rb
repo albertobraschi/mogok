@@ -7,8 +7,8 @@ module AuthenticatedSystem
   #   - it also requires a valid session token, so users cannot have multiple logins
   # 
   # If you want the original authenticated_system behavior just replace this file with the
-  # original one, no other changes are needed (although you may want to clean up the session
-  # token methods in the user model).
+  # original one, no other changes are needed as the module interface remains the same,
+  # although you may want to clean up the session token methods in the user model.
 
   protected
 

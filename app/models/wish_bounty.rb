@@ -11,9 +11,7 @@ class WishBounty < ActiveRecord::Base
 
   def revoke
     WishBounty.transaction do
-      self.user.lock!
-      self.user.uploaded += self.amount
-      self.user.save
+      self.user.credit! self.amount
 
       self.wish.lock!
       self.wish.total_bounty -= self.amount
@@ -27,9 +25,7 @@ class WishBounty < ActiveRecord::Base
   private
 
     def new_bounty_routine
-      self.user.lock!
-      self.user.uploaded -= self.amount
-      self.user.save
+      self.user.charge! self.amount
 
       self.wish.lock!
       self.wish.increment :bounties_count
@@ -41,9 +37,7 @@ class WishBounty < ActiveRecord::Base
 
     def destroy_bounty_routine
       if !revoked? && !self.wish.filled?
-        self.user.lock!
-        self.user.uploaded += self.amount
-        self.user.save
+        self.user.credit! self.amount
       end
     end
 end

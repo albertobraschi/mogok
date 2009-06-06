@@ -16,13 +16,13 @@ class Wish
       deliver_notification(self.filler,
                            'notify_approval.filler_subject',
                            self.total_bounty > 0 ? 'notify_approval.filler_body_with_amount' : 'notify_approval.filler_body',
-                           :name => self.name)
+                           :id => self.id, :name => self.name)
 
       # notify user who created the wish
       deliver_notification(self.user,
                            'notify_approval.wisher_subject',
                            'notify_approval.wisher_body',
-                           :name => self.name, :by => self.filler.username)
+                           :id => self.id, :name => self.name)
 
       # notify users who have not revoked bounties for the wish
       unless self.wish_bounties.blank?
@@ -32,7 +32,7 @@ class Wish
             deliver_notification(wb.user,
                                  'notify_approval.bounter_subject',
                                  'notify_approval.bounter_body',
-                                 :name => self.name, :by => self.filler.username)
+                                 :id => self.id, :name => self.name)
           end
         end
       end
@@ -42,13 +42,13 @@ class Wish
       deliver_notification(self.filler,
                            'notify_rejection.subject',
                            'notify_rejection.body',
-                           :name => self.name, :by => rejecter.username, :reason => reason)
+                           :id => self.id, :name => self.name, :rejecter_id => rejecter.id, :rejecter => rejecter.username, :reason => reason)
     end
 
     def notify_destruction(destroyer, reason)
       deliver_notification(self.user,
                            'notify_destruction.subject',
                            'notify_destruction.body',
-                            :name => self.name, :by => destroyer.username, :reason => reason)
+                            :name => self.name, :destroyer_id => destroyer.id, :destroyer => destroyer.username, :reason => reason)
     end
 end

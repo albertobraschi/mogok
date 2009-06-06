@@ -29,8 +29,8 @@ describe Message do
                          @sender,
                          {:to => @receiver.username, :reply => true, :message_id => old_message.id})
                        
-    m.subject.should == "#{I18n.t('model.message.prepare_to_reply.prefix')} #{old_message.subject}"
-    m.body.should include("#{@receiver.username} #{I18n.t('model.message.prepare_to_reply.wrote')}")
+    m.subject.should == "Re: #{old_message.subject}"
+    m.body.should include("#{@receiver.username} wrote:")
     m.replying_to.should == @receiver.username
   end
 
@@ -42,8 +42,8 @@ describe Message do
                          {:to => nil, :forward => true, :message_id => old_message.id})
                        
     m.receiver.should == nil
-    m.subject.should == "#{I18n.t('model.message.prepare_to_forward.prefix')} #{old_message.subject}"
-    m.body.should include("#{@receiver.username} #{I18n.t('model.message.prepare_to_forward.wrote')}")
+    m.subject.should == "Fwd: #{old_message.subject}"
+    m.body.should include("#{@receiver.username} wrote:")
   end
 
   it 'should be set as read' do
@@ -69,7 +69,7 @@ describe Message do
       m.save
       m.reload
 
-      m.subject.should == I18n.t('model.message.before_create.default_subject')
+      m.subject.should == 'no subject'
     end
 
   # delivering concern

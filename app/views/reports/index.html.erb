@@ -47,7 +47,7 @@
             <%= user_link r.handler %>
           </td>
           <td style="max-width:500px;">
-            <%= HtmlHelper.to_html r.reason %>
+            <%= to_html r.reason %>
           </td>
           <td class="no_wrap">
             <%= link_to '[ grab ]', {:action => 'grab', :id => r}, {:method => :post, :class => 'mod'} %>

@@ -1,4 +1,6 @@
 
-  <% flash.each do |key, message| %>
-    <%= content_tag 'div', message, :class => key %>
-  <% end %>
+  <%= content_tag 'div', flash[:notice], :class => 'notice' if flash[:notice] %>
+
+  <%= content_tag 'div', flash[:alert], :class => 'alert' if flash[:alert] %>
+
+  <%= content_tag 'div', flash[:error], :class => 'error' if flash[:error] %>

@@ -17,7 +17,7 @@ class User
   validates_length_of :email, :within => 1..100, :message => t_error('email', 'invalid_size')
   validates_format_of :email, :with => Authentication.email_regex, :message => t_error('email', 'invalid_format')
 
-  validate :validate_password
+  validate :validate_password, :validate_counters
 
   def add_error(field, key, args = {})
     errors.add field, self.class.t_error(field.to_s, key, args)
@@ -43,6 +43,13 @@ class User
 
     def password_required?
       false # prevents restful_authentication from validating password
+    end
+    
+    # This validation will raise an error if uploaded or downloaded are negative,
+    # it is the responsability of the controllers to ensure that no operation let
+    # the model in such state.
+    def validate_counters
+      raise 'user counter cannot be negative' if self.uploaded < 0 || self.downloaded < 0
     end
 end
 

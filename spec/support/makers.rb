@@ -27,6 +27,10 @@
       Reward.make(:torrent => torrent, :user => rewarder, :amount => amount)
     end
 
+    def make_snatch(torrent, user)
+      Snatch.make(:torrent => torrent, :user => user)
+    end
+
   # forums
 
     def make_forum(name = nil)

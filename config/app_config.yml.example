@@ -37,6 +37,12 @@ torrents:
   # if set will replace the original torrent file comment entry
   file_comment: Downloaded from Mogok
 
+  # the cost of a reseed request
+  reseed_request_cost_mb: 20
+
+  # the number of snatchers to be notified when a reseed request is made
+  reseed_request_notifications: 10
+
 # size of pages when browsing data (aka pagination)
 page_size:
   announce_logs: 50

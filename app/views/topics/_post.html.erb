@@ -83,7 +83,7 @@
       </td>
       <td <%= 'class="first_post"' if post.is_topic_post? %>>
         <div class="user_content" id="content<%= post.id %>">
-          <%= HtmlHelper.to_html post.body %>
+          <%= to_html post.body %>
         </div>
       </td>
     </tr>

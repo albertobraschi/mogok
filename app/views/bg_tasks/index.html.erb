@@ -90,7 +90,7 @@
     <tr>
       <% if @cron_jobs %>
         <td class="left">
-          <%= HtmlHelper.to_html(@cron_jobs).gsub('<br><br><br>', '<br>').gsub(/\A(<br>)+/, '') %>
+          <%= to_html(@cron_jobs).gsub('<br><br><br>', '<br>').gsub(/\A(<br>)+/, '') %>
         </td>
       <% else %>
         <td class="center">

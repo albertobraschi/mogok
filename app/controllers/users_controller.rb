@@ -31,7 +31,7 @@ class UsersController < ApplicationController
           @user.inviter = current_user
           @user.save
           logger.debug ":-) user created. id: #{@user.id}"
-          redirect_to :action => 'show', :id => @user
+          redirect_to_user
         else
           logger.debug ':-o user not created'
           @user.password = @user.password_confirmation = ''
@@ -52,13 +52,13 @@ class UsersController < ApplicationController
         if @user.edit(params[:user], current_user, params[:current_password], params[:update_counters] == '1')
           logger.debug ':-) user edited'
           flash[:notice] = t('success')
-          redirect_to :action => 'show', :id => @user
+          redirect_to_user
         else
           logger.debug ':-o user not edited'
           @user.password = @user.password_confirmation = ''
         end
       else
-        redirect_to :action => 'show', :id => @user
+        redirect_to_user
       end
     end
     set_collections    
@@ -75,7 +75,7 @@ class UsersController < ApplicationController
         flash[:notice] = t('success')        
         redirect_to :action => 'index'
       else
-        redirect_to :action => 'show', :id => @user
+        redirect_to_user
       end
     end
   end
@@ -89,7 +89,7 @@ class UsersController < ApplicationController
         @user.reset_passkey_with_notification(current_user)
         flash[:notice] = t('success')
       end
-      redirect_to :action => 'show', :id => @user
+      redirect_to_user
     end
   end
 
@@ -101,7 +101,7 @@ class UsersController < ApplicationController
       unless cancelled?
         @user.update_attribute :staff_info, params[:staff_info]
       end
-      redirect_to :action => 'show', :id => @user
+      redirect_to_user
     end
   end
 
@@ -113,12 +113,12 @@ class UsersController < ApplicationController
         unless params[:reason].blank?
           @user.report current_user, params[:reason], users_path(:action => 'show', :id => @user)
           flash[:notice] = t('success')
-          redirect_to :action => 'show', :id => @user
+          redirect_to_user
         else
           flash.now[:error] = t('reason_required')
         end
       else
-        redirect_to :action => 'show', :id => @user
+        redirect_to_user
       end
     end
   end
@@ -177,6 +177,10 @@ class UsersController < ApplicationController
   end
   
   private
+
+    def redirect_to_user(u = nil)
+      redirect_to :action => 'show', :id => u || @user
+    end
 
     def set_collections
       @genders = Gender.cached_all

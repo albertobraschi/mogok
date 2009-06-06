@@ -19,6 +19,21 @@ class Torrent
     end
   end
 
+  def eligible_for_reseed_request?
+    self.snatches_count > 0 && self.seeders_count <= 1
+  end
+
+  def request_reseed(requester, cost, notifications_number)
+    Torrent.transaction do
+      requester.charge! cost
+
+      notify_reseed_request self.user, requester
+
+      snatches = Snatch.find_all_by_torrent_id self, :order => 'created_at DESC', :limit => notifications_number
+      snatches.each {|s| notify_reseed_request s.user, requester }
+    end
+  end
+
   def total_peers
     self.seeders_count + self.leechers_count
   end

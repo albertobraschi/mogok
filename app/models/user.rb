@@ -62,6 +62,18 @@ class User < ActiveRecord::Base
     Report.create(self, reporter, reason, path)
   end
 
+  def charge!(amount)
+    lock!
+    self.uploaded -= amount
+    save!
+  end
+
+  def credit!(amount)
+    lock!
+    self.uploaded += amount
+    save!
+  end
+
   def editable_by?(updater)
     if updater != self && !updater.system?
       if updater.owner?
