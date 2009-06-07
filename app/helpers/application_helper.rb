@@ -2,9 +2,7 @@
 module ApplicationHelper
 
   def page_name(s)
-    @content_for_page_name = nil unless @content_for_page_name.blank? # reset if not blank
-    
-    content_for :page_name, "#{APP_CONFIG[:app_name]} : : #{s}"
+    @content_for_page_name = "#{APP_CONFIG[:app_name]} : : #{s}" # not using content_for as it will append, not replace
   end
 
   def self.process_search_keywords(param, max_keywords = nil)

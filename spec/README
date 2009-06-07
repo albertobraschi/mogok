@@ -17,7 +17,7 @@ Spec directory structure:
 
 Note that when a spec needs to create a record it calls a method in 'fetchers.rb' or in 'makers.rb',
 which uses the 'machinist' gem infrastructure to create the record. So if you want to use another
-factory strategy just change the methods in these file, with no need to change the spec ones.
+factory strategy just change the methods in these file, with no need to change the specs.
 
 Also note that the support files described above are used by the cucumber features tests, located
 in the directory 'features/'.

@@ -313,6 +313,25 @@ en:
         blank: Required field.
         empty: Required field.
 
+  lib:
+    bittorrent:
+      tracker:
+        process_scrape:
+          not_allowed: Tracker does not allow scrape.
+          malformed_request: Client sent a malformed request.
+          server_error: Inexpected server error.
+          invalid_torrent: Torrent not found.
+          invalid_passkey: Invalid passkey.
+          invalid_user: Invalid user.
+        process_announce:
+          malformed_request: Client sent a malformed request.
+          invalid_request: Client sent a request with invalid data.
+          client_banned: Client not allowed.
+          client_version_banned: Client version not allowed.
+          server_error: Inexpected server error.
+          invalid_torrent: Torrent not found.
+          invalid_passkey: Invalid passkey.
+          invalid_user: Invalid user.
 
   date:
     day_names: [Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday]

@@ -80,7 +80,7 @@ module Bittorrent
     
     # parse a bencoded string and return a hash containing the bcode entries
     def parse_bencoded(data)
-      raise ArgumentError unless data.is_a? String
+      raise 'bencoded data must be a String' unless data.is_a? String
       do_parse StringIO.new(data)
     end
 

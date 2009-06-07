@@ -24,6 +24,11 @@ module Bittorrent
     attr_accessor :numwant, :no_peer_id, :compact, :key
     attr_accessor :compact_ip, :no_peer_id, :peers
 
+    def initialize
+      self.interval = 1800
+      self.min_interval = 1800
+    end
+
     def out(logger = nil)
       logger.debug ':-) announce_response.out' if logger
       root = BDictionary.new
@@ -32,7 +37,7 @@ module Bittorrent
       else
         root[WARNING_MESSAGE] = BString.new(self.warning_message) if self.warning_message
         root[INTERVAL] = BNumber.new(self.interval)
-        root[MIN_INTERVAL] = BNumber.new(self.min_interval) if self.min_interval > 0
+        root[MIN_INTERVAL] = BNumber.new(self.min_interval)
         root[TRACKER_ID] = BString.new(self.tracker_id) if self.tracker_id
         root[COMPLETE] = BNumber.new(self.complete)
         root[INCOMPLETE] = BNumber.new(self.incomplete)
