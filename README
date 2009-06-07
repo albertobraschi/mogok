@@ -87,7 +87,7 @@ users with lower ranking.
   Roles and users also have tickets to grant them rights, currently three tickets are in use:
   - inviter: grants the right to send invitations
   - staff: grants right to see and edit staff info
-  - inactivity_exempt: will not be inactivated or removed if absent
+  - perpetual: will not be inactivated or removed if absent from the site
   - wisher: allow user to request torrents
 
 - Ratio policy
