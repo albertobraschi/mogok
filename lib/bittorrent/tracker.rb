@@ -124,22 +124,28 @@ module Bittorrent
         if req.torrent && req.torrent.active?
           logger.debug ":-) valid torrent: #{req.torrent.id} [#{req.torrent.name}]"
         else
-          failure 'invalid_torrent'
           logger.debug ":-o torrent not found or inactive for info hash hex #{info_hash_hex}"
+          failure 'invalid_torrent'          
         end
       end
 
       def set_user(req)
-        req.user = User.find_by_id(parse_user_id_from_announce_passkey(req.passkey))
-        if req.user && req.user.active?
-          logger.debug ":-) valid user: #{req.user.id} [#{req.user.username}]"
-          if req.passkey != make_announce_passkey(req.torrent, req.user)
-            failure 'invalid_passkey'
-            logger.debug ":-o invalid announce passkey: #{req.passkey}"
+        id = parse_user_id_from_announce_passkey(req.passkey)
+        if id
+          req.user = User.find_by_id(id)
+          if req.user && req.user.active?
+            logger.debug ":-) valid user: #{req.user.id} [#{req.user.username}]"
+            if req.passkey != make_announce_passkey(req.torrent, req.user)
+              logger.debug ":-o invalid announce passkey: #{req.passkey}"
+              failure 'invalid_passkey'              
+            end
+          else
+            logger.debug ':-o user not found or inactive'
+            failure 'invalid_user'            
           end
         else
-          failure 'invalid_user'
-          logger.debug ':-o user not found or inactive'
+          logger.debug ":-o unable to parse user id from announce passkey: #{req.passkey}"
+          failure 'invalid_passkey'          
         end
         logger.debug ':-) valid announce passkey'
       end
