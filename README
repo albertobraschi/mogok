@@ -84,7 +84,7 @@ migration file): system, owner, admin, mod, user and defective. The system role 
 be used by just one user (must have id = 1) and is used to identify automatic messages (system
 user won't accept messages). Users with roles system, owner and admin can edit the profiles of
 users with lower ranking.
-  Roles and users also have tickets to grant them rights, currently three tickets are in use:
+  Roles and users also have tickets that grant them rights, those currently in use are:
   - inviter: grants the right to send invitations
   - staff: grants right to see and edit staff info
   - perpetual: will not be inactivated or removed if absent from the site
@@ -344,8 +344,8 @@ configurations when necessary.
   - config/memcached.yml
   - config/schedule.rb
   - config/initializers/action_mailer.rb
-  - config/initializers/session_store.rb (change the secret)
-  - config/initializers/site_keys.rb (holds the restful_authentication key, change it)
+  - config/initializers/session_store.rb (change the secret!)
+  - config/initializers/site_keys.rb (holds the restful_authentication key, change it!)
   - db/migrate/099_create_data.rb
   
 
@@ -417,6 +417,9 @@ to 'lib/mysql.rb' if the application can't find your mysql gem.
 
     > mongrel (useful to run in development mode, run using 'ruby script/server' or 'script/server')
       sudo gem1.8 install mongrel
+
+    > thin (alternative to mongrel, run using 'ruby script/server thin' or 'script/server thin')
+      sudo gem1.8 install thin
 
     > passenger (example for 2.2.2)
       sudo gem1.8 install passenger

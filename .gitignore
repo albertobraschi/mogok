@@ -28,4 +28,6 @@ public/stylesheets/*
 !public/stylesheets/default.css
 Capfile
 config/deploy.rb
+config/stack
+config/install.rb
  

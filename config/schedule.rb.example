@@ -1,4 +1,6 @@
 
+# include the cron jobs below with the command: whenever --update-crontab Mogok
+
 every 1.hour, :at => 5 do
   runner 'BgTasks::Dispatcher.exec'
 end

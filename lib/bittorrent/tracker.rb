@@ -76,17 +76,9 @@ module Bittorrent
         logger.debug ":-) tracker.process_announce: event = [#{params[:event]}]"
         resp = AnnounceResponse.new
         begin
-          begin
-            req = AnnounceRequest.new params
-          rescue
-            failure 'malformed_request'
-          end
-          
-          prepare_announce_req req, remote_ip, config
+          req = prepare_announce_req params, remote_ip, config
 
-          check_announce_req_validity req
-
-          process_announce_data req, config
+          process_announce_req req, config
 
           prepare_announce_resp req, resp, config
         rescue TrackerFailure => e
@@ -109,11 +101,18 @@ module Bittorrent
       end
 
       def prepare_announce_req(req, remote_ip, config)
+        begin
+          req = AnnounceRequest.new params
+        rescue
+          failure 'malformed_request'
+        end
         req.ip = remote_ip
         set_torrent req
         set_user req
         req.set_numwant config[:announce_resp_max_peers]
         req.client = parse_client req.peer_id, config[:ban_unknown_clients]
+
+        check_announce_req_validity req
       end
 
       def set_torrent(req, info_hash = nil)
@@ -155,7 +154,7 @@ module Bittorrent
         end
       end
 
-      def process_announce_data(req, config)
+      def process_announce_req(req, config)
         req.current_action_at = Time.now
 
         peer = Peer.find_peer(req.torrent, req.user, req.ip, req.port)
@@ -190,9 +189,9 @@ module Bittorrent
         resp.complete     = req.torrent.seeders_count
         resp.incomplete   = req.torrent.leechers_count
         unless req.stopped?
-          resp.compact      = req.compact
-          resp.no_peer_id   = req.no_peer_id
-          resp.peers = Peer.find_for_announce_resp(req.torrent, req.user, req.numwant)
+          resp.compact    = req.compact
+          resp.no_peer_id = req.no_peer_id
+          resp.peers      = Peer.find_for_announce_resp(req.torrent, req.user, req.numwant)
         end
       end
   end
