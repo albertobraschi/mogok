@@ -12,8 +12,8 @@ class TrackerController < ApplicationController
   def announce
     logger.debug ':-) tracker_controller.announce'
 
-    send_data process_announce(params, request.remote_ip, APP_CONFIG[:tracker],
-              :type => 'text/plain')
+    send_data process_announce(params, request.remote_ip, APP_CONFIG[:tracker]),
+              :type => 'text/plain'
   end
 end
 
