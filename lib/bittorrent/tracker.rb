@@ -113,6 +113,7 @@ module Bittorrent
         req.client = parse_client req.peer_id, config[:ban_unknown_clients]
 
         check_announce_req_validity req
+        req
       end
 
       def set_torrent(req, info_hash = nil)
