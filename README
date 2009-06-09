@@ -2,14 +2,14 @@
 This project aims to provide the basic functionalities required by a private bittorrent
 tracker and community. It is built with the Ruby language and the Ruby on Rails framework.
 
+- Live Demo: http://mogok.morphexchange.com (thanks to Morph Labs: http://mor.ph)
+
+- Demo Video: http://www.youtube.com/watch?v=ep_dUaTb1GU (watch in HD)
+
 - Screenshots
   - http://bayimg.com/image/oaamaaacg.jpg
   - http://bayimg.com/image/oaamcaacg.jpg
   - http://bayimg.com/image/oaamhaacg.jpg
-
-- Demo Video: http://www.youtube.com/watch?v=ep_dUaTb1GU (watch in HD)
-
-- Live Demo: http://mogok.morphexchange.com (thanks to Morph Labs: http://mor.ph)
 
 - Current State: Beta Testing
 
