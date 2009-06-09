@@ -4,7 +4,8 @@ This plugin extends the functionality of will_paginate.
 It adds the following features:
 
 1 - An alternative link renderer
-  Change config/initializers/init.rb to use the default pagination links.
+  Include the code below in a class in your initializers directory to enable it.
+    WillPaginate::ViewHelpers.pagination_options[:renderer] = WillPaginate::MogokLinkRenderer
 
 
 2 - Support for remote (ajax) pagination (typically in partials)
@@ -22,11 +23,11 @@ It adds the following features:
     Product.paginate :page => :last, :per_page => 50
 
 
-4 - No empty page unless no record is found
-  If your set has 5 pages and you request page 6, will_paginate will return an empty set,
-  causing the impression that no record was found. This happens often when the only
-  record of the last page is deleted. This extension corrects that, looking for not empty
-  previous pages.
+4 - No empty page unless all pages are empty
+  If your set has 5 pages and you request page 6, will_paginate returns an empty page, causing
+  the misleading impression that no records were found. This happens specially when the only
+  record of the last page is deleted. This extension corrects it looking for not empty previous
+  pages (although the url will still show the non-existing page).
 
 
 5 - A view helper to add sort links to the browse table headers.
@@ -53,7 +54,7 @@ It adds the following features:
 6 - Support for html anchor in the pagination links.
   The html anchor associated with the list. Will be included in the rendered links.
   Example:
-    @comments.html_anchor = 'comments'
+    @comments.html_anchor = 'comments' (generates links ending with '#comments')
 
 
 

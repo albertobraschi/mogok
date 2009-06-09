@@ -45,7 +45,7 @@ module WillPaginate
         total_pages = (total_entries / per_page.to_f).ceil
 
         if total_pages > 0
-          page = total_pages if last_page || page > total_pages
+          page = total_pages if last_page || page > total_pages # last page also if page is greater than total pages
         else
           page = 1
         end
