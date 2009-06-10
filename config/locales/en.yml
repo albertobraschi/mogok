@@ -104,7 +104,7 @@ en:
       scrape:
         not_allowed: Tracker does not allow scrape.
         malformed_request: Client sent a malformed request.
-        server_error: Inexpected server error.
+        server_error: Unexpected server error.
         invalid_torrent: Torrent not found.
         invalid_passkey: Invalid passkey.
         invalid_user: Invalid user.
@@ -113,7 +113,7 @@ en:
         invalid_request: Client sent a request with invalid data.
         client_banned: Client not allowed.
         client_version_banned: Client version not allowed.
-        server_error: Inexpected server error.
+        server_error: Unexpected server error.
         invalid_torrent: Torrent not found.
         invalid_passkey: Invalid passkey.
         invalid_user: Invalid user.
@@ -319,7 +319,7 @@ en:
         process_scrape:
           not_allowed: Tracker does not allow scrape.
           malformed_request: Client sent a malformed request.
-          server_error: Inexpected server error.
+          server_error: Unexpected server error.
           invalid_torrent: Torrent not found.
           invalid_passkey: Invalid passkey.
           invalid_user: Invalid user.
@@ -328,7 +328,7 @@ en:
           invalid_request: Client sent a request with invalid data.
           client_banned: Client not allowed.
           client_version_banned: Client version not allowed.
-          server_error: Inexpected server error.
+          server_error: Unexpected server error.
           invalid_torrent: Torrent not found.
           invalid_passkey: Invalid passkey.
           invalid_user: Invalid user.

@@ -1,5 +1,5 @@
 
-class CreateData < ActiveRecord::Migration
+class CreateAppData < ActiveRecord::Migration
 
   def self.up
     self.create_roles
@@ -64,7 +64,7 @@ class CreateData < ActiveRecord::Migration
         c = Category.create(:name => 'Jazz', :type_id => t.id, :position => 3, :image => 'categories/jazz.png')
         Tag.create(:name => 'swing', :category_id => c.id)
         Tag.create(:name => 'cool', :category_id => c.id)
-        Tag.create(:name => 'eletric', :category_id => c.id)
+        Tag.create(:name => 'electric', :category_id => c.id)
     # type[video]
       t = Type.create(:name => 'video')
       # formats

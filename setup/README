@@ -1,0 +1,7 @@
+
+This directory contains recipes for installing all the required software
+in the server (Sprinkle) and for deploying the application (Capistrano). Usually
+such files are placed in the 'config' directory but due to overcrowding they
+were placed here instead.
+Check the Deployment section of the application README file for more on how to
+use the recipes.

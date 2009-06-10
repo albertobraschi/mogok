@@ -1,0 +1,15 @@
+
+# Capistrano recipe to be used by the 'sprinkle' installer, note
+# that the user in this case must be able to act as sudo.
+
+# user
+  set :user, '' # user must be able to act as sudo as it will be used to install stuff
+  set :use_sudo, true 
+
+# server
+  set :domain, 'localhost'
+  set :port, 22
+
+# roles
+  role :app, domain, :primary => true
+

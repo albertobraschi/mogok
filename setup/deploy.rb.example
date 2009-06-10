@@ -1,0 +1,167 @@
+
+# Capistrano recipe for deployment, in this case the user do not
+# have sudo privileges.
+
+set :application, 'mogok'
+
+# server
+  set :domain, 'localhost'
+  set :port, 22
+
+# user
+  set :user, '' # the application user goes here
+  set :use_sudo, false
+
+# roles
+  role :app, domain
+  role :web, domain
+  role :db,  domain, :primary => true
+
+# scm
+  set :scm, :git
+  default_run_options[:pty] = true
+
+# repository
+  set :branch, 'master'
+  # remote
+    # set :repository, 'git://github.com/pepeb/mogok.git'
+  # local
+    set :repository, '.'
+
+# deploy strategy
+  # remote repository
+    # set :deploy_via, :remote_cache
+    # set :repository_cache, 'git_cache'
+  # local repository
+    set :deploy_via, :copy
+    excluded = ['.git/*', '.gitignore', 'log/*', 'nbproject/*', 'setup/*']
+    excluded += ['config/app_config.*', 'config/bg_tasks.*', 'config/database.*', 'config/environment.*', 'config/memcached.*', 'config/schedule.*']
+    excluded += ['config/initializers/action_mailer.*', 'config/initializers/session_store.*', 'config/initializers/site_keys.*']
+    excluded += ['db/migrate/099_create_app_data.*']
+    set :copy_exclude, excluded
+
+# deploy
+  set :deploy_to, "/var/vhosts/#{application}"
+
+  set :local_config_path, 'config'  # config files path in the local machine
+  set :shared_config_path, "#{shared_path}/system/config" # config files path in the server's shared dir
+  set :release_config_path, "#{release_path}/config" # config files path in the server's release dir
+
+  namespace :deploy do
+    task :after_update_code do
+      config.symlinks # create the symlinks for the config files in the release config dir
+      generate_passenger_conf
+    end
+
+    task :after_setup do
+      config.setup_config
+    end
+
+    task :after_cold do
+      generate_passenger_conf
+    end
+
+    task :start, :roles => :app do
+      run "touch #{current_path}/tmp/restart.txt"
+    end
+
+    task :stop, :roles => :app do
+      # do nothing
+    end
+
+    desc 'Restart passenger.'
+    task :restart, :roles => :app, :except => { :no_release => true } do
+      run "touch #{current_path}/tmp/restart.txt"
+    end
+
+    # Tasks that upload and replace the application's config files so they can remain safely
+    # stored in the shared/system directory through deployments.
+    namespace :config do
+      set :config_files, ['app_config.yml', 'bg_tasks.yml', 'database.yml', 'memcached.yml', 'environment.rb', 'schedule.rb', 'initializers/action_mailer.rb']
+      set :session_store_file, 'initializers/session_store.rb'
+      set :site_keys_file, 'initializers/site_keys.rb'
+      set :app_data_migration_file, 'db/migrate/099_create_app_data.rb'
+
+      desc 'Create the shared config dirs in the server and upload ALL config files.'
+      task :setup_config, :roles => :app do
+        set_config_directories
+        set_config_files
+        set_site_keys
+        set_session_store
+        set_app_data_migration
+      end
+
+      desc 'Create config dirs if necessary, upload config files (replace if they exist) and restart server.'
+      task :default, :roles => :app do
+        set_config_directories
+        set_config_files
+        restart
+      end
+
+      desc 'Create the shared config dirs in the server if they do not exist.'
+      task :set_config_directories, :roles => :app do
+        run "if [ ! -d #{shared_config_path} ]; then mkdir #{shared_config_path}; fi"
+        run "if [ ! -d #{shared_config_path}/initializers ]; then mkdir #{shared_config_path}/initializers; fi"
+      end
+
+      desc 'Upload config files, replacing if they exist.'
+      task :set_config_files, :roles => :app do
+        config_files.each do |f|
+          run "if [ -f #{shared_config_path}/#{f} ]; then rm #{shared_config_path}/#{f}; fi"
+          top.upload "#{local_config_path}/#{f}", "#{shared_config_path}/#{f}"
+        end
+      end
+
+      desc 'Upload app_data migration file to the server creating the required dirs.'
+      task :set_app_data_migration, :roles => :app do
+        run "if [ ! -d #{shared_path}/system/db ]; then mkdir #{shared_path}/system/db; fi"
+        run "if [ ! -d #{shared_path}/system/db/migrate ]; then mkdir #{shared_path}/system/db/migrate; fi"
+        top.upload "#{app_data_migration_file}", "#{shared_path}/system/#{app_data_migration_file}"
+      end
+
+      desc 'Upload session store config file to server.'
+      task :set_session_store, :roles => :app do
+        top.upload "#{local_config_path}/#{session_store_file}", "#{shared_config_path}/#{session_store_file}"
+      end
+
+      desc 'Replace session store config in server. All current user sessions will become stale if changed!!!'
+      task :replace_session_store, :roles => :app do
+        if Capistrano::CLI.ui.agree('WARNING: Changing the session store attributes will invalidate all current user sessions. Are you sure? (y/n):')
+          run "if [ -f #{shared_config_path}/#{session_store_file} ]; then rm #{shared_config_path}/#{session_store_file}; fi"
+          top.upload "#{local_config_path}/#{session_store_file}", "#{shared_config_path}/#{session_store_file}"
+        end
+      end
+
+      desc 'Upload restful authentication site keys config file to server.'
+      task :set_site_keys, :roles => :app do
+        top.upload "#{local_config_path}/#{site_keys_file}", "#{shared_config_path}/#{site_keys_file}"
+      end
+
+      desc 'Replace restful authentication site keys in server. All existing passwords will become stale if changed!!!'
+      task :replace_site_keys, :roles => :app do
+        if Capistrano::CLI.ui.agree('WARNING: Changing the site keys will invalidate all existing passwords. Are you sure? (y/n):')
+          run "if [ -f #{shared_config_path}/#{site_keys_file} ]; then rm #{shared_config_path}/#{site_keys_file}; fi"
+          set_site_keys
+        end
+      end
+
+      desc 'Set config files symlinks for the application release that is being deployed.'
+      task :symlinks, :roles => :app do
+        # symlinks to config files
+        config_files.each {|f| run "ln -s #{shared_config_path}/#{f} #{release_config_path}/#{f}" }
+        # symlink to session_store.rb
+        run "ln -s #{shared_config_path}/#{session_store_file} #{release_config_path}/#{session_store_file}"
+        # symlink to site_keys.rb
+        run "ln -s #{shared_config_path}/#{site_keys_file} #{release_config_path}/#{site_keys_file}"
+        # symlink to 099_create_app_data.rb migration
+        run "ln -s #{shared_path}/system/#{app_data_migration_file} #{release_path}/#{app_data_migration_file}"
+      end
+    end
+  end
+
+
+
+
+
+
+

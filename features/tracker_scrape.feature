@@ -13,7 +13,7 @@ Feature: Tracker Scrape
     And the counters for torrent "Joe The Uploaders Torrent" indicate 7 seeders and 5 leechers
     And torrent "Joe The Uploaders Torrent" has snatches_count equal to 9
     When user "joe-the-scraper" sends a scrape request for torrent "Joe The Uploaders Torrent"
-    Then I should not see "Inexpected server error."
+    Then I should not see "Unexpected server error."
     And I should see "8:completei7e10:incompletei5e10:downloadedi9e"
 
 

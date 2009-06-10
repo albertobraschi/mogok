@@ -1,4 +1,4 @@
- 
+
 This project aims to provide the basic functionalities required by a private bittorrent
 tracker and community. It is built with the Ruby language and the Ruby on Rails framework.
 
@@ -38,7 +38,7 @@ when a category is selected).
       category[Blues]
         tags[east-coast, british, st-louis]
       category[Jazz]
-        tags[swing, cool, eletric]
+        tags[swing, cool, electric]
 
     type[video]
       formats[AVI, OGG, MPG]
@@ -116,7 +116,7 @@ mode.
 
 - Error logs
   The application will alert you when an exception is thrown by the application, you can
-see what happened in the error logs page. In production mode only inexpected errors will
+see what happened in the error logs page. In production mode only unexpected errors will
 be logged.
 
 - Application params
@@ -240,7 +240,7 @@ are printed by the Rails framework (won't be printed in 'production' mode). For 
 the logs start with smilies:
   :-) - everything is ok
   :-o - something out of ordinary happened, but most likely it is the user's fault
-  :-( - an inexpected error occurred
+  :-( - an unexpected error occurred
 
 - Authentication
   It uses the restful_authentication plugin, but with some changes, check lib/authenticated_system.rb.
@@ -266,7 +266,7 @@ operations, see below).
   Two strategies are used to test the application functionalities: Cucumber features for integration
 tests and RSpec for unit testing. The implemented tests main focus are the in the features used by
 the regular users, which means that admistrative features are not extensively covered. To run the
-tests you must create the 'test' database instance (check deployment below).
+tests you must create the 'test' database instance (check appendix B).
   IMPORTANT: caching is disabled by default during tests as the tests frameworks bypass cache_money
 synchronization, you can enable it by changing the flag in environment.rb.
   + Cucumber Features
@@ -335,34 +335,125 @@ to translate. So, if you want to translate, let's say to Spanish, this is what y
     the features tests.
 
 - Configuration
-  Lays in the files below. The files come with an 'example' extension, just rename them and change the
-configurations when necessary.
-  - config/environment.rb
-  - config/app_config.yml
-  - config/bg_tasks.yml
-  - config/database.yml
-  - config/memcached.yml
-  - config/schedule.rb
-  - config/initializers/action_mailer.rb
-  - config/initializers/session_store.rb (change the secret!)
-  - config/initializers/site_keys.rb (holds the restful_authentication key, change it!)
-  - db/migrate/099_create_data.rb
-  
+  Lays in the files below. The files come with an 'example' extension, first you have to rename them and change
+the configurations when necessary.
+  - app config
+    + config/environment.rb
+    + config/app_config.yml
+    + config/bg_tasks.yml
+    + config/database.yml
+    + config/memcached.yml
+    + config/schedule.rb
+    + config/initializers/action_mailer.rb
+    + config/initializers/session_store.rb (change the secret!)
+    + config/initializers/site_keys.rb (holds the restful_authentication key, change it!)
+    + db/migrate/099_create_data.rb (configure the app initial data, like roles, categories and so on)
+  - install and deploy
+    + setup/install.rb
+    + setup/deploy.rb
 
 # DEPLOYMENT
-  The deployment doesn't require anything more than a typical Rails application would,
-which means: set the Ruby environment, install the gems, install MySQL server and Memcached,
-prepare the application configuration files, run the migrations and start the server.
   If you are new to Rails and use Windows, a good and easy way to put the application
 running is to use InstantRails (install the correct version of the rails gem). For a real
-scenario, a good option is to deploy on Ubuntu using Passenger (modrails). Windows users
-can also emulate a production Ubuntu setup using VirtualBox, which is a free OS emulator
-by Sun Microsystems.
-  IMPORTANT: if you are running on Windows, change the name of the file 'lib/mysql.rb.windows'
-to 'lib/mysql.rb' if the application can't find your mysql gem.
+scenario, a good option is to deploy on Ubuntu using Passenger (modrails). 
+  A good way to have a real world remote server scenario is to emulate a production setup using
+VirtualBox, which is a free OS emulator by Sun Microsystems (check Appendix B on how to configure it).
+  IMPORTANT: if you are running on Windows, change the name of the file 'lib/mysql.rb.windows' to
+'lib/mysql.rb' if the application can't find your mysql gem.
 
-- Deploying on Ubuntu (tested for 8.04) with Passenger:
-  NOTE: Passenger also works on Nginx: http://www.modrails.com/documentation/Users guide Nginx.html
+- Deploying on Ubuntu with Passenger (tested for Ubuntu 8.04 and Passenger 2.2.2):  
+
+  # Installing the server software
+    There are two ways for installing all the software in the server: manually or using the 'passenger-stack'
+    script (http://github.com/benschwarz/passenger-stack/tree/master), which uses the 'sprinkle' gem.
+    If you prefer to do it by hand, check appendix A for a complete list of the installation steps.
+    To install using the 'passenger-stack' script, follow the steps below.
+      - you must have the 'capistrano' and 'sprinkle' gems installed in your local machine:
+        $ gem install capistrano
+        $ gem install crafterm-sprinkle --source http://gems.github.com/
+      - in the file 'setup/sprinkle_installer.rb', specify the server user (must have sudo privileges, so
+        use the first user you created when installing Ubuntu or another user with same privileges)
+      - in your local machine, run the command below (will install a bunch of things, so be patient):
+        $ sprinkle -v -c -s setup/sprinkle_installer.rb
+        IMPORTANT: when completed, set the root password for Mysql as it is not defined when installed
+
+  # Deploying the application
+    You can deploy manually just by copying all the code to the server and running the migrations or using
+    the Capistrano recipe located at 'setup/deploy.rb'. To use the capistrano recipe follow the steps below.
+    > First deployment
+      The first deployment requires the following steps:
+      - In the server
+        - app user (for security reasons, create another user for the app)
+          - create
+            $ sudo adduser mogok
+          - add user to www-data group
+            $ sudo adduser mogok www-data
+
+        - app directory (where the app will be deployed)
+          - create
+            $ sudo mkdir /var/vhosts
+            $ sudo mkdir /var/vhosts/mogok
+          - change ownership
+            $ sudo chown mogok:www-data -R /var/vhosts/mogok
+          - change permissions
+            $ sudo chmod 775 -R /var/vhosts/mogok
+
+        - database
+          - log in on mysql
+            $ mysql -u root -p (logging in as root user)
+          - create
+            mysql> create database mogok_production;
+          - set permissions to app user
+            mysql> GRANT ALL PRIVILEGES ON mogok_production.* TO 'mogok'@localhost IDENTIFIED BY 'enter password here';
+
+        - passenger
+          - edit the httpd.conf file (sudo gedit /etc/apache2/httpd.conf), including the following:
+            <VirtualHost *:80>
+              ServerName localhost
+              DocumentRoot "/var/vhosts/mogok/current/public"
+            </VirtualHost>
+          - restart apache
+            see Appendix D
+          - note that there are several ways to tell Apache about your app, this one happens to be the simpliest
+
+        - memcached
+          - start (it MUST be started before the deployment or the migrations will fail)
+            see Appendix C (will start automatically after server restarts)
+
+      - In your local machine
+        - be sure that all the configuration files are prepared (see item Configuration above)
+        - edit file 'config/database.yml'
+          set the user and password that you created for the production database
+        - edit file 'config/deploy.yml'
+          set user with the app user that you created in the server (password will be asked when you deploy)
+        - setup server (create the deploy dirs in the server and upload all the config files and the create_data migration)
+          $ cap deploy:setup
+        - deploy application (upload the application code and run the database migrations)
+          $ cap deploy:cold
+        - the application should be running, use owner/owner or system/system to log in
+
+    > Redeploying (tasks to submit code and config changes to the server, run the commands from the app root in your local machine)
+      - code (add a new version of your code to the server)        
+        $ cap deploy
+      - rollback (rollback deploy to the previous version, but do not touch the config files)
+        $ cap deploy:rollback
+      - config files (replace the config files in the server with your local ones, see 'config/deploy.rb' for the complete list)
+        $ cap deploy:config
+      - site keys (replace 'config/initializers/site_keys.rb' in the server (all passwords will get stale if changed!!!))
+        $ cap deploy:config:replace_site_keys
+      - session store (replace 'config/initializers/session_store.rb' in the server (all current sessions will get stale if changed!!!))
+        $ cap deploy:config:replace_session_store
+      - check 'config/deploy.rb' for other tasks involving config files
+      IMPORTANT:
+        + the deploy is currently being made via copy, which means that the code is transferred from your local
+          machine to the server, not from Github to the server
+        + the deploy script will effectively use your local git repository, so any change MUST be commited or it
+          won't be deployed (install git in your machine to be able to do this)
+        + the config files (those that came with an 'example' extension) are uploaded directly from your local
+          machine to the server and don't need to be commited (in fact they are set to be ignored in .gitignore)
+
+
+# Appendix A: Server Installation Steps
 
   - ubuntu update
     sudo apt-get install update
@@ -385,7 +476,8 @@ to 'lib/mysql.rb' if the application can't find your mysql gem.
 
   - rails 2.3.2 with ruby 1.8
 
-    sudo apt-get install ruby1.8 ruby1.8-dev rdoc1.8 ri1.8 irb libopenssl-ruby
+    > ruby (consider also the Ruby Enterprise Edition option)
+      sudo apt-get install ruby1.8 ruby1.8-dev rdoc1.8 ri1.8 irb libopenssl-ruby
 
     > install RubyGems (version 1.3.1+ required)
       - look on the net about how to install it properly, it changes all the time
@@ -394,9 +486,11 @@ to 'lib/mysql.rb' if the application can't find your mysql gem.
       - update RubyGems if necessary
         sudo gem1.8 update --system
 
-    sudo gem1.8 install rails
+    > rails
+      sudo gem1.8 install rails
 
-    sudo gem1.8 install mysql
+    > mysql gem
+      sudo gem1.8 install mysql
 
     > gems required to run the cucumber and rspec tests
       sudo gem1.8 install ruby-debug
@@ -415,17 +509,17 @@ to 'lib/mysql.rb' if the application can't find your mysql gem.
     > gems required for automatic crontab update (ignore if you are setting it manually)
       sudo gem1.8 install javan-whenever
 
-    > mongrel (useful to run in development mode, run using 'ruby script/server' or 'script/server')
+    > mongrel (optional) - useful to run in development mode, run using 'ruby script/server' or 'script/server'
       sudo gem1.8 install mongrel
 
-    > thin (alternative to mongrel, run using 'ruby script/server thin' or 'script/server thin')
+    > thin (optional) - alternative to mongrel, run using 'ruby script/server thin' or 'script/server thin')
       sudo gem1.8 install thin
 
-    > passenger (example for 2.2.2)
+    > passenger
       sudo gem1.8 install passenger
       sudo /usr/bin/passenger-install-apache2-module
 
-      - passenger will ask you to edit your apache conf file
+      - passenger will ask you to edit your apache config file
         sudo gedit /etc/apache2/httpd.conf
 
         - the file should have something like:
@@ -434,52 +528,57 @@ to 'lib/mysql.rb' if the application can't find your mysql gem.
           PassengerRoot /usr/lib/ruby/gems/1.8/gems/passenger-2.2.2
           PassengerRuby /usr/bin/ruby1.8
 
-          RailsEnv development (you can use this parameter to change the environment, default is production)
+          RailsEnv production (you can use this parameter to change the environment, default is production)
 
           <VirtualHost *:80>
             ServerName localhost
-            DocumentRoot PATH_TO_APP/mogok/public
+            DocumentRoot /var/vhosts/mogok/current/public (or your app path if using other)
           </VirtualHost>
 
-    > execute the migrations
-      mogok$ rake db:create
-      mogok$ rake db:migrate
-      mogok$ rake db:create RAILS_ENV=test
-      mogok$ rake db:create RAILS_ENV=production
-      mogok$ rake db:migrate RAILS_ENV=production
-
     > start memcached (if necessary)
-      memcached -d -l 127.0.0.1 -p 11211 -m 256 -P /tmp/memcached.pid
-        -d = run as a daemon
-        -l = ip address
-        -p = port
-        -m = Mb of memory for the cache
-        -P = where to put the pid file
-      memcached -vv -l 127.0.0.1 -p 11211 -m 256 -P /tmp/memcached.pid
-        -vv = verbose (so you can see what is being stored and read from it)
+      see Appendix C
+      
+    > restart apache
+      see Appendix D
 
-    > open http://localhost and use owner/owner or system/system to log in
+# Appendix B: VirtualBox Setup
+  > in order to access the application in the VirtualBox from your system or extenally, a port forward is needed:
+    - set the app to run on port 8080 on VirtualBox (change Apache config files)
+    - execute the commands below (VBoxManage is in the VirtualBox's install dir):
+      VBoxManage setextradata "ubuntu_box_name" "VBoxInternal/Devices/pcnet/0/LUN#0/Config/apache/Protocol" TCP
+      VBoxManage setextradata "ubuntu_box_name" "VBoxInternal/Devices/pcnet/0/LUN#0/Config/apache/GuestPort" 8080
+      VBoxManage setextradata "ubuntu_box_name" "VBoxInternal/Devices/pcnet/0/LUN#0/Config/apache/HostPort" 80
+    - restart Apache and your system if needed
+    - now you can open http://localhost on your system and it will be forwarded to port 8080 on VirtualBox
 
-    > if you are using VirtualBox and want to access the app from Windows, a port forward is needed:
-      - set the app to run on port 8080 on VirtualBox
-      - execute the commands on Windows (VBoxManage is in the VirtualBox's install dir):
-        VBoxManage setextradata "ubuntu_box_name" "VBoxInternal/Devices/pcnet/0/LUN#0/Config/apache/Protocol" TCP
-        VBoxManage setextradata "ubuntu_box_name" "VBoxInternal/Devices/pcnet/0/LUN#0/Config/apache/GuestPort" 8080
-        VBoxManage setextradata "ubuntu_box_name" "VBoxInternal/Devices/pcnet/0/LUN#0/Config/apache/HostPort" 80
-      - restart Apache and Windows if needed
-      - now you can open http://localhost on Windows and it will be forwarded to port 8080 on VirtualBox
+# Appendix C: Controlling Memcached
+  - options
+    -d = run as a daemon
+    -l = ip address
+    -p = port
+    -m = Mb of memory for the cache
+    -P = where to put the pid file
+    -vv = verbose
+  - start as daemon
+    memcached -d -l 127.0.0.1 -p 11211 -m 256 -P /tmp/memcached.pid
+  - start in verbose mode (so you can see what is being stored and read from it)
+    memcached -vv -l 127.0.0.1 -p 11211 -m 256 -P /tmp/memcached.pid
 
-    > useful commands
-      - restart passenger
-        mogok$ touch tmp/restart.txt
+# Appendix D: Useful Commands
+  - passenger
+    - manual restart
+      $ touch tmp/restart.txt
+    - info
+      $ passenger-memory-stats
+      $ passenger-status
+  - apache
+    $ sudo /etc/init.d/apache2 stop
+    $ sudo /etc/init.d/apache2 start
+    $ sudo /etc/init.d/apache2 restart
 
-      - apache control
-        sudo /etc/init.d/apache2 stop
-        sudo /etc/init.d/apache2 start
 
-      - passenger info
-        passenger-memory-stats
-        passenger-status
+
+
 
 
 
