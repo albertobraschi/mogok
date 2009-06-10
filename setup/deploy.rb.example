@@ -34,7 +34,7 @@ set :application, 'mogok'
     # set :repository_cache, 'git_cache'
   # local repository
     set :deploy_via, :copy
-    excluded = ['.git/*', '.gitignore', 'log/*', 'nbproject/*', 'setup/*']
+    excluded = ['.git/*', '.gitignore', 'log/*', 'nbproject/*', 'setup/*', 'Capfile']
     excluded += ['config/app_config.*', 'config/bg_tasks.*', 'config/database.*', 'config/environment.*', 'config/memcached.*', 'config/schedule.*']
     excluded += ['config/initializers/action_mailer.*', 'config/initializers/session_store.*', 'config/initializers/site_keys.*']
     excluded += ['db/migrate/099_create_app_data.*']
@@ -50,7 +50,6 @@ set :application, 'mogok'
   namespace :deploy do
     task :after_update_code do
       config.symlinks # create the symlinks for the config files in the release config dir
-      generate_passenger_conf
     end
 
     task :after_setup do
