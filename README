@@ -335,8 +335,8 @@ to translate. So, if you want to translate, let's say to Spanish, this is what y
     the features tests.
 
 - Configuration
-  Lays in the files below. The files come with an 'example' extension, first you have to rename them and change
-the configurations when necessary.
+  Lays in the files below. The files come with an 'example' extension, just create a copy of each file without
+the extension and change the configuration when needed.
   - app config
     + config/environment.rb
     + config/app_config.yml
@@ -352,6 +352,7 @@ the configurations when necessary.
     + setup/install.rb
     + setup/deploy.rb
 
+
 # DEPLOYMENT
   If you are new to Rails and use Windows, a good and easy way to put the application
 running is to use InstantRails (install the correct version of the rails gem). For a real
@@ -366,7 +367,8 @@ VirtualBox, which is a free OS emulator by Sun Microsystems (check Appendix B on
   # Installing the server software
     There are two ways for installing all the software in the server: manually or using the 'passenger-stack'
     script (http://github.com/benschwarz/passenger-stack/tree/master), which uses the 'sprinkle' gem.
-    If you prefer to do it by hand, check appendix A for a complete list of the installation steps.
+    If you prefer to do it by hand or is deploying on Windows, check appendix A for a complete list of the
+    required installation steps.
     To install using the 'passenger-stack' script, follow the steps below.
       - you must have the 'capistrano' and 'sprinkle' gems installed in your local machine:
         $ gem install capistrano
