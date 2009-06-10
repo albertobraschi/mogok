@@ -1,18 +1,25 @@
 
 MAILER_CONFIG = {}
 
-MAILER_CONFIG[:password_recovery_from] = 'no-reply@myhost.com'
-MAILER_CONFIG[:invitation_from] = 'no-reply@myhost.com'
+case
+  when Rails.env.production?
+    # production smtp setup goes here
+  when Rails.env.development? || Rails.env.test?
+    MAILER_CONFIG[:password_recovery_from] = 'no-reply@myhost.com'
+    MAILER_CONFIG[:invitation_from] = 'no-reply@myhost.com'
 
-# mailer configuration for a regular gmail account (requires plugin action_mailer_optional_tls or similar)
-ActionMailer::Base.logger = !Rails.logger
-ActionMailer::Base.delivery_method = :smtp
-ActionMailer::Base.raise_delivery_errors = !Rails.env.development?
-ActionMailer::Base.smtp_settings = {
-  :tls => true,
-  :address => 'smtp.gmail.com',
-  :port => '587',
-  :authentication => :login,
-  :user_name => '',
-  :password => ''
-}
+    # mailer configuration for a regular gmail account (requires plugin action_mailer_optional_tls or similar)
+    ActionMailer::Base.logger = Rails.logger
+    ActionMailer::Base.delivery_method = :smtp
+    ActionMailer::Base.raise_delivery_errors = false
+    ActionMailer::Base.smtp_settings = {
+      :tls => true,
+      :address => 'smtp.gmail.com',
+      :port => '587',
+      :authentication => :login,
+      :user_name => '',
+      :password => ''
+    }
+end
+
+

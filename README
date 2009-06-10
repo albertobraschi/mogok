@@ -398,7 +398,7 @@ to 'lib/mysql.rb' if the application can't find your mysql gem.
 
     sudo gem1.8 install mysql
 
-    > gems required to run the features tests
+    > gems required to run the cucumber and rspec tests
       sudo gem1.8 install ruby-debug
       sudo gem1.8 install rspec
       sudo gem1.8 install rspec-rails

@@ -1,130 +1,263 @@
 # *** restart the application after changing this file ***
 
-# GENERAL
+production:
+  # application name (appears in the browse window)
+  app_name: Mogok
 
-# application name (appears in the browse window)
-app_name: Mogok
+  # default locale
+  default_locale: en
 
-# default locale
-default_locale: en
+  login:
+    # login max attempts before blocking
+    max_attempts: 5
+    # how many hours the user's IP will remain blocked if limit exceeded
+    block_hours: 4
 
-login:
-  # login max attempts before blocking
-  max_attempts: 5
-  # how many hours the user's IP will remain blocked if limit exceeded
-  block_hours: 4
-
-users:
-  # default avatar image.
-  default_avatar: no_avatar.jpg
-
-torrents:
-  # expiration time for the torrents browse cached pages (cache expires when a torrent is added or removed)
-  refresh_minutes: 5
-
-  # torrent file maximum size (such files are temporarily loaded in memory so be careful)
-  file_max_size_kb: 256
-
-  # set to false to block torrent uploads for non-admins (mainly for demo purposes)
-  upload_enabled: true
-
-  # period that a torrent remains labeled as new after it was uploaded
-  new_period_minutes: 60
-
-  # if set will be put in the beginning of the torrent file name(e.g [mogok]Test.torrent)
-  file_prefix: mogok
-
-  # if set will replace the original torrent file comment entry
-  file_comment: Downloaded from Mogok
-
-  # the cost of a reseed request
-  reseed_request_cost_mb: 20
-
-  # the number of snatchers to be notified when a reseed request is made
-  reseed_request_notifications: 10
-
-# size of pages when browsing data (aka pagination)
-page_size:
-  announce_logs: 50
-  forum_posts: 20
-  forum_search_results: 40
-  forum_topics: 40
-  logs: 50
-  messages: 20
-  peers: 50
-  stats_history: 20
-  torrents: 100
-  torrent_comments: 20
-  torrent_peers: 20
-  torrent_rewards: 40
-  torrent_snatches: 20
-  users: 40
-  user_activity: 20
-  user_history: 20
-  wishes: 40
-  wish_bounties: 40
-
-# browse table columns showed by default in a decrescent way when header is clicked the fist time
-desc_by_default:
-  announce_logs:
-    - created_at
-    - up_offset
-    - down_offset
-  torrents:
-    - created_at
-    - comments_count
-    - snatches_count
-    - seeders_count
-    - leechers_count
   users:
-    - uploaded
-    - downloaded
-    - ratio
-  wishes:
-    - created_at
-    - total_bounty
+    # default avatar image.
+    default_avatar: no_avatar.jpg
+
+  torrents:
+    # expiration time for the torrents browse cached pages (cache expires when a torrent is added or removed)
+    refresh_minutes: 10
+
+    # torrent file maximum size (such files are temporarily loaded in memory so be careful)
+    file_max_size_kb: 256
+
+    # set to false to block torrent uploads for non-admins (mainly for demo purposes)
+    upload_enabled: true
+
+    # period that a torrent remains labeled as new after it was uploaded
+    new_period_minutes: 120
+
+    # if set will be put in the beginning of the torrent file name(e.g [mogok]Test.torrent)
+    file_prefix: mogok
+
+    # if set will replace the original torrent file comment entry
+    file_comment: Downloaded from Mogok
+
+    # the cost of a reseed request
+    reseed_request_cost_mb: 20
+
+    # the number of snatchers to be notified when a reseed request is made
+    reseed_request_notifications: 10
+
+  # size of pages when browsing data (aka pagination)
+  page_size:
+    announce_logs: 50
+    forum_posts: 15
+    forum_search_results: 20
+    forum_topics: 20
+    logs: 50
+    messages: 20
+    peers: 50
+    stats_history: 20
+    torrents: 100
+    torrent_comments: 2
+    torrent_peers: 10
+    torrent_rewards: 20
+    torrent_snatches: 10
+    users: 2
+    user_activity: 15
+    user_history: 2
+    wishes: 50
+    wish_bounties: 20
 
 
-# ADMINISTRATION
-
-adm:
-  # enable the passenger restart link also in production mode (env page)
-  passenger_restart_production: true
-
-  # display sensitive environment information in production mode (env page)
-  display_all_env_info_production: true
-
-  # display 'whenever' gem crontab update link in the bg_tasks page
-  crontab_update_enabled:  true
-
-
-# TRACKER
-
-tracker:
-  # set the url for an external tracker if necessary (check app/helpers/tracker_helper.rb)
-  # external_url: http://host:port/tracker
-
-  # if tracker accepts scrape requests
-  scrape_enabled: true
-
-  # announce response defaults
-  announce_interval_seconds: 1800
-  announce_min_interval_seconds: 1800
-  announce_resp_max_peers: 30
-
-  # if tracker does not accept unregistered bittorrent clients
-  ban_unknown_clients: false
-
-  # if announces from the bittorrent clients are to be logged
-  log_announces: true
-
-  # bonus are given for uploading data in certain conditions, like seeding
-  bonus_rules:
-    seeding: 0.5
+  # browse table columns showed by default in a decrescent way when header is clicked the fist time
+  desc_by_default:
+    announce_logs:
+      - created_at
+      - up_offset
+      - down_offset
+    torrents:
+      - created_at
+      - comments_count
+      - snatches_count
+      - seeders_count
+      - leechers_count
+    users:
+      - uploaded
+      - downloaded
+      - ratio
+    wishes:
+      - created_at
+      - total_bounty
 
 
+  # ADMINISTRATION
+
+  adm:
+    # enable the passenger restart link also in production mode (env page)
+    passenger_restart_production: true
+
+    # display sensitive environment information in production mode (env page)
+    display_all_env_info_production: true
+
+    # display 'whenever' gem crontab update link in the bg_tasks page
+    crontab_update_enabled:  true
+
+  # TRACKER
+
+  tracker:
+    # set the url for an external tracker if necessary (check app/helpers/tracker_helper.rb)
+    # external_url: http://host:port/tracker
+
+    # if tracker accepts scrape requests
+    scrape_enabled: true
+
+    # announce response defaults
+    announce_interval_seconds: 1800
+    announce_min_interval_seconds: 1800
+    announce_resp_max_peers: 30
+
+    # if tracker does not accept unregistered bittorrent clients
+    ban_unknown_clients: false
+
+    # if announces from the bittorrent clients are to be logged
+    log_announces: true
+
+    # bonus are given for uploading data in certain conditions, like seeding
+    bonus_rules:
+      seeding: 0.5
 
 
+development:
+  app_name: Mogok Dev
+  default_locale: en
+  login:
+    max_attempts: 5
+    block_hours: 4
+  users:
+    default_avatar: no_avatar.jpg
+  torrents:
+    refresh_minutes: 2
+    file_max_size_kb: 256
+    upload_enabled: true
+    new_period_minutes: 10
+    file_prefix: mogok
+    file_comment: Downloaded from Mogok
+    reseed_request_cost_mb: 20
+    reseed_request_notifications: 10
+  page_size:
+    announce_logs: 50
+    forum_posts: 15
+    forum_search_results: 20
+    forum_topics: 20
+    logs: 50
+    messages: 2
+    peers: 50
+    stats_history: 20
+    torrents: 3
+    torrent_comments: 2
+    torrent_peers: 10
+    torrent_rewards: 20
+    torrent_snatches: 10
+    users: 2
+    user_activity: 15
+    user_history: 2
+    wishes: 50
+    wish_bounties: 20
+  desc_by_default:
+    announce_logs:
+      - created_at
+      - up_offset
+      - down_offset
+    torrents:
+      - created_at
+      - comments_count
+      - snatches_count
+      - seeders_count
+      - leechers_count
+    users:
+      - uploaded
+      - downloaded
+      - ratio
+    wishes:
+      - created_at
+      - total_bounty
+  adm:
+    passenger_restart_production: true
+    display_all_env_info_production: true
+    crontab_update_enabled:  true
+  tracker:
+    # external_url: http://host:port/tracker
+    scrape_enabled: true
+    announce_interval_seconds: 1800
+    announce_min_interval_seconds: 1800
+    announce_resp_max_peers: 30
+    ban_unknown_clients: false
+    log_announces: true
+    bonus_rules:
+      seeding: 0.5
 
+test:
+  app_name: Mogok Test
+  default_locale: en
+  login:
+    max_attempts: 5
+    block_hours: 4
+  users:
+    default_avatar: no_avatar.jpg
+  torrents:
+    refresh_minutes: 2
+    file_max_size_kb: 256
+    upload_enabled: true
+    new_period_minutes: 10
+    file_prefix: mogok
+    file_comment: Downloaded from Mogok
+    reseed_request_cost_mb: 20
+    reseed_request_notifications: 10
+  page_size:
+    announce_logs: 50
+    forum_posts: 15
+    forum_search_results: 20
+    forum_topics: 20
+    logs: 50
+    messages: 2
+    peers: 50
+    stats_history: 20
+    torrents: 3
+    torrent_comments: 2
+    torrent_peers: 10
+    torrent_rewards: 20
+    torrent_snatches: 10
+    users: 2
+    user_activity: 15
+    user_history: 2
+    wishes: 50
+    wish_bounties: 20
+  desc_by_default:
+    announce_logs:
+      - created_at
+      - up_offset
+      - down_offset
+    torrents:
+      - created_at
+      - comments_count
+      - snatches_count
+      - seeders_count
+      - leechers_count
+    users:
+      - uploaded
+      - downloaded
+      - ratio
+    wishes:
+      - created_at
+      - total_bounty
+  adm:
+    passenger_restart_production: true
+    display_all_env_info_production: true
+    crontab_update_enabled:  true
+  tracker:
+    # external_url: http://host:port/tracker
+    scrape_enabled: true
+    announce_interval_seconds: 1800
+    announce_min_interval_seconds: 1800
+    announce_resp_max_peers: 30
+    ban_unknown_clients: false
+    log_announces: true
+    bonus_rules:
+      seeding: 0.5
 
 #

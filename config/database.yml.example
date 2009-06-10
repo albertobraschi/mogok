@@ -1,8 +1,20 @@
+
+production:
+  adapter: mysql
+  encoding: utf8
+  database: mogok_production
+  username:
+  password:
+  host: localhost
+  socket: /var/run/mysqld/mysqld.sock
+  pool: 5
+  timeout: 5000
+
 development:
   adapter: mysql
   encoding: utf8
   database: mogok_development
-  username: 
+  username:
   password:
   host: localhost
   socket: /var/run/mysqld/mysqld.sock
@@ -13,20 +25,10 @@ test:
   adapter: mysql
   encoding: utf8
   database: mogok_test
-  username: 
+  username:
   password:
   host: localhost
   socket: /var/run/mysqld/mysqld.sock
   pool: 5
   timeout: 5000
 
-production:
-  adapter: mysql
-  encoding: utf8
-  database: mogok_production
-  username: 
-  password:
-  host: localhost
-  socket: /var/run/mysqld/mysqld.sock
-  pool: 5
-  timeout: 5000

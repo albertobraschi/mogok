@@ -2,7 +2,7 @@
 #
 # Example (run every hour at minute 5):
 # 
-#   5 * * * * RAILS_ENV=production /home/user/apps/mogok/script/runner /home/user/apps/mogok/script/bg_tasks.rb
+#   5 * * * * RAILS_ENV=production /path/to/app/root/script/runner /path/to/app/root/script/bg_tasks.rb
 
 BgTasks::Dispatcher.exec
 

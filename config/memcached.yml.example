@@ -1,4 +1,11 @@
 
+production:
+  ttl: 604800
+  namespace: mogok
+  sessions: false
+  debug: false
+  servers: localhost:11211
+
 development:
   ttl: 604800
   namespace: mogok-dev
@@ -11,11 +18,4 @@ test:
   namespace: mogok-test
   sessions: false
   debug: true
-  servers: localhost:11211
-
-production:
-  ttl: 604800
-  namespace: mogok
-  sessions: false
-  debug: false
   servers: localhost:11211
