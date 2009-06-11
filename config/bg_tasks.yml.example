@@ -19,7 +19,7 @@ production:
       peer_max_inactivity_minutes: 90
 
   refresh_stats:
-    interval_minutes: 2
+    interval_minutes: 360
 
   # Example
   #   user_x_power_user:
