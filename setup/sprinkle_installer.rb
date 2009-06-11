@@ -20,7 +20,7 @@ policy :passenger_stack, :roles => :app do
   requires :memcached               # memcached
   requires :libmemcached            # libmemcached
   requires :required_gems           # gems required by this app
-  # requires :scm                   # Git
+  # requires :scm                   # Git (only when deploying from remote repository)
 end
 
 deployment do  

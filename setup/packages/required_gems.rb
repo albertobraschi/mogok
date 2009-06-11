@@ -9,7 +9,8 @@ package :required_gems do
   requires :rspec_rails  
   requires :ruby_debug
   requires :system_timer
-  requires :webrat  
+  requires :webrat
+  requires :whenever
 end
 
 package :cache_money do
@@ -76,12 +77,21 @@ package :whenever do
   description 'Whenever Gem'
   gem 'javan-whenever' do
     source 'http://gems.github.com'
+    post :install, 'ln -s /usr/local/ruby-enterprise/lib/ruby/gems/1.8/gems/javan-whenever-0.3.0/bin/whenever /usr/local/bin/whenever'
   end
-  version '0.2.2'
+  version '0.3.0'
+  requires :chronic # it should install the dependencies, but it doesn't...
 end
 
+# dependencies
 
-package :webrat_dependencies do
-  description 'Libraries required by the Webrat gem'
-  apt %w( libxml2 libxml2-dev libxslt1.1 libxslt1-dev libxml-ruby libxslt-ruby )
-end
+  package :chronic do
+    description 'Chronic Gem'
+    gem 'chronic'
+    version '0.2.3'
+  end
+
+  package :webrat_dependencies do
+    description 'Libraries required by the Webrat gem'
+    apt %w( libxml2 libxml2-dev libxslt1.1 libxslt1-dev libxml-ruby libxslt-ruby )
+  end

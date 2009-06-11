@@ -209,7 +209,7 @@ some (also configurable) of those who snatched it will receive a message.
         configured to run every hour) and click 'update (cron)' in the bg_tasks page, you should see the new
         cron jobs in the cron jobs table (note that if the app is deployed in more than one machine you'll
         have set the cron tabs manually in the specific one).
-      - IMPORTANT: the file APP_ROOT/script/runner must be an executable (chmod +x runner)
+      - IMPORTANT: the file APP_ROOT/script/runner must be an executable (check it if you're not deploying with Capistrano)
       - to edit cron jobs directly in your system use the commands below:
         - using the 'whenever' gem:
           mogok$ whenever --update-crontab Mogok (same command called by the application as mentioned above)
