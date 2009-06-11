@@ -1,7 +1,12 @@
 
 This directory contains recipes for installing all the required software
-in the server (Sprinkle) and for deploying the application (Capistrano). Usually
-such files are placed in the 'config' directory but due to overcrowding they
-were placed here instead.
+in the server (Sprinkle + passenger-stack) and for deploying the application
+(Capistrano). Usually such files are placed in the 'config' directory but due
+to overcrowding they were placed here instead.
 Check the Deployment section of the application README file for more on how to
 use the recipes.
+
+References:
+  + http://github.com/crafterm/sprinkle/tree/master
+  + http://github.com/benschwarz/passenger-stack/tree/master
+  + http://wiki.capify.org/index.php/Main_Page

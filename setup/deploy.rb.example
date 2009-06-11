@@ -1,6 +1,7 @@
 
 # Capistrano recipe for deployment, in this case the user do not
-# have sudo privileges.
+# need to act as sudo as it is supposed to only deploy and not install
+# anything in the system.
 
 set :application, 'mogok'
 

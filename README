@@ -377,11 +377,12 @@ VirtualBox, which is a free OS emulator by Sun Microsystems (check Appendix B on
         use the first user you created when installing Ubuntu or another user with same privileges)
       - in your local machine, run the command below (will install a bunch of things, so be patient):
         $ sprinkle -v -c -s setup/sprinkle_installer.rb
-        IMPORTANT: when completed, set the root password for Mysql as it is not defined when installed
+        IMPORTANT: when completed, set the root password for Mysql as it is not defined when installed!
 
   # Deploying the application
-    You can deploy manually just by copying all the code to the server and running the migrations or using
-    the Capistrano recipe located at 'setup/deploy.rb'. To use the capistrano recipe follow the steps below.
+    You can deploy manually just by copying all the code to the server and running the migrations yourself
+    or using the Capistrano recipe located at 'setup/deploy.rb'. To use the capistrano recipe follow the
+    steps below.
     > First deployment
       The first deployment requires the following steps:
       - In the server
@@ -435,15 +436,18 @@ VirtualBox, which is a free OS emulator by Sun Microsystems (check Appendix B on
         - the application should be running, use owner/owner or system/system to log in
 
     > Redeploying (tasks to submit code and config changes to the server, run the commands from the app root in your local machine)
-      - code (add a new version of your code to the server)        
+      - add a new release of your code to the server
         $ cap deploy
-      - rollback (rollback deploy to the previous version, but do not touch the config files)
+      - rollback deploy to the previous release, but do not touch the config files
         $ cap deploy:rollback
-      - config files (replace the config files in the server with your local ones, see 'config/deploy.rb' for the complete list)
+      - replace the config files in the server with your local ones and restart app (see 'config/deploy.rb' for the files list)
         $ cap deploy:config
-      - site keys (replace 'config/initializers/site_keys.rb' in the server (all passwords will get stale if changed!!!))
+      - replace a particular config file in the server with your local one and restart app
+        $ cap deploy:config:set_file file=config_file.xxx
+        $ cap deploy:config:set_file file=initializers/config_file.xxx
+      - replace 'config/initializers/site_keys.rb' in the server and restart (all passwords will get stale if keys changed!!!)
         $ cap deploy:config:replace_site_keys
-      - session store (replace 'config/initializers/session_store.rb' in the server (all current sessions will get stale if changed!!!))
+      - replace 'config/initializers/session_store.rb' in the server and restart (all current sessions will get stale if keys changed!!!)
         $ cap deploy:config:replace_session_store
       - check 'config/deploy.rb' for other tasks involving config files
       IMPORTANT:

@@ -6,8 +6,17 @@ module WillPaginate
     module ClassMethods
 
       def current_page(page)
-        return 1 if page.blank?
-        page == 'last' ? :last : page.to_i
+        if page.blank?
+          1
+        elsif page == 'last'
+          :last
+        else
+          begin
+            Integer(page)
+          rescue
+            1
+          end
+        end
       end
 
       def order_by(order_by, desc)
