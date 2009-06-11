@@ -90,39 +90,39 @@ production:
 
   # ADMINISTRATION
 
-  adm:
-    # enable the passenger restart link also in production mode (env page)
-    passenger_restart_production: true
+    adm:
+      # enable the passenger restart link also in production mode (env page)
+      passenger_restart_production: true
 
-    # display sensitive environment information in production mode (env page)
-    display_all_env_info_production: true
+      # display sensitive environment information in production mode (env page)
+      display_all_env_info_production: true
 
-    # display 'whenever' gem crontab update link in the bg_tasks page
-    crontab_update_enabled:  true
+      # display 'whenever' gem crontab update link in the bg_tasks page
+      crontab_update_enabled:  true
 
   # TRACKER
 
-  tracker:
-    # set the url for an external tracker if necessary (check app/helpers/tracker_helper.rb)
-    # external_url: http://host:port/tracker
+    tracker:
+      # set the url for an external tracker if necessary (check app/helpers/tracker_helper.rb)
+      # external_url: http://host:port/tracker
 
-    # if tracker accepts scrape requests
-    scrape_enabled: true
+      # if tracker accepts scrape requests
+      scrape_enabled: true
 
-    # announce response defaults
-    announce_interval_seconds: 1800
-    announce_min_interval_seconds: 1800
-    announce_resp_max_peers: 30
+      # announce response defaults
+      announce_interval_seconds: 1800
+      announce_min_interval_seconds: 1800
+      announce_resp_max_peers: 30
 
-    # if tracker does not accept unregistered bittorrent clients
-    ban_unknown_clients: false
+      # if tracker does not accept unregistered bittorrent clients
+      ban_unknown_clients: false
 
-    # if announces from the bittorrent clients are to be logged
-    log_announces: true
+      # if announces from the bittorrent clients are to be logged
+      log_announces: true
 
-    # bonus are given for uploading data in certain conditions, like seeding
-    bonus_rules:
-      seeding: 0.5
+      # bonus are given for uploading data in certain conditions, like seeding
+      bonus_rules:
+        seeding: 0.5
 
 
 development:
