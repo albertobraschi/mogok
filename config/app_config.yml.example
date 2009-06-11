@@ -4,6 +4,9 @@ production:
   # application name (appears in the browse window)
   app_name: Mogok
 
+  # application unix name (used to system operations)
+  app_unix_name: mogok
+
   # default locale
   default_locale: en
 
@@ -124,6 +127,7 @@ production:
 
 development:
   app_name: Mogok Dev
+  app_unix_name: mogok
   default_locale: en
   login:
     max_attempts: 5
@@ -193,6 +197,7 @@ development:
 
 test:
   app_name: Mogok Test
+  app_unix_name: mogok
   default_locale: en
   login:
     max_attempts: 5

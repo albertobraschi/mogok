@@ -58,7 +58,7 @@ class BgTasksController < ApplicationController
     logger.debug ':-) adm_controller.update_crontab'
     access_denied unless APP_CONFIG[:adm][:crontab_update_enabled]
     if request.post?
-      %x{whenever --update-crontab #{APP_CONFIG[:app_name]}}
+      %x{whenever --update-crontab #{APP_CONFIG[:app_unix_name]}}
     end
     redirect_to :action => 'index'
   end
