@@ -201,24 +201,24 @@ some (also configurable) of those who snatched it will receive a message.
       - also works in Windows
       - will run in 'development' mode by default
       - run with the commands:
-        mogok$ ruby1.8 script/bg_tasks_mock.rb
-        mogok$ ruby1.8 script/bg_tasks_mock.rb production
+        $ ruby script/bg_tasks_mock.rb
+        $ ruby script/bg_tasks_mock.rb production
     + running as a cron job
-      - the app has a link to include cron jobs in your system automatically using the 'whenever' gem
+      - the 'tasks' page has a link to include cron jobs in your system automatically (it calls the 'whenever' gem)
       - to include the cron jobs, configure the scheduling in the file 'config/schedule.rb' (it is already
-        configured to run every hour) and click 'update (cron)' in the bg_tasks page, you should see the new
+        configured to run every hour) and click 'update' in the 'tasks' page, you should see the new
         cron jobs in the cron jobs table (note that if the app is deployed in more than one machine you'll
         have set the cron tabs manually in the specific one).
-      - IMPORTANT: the file APP_ROOT/script/runner must be an executable (check it if you're not deploying with Capistrano)
-      - to edit cron jobs directly in your system use the commands below:
+      - IMPORTANT: file script/runner must be executable (check if you're not deploying with Capistrano)
+      - to manually edit the cron jobs use the commands below:
         - using the 'whenever' gem:
-          mogok$ whenever --update-crontab mogok (same command called by the application as mentioned above)
+          $ whenever --update-crontab mogok (same command called by the application as mentioned above)
         - using the crontab tool:
           $ crontab -l (list cron jobs)
           $ crontab -e (edit cron jobs)
           $ crontab -r (remove all)
-          - cron job example using the 'bg_tasks.rb' script (runs every hour at minute 5):
-            5 * * * * RAILS_ENV=production /var/vhosts/mogok/script/runner /var/vhosts/mogok/script/bg_tasks.rb
+          - example (runs every hour at minute 5):
+            5 * * * * /var/vhosts/mogok/current/script/runner -e production "BgTasks::Dispatcher.exec"
 
 
 # SOME TECHNICAL THINGS
@@ -336,7 +336,9 @@ to translate. So, if you want to translate, let's say to Spanish, this is what y
 
 - Configuration
   Lays in the files below. The files come with an 'example' extension, just create a copy of each file without
-the extension and change the configuration when needed.
+the extension and change the configuration when needed. Note that the resulting configuration files are listed
+in the file '.gitignore', preventing them from being committed to the repository and possibly exposing sensitive
+information about your system.
   - app config
     + config/environment.rb
     + config/app_config.yml
@@ -366,17 +368,20 @@ VirtualBox, which is a free OS emulator by Sun Microsystems (check Appendix B on
 
   # Installing the server software
     There are two ways for installing all the software in the server: manually or using the 'passenger-stack'
-    script (check http://github.com/benschwarz/passenger-stack/tree/master to see what it installs). You can
-    also customize the script, check http://github.com/crafterm/sprinkle/tree/master.
-    If you prefer to do it by hand or is deploying on Windows, check appendix A for a complete list of the
-    required installation steps.
+    script (check http://github.com/benschwarz/passenger-stack/tree/master to see what it installs). In
+    addition to the script packages, it will also install the gems required by the application, check
+    'setup/packages/required_gems.rb' for the complete list. You can add further customizations the the script,
+    check http://github.com/crafterm/sprinkle/tree/master for instructions.
+    If you prefer to do the installation by hand or is deploying on Windows, check appendix A for a complete
+    list of the  required installation steps.
     To install using the 'passenger-stack' script, follow the steps below.
+      - be sure that your server accepts ssh connections
       - you must have the 'capistrano' and 'sprinkle' gems installed in your local machine:
         $ gem install capistrano
         $ gem install crafterm-sprinkle --source http://gems.github.com/
       - in the file 'setup/sprinkle_installer.rb', specify the server user (must have sudo privileges, so
         use the first user you created when installing Ubuntu or another user with same privileges)
-      - in your local machine, run the command below (will install the required software AND gems):
+      - in your local machine, run the command below (will install the required software and gems):
         $ sprinkle -v -c -s setup/passenger_stack.rb
         IMPORTANT: when completed, set the root password for Mysql as it is not defined by the script!
 
@@ -411,18 +416,18 @@ VirtualBox, which is a free OS emulator by Sun Microsystems (check Appendix B on
             mysql> GRANT ALL PRIVILEGES ON mogok_production.* TO 'mogok'@localhost IDENTIFIED BY 'enter password here';
 
         - passenger
-          - edit the httpd.conf file (sudo gedit /etc/apache2/httpd.conf), including the following:
+          - edit the httpd.conf file (sudo nano /etc/apache2/httpd.conf), including the following:
             <VirtualHost *:80>
               ServerName localhost
               DocumentRoot "/var/vhosts/mogok/current/public"
             </VirtualHost>
-          - note that there are several ways to tell Apache about your app, this one happens to be the simpliest
+          - note that this config is the minimal required to run the app, check passenger docs on how to do in a real scenario
           - restart apache
-            see Appendix D          
+            $ sudo /etc/init.d/apache2 restart
 
         - memcached
           - start (it MUST be started before the deployment or the migrations will fail)
-            see Appendix C (will start automatically after server restarts)
+            see Appendix C (will start automatically if server is restarted)
 
       - In your local machine
         - be sure that all the configuration files are prepared (see item Configuration above)
@@ -564,21 +569,6 @@ VirtualBox, which is a free OS emulator by Sun Microsystems (check Appendix B on
     memcached -d -l 127.0.0.1 -p 11211 -m 256 -P /tmp/memcached.pid
   - start in verbose mode (so you can see what is being stored and read from it)
     memcached -vv -l 127.0.0.1 -p 11211 -m 256 -P /tmp/memcached.pid
-
-# Appendix D: Useful Commands
-  - passenger
-    - manual restart
-      $ touch tmp/restart.txt
-    - info
-      $ passenger-memory-stats
-      $ passenger-status
-  - apache
-    $ sudo /etc/init.d/apache2 stop
-    $ sudo /etc/init.d/apache2 start
-    $ sudo /etc/init.d/apache2 restart
-
-
-
 
 
 

@@ -1,4 +1,7 @@
-#!/usr/bin/env ruby
+
+# A mock to run the background tasks, run with:
+#  $ ruby script/bg_tasks_mock.rb
+#  $ ruby script/bg_tasks_mock.rb production
 
 require 'rubygems'
 require 'logger'
