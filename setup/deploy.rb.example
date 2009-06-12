@@ -10,7 +10,7 @@ set :application, 'mogok'
   set :port, 22
 
 # user
-  set :user, '' # the application user goes here
+  set :user, '' # the application server user goes here
   set :use_sudo, false
 
 # roles
