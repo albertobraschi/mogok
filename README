@@ -88,7 +88,7 @@ users with lower ranking.
   - inviter: grants the right to send invitations
   - staff: grants right to see and edit staff info
   - perpetual: will not be inactivated or removed if absent from the site
-  - wisher: allow user to request torrents
+  - wisher: allows user to request torrents
 
 - Ratio policy
   The application will apply ratio enforcement rules and promote users based on their ratio and
@@ -379,8 +379,6 @@ VirtualBox, which is a free OS emulator by Sun Microsystems (check Appendix B on
       - you must have the 'capistrano' and 'sprinkle' gems installed in your local machine:
         $ gem install capistrano
         $ gem install crafterm-sprinkle --source http://gems.github.com/
-      - in the file 'setup/sprinkle_installer.rb', specify the server user (must have sudo privileges, so
-        use the first user you created when installing Ubuntu or another user with same privileges)
       - in your local machine, run the command below (will install the required software and gems):
         $ sprinkle -v -c -s setup/passenger_stack.rb
         IMPORTANT: when completed, set the root password for Mysql as it is not defined by the script!
@@ -433,9 +431,7 @@ VirtualBox, which is a free OS emulator by Sun Microsystems (check Appendix B on
         - be sure that all the configuration files are prepared (see item Configuration above)
         - edit file 'config/database.yml'
           set the user and password that you created for the production database
-        - edit file 'config/deploy.yml'
-          set user with the app user that you created in the server (password will be asked when you deploy)
-        - setup server (create the deploy dirs in the server and upload all the config files and the create_data migration)
+        - setup deploy structure (create the deploy dirs in the server and upload all the config files and the create_data migration)
           $ cap deploy:setup
         - deploy application (upload the application code and run the database migrations)
           $ cap deploy:cold

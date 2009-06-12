@@ -3,8 +3,9 @@
 # that the user in this case must be able to act as sudo.
 
 # user
-  set :user, '' # user must be able to act as sudo as it will be used to install stuff
-  set :use_sudo, true 
+  Capistrano::CLI.ui.say('Please provide the user credentials (must have sudo privileges):')
+  set :user,     Capistrano::CLI.ui.ask(' > username: ')
+  set :password, Capistrano::CLI.password_prompt(' > password: ')
 
 # server
   set :domain, 'localhost'

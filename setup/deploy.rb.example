@@ -1,6 +1,6 @@
 
-# Capistrano recipe for deployment, in this case the user do not
-# need to act as sudo as it is supposed to only deploy and not install
+# Capistrano recipe for deployment, in this case the user do not need
+# to act as sudo as it is supposed to only deploy and not install
 # anything in the system.
 
 set :application, 'mogok'
@@ -10,7 +10,9 @@ set :application, 'mogok'
   set :port, 22
 
 # user
-  set :user, '' # the application server user goes here
+  Capistrano::CLI.ui.say('Please provide the app user credentials:')
+  set :user,     Capistrano::CLI.ui.ask(' > username: ')
+  set :password, Capistrano::CLI.password_prompt(' > password: ')
   set :use_sudo, false
 
 # roles
@@ -29,13 +31,16 @@ set :application, 'mogok'
   # local
     set :repository, '.'
 
+# cleanup (cap deploy:cleanup)
+  set :keep_releases, 4
+
 # deploy strategy
   # remote repository
     # set :deploy_via, :remote_cache
     # set :repository_cache, 'git_cache'
   # local repository
     set :deploy_via, :copy
-    excluded = ['.git/*', '.gitignore', 'log/*', 'nbproject/*', 'setup/*', 'Capfile']
+    excluded =  ['.git/*', '.gitignore', 'log/*', 'nbproject/*', 'setup/*', 'Capfile']
     excluded += ['config/app_config.*', 'config/bg_tasks.*', 'config/database.*', 'config/environment.*', 'config/memcached.*', 'config/schedule.*']
     excluded += ['config/initializers/action_mailer.*', 'config/initializers/session_store.*', 'config/initializers/site_keys.*']
     excluded += ['db/migrate/099_create_app_data.*']
@@ -51,18 +56,15 @@ set :application, 'mogok'
   namespace :deploy do
     task :after_update_code do
       config.symlinks # create the symlinks for the config files in the release config dir
+      update_crontab
     end
 
     task :after_setup do
       config.setup_config
     end
 
-    task :after_cold do
-      generate_passenger_conf
-    end
-
     task :start, :roles => :app do
-      run "touch #{current_path}/tmp/restart.txt"
+      restart
     end
 
     task :stop, :roles => :app do
@@ -72,6 +74,11 @@ set :application, 'mogok'
     desc 'Restart passenger.'
     task :restart, :roles => :app, :except => { :no_release => true } do
       run "touch #{current_path}/tmp/restart.txt"
+    end
+
+    desc 'Update the crontab file using whenever gem.'
+    task :update_crontab, :roles => :db do
+      run "cd #{release_path} && whenever --update-crontab #{application}"
     end
 
     # Tasks that upload and replace the application's config files so they can remain safely
@@ -84,8 +91,8 @@ set :application, 'mogok'
 
       desc 'Create the shared config dirs in the server and upload ALL config files.'
       task :setup_config, :roles => :app do
-        set_config_directories
-        set_config_files
+        set_directories
+        set_files
         set_site_keys
         set_session_store
         set_app_data_migration
@@ -93,19 +100,29 @@ set :application, 'mogok'
 
       desc 'Create config dirs if necessary, upload config files (replace if they exist) and restart server.'
       task :default, :roles => :app do
-        set_config_directories
-        set_config_files
+        set_directories
+        set_files
         restart
       end
 
       desc 'Create the shared config dirs in the server if they do not exist.'
-      task :set_config_directories, :roles => :app do
+      task :set_directories, :roles => :app do
         run "if [ ! -d #{shared_config_path} ]; then mkdir #{shared_config_path}; fi"
         run "if [ ! -d #{shared_config_path}/initializers ]; then mkdir #{shared_config_path}/initializers; fi"
       end
 
+      desc 'Upload a particular config file, replacing if it exists, and restart the application.'
+      task :set_file, :roles => :app do
+        # usage: cap deploy:config:set_file file=app_config.yml
+        f = ENV['file']
+        raise 'the given file does not appear to be a config file' unless config_files.include?(f)
+        run "if [ -f #{shared_config_path}/#{f} ]; then rm #{shared_config_path}/#{f}; fi"
+        top.upload "#{local_config_path}/#{f}", "#{shared_config_path}/#{f}"
+        restart
+      end
+
       desc 'Upload config files, replacing if they exist.'
-      task :set_config_files, :roles => :app do
+      task :set_files, :roles => :app do
         config_files.each do |f|
           run "if [ -f #{shared_config_path}/#{f} ]; then rm #{shared_config_path}/#{f}; fi"
           top.upload "#{local_config_path}/#{f}", "#{shared_config_path}/#{f}"
@@ -124,11 +141,12 @@ set :application, 'mogok'
         top.upload "#{local_config_path}/#{session_store_file}", "#{shared_config_path}/#{session_store_file}"
       end
 
-      desc 'Replace session store config in server. All current user sessions will become stale if changed!!!'
+      desc 'Replace session store config in server and restart. All current user sessions will become stale if changed!!!'
       task :replace_session_store, :roles => :app do
         if Capistrano::CLI.ui.agree('WARNING: Changing the session store attributes will invalidate all current user sessions. Are you sure? (y/n):')
           run "if [ -f #{shared_config_path}/#{session_store_file} ]; then rm #{shared_config_path}/#{session_store_file}; fi"
-          top.upload "#{local_config_path}/#{session_store_file}", "#{shared_config_path}/#{session_store_file}"
+          set_session_store
+          restart
         end
       end
 
@@ -137,15 +155,16 @@ set :application, 'mogok'
         top.upload "#{local_config_path}/#{site_keys_file}", "#{shared_config_path}/#{site_keys_file}"
       end
 
-      desc 'Replace restful authentication site keys in server. All existing passwords will become stale if changed!!!'
+      desc 'Replace restful authentication site keys in server and restart. All existing passwords will become stale if changed!!!'
       task :replace_site_keys, :roles => :app do
         if Capistrano::CLI.ui.agree('WARNING: Changing the site keys will invalidate all existing passwords. Are you sure? (y/n):')
           run "if [ -f #{shared_config_path}/#{site_keys_file} ]; then rm #{shared_config_path}/#{site_keys_file}; fi"
           set_site_keys
+          restart
         end
       end
 
-      desc 'Set config files symlinks for the application release that is being deployed.'
+      desc 'Set config files symlinks for the application release that was deployed.'
       task :symlinks, :roles => :app do
         # symlinks to config files
         config_files.each {|f| run "ln -s #{shared_config_path}/#{f} #{release_config_path}/#{f}" }
