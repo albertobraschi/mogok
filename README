@@ -212,13 +212,13 @@ some (also configurable) of those who snatched it will receive a message.
       - IMPORTANT: the file APP_ROOT/script/runner must be an executable (check it if you're not deploying with Capistrano)
       - to edit cron jobs directly in your system use the commands below:
         - using the 'whenever' gem:
-          mogok$ whenever --update-crontab Mogok (same command called by the application as mentioned above)
+          mogok$ whenever --update-crontab mogok (same command called by the application as mentioned above)
         - using the crontab tool:
           $ crontab -l (list cron jobs)
           $ crontab -e (edit cron jobs)
           $ crontab -r (remove all)
           - cron job example using the 'bg_tasks.rb' script (runs every hour at minute 5):
-            5 * * * * RAILS_ENV=production /home/user/apps/mogok/script/runner /home/user/apps/mogok/script/bg_tasks.rb
+            5 * * * * RAILS_ENV=production /var/vhosts/mogok/script/runner /var/vhosts/mogok/script/bg_tasks.rb
 
 
 # SOME TECHNICAL THINGS
@@ -354,10 +354,10 @@ the extension and change the configuration when needed.
 
 
 # DEPLOYMENT
-  If you are new to Rails and use Windows, a good and easy way to put the application
-running is to use InstantRails (install the correct version of the rails gem). For a real
-scenario, a good option is to deploy on Ubuntu using Passenger (modrails). 
-  A good way to have a real world remote server scenario is to emulate a production setup using
+  If you are new to Rails and use Windows, and easy way to put the application running is to
+use InstantRails (install the correct version of the rails gem). For a real scenario, a good option
+is to deploy on Ubuntu using Passenger (modrails). 
+  A nice way to have a real world remote server scenario is to emulate a production setup using
 VirtualBox, which is a free OS emulator by Sun Microsystems (check Appendix B on how to configure it).
   IMPORTANT: if you are running on Windows, change the name of the file 'lib/mysql.rb.windows' to
 'lib/mysql.rb' if the application can't find your mysql gem.
@@ -366,7 +366,8 @@ VirtualBox, which is a free OS emulator by Sun Microsystems (check Appendix B on
 
   # Installing the server software
     There are two ways for installing all the software in the server: manually or using the 'passenger-stack'
-    script (http://github.com/benschwarz/passenger-stack/tree/master), which uses the 'sprinkle' gem.
+    script (check http://github.com/benschwarz/passenger-stack/tree/master to see what it installs). You can
+    also customize the script, check http://github.com/crafterm/sprinkle/tree/master.
     If you prefer to do it by hand or is deploying on Windows, check appendix A for a complete list of the
     required installation steps.
     To install using the 'passenger-stack' script, follow the steps below.
@@ -375,9 +376,9 @@ VirtualBox, which is a free OS emulator by Sun Microsystems (check Appendix B on
         $ gem install crafterm-sprinkle --source http://gems.github.com/
       - in the file 'setup/sprinkle_installer.rb', specify the server user (must have sudo privileges, so
         use the first user you created when installing Ubuntu or another user with same privileges)
-      - in your local machine, run the command below (will install a bunch of things, so be patient):
-        $ sprinkle -v -c -s setup/sprinkle_installer.rb
-        IMPORTANT: when completed, set the root password for Mysql as it is not defined when installed!
+      - in your local machine, run the command below (will install the required software AND gems):
+        $ sprinkle -v -c -s setup/passenger_stack.rb
+        IMPORTANT: when completed, set the root password for Mysql as it is not defined by the script!
 
   # Deploying the application
     You can deploy manually just by copying all the code to the server and running the migrations yourself
@@ -415,9 +416,9 @@ VirtualBox, which is a free OS emulator by Sun Microsystems (check Appendix B on
               ServerName localhost
               DocumentRoot "/var/vhosts/mogok/current/public"
             </VirtualHost>
-          - restart apache
-            see Appendix D
           - note that there are several ways to tell Apache about your app, this one happens to be the simpliest
+          - restart apache
+            see Appendix D          
 
         - memcached
           - start (it MUST be started before the deployment or the migrations will fail)
@@ -438,9 +439,9 @@ VirtualBox, which is a free OS emulator by Sun Microsystems (check Appendix B on
     > Redeploying (tasks to submit code and config changes to the server, run the commands from the app root in your local machine)
       - add a new release of your code to the server
         $ cap deploy
-      - rollback deploy to the previous release, but do not touch the config files
+      - rollback to the previous code release, but do not touch the config files
         $ cap deploy:rollback
-      - replace the config files in the server with your local ones and restart app (see 'config/deploy.rb' for the files list)
+      - replace the config files in the server with your local ones and restart app (see 'config/deploy.rb' for the affected files)
         $ cap deploy:config
       - replace a particular config file in the server with your local one and restart app
         $ cap deploy:config:set_file file=config_file.xxx
@@ -452,11 +453,11 @@ VirtualBox, which is a free OS emulator by Sun Microsystems (check Appendix B on
       - check 'config/deploy.rb' for other tasks involving config files
       IMPORTANT:
         + the deploy is currently being made via copy, which means that the code is transferred from your local
-          machine to the server, not from Github to the server
+          machine to the server, not from the remote repository (Github in this case) to the server
         + the deploy script will effectively use your local git repository, so any change MUST be commited or it
           won't be deployed (install git in your machine to be able to do this)
-        + the config files (those that came with an 'example' extension) are uploaded directly from your local
-          machine to the server and don't need to be commited (in fact they are set to be ignored in .gitignore)
+        + note that the config files (those that came with an 'example' extension) are not under version control
+          and are uploaded directly from your local machine to the server without git acting as intermediary
 
 
 # Appendix A: Server Installation Steps
@@ -514,12 +515,6 @@ VirtualBox, which is a free OS emulator by Sun Microsystems (check Appendix B on
 
     > gems required for automatic crontab update (ignore if you are setting it manually)
       sudo gem1.8 install javan-whenever
-
-    > mongrel (optional) - useful to run in development mode, run using 'ruby script/server' or 'script/server'
-      sudo gem1.8 install mongrel
-
-    > thin (optional) - alternative to mongrel, run using 'ruby script/server thin' or 'script/server thin')
-      sudo gem1.8 install thin
 
     > passenger
       sudo gem1.8 install passenger

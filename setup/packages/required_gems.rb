@@ -37,7 +37,7 @@ package :cucumber do
   verify do
     has_gem 'cucumber'
     has_file '/usr/local/ruby-enterprise/bin/cucumber'
-    has_symlink '/usr/local/bin/cucumber'
+    has_symlink '/usr/local/bin/cucumber', '/usr/local/ruby-enterprise/bin/cucumber'
   end
 end
 
@@ -73,7 +73,7 @@ package :rspec do
   verify do
     has_gem 'rspec'
     has_file '/usr/local/ruby-enterprise/bin/spec'
-    has_symlink '/usr/local/bin/spec'
+    has_symlink '/usr/local/bin/spec', '/usr/local/ruby-enterprise/bin/spec'
   end
 end
 
@@ -130,7 +130,7 @@ package :whenever do
   verify do
     has_gem 'webrat'
     has_file '/usr/local/ruby-enterprise/bin/whenever'
-    has_symlink '/usr/local/bin/whenever'
+    has_symlink '/usr/local/bin/whenever', '/usr/local/ruby-enterprise/bin/whenever'
   end
 
   requires :chronic # it should install the dependencies, but it doesn't...

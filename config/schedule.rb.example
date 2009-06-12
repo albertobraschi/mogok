@@ -1,6 +1,8 @@
 
 # include the cron jobs below with the command: whenever --update-crontab Mogok
 
+# set :cron_log, '/var/vhosts/mogok/shared/cron_log.log' # useful if cron jobs not working for some reason
+
 every 1.hour, :at => 5 do
   runner 'BgTasks::Dispatcher.exec'
 end
