@@ -1,8 +1,8 @@
 
-# This recipe prepares the server to the application deployment. Calling it with the
-# command 'cap -f setup/server_setup.rb server_setup' will trigger the following steps:
-#   + create a user to own and run the application (not recommended to be a sudoer)
-#   + create the app directory and grant write privileges to the user above
+# This recipe prepares the server to the application deployment. Calling its default
+# task (cap -f setup/server_setup.rb server_setup) will execute the following steps:
+#   + create a user (without sudo privileges) to own and run the application
+#   + create the app directory and grant write privileges to the user created above
 #   + create passenger configuration file in '/etc/apache2/sites-available' and
 #     enable it by calling 'a2ensite' (the file template is 'templates/mogok.erb')
 #   + restart memcached server (or start if not running)
@@ -54,7 +54,6 @@ set :application, 'mogok'
     desc 'Create the application user and assign it to its group.'
     task :create_app_user, :roles => :app do
       sudo("useradd #{app_user} --create-home") {|ch, stream, out| puts "     << #{out}" }
-
       sudo "passwd #{app_user}" do |ch, stream, out|
         puts "     << #{out}"
         if out =~ /Enter new UNIX password:/
@@ -65,7 +64,6 @@ set :application, 'mogok'
           ch.send_data "\n"
         end
       end
-
       sudo("adduser #{app_user} #{app_user_group}") {|ch, stream, out| puts "     << #{out}" }
     end
 

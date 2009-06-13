@@ -331,7 +331,7 @@ to translate. So, if you want to translate, let's say to Spanish, this is what y
   + change the default locale in the file app_config.yml to 'es'
   + translate the views. note that you can let the original english views intact and just add the translated
     ones following this name pattern: my_view.html.erb -> my_view.es.html.erb.
-  + IMPORTANT: changing or deleting the default 'en.yml' file and the default english views will break some of
+  + IMPORTANT: changing or deleting the default 'en.yml' file and the default english views may break some of
     the features tests.
 
 - Configuration
@@ -571,14 +571,14 @@ VirtualBox, which is a free OS emulator by Sun Microsystems (check Appendix D on
         VBoxManage setextradata "ubuntu_box_name" "VBoxInternal/Devices/pcnet/0/LUN#0/Config/apache/Protocol" TCP
         VBoxManage setextradata "ubuntu_box_name" "VBoxInternal/Devices/pcnet/0/LUN#0/Config/apache/GuestPort" 80
         VBoxManage setextradata "ubuntu_box_name" "VBoxInternal/Devices/pcnet/0/LUN#0/Config/apache/HostPort" 8080
-      + restart Apache and your system if needed
+      + restart the guest system if running
       + open the browse at http://localhost:8080 on your system and it will be forwarded to port 80 on VirtualBox
     - connecting via SSH (port 22)
       + execute the commands below
         VBoxManage setextradata "ubuntu_box_name" "VBoxInternal/Devices/pcnet/0/LUN#0/Config/apache/Protocol" TCP
         VBoxManage setextradata "ubuntu_box_name" "VBoxInternal/Devices/pcnet/0/LUN#0/Config/apache/GuestPort" 22
         VBoxManage setextradata "ubuntu_box_name" "VBoxInternal/Devices/pcnet/0/LUN#0/Config/apache/HostPort" 2222
-      + restart Apache and your system if needed
+      + restart the guest system if running
       + connect via SSH on port 2222 of your system and it will be forwarded to port 22 on VirtualBox:
         $ ssh -l <user> -p 2222 localhost
 
