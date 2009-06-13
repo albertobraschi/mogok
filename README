@@ -425,7 +425,7 @@ VirtualBox, which is a free OS emulator by Sun Microsystems (check Appendix D on
         $ cap deploy:config:replace_site_keys
       - replace 'config/initializers/session_store.rb' in the server and restart (all current sessions will get stale if keys changed!!!)
         $ cap deploy:config:replace_session_store
-    - check 'config/deploy.rb' for other tasks involving config files
+    - check 'setup/deploy.rb' and 'setup/setup.rb' for other useful tasks
     - IMPORTANT:
       + the deploy is currently being made via copy, which means that the code is transferred from your local
         machine repository to the server, not from the remote repository (Github for instance) to the server
