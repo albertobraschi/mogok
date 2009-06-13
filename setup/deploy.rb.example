@@ -1,16 +1,16 @@
 
-# Capistrano recipe for deployment, in this case the user do not need
-# to act as sudo as it is supposed to only deploy and not install
+# Capistrano recipe for deployment, in this case the user do not
+# need to act as sudo as it is supposed to only deploy and not install
 # anything in the system.
 
 set :application, 'mogok'
 
 # server
   set :domain, 'localhost'
-  set :port, 22
+  # set :port, 2222
 
 # user
-  Capistrano::CLI.ui.say('Please provide the app user credentials:')
+  Capistrano::CLI.ui.say('Please provide the app user (not the admin!!) credentials:')
   set :user,     Capistrano::CLI.ui.ask(' > username: ')
   set :password, Capistrano::CLI.password_prompt(' > password: ')
   set :use_sudo, false
@@ -49,9 +49,9 @@ set :application, 'mogok'
 # deploy
   set :deploy_to, "/var/vhosts/#{application}"
 
-  set :local_config_path, 'config'  # config files path in the local machine
+  set :local_config_path, 'config'                        # config files path in the local machine
   set :shared_config_path, "#{shared_path}/system/config" # config files path in the server's shared dir
-  set :release_config_path, "#{release_path}/config" # config files path in the server's release dir
+  set :release_config_path, "#{release_path}/config"      # config files path in the server's release dir
 
   namespace :deploy do
     task :after_update_code do
@@ -60,7 +60,7 @@ set :application, 'mogok'
     end
 
     task :after_setup do
-      config.setup_config
+      config.init_config
     end
 
     task :start, :roles => :app do
@@ -90,12 +90,12 @@ set :application, 'mogok'
       set :app_data_migration_file, 'db/migrate/099_create_app_data.rb'
 
       desc 'Create the shared config dirs in the server and upload ALL config files.'
-      task :setup_config, :roles => :app do
+      task :init_config, :roles => :app do
         set_directories
         set_files
         set_site_keys
         set_session_store
-        set_app_data_migration
+        set_custom_migrations
       end
 
       desc 'Create config dirs if necessary, upload config files (replace if they exist) and restart server.'
@@ -111,9 +111,9 @@ set :application, 'mogok'
         run "if [ ! -d #{shared_config_path}/initializers ]; then mkdir #{shared_config_path}/initializers; fi"
       end
 
+      # usage: cap deploy:config:set_file file=app_config.yml
       desc 'Upload a particular config file, replacing if it exists, and restart the application.'
       task :set_file, :roles => :app do
-        # usage: cap deploy:config:set_file file=app_config.yml
         f = ENV['file']
         raise 'the given file does not appear to be a config file' unless config_files.include?(f)
         run "if [ -f #{shared_config_path}/#{f} ]; then rm #{shared_config_path}/#{f}; fi"
@@ -129,11 +129,11 @@ set :application, 'mogok'
         end
       end
 
-      desc 'Upload app_data migration file to the server creating the required dirs.'
-      task :set_app_data_migration, :roles => :app do
-        run "if [ ! -d #{shared_path}/system/db ]; then mkdir #{shared_path}/system/db; fi"
-        run "if [ ! -d #{shared_path}/system/db/migrate ]; then mkdir #{shared_path}/system/db/migrate; fi"
-        top.upload "#{app_data_migration_file}", "#{shared_path}/system/#{app_data_migration_file}"
+      desc 'Upload custom migrations to the server, creating the required dirs.'
+      task :set_custom_migrations, :roles => :app do
+        run "if [ ! -d #{shared_path}/db ]; then mkdir #{shared_path}/db; fi"
+        run "if [ ! -d #{shared_path}/db/migrate ]; then mkdir #{shared_path}/db/migrate; fi"
+        top.upload "#{app_data_migration_file}", "#{shared_path}/#{app_data_migration_file}"
       end
 
       desc 'Upload session store config file to server.'
@@ -166,14 +166,14 @@ set :application, 'mogok'
 
       desc 'Set config files symlinks for the application release that was deployed.'
       task :symlinks, :roles => :app do
-        # symlinks to config files
+        # config files
         config_files.each {|f| run "ln -s #{shared_config_path}/#{f} #{release_config_path}/#{f}" }
-        # symlink to session_store.rb
+        # session_store.rb
         run "ln -s #{shared_config_path}/#{session_store_file} #{release_config_path}/#{session_store_file}"
-        # symlink to site_keys.rb
+        # site_keys.rb
         run "ln -s #{shared_config_path}/#{site_keys_file} #{release_config_path}/#{site_keys_file}"
-        # symlink to 099_create_app_data.rb migration
-        run "ln -s #{shared_path}/system/#{app_data_migration_file} #{release_path}/#{app_data_migration_file}"
+        # app_data migration
+        run "ln -s #{shared_path}/#{app_data_migration_file} #{release_path}/#{app_data_migration_file}"
       end
     end
   end

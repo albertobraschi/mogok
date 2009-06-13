@@ -1,4 +1,3 @@
-nbproject
 config/environment.rb
 config/app_config.yml
 config/database.yml
@@ -14,6 +13,13 @@ config/locales/*
 db/*.sql
 db/schema.rb
 lib/mysql.rb
+log/*.log
+nbproject
+public/stylesheets/*
+!public/stylesheets/default.css
+setup/deploy.rb
+setup/install.rb
+setup/setup.rb
 vendor/plugins/*
 !vendor/plugins/action_mailer_optional_tls
 !vendor/plugins/focus_fu
@@ -23,8 +29,3 @@ vendor/plugins/*
 !vendor/plugins/strip_attributes
 !vendor/plugins/will_paginate-2.3.8
 !vendor/plugins/xss_terminate
-log/*.log
-public/stylesheets/*
-!public/stylesheets/default.css
-setup/deploy.rb
-setup/install.rb

@@ -3,8 +3,8 @@ production:
   adapter: mysql
   encoding: utf8
   database: mogok_production
-  username: 
-  password:
+  username: USERNAME_FOR_PRODUCTION_DATABASE_USER
+  password: PASSWORD_FOR_PRODUCTION_DATABASE_USER
   host: localhost
   socket: /var/run/mysqld/mysqld.sock
   pool: 5

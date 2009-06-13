@@ -3,14 +3,13 @@
 # that the user in this case must be able to act as sudo.
 
 # user
-  Capistrano::CLI.ui.say('Please provide the user credentials (must have sudo privileges):')
+  Capistrano::CLI.ui.say('Please provide the admin user credentials (must have sudo privileges):')
   set :user,     Capistrano::CLI.ui.ask(' > username: ')
   set :password, Capistrano::CLI.password_prompt(' > password: ')
 
 # server
   set :domain, 'localhost'
-  set :port, 22
+  # set :port, 2222
 
 # roles
   role :app, domain, :primary => true
-
