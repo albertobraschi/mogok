@@ -1,6 +1,6 @@
 
-# Capistrano recipe to be used by the 'sprinkle' installer, note
-# that the user in this case must be able to act as sudo.
+# A simple Capistrano recipe to provide a way for the 'sprinkle' installer connect
+# to the server. Note that the user in this case must be able to act as sudo.
 
 # user
   Capistrano::CLI.ui.say('Please provide the admin user credentials (must have sudo privileges):')

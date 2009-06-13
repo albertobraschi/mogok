@@ -9,7 +9,7 @@ class BgTasksController < ApplicationController
     logger.debug ':-) bg_tasks_controller.index'
     @bg_tasks = fetch_tasks
     @cron_jobs = list_cron_jobs
-    @task_logs = BgTaskLog.all :limit => 20
+    @task_logs = BgTaskLog.all :limit => 40
   end
 
   def exec
