@@ -7,9 +7,9 @@ tracker and community. It is built with the Ruby language and the Ruby on Rails 
 - Demo Video: http://www.youtube.com/watch?v=ep_dUaTb1GU (watch in HD)
 
 - Screenshots
-  - http://bayimg.com/image/oaamaaacg.jpg
-  - http://bayimg.com/image/oaamcaacg.jpg
-  - http://bayimg.com/image/oaamhaacg.jpg
+  + http://bayimg.com/image/oaamaaacg.jpg
+  + http://bayimg.com/image/oaamcaacg.jpg
+  + http://bayimg.com/image/oaamhaacg.jpg
 
 - Current State: Beta Testing
 
@@ -28,7 +28,7 @@ organize the torrents in specific or generic forms. Check below examples on both
 scenarios (note that users can't choose or even see the torrent type, this is done implicitly
 when a category is selected).
 
-  # A community specialized in music:
+  + A community specialized in music:
     - this structure is configured as the example in the create_data migration file
 
     type[audio]
@@ -59,7 +59,7 @@ when a category is selected).
       category[Software]
         tags[windows, linux, mac]
 
-  # A community with more generic content:
+  + A community with more generic content:
 
     type[music]
       formats[MP3, OGG, FLAC]
@@ -85,10 +85,10 @@ be used by just one user (must have id = 1) and is used to identify automatic me
 user won't accept messages). Users with roles system, owner and admin can edit the profiles of
 users with lower ranking.
   Roles and users also have tickets that grant them rights, those currently in use are:
-  - inviter: grants the right to send invitations
-  - staff: grants right to see and edit staff info
-  - perpetual: will not be inactivated or removed if absent from the site
-  - wisher: allows user to request torrents
+    + inviter: grants the right to send invitations
+    + staff: grants right to see and edit staff info
+    + perpetual: will not be inactivated or removed if absent from the site
+    + wisher: allows user to request torrents
 
 - Ratio policy
   The application will apply ratio enforcement rules and promote users based on their ratio and
@@ -109,10 +109,10 @@ mode.
 
 - Logs
   Several types of logs are provided so you can check what is going on with the app:
-  - error logs
-  - tracker announce logs (can be turned off)
-  - activity logs
-  - background tasks logs
+    + error logs
+    + tracker announce logs (can be turned off)
+    + activity logs
+    + background tasks logs
 
 - Error logs
   The application will alert you when an exception is thrown by the application, you can
@@ -204,7 +204,8 @@ some (also configurable) of those who snatched it will receive a message.
         $ ruby script/bg_tasks_mock.rb
         $ ruby script/bg_tasks_mock.rb production
     + running as a cron job
-      - the 'tasks' page has a link to include cron jobs in your system automatically (it calls the 'whenever' gem)
+      - the 'tasks' page has a link (can be disabled in app_config.yml) to include cron jobs in your system
+        automatically (it invoke a system call to the 'whenever' gem)
       - to include the cron jobs, configure the scheduling in the file 'config/schedule.rb' (it is already
         configured to run every hour) and click 'update' in the 'tasks' page, you should see the new
         cron jobs in the cron jobs table (note that if the app is deployed in more than one machine you'll
@@ -399,7 +400,7 @@ VirtualBox, which is a free OS emulator by Sun Microsystems (check Appendix D on
         mysql> GRANT ALL PRIVILEGES ON mogok_production.* TO 'user_username_here'@localhost IDENTIFIED BY 'user_password_here';
       + add the username and password to your local file 'config/database.yml' (production instance)
 
-    - deployment setup (create deploy dirs and upload your local config files and custom migrations)
+    - deployment setup (create deploy dirs and upload your local config files and custom migrations to shared dir)
       + be certain that all the configuration files are prepared (see item Configuration above)
       + run the command below
         $ cap deploy:setup
@@ -436,10 +437,13 @@ VirtualBox, which is a free OS emulator by Sun Microsystems (check Appendix D on
 
   > Manual deployment
     - server software installation
-      check Appendix A for a complete list of the required software
+      + check Appendix A for a complete list of the required software
     - server environment setup
-      check Appendix B for a complete list of the steps
+      + check Appendix B for a complete list of the steps
     - application code and database deployment
+      + copy the application code to the server
+      + run the migrations
+        $ rake db:migrate
 
 
 # Appendix A: Server Installation Steps
