@@ -1,0 +1,107 @@
+
+# This recipe prepares the server to the application deployment. Calling it with the
+# command 'cap -f setup/server_setup.rb server_setup' will trigger the following steps:
+#   + create a user to own and run the application (not recommended to be a sudoer)
+#   + create the app directory and grant write privileges to the user above
+#   + create passenger configuration file in '/etc/apache2/sites-available' and
+#     enable it by calling 'a2ensite' (the file template is 'templates/mogok.erb')
+#   + restart memcached server (or start if not running)
+
+set :application, 'mogok'
+
+# server
+  set :domain, 'localhost'
+  # set :port, 2222
+
+# user
+  Capistrano::CLI.ui.say('Please provide the admin user credentials (must have sudo privileges):')
+  set :user,     Capistrano::CLI.ui.ask(' > username: ')
+  set :password, Capistrano::CLI.password_prompt(' > password: ')
+  set :use_sudo, false
+
+# roles
+  role :app, domain
+  role :db,  domain, :primary => true
+
+# paths
+  set :apps_path, '/var/vhosts'
+  set :app_root_path, "#{apps_path}/#{application}"
+
+# app user
+  Capistrano::CLI.ui.say('Please provide the information for the app user that will be created in the server:')
+  set :app_user,          Capistrano::CLI.ui.ask(' > username: ')
+  set :app_user_password, Capistrano::CLI.password_prompt(' > password: ')
+  password_confirmation = Capistrano::CLI.password_prompt(' > confirm.: ')
+  raise 'password must match password confirmation' if app_user_password != password_confirmation
+
+  Capistrano::CLI.ui.say('Please provide the app user group (www-data on Ubuntu, for others is the group in which Apache runs):')
+  set :app_user_group, Capistrano::CLI.ui.ask(' > group: ')
+
+# passenger
+  Capistrano::CLI.ui.say('Please provide the server name parameter to be set in the passenger config file (i.e. localhost or www.mysite.com):')
+  set :passenger_server_name, Capistrano::CLI.ui.ask('> server name: ')
+  set :passenger_document_root, "#{app_root_path}/current/public"
+
+# server setup tasks
+  namespace :server_setup do
+    task :default do
+      create_app_user
+      create_app_directory
+      passenger_config
+      restart_memcached
+    end
+
+    desc 'Create the application user and assign it to its group.'
+    task :create_app_user, :roles => :app do
+      sudo("useradd #{app_user} --create-home") {|ch, stream, out| puts "     << #{out}" }
+
+      sudo "passwd #{app_user}" do |ch, stream, out|
+        puts "     << #{out}"
+        if out =~ /Enter new UNIX password:/
+          ch.send_data "#{app_user_password}" + "\n"
+        elsif out =~ /Retype new UNIX password:/
+          ch.send_data "#{app_user_password}" + "\n"
+        else
+          ch.send_data "\n"
+        end
+      end
+
+      sudo("adduser #{app_user} #{app_user_group}") {|ch, stream, out| puts "     << #{out}" }
+    end
+
+    desc 'Create the application directory, change its owner to app user and grant the required permissions.'
+    task :create_app_directory, :roles => :app do
+      sudo "sh -c 'if [ ! -d #{apps_path} ]; then mkdir #{apps_path}; fi'"
+      sudo "mkdir #{app_root_path}"
+      sudo "chown #{app_user}:#{app_user_group} -R #{app_root_path}"
+      sudo "chmod 775 -R #{app_root_path}"
+    end
+
+    desc 'Create Passenger configuration on Apache.'
+    task :passenger_config, :roles => :app do
+      require 'erb'
+      template = ERB.new(File.read('setup/templates/mogok.erb'), nil, '<>')
+      result = template.result(binding)
+      sudo "sh -c 'if [ -f /etc/apache2/sites-available/mogok ]; then rm /etc/apache2/sites-available/mogok; fi'"
+      sudo "sh -c 'if [ -f /etc/apache2/sites-enabled/mogok ]; then rm /etc/apache2/sites-enabled/mogok; fi'"
+      put(result, "/home/#{user}/mogok") # method 'put' do not support sudo
+      sudo "mv /home/#{user}/mogok /etc/apache2/sites-available"
+      sudo 'chown root:root /etc/apache2/sites-available/mogok'
+      sudo('a2ensite mogok') {|ch, stream, out| puts "     << #{out}" }
+      sudo('/etc/init.d/apache2 reload') {|ch, stream, out| puts "     << #{out}" }
+    end
+
+    desc 'Restart (or start if stopped) memcached server.'
+    task :restart_memcached, :roles => :app do
+      sudo '/etc/init.d/memcached restart' do |ch, stream, out|
+        puts "     << #{out}"
+      end
+    end
+  end
+
+
+
+
+
+
+
