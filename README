@@ -366,10 +366,12 @@ VirtualBox, which is a free OS emulator by Sun Microsystems (check Appendix D on
 'lib/mysql.rb' if the application can't find your mysql gem.
 
 - Deploying on Ubuntu with Passenger (tested for Ubuntu 8.04 and Passenger 2.2.2)
-  The deployment can be done in two ways, manually or using the 'capistrano' and 'sprinkle' recipes. Note
-  that the recipe for the server software installation uses 'passenger-stack', which installs Ruby Enterprise
-  Edition instead of the regular Ruby interpreter. If you are emulating a server with VirtualBox perform the
-  port forward (check Appendix D) and change the port to 2222 in the recipes.
+  - the deployment can be done in two ways, manually or using the 'capistrano' and 'sprinkle' recipes
+  - if using the recipes, you will be asked to provide the necessary information during the execution
+  - note that the recipe for the server software installation uses 'passenger-stack', which installs Ruby
+    Enterprise Edition instead of the regular Ruby interpreter
+  - if you are emulating a server with VirtualBox, perform the required port forward (check Appendix D)
+    and change the port to 2222 in the recipes
 
   > Fresh deployment with recipes (all commands are done in your local machine, unless when specified)
     - server installation
