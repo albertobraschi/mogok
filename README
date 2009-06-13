@@ -376,7 +376,7 @@ VirtualBox, which is a free OS emulator by Sun Microsystems (check Appendix D on
 
   > Fresh deployment with recipes (all commands are done in your local machine, unless when specified)
     - server installation
-      + be sure that your server accepts ssh connections
+      + make sure that your server accepts ssh connections
       + install the 'capistrano' and 'sprinkle' gems if not installed
         $ sudo gem install capistrano
         $ sudo gem install crafterm-sprinkle --source http://gems.github.com/
