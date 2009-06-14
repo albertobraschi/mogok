@@ -97,7 +97,7 @@ class AdmController < ApplicationController
     end
 
     def windows?
-      RUBY_PLATFORM =~ /win/
+      RUBY_PLATFORM =~ /mswin/
     end
 end
 
