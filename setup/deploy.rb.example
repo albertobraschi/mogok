@@ -2,6 +2,11 @@
 # Capistrano recipe for deployment, in this case the user do not
 # need to act as sudo as it is supposed to only deploy and not install
 # anything in the system.
+#
+# It is also possible to deploy from a remote git repository to the server:
+#   + switch the comments in the 'repository' and 'deploy strategy' sections
+#   + change the clone repository url if using a different one
+#   + install git in your server (check 'setup/passenger_stack.rb')
 
 set :application, 'mogok'
 
@@ -81,7 +86,7 @@ set :application, 'mogok'
       run "cd #{release_path} && whenever --update-crontab #{application}"
     end
 
-    # Tasks that upload and replace the application's config files so they can remain safely
+    # Tasks that upload and replace the application's config files so they can remain
     # stored in the shared/system directory through deployments.
     namespace :config do
       set :config_files, ['app_config.yml', 'bg_tasks.yml', 'database.yml', 'memcached.yml', 'environment.rb', 'schedule.rb', 'initializers/action_mailer.rb']

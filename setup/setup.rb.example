@@ -1,8 +1,8 @@
 
 # This recipe prepares the server to the application deployment. Calling its default
 # task (cap -f setup/server_setup.rb server_setup) will execute the following steps:
-#   + create a user (without sudo privileges) to own and run the application
-#   + create the app directory and grant write privileges to the user created above
+#   + create a user without sudo privileges to own and run the application
+#   + create the app directory and grant write privileges to the user above
 #   + create passenger configuration file in '/etc/apache2/sites-available' and
 #     enable it by calling 'a2ensite' (the file template is 'templates/mogok.erb')
 #   + restart memcached server (or start if not running)

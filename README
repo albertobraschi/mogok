@@ -341,10 +341,10 @@ the extension and change the configuration when needed. Note that the resulting 
 in the file '.gitignore', preventing them from being committed to the repository and possibly exposing sensitive
 information about your system.
   > app config
-    + config/environment.rb
     + config/app_config.yml
     + config/bg_tasks.yml
     + config/database.yml
+    + config/environment.rb
     + config/memcached.yml
     + config/schedule.rb
     + config/initializers/action_mailer.rb
@@ -352,10 +352,11 @@ information about your system.
     + config/initializers/site_keys.rb (holds the restful_authentication key, change it!)
     + db/migrate/099_create_data.rb (configure the app initial data, like roles, categories and so on)
   > install and deploy
+    + setup/deploy.rb    
     + setup/install.rb
+    + setup/passenger_stack.rb
     + setup/setup.rb
-    + setup/deploy.rb
-
+    
 
 # DEPLOYMENT
   If you are new to Rails and use Windows, an easy way to put the application running is to
@@ -378,18 +379,27 @@ VirtualBox, which is a free OS emulator by Sun Microsystems (check Appendix D on
         execute it again and it will resume its work
       - note that the install recipe is based in the 'passenger-stack', which installs Ruby Enterprise
         Edition instead of the regular Ruby interpreter
-      - the server setup recipe will create a user to be used to deploy and run the application (you will be
-        asked to provide a username and password), and for security reasons this user will not have sudo
-        privileges
+      - the server setup recipe will create a user (without sudo privileges) to be used to deploy and run the
+        application (you will be asked to provide a username and password)
       - finally, in the deployment phase, the deploy recipe will ask you to provide the credentials of the
         application user, which is the one created above
     + manual deployment
       - check below to a complete list of the steps necessary to do a manual deployment, basically the
         steps executed by the recipes
 
-  > Steps for the first deployment with recipes (all commands are done in your local machine, unless when specified)
-    - code
-      + install git in your local machine, as the deploy recipe will get the code from your local git repository
+  > Steps for the first deployment, using recipes
+    - all commands are called in the application root directory of your local machine, unless when specified
+
+    - local code repository
+      - currently the deploy recipe will look for the code in the git repository of your local machine, but if
+        you prefer to deploy from the remote repository then check 'setup/deploy.rb' on how to do that and
+        ignore the steps below
+      + install git in your local machine
+      + if Windows is your local system, install Tar
+        + download tar at http://gnuwin32.sourceforge.net/packages/libarchive.htm
+        + extract the files in C:\Program Files\GnuWin32\bin
+        + create a copy of bsdtar.exe and rename it into tar.exe
+        + add C:\Program Files\GnuWin32\bin to PATH
       + make a clone of the repository in your local machine
         $ git clone git://github.com/pepeb/mogok.git
 

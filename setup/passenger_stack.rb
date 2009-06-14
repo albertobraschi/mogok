@@ -1,5 +1,6 @@
 
-# Sprinkle gem script to setup a server (works better with Ubuntu according to the author).
+# Sprinkle gem script to setup a server (works better with Ubuntu according to the
+# author).
 
 # packages
 %w(apache essential memcached mysql required_gems ruby_enterprise scm).each do |r|
@@ -18,11 +19,11 @@ policy :passenger_stack, :roles => :app do
   requires :memcached               # memcached
   requires :libmemcached            # libmemcached
 
+  # requires :scm                   # Git (enable if deploying from a remote repository)
+  
   requires :ruby_enterprise         # ruby enterprise edition
   requires :appserver               # passenger  
   requires :required_gems           # gems required by this app
-  
-  # requires :scm                   # Git (only when deploying from remote repository)
 end
 
 deployment do  

@@ -19,6 +19,7 @@ public/stylesheets/*
 !public/stylesheets/default.css
 setup/deploy.rb
 setup/install.rb
+setup/passenger_stack.rb
 setup/setup.rb
 tmp/cache
 tmp/pids
