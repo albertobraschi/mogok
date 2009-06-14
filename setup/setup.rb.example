@@ -14,7 +14,7 @@ set :application, 'mogok'
   # set :port, 2222
 
 # user
-  Capistrano::CLI.ui.say('Please provide the admin user credentials (must have sudo privileges):')
+  Capistrano::CLI.ui.say('Please provide the sudo user credentials:')
   set :user,     Capistrano::CLI.ui.ask(' > username: ')
   set :password, Capistrano::CLI.password_prompt(' > password: ')
   set :use_sudo, false
@@ -34,7 +34,7 @@ set :application, 'mogok'
   password_confirmation = Capistrano::CLI.password_prompt(' > confirm.: ')
   raise 'password must match password confirmation' if app_user_password != password_confirmation
 
-  Capistrano::CLI.ui.say('Please provide the app user group (www-data on Ubuntu, for others is the group in which Apache runs):')
+  Capistrano::CLI.ui.say('Please provide the app user group (\'www-data\' on Ubuntu, for others is the group in which Apache runs):')
   set :app_user_group, Capistrano::CLI.ui.ask(' > group: ')
 
 # passenger

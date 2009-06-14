@@ -10,7 +10,7 @@ set :application, 'mogok'
   # set :port, 2222
 
 # user
-  Capistrano::CLI.ui.say('Please provide the app user (not the admin!!) credentials:')
+  Capistrano::CLI.ui.say('Please provide the app user (not the sudo!) credentials:')
   set :user,     Capistrano::CLI.ui.ask(' > username: ')
   set :password, Capistrano::CLI.password_prompt(' > password: ')
   set :use_sudo, false

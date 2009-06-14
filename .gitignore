@@ -20,6 +20,10 @@ public/stylesheets/*
 setup/deploy.rb
 setup/install.rb
 setup/setup.rb
+tmp/cache
+tmp/pids
+tmp/sessions
+tmp/sockets
 vendor/plugins/*
 !vendor/plugins/action_mailer_optional_tls
 !vendor/plugins/focus_fu

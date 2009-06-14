@@ -50,6 +50,8 @@ class AdmController < ApplicationController
 
       h[:server_hostname] = %x{uname -a}
 
+      h[:server_datetime] = windows? ? "#{%x{echo %DATE%}} #{%x{echo %TIME%}}" : %x{date}
+
       h[:ruby_version] = "#{RUBY_VERSION} (#{RUBY_PLATFORM})"
       h[:ruby_gems_version] = Gem::RubyGemsVersion
 
@@ -92,6 +94,10 @@ class AdmController < ApplicationController
 
     def logger_level_description(level)
       (0..5).include?(level) ? ['debug', 'info', 'warn', 'error', 'fatal', 'unknown'][level] : '????'
+    end
+
+    def windows?
+      RUBY_PLATFORM =~ /win/
     end
 end
 

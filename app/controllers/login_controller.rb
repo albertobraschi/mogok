@@ -7,7 +7,7 @@ class LoginController < ApplicationController
 
   def login
     logger.debug ':-) login_controller.login'
-    login_attempt = LoginAttempt.fetch(request.remote_ip)
+    login_attempt = LoginAttempt.find_or_create(request.remote_ip)
     @app_params = AppParam.params_hash
     if login_attempt.blocked?
       logger.debug ":-) login is temporarily blocked for this ip: #{login_attempt.ip}"

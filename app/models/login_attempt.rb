@@ -22,7 +22,7 @@ class LoginAttempt < ActiveRecord::Base
     delete_all ['ip = ?', ip]
   end
 
-  def self.fetch(ip)
+  def self.find_or_create(ip)
     find_by_ip(ip) || new(:ip => ip, :attempts_count => 0)
   end
 

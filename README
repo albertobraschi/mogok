@@ -368,44 +368,67 @@ VirtualBox, which is a free OS emulator by Sun Microsystems (check Appendix D on
 
 - Deploying on Ubuntu with Passenger (tested for Ubuntu 8.04 and Passenger 2.2.2)
   - the deployment can be done in two ways, manually or using the 'capistrano' and 'sprinkle' recipes
-  - if using the recipes, you will be asked to provide the necessary information during the execution
-  - note that the recipe for the server software installation uses 'passenger-stack', which installs Ruby
-    Enterprise Edition instead of the regular Ruby interpreter
-  - if you are emulating a server with VirtualBox, perform the required port forward (check Appendix D)
-    and change the port to 2222 in the recipes
+    + recipes
+      - will automatically install all required software and gems in your server and deploy your application,
+        the only exception in the database setup, which has to be done manually
+      - during the installation and server setup phase, the recipes will ask you to provide the credentials
+        of a sudo user so they can have the necessary permissions to execute properly (this user tipically
+        is the one you create when installing the system)
+      - if during installation the recipe stops (usually because a software repository site is down), just
+        execute it again and it will resume its work
+      - note that the install recipe is based in the 'passenger-stack', which installs Ruby Enterprise
+        Edition instead of the regular Ruby interpreter
+      - the server setup recipe will create a user to be used to deploy and run the application (you will be
+        asked to provide a username and password), and for security reasons this user will not have sudo
+        privileges
+      - finally, in the deployment phase, the deploy recipe will ask you to provide the credentials of the
+        application user, which is the one created above
+    + manual deployment
+      - check below to a complete list of the steps necessary to do a manual deployment, basically the
+        steps executed by the recipes
 
-  > Fresh deployment with recipes (all commands are done in your local machine, unless when specified)
+  > Steps for the first deployment with recipes (all commands are done in your local machine, unless when specified)
+    - code
+      + install git in your local machine, as the deploy recipe will get the code from your local git repository
+      + make a clone of the repository in your local machine
+        $ git clone git://github.com/pepeb/mogok.git
+
+    - virtual box
+      + if you are emulating a server with VirtualBox, perform the required SSH port forward (check Appendix D)
+        and change the port to 2222 (or the one you choose) in the recipes or they won't be able to connect to
+        the server
+
     - server installation
       + make sure that your server accepts ssh connections
-      + install the 'capistrano' and 'sprinkle' gems if not installed
+      + install the 'capistrano' and 'sprinkle' gems
         $ sudo gem install capistrano
         $ sudo gem install crafterm-sprinkle --source http://gems.github.com/
-      + run the command below (will install all required software and gems, be patient)
+      + run the command below (will install all required software and gems, it will take some time)
         $ sprinkle -v -c -s setup/passenger_stack.rb      
 
-    - server setup
-      + run the command below (creates app user, app dir, passenger app config and starts memcached):
+    - server setup (creates app user, app dir, passenger app config and starts memcached):
+      + run the command below 
         $ cap -f setup/setup.rb server_setup
 
-    - database setup (has to be done manually in the server)
+    - database setup (this step has to be done manually)
       + log in on your server via ssh
         $ ssh -l <user> -p 22 localhost
       + log in on mysql (password should be empty as the installer doesn't set it)
         $ mysql -u root -p
       + set the root's password
-        mysql> SET PASSWORD FOR root@localhost=PASSWORD('your_password_here');
+        mysql> SET PASSWORD FOR root@localhost=PASSWORD('root_password_here');
       + create
         mysql> create database mogok_production;
       + create database user for the app
         mysql> GRANT ALL PRIVILEGES ON mogok_production.* TO 'user_username_here'@localhost IDENTIFIED BY 'user_password_here';
       + add the username and password to your local file 'config/database.yml' (production instance)
 
-    - deployment setup (create deploy dirs and upload your local config files and custom migrations to shared dir)
+    - deployment setup (creates deploy dirs and uploads your local config files and custom migrations to deploy dir)
       + be certain that all the configuration files are prepared (see item Configuration above)
       + run the command below
         $ cap deploy:setup
 
-    - deployment (upload the application code, run the database migrations and start app)
+    - deployment (uploads the application code, runs the database migrations and starts app)
       + run the command below 
         $ cap deploy:cold
 
@@ -428,12 +451,11 @@ VirtualBox, which is a free OS emulator by Sun Microsystems (check Appendix D on
         $ cap deploy:config:replace_session_store
     - check 'setup/deploy.rb' and 'setup/setup.rb' for other useful tasks
     - IMPORTANT:
-      + the deploy is currently being made via copy, which means that the code is transferred from your local
-        machine repository to the server, not from the remote repository (Github for instance) to the server
-      + the deploy script will effectively use your local git repository, so any change MUST be commited or it
-        won't be deployed (install git in your machine to be able to do this)
-      + note that the config files (those that came with an 'example' extension) are ignored by git and are
-        uploaded directly from your local machine to the server without git acting as intermediary
+      + because the deployed code is being transferred from your local repository to the server and not from
+        the remote repository (Github in this case) to the server, you MUST commit any change or it won't be
+        deployed
+      + note that the config files (those that came with an 'example' extension) are ignored by git (see .gitignore)
+        and are uploaded directly from your local machine to the server, so no need to commit when they change
 
   > Manual deployment
     - server software installation
@@ -442,7 +464,7 @@ VirtualBox, which is a free OS emulator by Sun Microsystems (check Appendix D on
       + check Appendix B for a complete list of the steps
     - application code and database deployment
       + copy the application code to the server
-      + run the migrations
+      + run the migrations (make sure that the Memcached server is running or it will fail)
         $ rake db:migrate
 
 
