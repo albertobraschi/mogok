@@ -2,11 +2,11 @@
 class CreateDefaultData < ActiveRecord::Migration
 
   def self.up
-    # application database params (only 'true', 'false' or a numeric string is allowed)
+    # application database params (values can be anything loadable by YAML)
     AppParam.create :name => 'signup_open'              , :value => 'true'
     AppParam.create :name => 'signup_by_invitation_only', :value => 'true'
 
-    # user roles required by the application
+    # default roles
     self.create_role 1, Role::SYSTEM       , 'System'       ,'user_system'   , 'staff'
     self.create_role 2, Role::OWNER        , 'Owner'        ,'user_owner'    , 'staff inviter wisher'
     self.create_role 3, Role::ADMINISTRATOR, 'Administrator','user_admin'    , 'staff inviter wisher'
@@ -14,16 +14,15 @@ class CreateDefaultData < ActiveRecord::Migration
     self.create_role 5, Role::USER         , 'User'         ,'user_user'     , 'wisher'
     self.create_role 5, Role::DEFECTIVE    , 'Defective'    ,'user_defective'
 
-    # style and country
+    # default style
     s = Style.create :id => 1, :name => 'default', :stylesheet => 'default.css'
+
+    # default country
     c = Country.create(:name => 'Earth', :image => 'earth.gif')
 
-    # users
-    role_system = Role.find_by_name Role::SYSTEM
-    self.create_user 1, 'system', role_system, s # system user must have the id 1
-    
-    role_owner = Role.find_by_name Role::OWNER
-    self.create_user 2, 'owner', role_owner, s, c
+    # default users
+    self.create_user 1, 'system', Role.find_by_name(Role::SYSTEM), s # system user must have the id 1
+    self.create_user 2, 'owner', Role.find_by_name(Role::OWNER), s, c
   end
 
   def self.down
@@ -38,7 +37,7 @@ class CreateDefaultData < ActiveRecord::Migration
 
     def self.create_role(id, name, description, css_class, tickets = nil)
       r = Role.new :id => id, :description => description, :css_class => css_class, :tickets => tickets
-      r.name = name # attribute name must be assigned separately
+      r.name = name # attribute name is protected and must be assigned separately
       r.save
     end
 
@@ -53,7 +52,7 @@ class CreateDefaultData < ActiveRecord::Migration
                    :save_sent => false,
                    :display_downloads => false,
                    :display_last_request_at => false)
-      u.role = role # attribute role_id must be assigned separately
+      u.role = role # attribute role_id is protected and must be assigned separately
       u.save(false)
     end
 end

@@ -393,7 +393,7 @@ VirtualBox, which is a free OS emulator by Sun Microsystems (check Appendix D on
     - local code repository
       - currently the deploy recipe will look for the code in the git repository of your local machine, but if
         you prefer to deploy from the remote repository then check 'setup/deploy.rb' on how to do that and
-        ignore the steps below
+        ignore three the steps below
       + install git in your local machine
       + if Windows is your local system, install Tar
         + download tar at http://gnuwin32.sourceforge.net/packages/libarchive.htm
@@ -556,12 +556,17 @@ VirtualBox, which is a free OS emulator by Sun Microsystems (check Appendix D on
       $ sudo chmod 775 -R /var/vhosts/mogok
 
   - database
+    + log in on your server via ssh
+      $ ssh -l <user> -p 22 localhost
     + log in on mysql
-      $ mysql -u root -p (logging in as root user)
+      $ mysql -u root -p
+    + set the root's password if not set
+      mysql> SET PASSWORD FOR root@localhost=PASSWORD('root_password_here');
     + create
       mysql> create database mogok_production;
-    + set permissions to app user
-      mysql> GRANT ALL PRIVILEGES ON mogok_production.* TO 'mogok'@localhost IDENTIFIED BY 'enter password here';
+    + create database user for the app
+      mysql> GRANT ALL PRIVILEGES ON mogok_production.* TO 'user_username_here'@localhost IDENTIFIED BY 'user_password_here';
+    + add the username and password to your local file 'config/database.yml' (production instance)
 
   - passenger      
     + create a file called 'mogok' in '/etc/apache2/sites-available' (sudo nano /etc/apache2/sites-available/mogok),
@@ -573,11 +578,10 @@ VirtualBox, which is a free OS emulator by Sun Microsystems (check Appendix D on
         </VirtualHost>
 
     + note that this config is the minimal required to run the app, check passenger docs on how to add further parameters
-    + change file ownership to 'root' if necessary
+    + change file ownership to 'root' if not set
       $ sudo chown root:root /etc/apache2/sites-available/mogok
     + enable it
       $ sudo a2ensite mogok
-    
     + reload apache
       $ sudo /etc/init.d/apache2 reload
 
