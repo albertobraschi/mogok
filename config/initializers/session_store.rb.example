@@ -8,11 +8,10 @@
 # Make sure the secret is at least 30 characters and all random,
 # no regular words or you'll be exposed to dictionary attacks.
 
-case
-  when Rails.env.production?
-    ActionController::Base.session = {:key => 'mogok_session', :secret => 'your session key goes here'}
-  when Rails.env.development? || Rails.env.test?
-    ActionController::Base.session = {:key => 'mogok_dev_session', :secret => '56r9diendje938jd73kjd8ej30jddndic9jdne7d39ej9dhd8dyhd'}
+if Rails.env.production?
+  ActionController::Base.session = {:key => 'mogok_session', :secret => 'your_session_key_goes_here'}
+else
+  ActionController::Base.session = {:key => 'mogok_dev_session', :secret => '56r9diendje938jd73kjd8ej30jddndic9jdne7d39ej9dhd8dyhd'}
 end
 
 # Use the database for sessions instead of the cookie-based default,

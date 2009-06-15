@@ -17,11 +17,10 @@
 # keep it someplace secure.  Use the random value given or type in the lyrics to
 # your favorite Jay-Z song or something; any moderately long, unpredictable text.
 
-case
-  when Rails.env.production?
-    REST_AUTH_SITE_KEY = 'your restful authentication production key goes here'
-  when Rails.env.development? || Rails.env.test?
-    REST_AUTH_SITE_KEY = '84ujdgeu8d8933nnbdndo8e8b387uioj7894j49ij3n32e2ff'
+if Rails.env.production?
+  REST_AUTH_SITE_KEY = 'your_restful_authentication_production_key_goes_here'
+else
+  REST_AUTH_SITE_KEY = '84ujdgeu8d8933nnbiokdndo8e8b387uioj7894j49ij3n32e2ff'
 end
 
 # Repeated applications of the hash make brute force (even with a compromised
