@@ -1,4 +1,7 @@
 
+class AccessDeniedError < StandardError
+end
+
 module AuthorizedSystem
 
   protected
