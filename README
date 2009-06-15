@@ -367,7 +367,7 @@ VirtualBox, which is a free OS emulator by Sun Microsystems (check Appendix D on
   IMPORTANT: if you are running on Windows, change the name of the file 'lib/mysql.rb.windows' to
 'lib/mysql.rb' if the application can't find your mysql gem.
 
-- Deploying on Ubuntu with Passenger (tested for Ubuntu 8.04 and Passenger 2.2.2)
+- Deploying on Ubuntu with Passenger (tested for Ubuntu 8.04 and 9.04 with Passenger 2.2.2)
   - the deployment can be done in two ways, manually or using the 'capistrano' and 'sprinkle' recipes
     + recipes
       - will automatically install all required software and gems in your server and deploy your application,
@@ -391,9 +391,10 @@ VirtualBox, which is a free OS emulator by Sun Microsystems (check Appendix D on
     - all commands are called in the application root directory of your local machine, unless when specified
 
     - local code repository
-      - currently the deploy recipe will look for the code in the git repository of your local machine, but if
-        you prefer to deploy from the remote repository then check 'setup/deploy.rb' on how to do that and
-        ignore three the steps below
+      - currently the deploy recipe will look for the code in the git repository of your local machine (more
+        convenient as you don't have to push a particular branch to the remote repository just to be able to
+        deploy it), but if you prefer to deploy from the remote repository then check 'setup/deploy.rb' on
+        how to do that and ignore the three steps below
       + install git in your local machine
       + if Windows is your local system, install Tar
         + download tar at http://gnuwin32.sourceforge.net/packages/libarchive.htm
@@ -418,7 +419,7 @@ VirtualBox, which is a free OS emulator by Sun Microsystems (check Appendix D on
 
     - server setup (creates app user, app dir, passenger app config and starts memcached):
       + run the command below 
-        $ cap -f setup/setup.rb server_setup
+        $ cap -f setup/server_setup.rb server_setup
 
     - database setup (this step has to be done manually)
       + log in on your server via ssh

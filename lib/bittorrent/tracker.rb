@@ -64,7 +64,7 @@ module Bittorrent
           t = req.torrent
           resp.add_file(t.info_hash, t.seeders_count, t.leechers_count, t.snatches_count)          
         rescue TrackerFailure => e
-          resp.failure_reason = i18n("scrape_announce.#{e.message}")
+          resp.failure_reason = i18n("process_scrape.#{e.message}")
         rescue => e
           log_error e
           resp.failure_reason = i18n('process_scrape.server_error')

@@ -20,7 +20,7 @@ public/stylesheets/*
 setup/deploy.rb
 setup/install.rb
 setup/passenger_stack.rb
-setup/setup.rb
+setup/server_setup.rb
 tmp/cache
 tmp/pids
 tmp/sessions

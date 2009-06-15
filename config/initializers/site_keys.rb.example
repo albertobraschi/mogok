@@ -18,7 +18,7 @@
 # your favorite Jay-Z song or something; any moderately long, unpredictable text.
 
 if Rails.env.production?
-  REST_AUTH_SITE_KEY = 'your_restful_authentication_production_key_goes_here'
+  REST_AUTH_SITE_KEY = 'your_restful_authentication_key_goes_here'
 else
   REST_AUTH_SITE_KEY = '84ujdgeu8d8933nnbiokdndo8e8b387uioj7894j49ij3n32e2ff'
 end
