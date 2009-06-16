@@ -17,6 +17,7 @@ log/*.log
 nbproject
 public/stylesheets/*
 !public/stylesheets/default.css
+setup/backup.rb
 setup/deploy.rb
 setup/install.rb
 setup/passenger_stack.rb

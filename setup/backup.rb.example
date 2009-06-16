@@ -1,0 +1,60 @@
+
+# Recipe to make your application's backup.
+#
+# NOTE: if you are using VirtualBox, downloading the backup files to your
+#       local machine will probably result in an error.
+
+set :application, 'mogok'
+
+# server
+  set :domain, 'localhost'
+  # set :port, 2222
+
+# roles
+  role :db, domain, :primary => true
+
+# user
+  Capistrano::CLI.ui.say('Please provide the app user password:')
+  set :user, application
+  Capistrano::CLI.ui.say(" > username: #{user}")
+  set :password, Capistrano::CLI.password_prompt(' > password: ')
+  set :use_sudo, false
+
+# paths
+  set :apps_path, '/var/vhosts'
+  set :app_root_path, "#{apps_path}/#{application}"
+  set :app_backup_path, "#{app_root_path}/backup"
+
+namespace :backup do
+  task :default do
+    database
+  end
+
+  desc 'Generate a dump of the production database and download it to local machine if specified.'
+  task :database, :roles => :db, :only => { :primary => true } do
+    # database root password
+    Capistrano::CLI.ui.say("Please provide the password for database root user:")
+    set :db_root_password, Capistrano::CLI.password_prompt(' > password: ')
+
+    # download to local machine?
+    set :download_dump, Capistrano::CLI.ui.ask("Dowload dump file to your local machine? [y/n]: ")
+
+    run "mkdir -p #{app_backup_path}"
+    file_name = "#{Time.now.strftime '%Y%m%d%H%M%S'}.#{application}_production.dump.sql"
+    file_path = "#{app_backup_path}/#{file_name}"
+    on_rollback { delete backup_path }
+    run "mysqldump -u root -p#{db_root_password} #{application}_production > #{file_path}" do |ch, stream, out|
+      puts out
+    end
+    get "#{file_path}", '.' if download_dump == 'y'
+  end
+
+
+  desc 'Remove backup directory.'
+  task :erase, :roles => :db, :only => { :primary => true } do
+    run "rm -rf #{app_backup_path}"
+  end
+end
+
+
+

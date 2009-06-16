@@ -14,17 +14,17 @@ set :application, 'mogok'
   set :domain, 'localhost'
   # set :port, 2222
 
+# roles
+  role :app, domain
+  role :web, domain
+  role :db,  domain, :primary => true
+
 # user
   Capistrano::CLI.ui.say('Please provide the app user password:')
   set :user, application
   Capistrano::CLI.ui.say(" > username: #{user}")
   set :password, Capistrano::CLI.password_prompt(' > password: ')
   set :use_sudo, false
-
-# roles
-  role :app, domain
-  role :web, domain
-  role :db,  domain, :primary => true
 
 # scm
   set :scm, :git
