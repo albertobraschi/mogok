@@ -50,7 +50,9 @@ class AdmController < ApplicationController
 
       h[:server_hostname] = %x{uname -a}
 
-      h[:server_datetime] = windows? ? "#{%x{echo %DATE%}} #{%x{echo %TIME%}}" : %x{date}
+      h[:server_time] = windows? ? "#{%x{echo %DATE%}} #{%x{echo %TIME%}}" : %x{date}
+     
+      h[:database_time] = ActiveRecord::Base.connection.select_all('SELECT NOW()')[0]['NOW()']
 
       h[:ruby_version] = "#{RUBY_VERSION} (#{RUBY_PLATFORM})"
       h[:ruby_gems_version] = Gem::RubyGemsVersion
