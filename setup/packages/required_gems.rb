@@ -30,6 +30,7 @@ end
 package :cucumber do
   description 'Cucumber Gem'
   gem 'cucumber' do
+    pre  :install, 'rm -f /usr/local/bin/cucumber'
     post :install, 'ln -s /usr/local/ruby-enterprise/bin/cucumber /usr/local/bin/cucumber'
   end
   version '0.3.1'  
@@ -66,6 +67,7 @@ end
 package :rspec do
   description 'Rspec Gem'
   gem 'rspec' do
+    pre  :install, 'rm -f /usr/local/bin/spec'
     post :install, 'ln -s /usr/local/ruby-enterprise/bin/spec /usr/local/bin/spec'
   end
   version '1.2.6'  
@@ -123,6 +125,7 @@ package :whenever do
   description 'Whenever Gem'
   gem 'javan-whenever' do
     source 'http://gems.github.com'
+    pre  :install, 'rm -f /usr/local/bin/whenever'
     post :install, 'ln -s /usr/local/ruby-enterprise/bin/whenever /usr/local/bin/whenever'
   end
   version '0.3.0'  

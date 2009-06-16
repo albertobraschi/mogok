@@ -380,9 +380,8 @@ VirtualBox, which is a free OS emulator by Sun Microsystems (check Appendix D on
       - note that the install recipe is based in the 'passenger-stack', which installs Ruby Enterprise
         Edition instead of the regular Ruby interpreter
       - the server setup recipe will create a user (without sudo privileges) to be used to deploy and run the
-        application (you will be asked to provide a username and password)
-      - finally, in the deployment phase, the deploy recipe will ask you to provide the credentials of the
-        application user, which is the one created above
+        application (its username will the the application name and you will be asked for a password)
+      - finally, all the deployment will be done using the application user created above
     + manual deployment
       - check below to a complete list of the steps necessary to do a manual deployment, basically the
         steps executed by the recipes

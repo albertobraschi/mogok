@@ -1,10 +1,11 @@
 
-# This recipe prepares the server to the application deployment. Calling its default
+# This recipe prepares the server for the application deployment. Calling its default
 # task (cap -f setup/server_setup.rb server_setup) will execute the following steps:
-#   + create a user without sudo privileges to own and run the application
+#   + create a user without sudo privileges to own and run the application, its username
+#     will be the application name
 #   + create the app directory and grant write privileges to the user above
 #   + create passenger configuration file in '/etc/apache2/sites-available' and
-#     enable it by calling 'a2ensite' (the file template is 'templates/mogok.erb')
+#     enable it by calling 'a2ensite' (the file template is 'templates/<application>.erb')
 #   + restart memcached server (or start if not running)
 
 set :application, 'mogok'
@@ -28,8 +29,9 @@ set :application, 'mogok'
   set :app_root_path, "#{apps_path}/#{application}"
 
 # app user
-  Capistrano::CLI.ui.say('Please provide the information for the app user that will be created in the server:')
-  set :app_user,          Capistrano::CLI.ui.ask(' > username: ')
+  Capistrano::CLI.ui.say("Please provide the password for the app user that will be created in the server:")
+  set :app_user, application
+  Capistrano::CLI.ui.say(" > username: #{app_user}")
   set :app_user_password, Capistrano::CLI.password_prompt(' > password: ')
   password_confirmation = Capistrano::CLI.password_prompt(' > confirm.: ')
   raise 'password must match password confirmation' if app_user_password != password_confirmation
@@ -53,7 +55,7 @@ set :application, 'mogok'
 
     desc 'Create the application user and assign it to its group.'
     task :create_app_user, :roles => :app do
-      sudo("useradd #{app_user} --create-home") {|ch, stream, out| puts "     << #{out}" }
+      sudo("useradd --create-home --shell /bin/bash #{app_user}") {|ch, stream, out| puts "     << #{out}" }
       sudo "passwd #{app_user}" do |ch, stream, out|
         puts "     << #{out}"
         if out =~ /Enter new UNIX password:/
@@ -69,8 +71,7 @@ set :application, 'mogok'
 
     desc 'Create the application directory, change its owner to app user and grant the required permissions.'
     task :create_app_directory, :roles => :app do
-      sudo "sh -c 'if [ ! -d #{apps_path} ]; then mkdir #{apps_path}; fi'"
-      sudo "mkdir #{app_root_path}"
+      sudo "mkdir -p #{app_root_path}"
       sudo "chown #{app_user}:#{app_user_group} -R #{app_root_path}"
       sudo "chmod 775 -R #{app_root_path}"
     end
@@ -78,14 +79,14 @@ set :application, 'mogok'
     desc 'Create Passenger configuration on Apache.'
     task :passenger_config, :roles => :app do
       require 'erb'
-      template = ERB.new(File.read('setup/templates/mogok.erb'), nil, '<>')
+      template = ERB.new(File.read("setup/templates/#{application}.erb"), nil, '<>')
       result = template.result(binding)
-      sudo "sh -c 'if [ -f /etc/apache2/sites-available/mogok ]; then rm /etc/apache2/sites-available/mogok; fi'"
-      sudo "sh -c 'if [ -f /etc/apache2/sites-enabled/mogok ]; then rm /etc/apache2/sites-enabled/mogok; fi'"
-      put(result, "/home/#{user}/mogok") # method 'put' do not support sudo
-      sudo "mv /home/#{user}/mogok /etc/apache2/sites-available"
-      sudo 'chown root:root /etc/apache2/sites-available/mogok'
-      sudo('a2ensite mogok') {|ch, stream, out| puts "     << #{out}" }
+      sudo "rm -f /etc/apache2/sites-available/#{application}"
+      sudo "rm -f /etc/apache2/sites-enabled/#{application}"
+      put(result, "/home/#{user}/#{application}") # method 'put' do not support sudo
+      sudo "mv /home/#{user}/#{application} /etc/apache2/sites-available"
+      sudo "chown root:root /etc/apache2/sites-available/#{application}"
+      sudo("a2ensite #{application}") {|ch, stream, out| puts "     << #{out}" }
       sudo('/etc/init.d/apache2 reload') {|ch, stream, out| puts "     << #{out}" }
     end
 

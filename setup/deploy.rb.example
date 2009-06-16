@@ -6,7 +6,7 @@
 # It is also possible to deploy from a remote git repository to the server:
 #   + switch the comments in the 'repository' and 'deploy strategy' sections
 #   + change the clone repository url if using a different one
-#   + install git in your server (check 'setup/passenger_stack.rb')
+#   + install git in the server (enable it in 'setup/passenger_stack.rb')
 
 set :application, 'mogok'
 
@@ -15,8 +15,9 @@ set :application, 'mogok'
   # set :port, 2222
 
 # user
-  Capistrano::CLI.ui.say('Please provide the app user (not the sudo!) credentials:')
-  set :user,     Capistrano::CLI.ui.ask(' > username: ')
+  Capistrano::CLI.ui.say('Please provide the app user password:')
+  set :user, application
+  Capistrano::CLI.ui.say(" > username: #{user}")
   set :password, Capistrano::CLI.password_prompt(' > password: ')
   set :use_sudo, false
 
@@ -112,8 +113,7 @@ set :application, 'mogok'
 
       desc 'Create the shared config dirs in the server if they do not exist.'
       task :set_directories, :roles => :app do
-        run "if [ ! -d #{shared_config_path} ]; then mkdir #{shared_config_path}; fi"
-        run "if [ ! -d #{shared_config_path}/initializers ]; then mkdir #{shared_config_path}/initializers; fi"
+        run "mkdir -p #{shared_config_path}/initializers"
       end
 
       # usage: cap deploy:config:set_file file=app_config.yml
@@ -121,7 +121,7 @@ set :application, 'mogok'
       task :set_file, :roles => :app do
         f = ENV['file']
         raise 'the given file does not appear to be a config file' unless config_files.include?(f)
-        run "if [ -f #{shared_config_path}/#{f} ]; then rm #{shared_config_path}/#{f}; fi"
+        run "rm -f #{shared_config_path}/#{f}"
         top.upload "#{local_config_path}/#{f}", "#{shared_config_path}/#{f}"
         restart
       end
@@ -129,15 +129,14 @@ set :application, 'mogok'
       desc 'Upload config files, replacing if they exist.'
       task :set_files, :roles => :app do
         config_files.each do |f|
-          run "if [ -f #{shared_config_path}/#{f} ]; then rm #{shared_config_path}/#{f}; fi"
+          run "rm -f #{shared_config_path}/#{f}"
           top.upload "#{local_config_path}/#{f}", "#{shared_config_path}/#{f}"
         end
       end
 
       desc 'Upload custom migrations to the server, creating the required dirs.'
       task :set_custom_migrations, :roles => :app do
-        run "if [ ! -d #{shared_path}/db ]; then mkdir #{shared_path}/db; fi"
-        run "if [ ! -d #{shared_path}/db/migrate ]; then mkdir #{shared_path}/db/migrate; fi"
+        run "mkdir -p #{shared_path}/db/migrate"
         top.upload "#{app_data_migration_file}", "#{shared_path}/#{app_data_migration_file}"
       end
 
@@ -149,7 +148,7 @@ set :application, 'mogok'
       desc 'Replace session store config in server and restart. All current user sessions will become stale if changed!!!'
       task :replace_session_store, :roles => :app do
         if Capistrano::CLI.ui.agree('WARNING: Changing the session store attributes will invalidate all current user sessions. Are you sure? (y/n):')
-          run "if [ -f #{shared_config_path}/#{session_store_file} ]; then rm #{shared_config_path}/#{session_store_file}; fi"
+          run "rm -f #{shared_config_path}/#{session_store_file}"
           set_session_store
           restart
         end
@@ -163,7 +162,7 @@ set :application, 'mogok'
       desc 'Replace restful authentication site keys in server and restart. All existing passwords will become stale if changed!!!'
       task :replace_site_keys, :roles => :app do
         if Capistrano::CLI.ui.agree('WARNING: Changing the site keys will invalidate all existing passwords. Are you sure? (y/n):')
-          run "if [ -f #{shared_config_path}/#{site_keys_file} ]; then rm #{shared_config_path}/#{site_keys_file}; fi"
+          run "rm -f #{shared_config_path}/#{site_keys_file}"
           set_site_keys
           restart
         end

@@ -8,6 +8,7 @@ package :ruby_enterprise do
   source "http://rubyforge.org/frs/download.php/55511/ruby-enterprise-#{version}.tar.gz" do
     custom_install 'sudo ./installer --auto=/usr/local/ruby-enterprise'
 
+    pre  :install, 'rm -f /usr/bin/ruby'
     post :install, "ln -s #{install_path}/bin/ruby /usr/bin/ruby" # or /usr/bin/env (used in shebangs) can't find ruby
     
     binaries.each {|bin| post :install, "ln -s #{install_path}/bin/#{bin} /usr/local/bin/#{bin}" }
