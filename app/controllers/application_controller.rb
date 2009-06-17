@@ -8,7 +8,7 @@ class ApplicationController < ActionController::Base
 
   protected
 
-    def after_logged_in_required # callback from app_authorization
+    def after_logged_in_required # callback from authorized_system
       current_user.register_access
       staff_alerts
     end

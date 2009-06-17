@@ -2,67 +2,67 @@
 ActionController::Routing::Routes.draw do |map|
   
   # app root
-  map.root :controller => 'content'
+    map.root :controller => 'content'
   
   # login
-  map.login 'login', :controller => 'login', :action => 'login'
-  map.logout 'logout', :controller => 'login', :action => 'logout'
+    map.login 'login', :controller => 'login', :action => 'login'
+    map.logout 'logout', :controller => 'login', :action => 'logout'
 
   # signup
-  map.signup_with_invite 'signup/:invite_code', :controller => 'signup'
-  map.signup 'signup', :controller => 'signup'
+    map.signup_with_invite 'signup/:invite_code', :controller => 'signup'
+    map.signup 'signup', :controller => 'signup'
 
   # password recovery
-  map.password_recovery 'password_recovery', :controller => 'password_recovery'
-  map.change_password 'change_password/:recovery_code', :controller => 'password_recovery', :action => 'change_password'
+    map.password_recovery 'password_recovery', :controller => 'password_recovery'
+    map.change_password 'change_password/:recovery_code', :controller => 'password_recovery', :action => 'change_password'
   
   # content
-  map.with_options :controller => 'content' do |content|
-    content.help 'help', :action => 'help' 
-    content.staff 'staff', :action => 'staff'
-  end
+    map.with_options :controller => 'content' do |content|
+      content.help 'help', :action => 'help'
+      content.staff 'staff', :action => 'staff'
+    end
 
   # user  
-  map.my_bookmarks 'my_bookmarks', :controller => 'users', :action => 'my_bookmarks'
-  map.my_uploads 'my_uploads', :controller => 'users', :action => 'my_uploads'
-  map.my_wishes 'my_requests', :controller => 'users', :action => 'my_wishes'
-  map.stuck 'stuck', :controller => 'users', :action => 'stuck'
-  map.users 'users/:action/:id', :controller => 'users'
+    map.my_bookmarks 'my_bookmarks', :controller => 'users', :action => 'my_bookmarks'
+    map.my_uploads 'my_uploads', :controller => 'users', :action => 'my_uploads'
+    map.my_wishes 'my_requests', :controller => 'users', :action => 'my_wishes'
+    map.stuck 'stuck', :controller => 'users', :action => 'stuck'
+    map.users 'users/:action/:id', :controller => 'users'
   
   # messages (in this case :id is being used to define the folder)
-  map.messages 'messages/:action/:id', :controller => 'messages'
+    map.messages 'messages/:action/:id', :controller => 'messages'
   
   # torrents  
-  map.comments 'torrents/:torrent_id/comments/:action/:id', :controller => 'comments'
-  map.upload 'upload', :controller => 'torrents', :action => 'upload'
-  map.rewards 'torrents/:torrent_id/rewards/:action/:id', :controller => 'rewards'
-  map.torrents 'torrents/:action/:id', :controller => 'torrents'
+    map.comments 'torrents/:torrent_id/comments/:action/:id', :controller => 'comments'
+    map.upload 'upload', :controller => 'torrents', :action => 'upload'
+    map.rewards 'torrents/:torrent_id/rewards/:action/:id', :controller => 'rewards'
+    map.torrents 'torrents/:action/:id', :controller => 'torrents'
 
   # wishes (appears as 'requests' for the user)  
-  map.wish_comments 'requests/:wish_id/comments/:action/:id', :controller => 'wish_comments'
-  map.wish_bounties 'requests/:wish_id/bounties/:action/:id', :controller => 'wish_bounties'
-  map.wishes 'requests/:action/:id', :controller => 'wishes'
+    map.wish_comments 'requests/:wish_id/comments/:action/:id', :controller => 'wish_comments'
+    map.wish_bounties 'requests/:wish_id/bounties/:action/:id', :controller => 'wish_bounties'
+    map.wishes 'requests/:action/:id', :controller => 'wishes'
 
   # forums  
-  map.posts 'forums/:forum_id/posts/:action/:id', :controller => 'posts'
-  map.topics 'forums/:forum_id/topics/:action/:id', :controller => 'topics'
-  map.forums 'forums/:action/:id', :controller => 'forums'
+    map.posts 'forums/:forum_id/posts/:action/:id', :controller => 'posts'
+    map.topics 'forums/:forum_id/topics/:action/:id', :controller => 'topics'
+    map.forums 'forums/:action/:id', :controller => 'forums'
 
   # invitations
-  map.invitations 'invitations', :controller => 'invitations'
+    map.invitations 'invitations', :controller => 'invitations'
 
   # logs
-  map.logs 'logs', :controller => 'logs'
+    map.logs 'logs', :controller => 'logs'
 
   # stats
-  map.stats 'stats', :controller => 'stats'
+    map.stats 'stats', :controller => 'stats'
 
   # tracker
-  map.tracker 'tracker/:passkey/:action', :controller => 'tracker'
+    map.tracker 'tracker/:passkey/:action', :controller => 'tracker'
   
   # default
-  map.connect ':controller/:action/:id'
-  map.connect ':controller/:action/:id.:format'
+    map.connect ':controller/:action/:id'
+    map.connect ':controller/:action/:id.:format'
 end
 
 
