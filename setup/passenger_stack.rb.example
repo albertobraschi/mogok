@@ -1,6 +1,7 @@
 
-# Sprinkle gem script to setup a server (works better with Ubuntu according to the
-# author).
+# Sprinkle gem script to install the server required software (works better with
+# Ubuntu according to the author). It uses the server_setup recipe to connect to
+# the server.
 
 # packages
 %w(apache essential memcached mysql required_gems ruby_enterprise scm).each do |r|
@@ -30,7 +31,7 @@ deployment do
   # mechanism for deployment
   delivery :capistrano do
     begin
-      recipes 'setup/install'
+      recipes 'setup/server_setup'
     rescue LoadError
       puts 'Error: cannot find capistrano install recipe.'
     end

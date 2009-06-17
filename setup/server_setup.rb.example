@@ -28,22 +28,6 @@ set :application, 'mogok'
   set :apps_path, '/var/vhosts'
   set :app_root_path, "#{apps_path}/#{application}"
 
-# app user
-  Capistrano::CLI.ui.say("Please provide the password for the app user that will be created in the server:")
-  set :app_user, application
-  Capistrano::CLI.ui.say(" > username: #{app_user}")
-  set :app_user_password, Capistrano::CLI.password_prompt(' > password: ')
-  password_confirmation = Capistrano::CLI.password_prompt(' > confirm.: ')
-  raise 'password must match password confirmation' if app_user_password != password_confirmation
-
-  Capistrano::CLI.ui.say('Please provide the app user group (\'www-data\' on Ubuntu, for others is the group in which Apache runs):')
-  set :app_user_group, Capistrano::CLI.ui.ask(' > group: ')
-
-# passenger
-  Capistrano::CLI.ui.say('Please provide the server name parameter to be set in the passenger config file (i.e. localhost or www.mysite.com):')
-  set :passenger_server_name, Capistrano::CLI.ui.ask('> server name: ')
-  set :passenger_document_root, "#{app_root_path}/current/public"
-
 # server setup tasks
   namespace :server_setup do
     task :default do
@@ -55,6 +39,16 @@ set :application, 'mogok'
 
     desc 'Create the application user and assign it to its group.'
     task :create_app_user, :roles => :app do
+      Capistrano::CLI.ui.say("Please provide the password for the app user that will be created in the server:")
+      set :app_user, application
+      Capistrano::CLI.ui.say(" > username: #{app_user}")
+      set :app_user_password, Capistrano::CLI.password_prompt(' > password: ')
+      password_confirmation = Capistrano::CLI.password_prompt(' > confirm.: ')
+      raise 'password must match password confirmation' if app_user_password != password_confirmation
+
+      Capistrano::CLI.ui.say('Please provide the app user group (\'www-data\' on Ubuntu, for others is the group in which Apache runs):')
+      set :app_user_group, Capistrano::CLI.ui.ask(' > group: ')
+
       sudo("useradd --create-home --shell /bin/bash #{app_user}") {|ch, stream, out| puts "     << #{out}" }
       sudo "passwd #{app_user}" do |ch, stream, out|
         puts "     << #{out}"
@@ -78,6 +72,10 @@ set :application, 'mogok'
 
     desc 'Create Passenger configuration on Apache.'
     task :passenger_config, :roles => :app do
+      Capistrano::CLI.ui.say('Please provide the server name parameter to be set in the passenger config file (i.e. localhost or www.mysite.com):')
+      set :passenger_server_name, Capistrano::CLI.ui.ask('> server name: ')
+      set :passenger_document_root, "#{app_root_path}/current/public"
+
       require 'erb'
       template = ERB.new(File.read("setup/templates/#{application}.erb"), nil, '<>')
       result = template.result(binding)
