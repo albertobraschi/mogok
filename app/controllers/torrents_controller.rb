@@ -63,6 +63,8 @@ class TorrentsController < ApplicationController
       end
       set_collections
       @category = @torrent.category
+    else
+      render :template => 'torrents/unavailable'
     end
   end
   
@@ -92,6 +94,8 @@ class TorrentsController < ApplicationController
           redirect_to_torrent
         end
       end
+    else
+      render :template => 'torrents/unavailable'
     end
   end  
 
@@ -120,6 +124,8 @@ class TorrentsController < ApplicationController
           redirect_to_torrent
         end
       end
+    else
+      render :template => 'torrents/unavailable'      
     end
   end
   
@@ -167,6 +173,8 @@ class TorrentsController < ApplicationController
       t.comment = APP_CONFIG[:torrents][:file_comment] if APP_CONFIG[:torrents][:file_comment]
       file_name = TorrentsHelper.torrent_file_name t, APP_CONFIG[:torrents][:file_prefix]
       send_data t.out, :filename => file_name, :type => 'application/x-bittorrent', :disposition => 'attachment'
+    else
+      render :template => 'torrents/unavailable'
     end
   end
 
@@ -201,6 +209,8 @@ class TorrentsController < ApplicationController
           redirect_to_torrent
         end        
       end
+    else
+      render :template => 'torrents/unavailable'
     end
   end
     
@@ -212,12 +222,7 @@ class TorrentsController < ApplicationController
 
     def torrent_available?(t = nil)
       t ||= @torrent
-      if !t.blank? && (t.active? || current_user.admin_mod?)
-        true
-      else
-        render :template => 'torrents/unavailable'
-        false
-      end
+      !t.blank? && (t.active? || current_user.admin_mod?)
     end
 
     def set_collections
