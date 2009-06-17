@@ -1,51 +1,13 @@
-require 'ipaddr'
-require 'openssl'
 
 module Bittorrent
 
   module Tracker
-
+    include Passkey, BittorrentClient
+    
     class TrackerFailure < StandardError
     end
 
     protected
-
-      # Make an announce passkey. It is composed by the 32 characters hmac generated from the torrent
-      # announce key and the user passkey followed by the user id.
-      def make_announce_passkey(torrent, user)
-        hmac = OpenSSL::HMAC.hexdigest(OpenSSL::Digest::MD5.new, torrent.announce_key, user.passkey).upcase
-        hmac + user.id.to_s
-      end
-
-      # Just get the user id that is in the end of the announce passkey, after the hmac.
-      def parse_user_id_from_announce_passkey(passkey)
-        begin
-          passkey.size > 32 ? Integer(passkey[32, passkey.size - 1]) : nil
-        rescue
-          nil
-        end
-      end
-
-      # Returns a stored Client object or, if code not found in the database, an instance of
-      # Client containing the code and version received.
-      def parse_client(peer_id, ban_unknown = false)
-        if peer_id.size == 20
-          if peer_id[0, 1] == '-' && peer_id[7, 1] == '-' # azureus style
-            code = peer_id[1, 2]
-            version = peer_id[3, 4]
-          else # shadow style
-            code = peer_id[0, 1]
-            version = peer_id[1, 5].gsub('-', '')
-          end
-          c = Client.find_by_code code
-        end
-        unless c
-          c = Client.new :code => code, :name => code
-          c.banned = true if ban_unknown
-        end
-        c.version = version
-        c
-      end
 
       def process_scrape(params, config)
         logger.debug ':-) tracker.process_scrape'

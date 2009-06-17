@@ -265,11 +265,12 @@ operations, see below).
 
 - Testing
   Two strategies are used to test the application functionalities: Cucumber features for integration
-tests and RSpec for unit testing. The implemented tests main focus are the in the features used by
+tests and RSpec for unit testing. The implemented tests main focus are in the features used by
 the regular users, which means that admistrative features are not extensively covered. To run the
 tests you must create the 'test' database instance (check appendix B).
-  IMPORTANT: caching is disabled by default during tests as the tests frameworks bypass cache_money
-synchronization, you can enable it by changing the flag in environment.rb.
+  IMPORTANT: caching is enabled by default during the tests but it is recommended to run them also with
+the cache disabled (change the flag in 'config/environment.rb') as the test frameworks bypass cache_money
+synchronization.
   + Cucumber Features
     Are in the directory 'features'. Note that those tests rely on messages in the 'en.yml' file
     and on the content of the default english views, so changing them may break some of the tests.
@@ -352,6 +353,7 @@ information about your system.
     + config/initializers/site_keys.rb (holds the restful_authentication key, change it!)
     + db/migrate/099_create_data.rb (configure the app initial data, like roles, categories and so on)
   > install and deploy
+    + setup/backup.rb
     + setup/deploy.rb    
     + setup/install.rb
     + setup/passenger_stack.rb

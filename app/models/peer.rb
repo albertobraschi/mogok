@@ -1,5 +1,6 @@
 
 require 'ping'
+require 'ipaddr'
 
 class Peer < ActiveRecord::Base
   concerns :callbacks, :finders
