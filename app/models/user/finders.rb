@@ -10,7 +10,7 @@ class User
   def paginate_uploads(params, args)
     Torrent.scoped_by_active(true).paginate_by_user_id self,
                                                        :order => self.class.order_by(params[:order_by], params[:desc]),
-                                                       :page => self.class.current_page(params[:page]),
+                                                       :page => params[:page],
                                                        :per_page => args[:per_page],
                                                        :include => :tags
   end
@@ -18,14 +18,14 @@ class User
   def paginate_wishes(params, args)
     Wish.paginate_by_user_id self,
                              :order => self.class.order_by(params[:order_by], params[:desc]),
-                             :page => self.class.current_page(params[:page]),
+                             :page => params[:page],
                              :per_page => args[:per_page]
   end
 
   def paginate_bookmarks(params, args)
     Torrent.paginate :conditions => paginate_bookmarks_conditions,
                      :order => 'name',
-                     :page => self.class.current_page(params[:page]),
+                     :page => params[:page],
                      :per_page => args[:per_page],
                      :include => :tags
   end
@@ -33,7 +33,7 @@ class User
   def paginate_stuck(params, args)
     Torrent.paginate :conditions => stuck_conditions,
                      :order => 'leechers_count DESC, name',
-                     :page => self.class.current_page(params[:page]),
+                     :page => params[:page],
                      :per_page => args[:per_page],
                      :include => :tags
   end
@@ -42,7 +42,7 @@ class User
   def paginate_invitees(params, args)
     self.class.paginate_by_inviter_id self.id,
                                       :order => 'created_at',
-                                      :page => self.class.current_page(params[:page]),
+                                      :page => params[:page],
                                       :per_page => args[:per_page]
   end
 
@@ -57,7 +57,7 @@ class User
   def paginate_snatches(params, args)
     Snatch.paginate_by_user_id self,
                                :order => 'created_at DESC',
-                               :page => self.class.current_page(params[:page]),
+                               :page => params[:page],
                                :per_page => args[:per_page]
   end
 
@@ -65,7 +65,7 @@ class User
     Peer.paginate_by_user_id self,
                              :conditions => {:seeder => params[:seeding] == '1'},
                              :order => 'started_at DESC',
-                             :page => self.class.current_page(params[:page]),
+                             :page => params[:page],
                              :per_page => args[:per_page]
   end
 
@@ -74,7 +74,7 @@ class User
 
     paginate :conditions => search_conditions(params, searcher),
              :order => order_by(params[:order_by], params[:desc]),
-             :page => current_page(params[:page]),
+             :page => params[:page],
              :per_page => args[:per_page]
   end
 

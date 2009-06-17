@@ -21,13 +21,13 @@ It adds the following features:
 3 - Support for rendering the last page (doesn't apply to remote pagination).
   Example:
     Product.paginate :page => :last, :per_page => 50
+    Product.paginate :page => 'last', :per_page => 50
 
 
 4 - No empty page unless all pages are empty
-  If your set has 5 pages and you request page 6, will_paginate returns an empty page, causing
-  the misleading impression that no records were found. This happens specially when the only
-  record of the last page is deleted. This extension corrects it looking for not empty previous
-  pages (although the url will still show the non-existing page).
+  If your set has 4 pages and you request page 10, it will return page 4 (will_paginate returns an empty page).
+  Example:
+    Product.paginate :page => 10, :per_page => 50 # returns page 4 if page 4 is the last
 
 
 5 - A view helper to add sort links to the browse table headers.

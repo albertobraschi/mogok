@@ -6,7 +6,7 @@ class Peer
   def self.search(params, args)
     paginate :conditions => search_conditions(params),
              :order => 'started_at DESC',
-             :page => current_page(params[:page]),
+             :page => params[:page],
              :per_page => args[:per_page]
   end
 

@@ -16,7 +16,7 @@ class Stat < ActiveRecord::Base
   end
 
   def self.paginate(params, args)
-    super :order => 'created_at DESC', :page => current_page(params[:page]), :per_page => args[:per_page]
+    super :order => 'created_at DESC', :page => params[:page], :per_page => args[:per_page]
   end
 
   private

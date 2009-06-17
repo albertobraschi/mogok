@@ -5,34 +5,16 @@ module WillPaginate
 
     module ClassMethods
 
-      def current_page(page)
-        if page.blank?
-          1
-        elsif page == 'last'
-          :last
-        else
-          begin
-            Integer(page)
-          rescue
-            1
-          end
-        end
-      end
-
       def order_by(order_by, desc)
         "#{order_by}#{' DESC' if desc == '1'}"
       end
 
       alias :old_paginate :paginate
-      
+      alias :old_wp_parse_options :wp_parse_options
+
       def paginate(*args, &block)                
         options = args.pop
-        
-        if options[:page] == :last
-          last_page = true
-          options[:page] = 1 # just to avoid parse error
-        end
-        
+
         page, per_page, total_entries = wp_parse_options(options)
         finder = (options[:finder] || 'find').to_s
 
@@ -54,14 +36,37 @@ module WillPaginate
         total_pages = (total_entries / per_page.to_f).ceil
 
         if total_pages > 0
-          page = total_pages if last_page || page > total_pages # last page also if page is greater than total pages
-        else
-          page = 1
+          page = total_pages if page == :last || page > total_pages # last page also if page is greater than total pages
         end
         
         WillPaginate::Collection.create(page, per_page, total_entries) do |pager|
           find_options.update(:offset => pager.offset, :limit => pager.per_page)
           pager.replace send(finder, *args, &block)
+        end
+      end
+
+      def wp_parse_options(options) #:nodoc:
+        raise ArgumentError, 'parameter hash expected' unless options.respond_to? :symbolize_keys
+        options = options.symbolize_keys
+        raise ArgumentError, ':page parameter required' unless options.key? :page
+
+        if options[:count] and options[:total_entries]
+          raise ArgumentError, ':count and :total_entries are mutually exclusive'
+        end
+
+        page     = parse_page(options[:page])
+        per_page = options[:per_page] || self.per_page
+        total    = options[:total_entries]
+        [page, per_page, total]
+      end
+
+      def parse_page(page)
+        return 1 if page.blank?
+        return :last if page == 'last' || page == :last
+        begin
+          Integer(page)
+        rescue
+          1
         end
       end
     end

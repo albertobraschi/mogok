@@ -6,21 +6,21 @@ class Wish
   def paginate_comments(params, args)
     WishComment.paginate_by_wish_id self,
                                     :order => 'created_at',
-                                    :page => self.class.current_page(params[:page]),
+                                    :page => params[:page],
                                     :per_page => args[:per_page]
   end
 
   def paginate_bounties(params, args)
     WishBounty.paginate_by_wish_id self,
                                    :order => 'created_at',
-                                   :page => self.class.current_page(params[:page]),
+                                   :page => params[:page],
                                    :per_page => args[:per_page]
   end
 
   def self.search(params, args)
     paginate :conditions => search_conditions(params),
              :order => order_by(params[:order_by], params[:desc]),
-             :page => current_page(params[:page]),
+             :page => params[:page],
              :per_page => args[:per_page]
   end
 

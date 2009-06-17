@@ -6,14 +6,14 @@ class Torrent
   def paginate_comments(params, args)
     Comment.paginate_by_torrent_id self,
                                    :order => 'created_at',
-                                   :page => self.class.current_page(params[:page]),
+                                   :page => params[:page],
                                    :per_page => args[:per_page]
   end
 
   def paginate_peers(params, args)
     Peer.paginate_by_torrent_id self,
                                 :order => 'started_at DESC',
-                                :page => self.class.current_page(params[:page]),
+                                :page => params[:page],
                                 :per_page => args[:per_page]
   end
 
@@ -21,21 +21,21 @@ class Torrent
   def paginate_snatches(params, args)
     Snatch.paginate_by_torrent_id self,
                                   :order => 'created_at DESC',
-                                  :page => self.class.current_page(params[:page]),
+                                  :page => params[:page],
                                   :per_page => args[:per_page]
   end
 
   def paginate_rewards(params, args)
     Reward.paginate_by_torrent_id self,
                                   :order => 'created_at',
-                                  :page => self.class.current_page(params[:page]),
+                                  :page => params[:page],
                                   :per_page => args[:per_page]
   end
 
   def self.search(params, searcher, args)
     paginate :conditions => search_conditions(params, searcher),
              :order => order_by(params[:order_by], params[:desc]),
-             :page => current_page(params[:page]),
+             :page => params[:page],
              :per_page => args[:per_page],
              :include => :tags
   end

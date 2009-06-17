@@ -6,7 +6,7 @@ class AnnounceLog < ActiveRecord::Base
   def self.search(params, args)
     paginate :conditions => search_conditions(params),
              :order => order_by(params[:order_by], params[:desc]),
-             :page => current_page(params[:page]),
+             :page => params[:page],
              :per_page => args[:per_page]
   end
 

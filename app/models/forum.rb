@@ -36,7 +36,7 @@ class Forum < ActiveRecord::Base
     Topic.paginate_by_forum_id self,
                                :conditions => search_conditions(params),
                                :order => 'stuck DESC, last_post_at DESC',
-                               :page => self.class.current_page(params[:page]),
+                               :page => params[:page],
                                :per_page => args[:per_page]
   end
 
@@ -44,7 +44,7 @@ class Forum < ActiveRecord::Base
   def self.search_all(params, args)
     Topic.paginate :conditions => search_all_conditions(params),
                    :order => 'last_post_at DESC',
-                   :page => current_page(params[:page]),
+                   :page => params[:page],
                    :per_page => args[:per_page]
   end
 
