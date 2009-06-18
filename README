@@ -368,7 +368,7 @@ VirtualBox, which is a free OS emulator by Sun Microsystems (check Appendix D on
   IMPORTANT: if you are running on Windows, change the name of the file 'lib/mysql.rb.windows' to
 'lib/mysql.rb' if the application can't find your mysql gem.
 
-- Deploying on Ubuntu with Passenger (tested for Ubuntu 8.04 and 9.04 with Passenger 2.2.2)
+- Deploying on Ubuntu with Passenger (tested for Ubuntu 9.04 with Passenger 2.2.3)
   - the deployment can be done in two ways, manually or using the 'capistrano' and 'sprinkle' recipes
     + recipes
       - will automatically install all required software and gems in your server and deploy your application,
