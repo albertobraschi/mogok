@@ -287,9 +287,8 @@ synchronization.
 
 - Caching
   The application uses memcached as the cache store. Caching is disabled by default in development
-and test modes, but you can enable it changing the flags in the file config/environment.rb in order
-to ensure that the cache is interacting well with the application or to get a better logging of
-the cache activities when on development mode.
+mode, but you can enable it by changing the flag in the file 'config/environment.rb' to ensure that the
+cache is interacting well with the application and to get a better logging of the cache activities.
   - currently the application uses three caching strategies:
     + cache_money (http://github.com/nkallen/cache-money/tree/master)
       - very easy to use, it caches records every time a query for a specific record, like User.find(1)
