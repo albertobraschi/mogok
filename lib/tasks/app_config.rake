@@ -28,7 +28,7 @@ namespace :app_config do
     migrations_path = File.join(root_path, 'db/migrate')
     migrations.each do |m|
       file = File.join(migrations_path, m)
-      FileUtils.copy_file("#{file}.example", file+'.xxx') unless File.exist?(file)
+      FileUtils.copy_file("#{file}.example", file) unless File.exist?(file)
     end
 
     setup_path = File.join(root_path, 'setup')
