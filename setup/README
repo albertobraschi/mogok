@@ -6,6 +6,18 @@ to overcrowding they were placed here instead.
 Check the Deployment section of the application README file for more on how to
 use the recipes.
 
+Directory structure:
+
+> setup
+  > packages                > contain the 'sprinkle' installation packages
+  > templates               > contain templates for generated files
+    + mogok.erb               + the app passenger config file
+  + backup.rb               + 'capistrano' tasks for backup
+  + deploy.rb               + 'capistrano' tasks for deployment
+  + passenger_stack.rb      + 'sprinkler' recipe to install a complete passenger stack in the server
+  + server_setup.rb         + 'capistrano' tasks to prepare the server for deployment
+
+
 References:
   + http://github.com/crafterm/sprinkle/tree/master
   + http://github.com/benschwarz/passenger-stack/tree/master

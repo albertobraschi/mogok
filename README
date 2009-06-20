@@ -337,25 +337,30 @@ to translate. So, if you want to translate, let's say to Spanish, this is what y
 
 - Configuration
   Lays in the files below. The files come with an 'example' extension, just create a copy of each file without
-the extension and change the configuration when needed. Note that the resulting configuration files are listed
-in the file '.gitignore', preventing them from being committed to the repository and possibly exposing sensitive
-information about your system.
-  > app config
-    + config/app_config.yml
-    + config/bg_tasks.yml
-    + config/database.yml
-    + config/environment.rb
-    + config/memcached.yml
-    + config/schedule.rb
-    + config/initializers/action_mailer.rb
-    + config/initializers/session_store.rb (change the secret!)
-    + config/initializers/site_keys.rb (holds the restful_authentication key, change it!)
-    + db/migrate/099_create_data.rb (configure the app initial data, like roles, categories and so on)
-  > install and deploy
-    + setup/backup.rb
-    + setup/deploy.rb
-    + setup/passenger_stack.rb
-    + setup/setup.rb
+the extension (see rake task below) and change the configuration when needed. Note that the resulting configuration
+files are listed in the file '.gitignore', preventing them from being committed to the repository and possibly
+exposing sensitive information about your system.
+  - to generate the config files copies execute the command below
+    $ rake app_config:generate_files
+  - config files list
+    > config
+      + config/app_config.yml
+      + config/bg_tasks.yml
+      + config/database.yml
+      + config/environment.rb
+      + config/memcached.yml
+      + config/schedule.rb
+    > initializers
+      + config/initializers/action_mailer.rb
+      + config/initializers/session_store.rb (change the secret!)
+      + config/initializers/site_keys.rb (holds the restful_authentication key, change it!)
+    > custom migrations
+      + db/migrate/099_create_data.rb (configure the app initial data, like roles, categories and so on)
+    > install and deploy
+      + setup/backup.rb
+      + setup/deploy.rb
+      + setup/passenger_stack.rb
+      + setup/server_setup.rb
     
 
 # DEPLOYMENT
