@@ -1,4 +1,7 @@
 
+# Command:
+#   $ rake app_config:generate_files
+
 namespace :app_config do
 
   desc "Create a copy of all the app config files without the '.example' extension."

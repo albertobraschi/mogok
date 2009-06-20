@@ -343,7 +343,7 @@ exposing sensitive information about your system.
   - to generate the config files copies execute the command below
     $ rake app_config:generate_files
   - config files list
-    > config
+    > app config
       + config/app_config.yml
       + config/bg_tasks.yml
       + config/database.yml

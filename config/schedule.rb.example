@@ -1,6 +1,4 @@
 
-# include the cron jobs below with the command: whenever --update-crontab Mogok
-
 # set :cron_log, '/var/vhosts/mogok/shared/cron.log' # commented as the app path may be different, enable or you won't be informed if a cron related error occur
 
 every 1.hour, :at => 5 do
