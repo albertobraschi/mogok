@@ -14,7 +14,7 @@ Directory structure:
     + mogok.erb               + the app passenger config file
   + backup.rb               + 'capistrano' tasks for backup
   + deploy.rb               + 'capistrano' tasks for deployment
-  + passenger_stack.rb      + 'sprinkler' recipe to install a complete passenger stack in the server
+  + passenger_stack.rb      + 'sprinkler' recipe to install a complete Passenger stack in the server
   + server_setup.rb         + 'capistrano' tasks to prepare the server for deployment
 
 

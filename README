@@ -316,8 +316,7 @@ cache is interacting well with the application and to get a better logging of th
 
 - Tracker request
   A tracker request is treated just like any regular Rails request. Under very heavy load this could be
-a problem, so a faster mechanism (like Rails Metal or even an external tracker) might be required on such
-scenario.
+a problem, so a faster mechanism (like an external tracker) might be necessary on such scenario.
 
 - Bittorrent
   The implementation is based in the specification found at: http://wiki.theory.org/BitTorrentSpecification

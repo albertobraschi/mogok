@@ -47,6 +47,7 @@ module AuthorizedSystem
     end
 
     def access_denied
+      logger.debug ':-o app_authorization.access_denied'
       raise AccessDeniedError
     end
     
