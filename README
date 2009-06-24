@@ -627,6 +627,3 @@ VirtualBox, which is a free OS emulator by Sun Microsystems (check Appendix D on
         $ ssh -l <user> -p 2222 localhost
 
 
-
-
-
