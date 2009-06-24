@@ -33,7 +33,7 @@ package :cucumber do
     pre  :install, 'rm -f /usr/local/bin/cucumber'
     post :install, 'ln -s /usr/local/ruby-enterprise/bin/cucumber /usr/local/bin/cucumber'
   end
-  version '0.3.1'  
+  version '0.3.11'
 
   verify do
     has_gem 'cucumber'
